@@ -50,7 +50,7 @@
                     if (btn.dataset.confirm === 'true') {
                         state.party.splice(index, 1);
                         PT.Engine.GameState.addToLog(state, `Released ${pokemon.name}. Bye bye!`);
-                        PT.App.goto('PARTY');
+                        PT.App._render();
                     } else {
                         msg.textContent = `Release ${pokemon.name}? Click DROP again to confirm.`;
                         btn.dataset.confirm = 'true';
@@ -61,7 +61,11 @@
             });
 
             document.getElementById('btn-back').addEventListener('click', () => {
-                PT.App.pop();
+                if (PT.App.screenStack.length > 0) {
+                    PT.App.pop();
+                } else {
+                    PT.App.goto('TRAVEL');
+                }
             });
         }
     };

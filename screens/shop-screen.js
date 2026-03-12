@@ -51,7 +51,7 @@
                         state.resources[key] = (state.resources[key] || 0) + (key === 'food' ? 10 : 1);
                         msg.textContent = `Bought ${item.name}! ${key === 'food' ? '(+10 rations)' : ''}`;
                         if (PT.Engine.Audio) PT.Engine.Audio.buy();
-                        PT.App.goto('SHOP');
+                        PT.App._render();
                     }
                 });
             });
@@ -66,13 +66,17 @@
                         state.resources.money -= cost;
                         state.resources[key] = (state.resources[key] || 0) + (key === 'food' ? 50 : 5);
                         msg.textContent = `Bought 5x ${item.name}!`;
-                        PT.App.goto('SHOP');
+                        PT.App._render();
                     }
                 });
             });
 
             document.getElementById('btn-back').addEventListener('click', () => {
-                PT.App.pop();
+                if (PT.App.screenStack.length > 0) {
+                    PT.App.pop();
+                } else {
+                    PT.App.goto('TRAVEL');
+                }
             });
         }
     };

@@ -58,7 +58,8 @@
                     PT.Engine.GameState.healPokemon(target, 1);
                     msg.textContent = `Used Potion on ${target.name}! +1 HP`;
                 }
-                PT.App.goto('INVENTORY');
+                // Re-render without clearing the screen stack
+                PT.App._render();
             });
 
             document.getElementById('btn-use-candy').addEventListener('click', () => {
@@ -70,11 +71,16 @@
                 target.level += 1;
                 target.maxHp = Math.min(5, target.maxHp + (target.level % 10 === 0 ? 1 : 0));
                 msg.textContent = `${target.name} grew to level ${target.level}!`;
-                PT.App.goto('INVENTORY');
+                // Re-render without clearing the screen stack
+                PT.App._render();
             });
 
             document.getElementById('btn-back').addEventListener('click', () => {
-                PT.App.pop();
+                if (PT.App.screenStack.length > 0) {
+                    PT.App.pop();
+                } else {
+                    PT.App.goto('TRAVEL');
+                }
             });
         }
     };
