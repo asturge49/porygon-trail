@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Porygon Trail: Kanto Expedition</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="game-wrapper">
+        <div id="game-screen">
+            <div id="app"></div>
+        </div>
+    </div>
+
+    <!-- Data -->
+    <script src="data/pokemon.js"></script>
+    <script src="data/routes.js"></script>
+    <script src="data/events.js"></script>
+    <script src="data/gym-leaders.js"></script>
+    <script src="data/items.js"></script>
+
+    <!-- Engine -->
+    <script src="engine/rng.js"></script>
+    <script src="engine/game-state.js"></script>
+    <script src="engine/screen-manager.js"></script>
+    <script src="engine/encounter-engine.js"></script>
+    <script src="engine/event-engine.js"></script>
+    <script src="engine/travel-engine.js"></script>
+    <script src="engine/scoring.js"></script>
+
+    <!-- Screens -->
+    <script src="screens/title-screen.js"></script>
+    <script src="screens/starter-screen.js"></script>
+    <script src="screens/travel-screen.js"></script>
+    <script src="screens/encounter-screen.js"></script>
+    <script src="screens/event-screen.js"></script>
+    <script src="screens/inventory-screen.js"></script>
+    <script src="screens/party-screen.js"></script>
+    <script src="screens/shop-screen.js"></script>
+    <script src="screens/gym-screen.js"></script>
+    <script src="screens/gameover-screen.js"></script>
+    <script src="screens/victory-screen.js"></script>
+    <script src="screens/leaderboard-screen.js"></script>
+
+    <!-- Audio -->
+    <script src="engine/audio.js"></script>
+
+    <!-- Main -->
+    <script>
+        (function() {
+            const PT = window.PorygonTrail;
+            PT.App = PT.Engine.ScreenManager;
+            PT.App.init(document.getElementById('app'));
+            PT.App.goto('TITLE');
+        })();
+    </script>
+</body>
+</html>
