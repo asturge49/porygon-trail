@@ -68,12 +68,15 @@
     function createPartyPokemon(data, level) {
         const maxHp = data.rarity === 'legendary' ? 5 :
                       data.rarity === 'rare' ? 4 : 3;
+        const lv = level || data.baseLevel || 5;
         return {
             id: data.id,
             name: data.name,
             types: data.types,
             rarity: data.rarity,
-            level: level || data.baseLevel || 5,
+            level: lv,
+            xp: 0,
+            xpToNext: lv * 20,
             hp: maxHp,
             maxHp: maxHp,
             status: 'healthy',
@@ -132,6 +135,42 @@
         return PT.Data.Routes[next];
     }
 
+    // XP System
+    function awardXP(pokemon, amount) {
+        if (pokemon.status === 'fainted' || amount <= 0) return { leveled: false };
+        pokemon.xp += amount;
+        if (pokemon.xp >= pokemon.xpToNext) {
+            pokemon.xp -= pokemon.xpToNext;
+            pokemon.level += 1;
+            pokemon.xpToNext = pokemon.level * 20;
+            // +1 maxHp every 5 levels, capped at 6
+            if (pokemon.level % 5 === 0 && pokemon.maxHp < 6) {
+                pokemon.maxHp += 1;
+            }
+            // Heal 1 HP on level-up
+            pokemon.hp = Math.min(pokemon.hp + 1, pokemon.maxHp);
+            return { leveled: true, newLevel: pokemon.level, name: pokemon.name };
+        }
+        return { leveled: false };
+    }
+
+    function awardPartyXP(state, totalXP) {
+        const alive = getAliveParty(state);
+        if (alive.length === 0 || totalXP <= 0) return [];
+        const perPokemon = Math.ceil(totalXP / alive.length);
+        const results = [];
+        alive.forEach(p => {
+            const result = awardXP(p, perPokemon);
+            if (result.leveled) results.push(result);
+        });
+        return results;
+    }
+
+    function formatLevelUps(levelUps) {
+        if (!levelUps || levelUps.length === 0) return '';
+        return levelUps.map(r => `${r.name} grew to Lv.${r.newLevel}!`).join(' ');
+    }
+
     PT.Engine.GameState = {
         createNewGame,
         createPartyPokemon,
@@ -143,6 +182,9 @@
         hasAbility,
         hasType,
         getCurrentRoute,
-        getNextRoute
+        getNextRoute,
+        awardXP,
+        awardPartyXP,
+        formatLevelUps
     };
 })();

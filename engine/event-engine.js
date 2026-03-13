@@ -141,6 +141,12 @@
             }
         }
 
+        // XP reward
+        if (effects.xp) {
+            const levelUps = PT.Engine.GameState.awardPartyXP(state, effects.xp);
+            effects._xpLevelUps = levelUps; // Stash for display
+        }
+
         // Days lost
         if (effects.daysLost) {
             state.daysElapsed += effects.daysLost;

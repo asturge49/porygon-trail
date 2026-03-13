@@ -68,9 +68,18 @@
                 if (alive.length === 0) { msg.textContent = "No alive Pokemon!"; return; }
                 const target = alive[0];
                 state.resources.rareCandy--;
+                // Instant level-up: reset XP and recalculate threshold
                 target.level += 1;
-                target.maxHp = Math.min(5, target.maxHp + (target.level % 10 === 0 ? 1 : 0));
+                target.xp = 0;
+                target.xpToNext = target.level * 20;
+                // +1 maxHp every 5 levels, capped at 6 (consistent with XP system)
+                if (target.level % 5 === 0 && target.maxHp < 6) {
+                    target.maxHp += 1;
+                }
+                // Heal 1 HP on level-up
+                target.hp = Math.min(target.hp + 1, target.maxHp);
                 msg.textContent = `${target.name} grew to level ${target.level}!`;
+                if (PT.Engine.Audio) PT.Engine.Audio.buy();
                 // Re-render without clearing the screen stack
                 PT.App._render();
             });

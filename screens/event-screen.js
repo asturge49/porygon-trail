@@ -108,6 +108,12 @@
             if (p) lines.push(`${p.name} joined your team!`);
         }
         if (effects.champion) lines.push('YOU BECAME CHAMPION!');
+        if (effects.xp) {
+            lines.push(`Party gained ${effects.xp} XP!`);
+            if (effects._xpLevelUps && effects._xpLevelUps.length > 0) {
+                lines.push(PT.Engine.GameState.formatLevelUps(effects._xpLevelUps));
+            }
+        }
 
         if (lines.length === 0) return '';
         return '<br><br><div style="border-top: 2px solid #0f380f; padding-top: 8px; font-size: 7px;">' +

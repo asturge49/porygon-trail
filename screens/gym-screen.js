@@ -86,6 +86,12 @@
             PT.Engine.GameState.addToLog(state, `Defeated ${leader.name}! Got ${leader.badge}!`);
             if (PT.Engine.Audio) PT.Engine.Audio.gymVictory();
 
+            // Award gym victory XP to the chosen Pokemon
+            const gymXP = 50 + (leader.level * 3);
+            const xpResult = PT.Engine.GameState.awardXP(pokemon, gymXP);
+            let xpLine = `${pokemon.name} gained ${gymXP} XP!`;
+            if (xpResult.leveled) xpLine += ` ${pokemon.name} grew to Lv.${xpResult.newLevel}!`;
+
             div.innerHTML = `
                 <div class="event-title">VICTORY!</div>
                 <div class="gym-leader-area">
@@ -93,6 +99,7 @@
                     <div class="gym-challenge-text">${leader.victoryText}</div>
                     <div style="font-size: 8px; margin-top: 12px;">
                         Earned: <span class="badge-earned">${leader.badge}</span> + $${leader.reward.money}
+                        <br>${xpLine}
                         <br>Win chance was ${chance}%
                     </div>
                 </div>
@@ -104,6 +111,12 @@
             if (pokemon.hp <= 0) state.pokemonLost++;
             PT.Engine.GameState.addToLog(state, `Lost to ${leader.name}. ${pokemon.name} was hurt.`);
 
+            // Award small consolation XP on loss
+            const lossXP = 10;
+            const lossXpResult = PT.Engine.GameState.awardXP(pokemon, lossXP);
+            let lossXpLine = `${pokemon.name} gained ${lossXP} XP.`;
+            if (lossXpResult.leveled) lossXpLine += ` ${pokemon.name} grew to Lv.${lossXpResult.newLevel}!`;
+
             div.innerHTML = `
                 <div class="event-title">DEFEAT...</div>
                 <div class="gym-leader-area">
@@ -111,6 +124,7 @@
                     <div class="gym-challenge-text">${leader.defeatText}</div>
                     <div style="font-size: 8px; margin-top: 12px;">
                         ${pokemon.name} takes 2 damage!
+                        <br>${lossXpLine}
                         <br>Win chance was ${chance}%
                         <br>You can try again next time you visit.
                     </div>

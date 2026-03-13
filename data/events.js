@@ -17,8 +17,8 @@
                 {
                     text: "Battle them!",
                     outcomes: [
-                        { weight: 50, narration: "Your Pokemon fight bravely and drive Team Rocket away!", effects: { money: 500 }, trackRocket: true },
-                        { weight: 30, narration: "A tough fight! You win, but your Pokemon take damage.", effects: { money: 200, partyDamage: 1 }, trackRocket: true },
+                        { weight: 50, narration: "Your Pokemon fight bravely and drive Team Rocket away!", effects: { money: 500, xp: 25 }, trackRocket: true },
+                        { weight: 30, narration: "A tough fight! You win, but your Pokemon take damage.", effects: { money: 200, partyDamage: 1, xp: 20 }, trackRocket: true },
                         { weight: 20, narration: "They overwhelm you and steal your supplies!", effects: { food: -10, pokeballs: -3 } }
                     ]
                 },
@@ -49,8 +49,8 @@
                 {
                     text: "Raid the hideout",
                     outcomes: [
-                        { weight: 40, narration: "You find a stash of supplies! Team Rocket will be furious.", effects: { money: 1000, pokeballs: 5, potions: 3 }, trackRocket: true },
-                        { weight: 35, narration: "You grab some items but trigger an alarm! Your Pokemon take hits escaping.", effects: { money: 500, pokeballs: 3, partyDamage: 1 }, trackRocket: true },
+                        { weight: 40, narration: "You find a stash of supplies! Team Rocket will be furious.", effects: { money: 1000, pokeballs: 5, potions: 3, xp: 30 }, trackRocket: true },
+                        { weight: 35, narration: "You grab some items but trigger an alarm! Your Pokemon take hits escaping.", effects: { money: 500, pokeballs: 3, partyDamage: 1, xp: 20 }, trackRocket: true },
                         { weight: 25, narration: "It was a trap! Team Rocket ambushes you!", effects: { partyDamage: 2, food: -10 } }
                     ]
                 },
@@ -76,8 +76,8 @@
                 {
                     text: "Face Giovanni!",
                     outcomes: [
-                        { weight: 40, narration: "Your team fights with everything they have and defeats Giovanni! Team Rocket disbands!", effects: { money: 3000 }, trackRocket: true },
-                        { weight: 35, narration: "A close battle! You barely win but your team is battered.", effects: { money: 1500, partyDamage: 2 }, trackRocket: true },
+                        { weight: 40, narration: "Your team fights with everything they have and defeats Giovanni! Team Rocket disbands!", effects: { money: 3000, xp: 50 }, trackRocket: true },
+                        { weight: 35, narration: "A close battle! You barely win but your team is battered.", effects: { money: 1500, partyDamage: 2, xp: 40 }, trackRocket: true },
                         { weight: 25, narration: "Giovanni's Pokemon are too strong. He takes your money and leaves.", effects: { money: -1000, partyDamage: 2 } }
                     ]
                 },
@@ -126,8 +126,8 @@
                 {
                     text: "Thank him",
                     outcomes: [
-                        { weight: 60, narration: "Oak gives you some Pokeballs and food. \"Be careful out there!\"", effects: { pokeballs: 5, food: 10 } },
-                        { weight: 40, narration: "Oak gives you a rare item! \"You'll need this where you're going.\"", effects: { pokeballs: 3, potions: 2, rareCandy: 1 } }
+                        { weight: 60, narration: "Oak gives you some Pokeballs and food. \"Be careful out there!\"", effects: { pokeballs: 5, food: 10, xp: 15 } },
+                        { weight: 40, narration: "Oak gives you a rare item! \"You'll need this where you're going.\"", effects: { pokeballs: 3, potions: 2, rareCandy: 1, xp: 20 } }
                     ]
                 }
             ]
@@ -144,9 +144,9 @@
                 {
                     text: "Accept his challenge!",
                     outcomes: [
-                        { weight: 45, narration: "Your Pokemon outperform Gary's! \"Hmph! I'll beat you next time!\"", effects: { money: 500 } },
-                        { weight: 35, narration: "A close match! Gary barely wins. \"I knew I was better!\"", effects: { partyDamage: 1 } },
-                        { weight: 20, narration: "Gary's team is surprisingly strong. He takes some of your money.", effects: { partyDamage: 1, money: -200 } }
+                        { weight: 45, narration: "Your Pokemon outperform Gary's! \"Hmph! I'll beat you next time!\"", effects: { money: 500, xp: 30 } },
+                        { weight: 35, narration: "A close match! Gary barely wins. \"I knew I was better!\"", effects: { partyDamage: 1, xp: 10 } },
+                        { weight: 20, narration: "Gary's team is surprisingly strong. He takes some of your money.", effects: { partyDamage: 1, money: -200, xp: 10 } }
                     ]
                 },
                 {
@@ -169,8 +169,8 @@
                 {
                     text: "Battle them",
                     outcomes: [
-                        { weight: 60, narration: "\"Team Rocket's blasting off again!\" They fly into the sky.", effects: { money: 300 }, trackRocket: true },
-                        { weight: 30, narration: "Meowth scratches your Pokemon! But you still win.", effects: { partyDamage: 1, money: 200 }, trackRocket: true },
+                        { weight: 60, narration: "\"Team Rocket's blasting off again!\" They fly into the sky.", effects: { money: 300, xp: 20 }, trackRocket: true },
+                        { weight: 30, narration: "Meowth scratches your Pokemon! But you still win.", effects: { partyDamage: 1, money: 200, xp: 15 }, trackRocket: true },
                         { weight: 10, narration: "Their Weezing's Smokescreen lets them steal some Pokeballs!", effects: { pokeballs: -3 } }
                     ]
                 },
@@ -455,8 +455,8 @@
                 {
                     text: "Storm Silph Co.!",
                     outcomes: [
-                        { weight: 40, narration: "You fight through Team Rocket and save Silph Co.! The president gives you a Lapras and the Silph Scope!", effects: { catchPokemon: 131, keyItem: "Silph Scope", money: 2000 }, trackRocket: true },
-                        { weight: 35, narration: "You rescue the employees but your team takes a beating. You get the Silph Scope!", effects: { partyDamage: 2, keyItem: "Silph Scope", money: 1000 }, trackRocket: true },
+                        { weight: 40, narration: "You fight through Team Rocket and save Silph Co.! The president gives you a Lapras and the Silph Scope!", effects: { catchPokemon: 131, keyItem: "Silph Scope", money: 2000, xp: 40 }, trackRocket: true },
+                        { weight: 35, narration: "You rescue the employees but your team takes a beating. You get the Silph Scope!", effects: { partyDamage: 2, keyItem: "Silph Scope", money: 1000, xp: 30 }, trackRocket: true },
                         { weight: 25, narration: "Team Rocket is too strong! You retreat with minor injuries.", effects: { partyDamage: 1 } }
                     ]
                 },
@@ -635,9 +635,9 @@
                     text: "Run through!",
                     bonusAbility: "dig",
                     outcomes: [
-                        { weight: 40, narration: "You sprint through the falling rocks! Everyone makes it!", effects: {} },
-                        { weight: 35, narration: "Rocks hit your team! A Pokemon is injured.", effects: { partyDamage: 1 } },
-                        { weight: 25, narration: "A major collapse! Multiple Pokemon are hurt!", effects: { partyDamage: 2 } }
+                        { weight: 40, narration: "You sprint through the falling rocks! Everyone makes it!", effects: { xp: 15 } },
+                        { weight: 35, narration: "Rocks hit your team! A Pokemon is injured.", effects: { partyDamage: 1, xp: 10 } },
+                        { weight: 25, narration: "A major collapse! Multiple Pokemon are hurt!", effects: { partyDamage: 2, xp: 10 } }
                     ],
                     bonusOutcome: { weight: 100, narration: "Your Ground-type digs a safe tunnel through the collapse!", effects: {} }
                 },
@@ -663,9 +663,9 @@
                     text: "Stand your ground",
                     bonusAbility: "guard",
                     outcomes: [
-                        { weight: 30, narration: "Your Pokemon shield you! But they take damage.", effects: { partyDamage: 2 } },
-                        { weight: 40, narration: "A Pokemon gets trampled! Food supplies are scattered!", effects: { partyDamage: 1, food: -10 } },
-                        { weight: 30, narration: "One Tauros stops and joins your team in respect!", effects: { partyDamage: 1, catchPokemon: 128 } }
+                        { weight: 30, narration: "Your Pokemon shield you! But they take damage.", effects: { partyDamage: 2, xp: 15 } },
+                        { weight: 40, narration: "A Pokemon gets trampled! Food supplies are scattered!", effects: { partyDamage: 1, food: -10, xp: 10 } },
+                        { weight: 30, narration: "One Tauros stops and joins your team in respect!", effects: { partyDamage: 1, catchPokemon: 128, xp: 20 } }
                     ],
                     bonusOutcome: { weight: 100, narration: "Your defensive Pokemon creates a barrier! The Tauros run around you!", effects: {} }
                 },
@@ -799,10 +799,10 @@
                 {
                     text: "Brave Victory Road!",
                     outcomes: [
-                        { weight: 30, narration: "Your team pushes through with determination! Indigo Plateau is in sight!", effects: { partyDamage: 1 } },
-                        { weight: 40, narration: "A brutal gauntlet! Your team is battered but standing!", effects: { partyDamage: 2 } },
-                        { weight: 20, narration: "The cave nearly claims your team. Everyone is exhausted.", effects: { partyDamage: 3, food: -10 } },
-                        { weight: 10, narration: "Incredibly, your team is inspired and powers through unscathed!", effects: {} }
+                        { weight: 30, narration: "Your team pushes through with determination! Indigo Plateau is in sight!", effects: { partyDamage: 1, xp: 30 } },
+                        { weight: 40, narration: "A brutal gauntlet! Your team is battered but standing!", effects: { partyDamage: 2, xp: 25 } },
+                        { weight: 20, narration: "The cave nearly claims your team. Everyone is exhausted.", effects: { partyDamage: 3, food: -10, xp: 20 } },
+                        { weight: 10, narration: "Incredibly, your team is inspired and powers through unscathed!", effects: { xp: 40 } }
                     ]
                 },
                 {
@@ -828,10 +828,10 @@
                 {
                     text: "Challenge the Elite Four!",
                     outcomes: [
-                        { weight: 25, narration: "Against all odds, you defeat all four and become CHAMPION! Your name will be remembered forever!", effects: { partyDamage: 2, champion: true } },
-                        { weight: 35, narration: "You defeat Lorelei and Bruno, but Agatha's ghosts overwhelm you. A valiant effort!", effects: { partyDamage: 3, money: 2000 } },
-                        { weight: 25, narration: "Lorelei's ice types freeze your team. You're eliminated in the first round.", effects: { partyDamage: 2, money: 1000 } },
-                        { weight: 15, narration: "You defeat ALL FOUR and become Champion! Lance himself congratulates you!", effects: { partyDamage: 3, champion: true, money: 5000 } }
+                        { weight: 25, narration: "Against all odds, you defeat all four and become CHAMPION! Your name will be remembered forever!", effects: { partyDamage: 2, champion: true, xp: 80 } },
+                        { weight: 35, narration: "You defeat Lorelei and Bruno, but Agatha's ghosts overwhelm you. A valiant effort!", effects: { partyDamage: 3, money: 2000, xp: 40 } },
+                        { weight: 25, narration: "Lorelei's ice types freeze your team. You're eliminated in the first round.", effects: { partyDamage: 2, money: 1000, xp: 20 } },
+                        { weight: 15, narration: "You defeat ALL FOUR and become Champion! Lance himself congratulates you!", effects: { partyDamage: 3, champion: true, money: 5000, xp: 100 } }
                     ]
                 },
                 {

@@ -51,10 +51,14 @@
             state.ballsWasted++;
         }
 
+        // XP reward: more for successful catch, small amount for failed attempt
+        const xpEarned = success ? 15 + (pokemon.level * 2) : 5;
+
         return {
             success,
             catchChance: Math.round(catchChance),
-            shakes: success ? 3 : state.rng.randInt(0, 2)
+            shakes: success ? 3 : state.rng.randInt(0, 2),
+            xpEarned
         };
     }
 
