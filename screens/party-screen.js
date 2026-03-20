@@ -16,17 +16,13 @@
                                  onerror="this.style.display='none'">
                             <div class="party-info">
                                 <div class="party-pokemon-name">${p.name}</div>
-                                <div>Lv.${p.level} | ${p.types.join('/')}</div>
+                                <div>${p.types.join('/')}</div>
                                 <div>Ability: ${p.travelAbility}</div>
                                 <div>Status: ${p.status.toUpperCase()}</div>
                                 <div class="hp-bar">
                                     <div class="hp-bar-fill ${p.hp <= 1 && p.hp > 0 ? 'low' : ''}" style="width: ${(p.hp / p.maxHp) * 100}%"></div>
                                 </div>
                                 <div style="font-size: 6px;">HP: ${p.hp}/${p.maxHp}</div>
-                                <div class="xp-bar">
-                                    <div class="xp-bar-fill" style="width: ${p.xpToNext ? (p.xp / p.xpToNext) * 100 : 0}%"></div>
-                                </div>
-                                <div style="font-size: 6px;">XP: ${p.xp || 0}/${p.xpToNext || p.level * 20}</div>
                             </div>
                             ${state.party.length > 1 && p.status !== 'fainted' ? `<button class="btn btn-small release-btn" data-index="${i}" style="font-size:6px; padding:3px 6px;">DROP</button>` : ''}
                         </div>

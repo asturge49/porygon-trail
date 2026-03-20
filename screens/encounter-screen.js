@@ -26,7 +26,7 @@
                         <img class="encounter-sprite" src="${pokemon.spriteUrl}" alt="${pokemon.name}"
                              onerror="this.style.display='none'; this.parentElement.innerHTML='<div style=\\'font-size:48px; padding:20px;\\'>?</div>'">
                         <div style="font-size: 8px; margin-top: 8px;">
-                            Lv.${pokemon.level} | ${pokemon.types.join('/')} | ${pokemon.rarity.toUpperCase()}
+                            ${pokemon.types.join('/')} | ${pokemon.rarity.toUpperCase()}
                         </div>
                     </div>
                 </div>
@@ -158,21 +158,11 @@
                     if (A) A.catchSuccess();
                     if (sprite) sprite.classList.add('catch-sparkle');
 
-                    // Award catch XP to party
-                    const levelUps = PT.Engine.GameState.awardPartyXP(state, result.xpEarned);
-                    let xpMsg = ` Party gained ${result.xpEarned} XP!`;
-                    if (levelUps.length > 0) xpMsg += ' ' + PT.Engine.GameState.formatLevelUps(levelUps);
-
-                    showResult(`${'shake... '.repeat(result.shakes)}CLICK!\n\nGotcha! ${pokemon.name} was caught! ${addResult.message}${xpMsg}`);
+                    showResult(`${'shake... '.repeat(result.shakes)}CLICK!\n\nGotcha! ${pokemon.name} was caught! ${addResult.message}`);
                 } else {
-                    // Award small XP for failed catch attempt
-                    const levelUps = PT.Engine.GameState.awardPartyXP(state, result.xpEarned);
-                    let xpMsg = '';
-                    if (levelUps.length > 0) xpMsg = ' ' + PT.Engine.GameState.formatLevelUps(levelUps);
-
                     if (A) A.catchFail();
                     if (sprite) sprite.classList.add('damage-flash');
-                    msgEl.textContent = `${'shake... '.repeat(result.shakes)}Oh no! ${pokemon.name} broke free! (${result.catchChance}% chance)${xpMsg}`;
+                    msgEl.textContent = `${'shake... '.repeat(result.shakes)}Oh no! ${pokemon.name} broke free! (${result.catchChance}% chance)`;
 
                     // Re-enable actions
                     actionsDiv.querySelectorAll('button').forEach(b => b.disabled = false);

@@ -108,11 +108,8 @@
             if (p) lines.push(`${p.name} joined your team!`);
         }
         if (effects.champion) lines.push('YOU BECAME CHAMPION!');
-        if (effects.xp) {
-            lines.push(`Party gained ${effects.xp} XP!`);
-            if (effects._xpLevelUps && effects._xpLevelUps.length > 0) {
-                lines.push(PT.Engine.GameState.formatLevelUps(effects._xpLevelUps));
-            }
+        if (effects.pokemonDeath && effects._deathResult && effects._deathResult.killed) {
+            lines.push(`💀 ${effects._deathResult.name} was lost forever!`);
         }
 
         if (lines.length === 0) return '';

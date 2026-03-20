@@ -66,21 +66,26 @@
                 if (state.resources.rareCandy <= 0) return;
                 const alive = PT.Engine.GameState.getAliveParty(state);
                 if (alive.length === 0) { msg.textContent = "No alive Pokemon!"; return; }
-                const target = alive[0];
-                state.resources.rareCandy--;
-                // Instant level-up: reset XP and recalculate threshold
-                target.level += 1;
-                target.xp = 0;
-                target.xpToNext = target.level * 20;
-                // +1 maxHp every 5 levels, capped at 6 (consistent with XP system)
-                if (target.level % 5 === 0 && target.maxHp < 6) {
-                    target.maxHp += 1;
+                // Find first Pokemon that can evolve
+                let target = null;
+                for (const p of alive) {
+                    const data = PT.Data.Pokemon.find(pk => pk.id === p.id);
+                    if (data && data.evolvesTo) { target = p; break; }
                 }
-                // Heal 1 HP on level-up
-                target.hp = Math.min(target.hp + 1, target.maxHp);
-                msg.textContent = `${target.name} grew to level ${target.level}!`;
+                if (!target) {
+                    msg.textContent = "No Pokemon can evolve!";
+                    return;
+                }
+                state.resources.rareCandy--;
+                const evoResult = PT.Engine.GameState.evolvePokemon(target);
+                if (evoResult.evolved) {
+                    msg.textContent = `${evoResult.oldName} evolved into ${evoResult.newName}!`;
+                    PT.Engine.GameState.addToLog(state, `${evoResult.oldName} evolved into ${evoResult.newName}!`);
+                } else {
+                    msg.textContent = `${target.name} couldn't evolve. Rare Candy had no effect!`;
+                    state.resources.rareCandy++; // Refund
+                }
                 if (PT.Engine.Audio) PT.Engine.Audio.buy();
-                // Re-render without clearing the screen stack
                 PT.App._render();
             });
 

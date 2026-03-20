@@ -125,14 +125,6 @@
             }
         });
 
-        // --- Passive travel XP ---
-        if (pace.distance > 0) {
-            const levelUps = PT.Engine.GameState.awardPartyXP(state, 3);
-            if (levelUps.length > 0) {
-                results.messages.push(PT.Engine.GameState.formatLevelUps(levelUps));
-            }
-        }
-
         // --- Check all fainted ---
         if (PT.Engine.GameState.getAliveParty(state).length === 0) {
             state.isGameOver = true;

@@ -32,7 +32,7 @@
                         <div class="hof-pokemon">
                             <img class="hof-sprite" src="${p.spriteUrl}" alt="${p.name}"
                                  onerror="this.style.display='none'">
-                            <div class="hof-name">${p.name} Lv.${p.level}</div>
+                            <div class="hof-name">${p.name}</div>
                         </div>
                     `).join('')}
                 </div>

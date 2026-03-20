@@ -6,7 +6,7 @@
     function createNewGame(trainerName, starterId) {
         const seed = Date.now();
         const starterData = PT.Data.Pokemon.find(p => p.id === starterId);
-        const starter = createPartyPokemon(starterData, 5);
+        const starter = createPartyPokemon(starterData);
 
         return {
             version: 1,
@@ -65,18 +65,14 @@
         };
     }
 
-    function createPartyPokemon(data, level) {
+    function createPartyPokemon(data) {
         const maxHp = data.rarity === 'legendary' ? 5 :
                       data.rarity === 'rare' ? 4 : 3;
-        const lv = level || data.baseLevel || 5;
         return {
             id: data.id,
             name: data.name,
             types: data.types,
             rarity: data.rarity,
-            level: lv,
-            xp: 0,
-            xpToNext: lv * 20,
             hp: maxHp,
             maxHp: maxHp,
             status: 'healthy',
@@ -135,40 +131,42 @@
         return PT.Data.Routes[next];
     }
 
-    // XP System
-    function awardXP(pokemon, amount) {
-        if (pokemon.status === 'fainted' || amount <= 0) return { leveled: false };
-        pokemon.xp += amount;
-        if (pokemon.xp >= pokemon.xpToNext) {
-            pokemon.xp -= pokemon.xpToNext;
-            pokemon.level += 1;
-            pokemon.xpToNext = pokemon.level * 20;
-            // +1 maxHp every 5 levels, capped at 6
-            if (pokemon.level % 5 === 0 && pokemon.maxHp < 6) {
-                pokemon.maxHp += 1;
-            }
-            // Heal 1 HP on level-up
-            pokemon.hp = Math.min(pokemon.hp + 1, pokemon.maxHp);
-            return { leveled: true, newLevel: pokemon.level, name: pokemon.name };
+    // Evolution System
+    function evolvePokemon(partyMon) {
+        const data = PT.Data.Pokemon.find(p => p.id === partyMon.id);
+        if (!data || !data.evolvesTo) return { evolved: false };
+        // Support branching evolution (e.g. Eevee -> [Vaporeon, Jolteon, Flareon])
+        let evoId = data.evolvesTo;
+        if (Array.isArray(evoId)) {
+            evoId = evoId[Math.floor(Math.random() * evoId.length)];
         }
-        return { leveled: false };
+        const evoData = PT.Data.Pokemon.find(p => p.id === evoId);
+        if (!evoData) return { evolved: false };
+
+        const oldName = partyMon.name;
+        partyMon.id = evoData.id;
+        partyMon.name = evoData.name;
+        partyMon.types = evoData.types;
+        partyMon.rarity = evoData.rarity;
+        partyMon.travelAbility = evoData.travelAbility;
+        partyMon.spriteUrl = getSpriteUrl(evoData.id);
+        // +1 maxHp on evolution, capped at 6
+        if (partyMon.maxHp < 6) partyMon.maxHp += 1;
+        // Heal 1 HP on evolution
+        partyMon.hp = Math.min(partyMon.hp + 1, partyMon.maxHp);
+        return { evolved: true, oldName: oldName, newName: evoData.name };
     }
 
-    function awardPartyXP(state, totalXP) {
+    // Permanent Death
+    function killPokemon(state) {
         const alive = getAliveParty(state);
-        if (alive.length === 0 || totalXP <= 0) return [];
-        const perPokemon = Math.ceil(totalXP / alive.length);
-        const results = [];
-        alive.forEach(p => {
-            const result = awardXP(p, perPokemon);
-            if (result.leveled) results.push(result);
-        });
-        return results;
-    }
-
-    function formatLevelUps(levelUps) {
-        if (!levelUps || levelUps.length === 0) return '';
-        return levelUps.map(r => `${r.name} grew to Lv.${r.newLevel}!`).join(' ');
+        if (alive.length <= 1) return null; // Never kill last Pokemon
+        const victim = state.rng.pick(alive);
+        const idx = state.party.indexOf(victim);
+        if (idx === -1) return null;
+        state.party.splice(idx, 1);
+        state.pokemonLost++;
+        return { killed: true, name: victim.name };
     }
 
     PT.Engine.GameState = {
@@ -183,8 +181,7 @@
         hasType,
         getCurrentRoute,
         getNextRoute,
-        awardXP,
-        awardPartyXP,
-        formatLevelUps
+        evolvePokemon,
+        killPokemon
     };
 })();

@@ -249,15 +249,15 @@
             return;
         }
 
-        // Final destination
+        // Final destination - only go to victory if champion
         if (state.currentLocationIndex >= PT.Data.Routes.length - 1) {
             if (state.hasWon) {
                 PT.App.goto('VICTORY');
-            } else {
-                // Reached plateau but haven't won yet - need Elite Four event
-                state.hasWon = true;
-                PT.App.goto('VICTORY');
+                return;
             }
+            // Not champion yet — keep rolling events (Elite Four, etc.)
+            // If no events triggered, just re-render travel
+            PT.App.goto('TRAVEL');
             return;
         }
 

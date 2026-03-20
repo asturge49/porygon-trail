@@ -141,10 +141,10 @@
             }
         }
 
-        // XP reward
-        if (effects.xp) {
-            const levelUps = PT.Engine.GameState.awardPartyXP(state, effects.xp);
-            effects._xpLevelUps = levelUps; // Stash for display
+        // Permanent Pokemon death
+        if (effects.pokemonDeath) {
+            const deathResult = PT.Engine.GameState.killPokemon(state);
+            effects._deathResult = deathResult;
         }
 
         // Days lost
@@ -177,7 +177,7 @@
         if (state.party.length < 6) {
             const data = PT.Data.Pokemon.find(p => p.id === pokemonId);
             if (data) {
-                state.party.push(PT.Engine.GameState.createPartyPokemon(data, data.baseLevel));
+                state.party.push(PT.Engine.GameState.createPartyPokemon(data));
             }
         }
     }

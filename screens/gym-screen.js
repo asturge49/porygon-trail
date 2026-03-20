@@ -27,7 +27,7 @@
                     ${PT.Engine.GameState.getAliveParty(state).map((p, i) => {
                         const hasAdvantage = p.types.some(t => leader.weakAgainst.includes(t));
                         const hasDisadvantage = p.types.some(t => leader.strongAgainst.includes(t));
-                        let label = `${p.name} Lv.${p.level} (${p.types.join('/')})`;
+                        let label = `${p.name} (${p.types.join('/')})`;
                         if (hasAdvantage) label += ' [SUPER EFFECTIVE!]';
                         if (hasDisadvantage) label += ' [NOT VERY EFFECTIVE...]';
                         return `<button class="btn btn-wide" data-index="${i}">${label}</button>`;
@@ -63,12 +63,12 @@
         if (hasAdvantage) chance += 25;
         if (hasDisadvantage) chance -= 25;
 
-        // Level bonus
-        const levelDiff = pokemon.level - leader.level;
-        chance += Math.max(-15, Math.min(15, levelDiff));
-
         // Badge count bonus
-        chance += state.badges.length * 2;
+        chance += state.badges.length * 3;
+
+        // Party size bonus
+        const aliveCount = PT.Engine.GameState.getAliveParty(state).length;
+        chance += aliveCount * 2;
 
         // Clamp
         chance = Math.max(10, Math.min(90, chance));
@@ -86,11 +86,13 @@
             PT.Engine.GameState.addToLog(state, `Defeated ${leader.name}! Got ${leader.badge}!`);
             if (PT.Engine.Audio) PT.Engine.Audio.gymVictory();
 
-            // Award gym victory XP to the chosen Pokemon
-            const gymXP = 50 + (leader.level * 3);
-            const xpResult = PT.Engine.GameState.awardXP(pokemon, gymXP);
-            let xpLine = `${pokemon.name} gained ${gymXP} XP!`;
-            if (xpResult.leveled) xpLine += ` ${pokemon.name} grew to Lv.${xpResult.newLevel}!`;
+            // Try to evolve the chosen Pokemon after gym victory
+            const evoResult = PT.Engine.GameState.evolvePokemon(pokemon);
+            let evoLine = '';
+            if (evoResult.evolved) {
+                evoLine = `<br>${evoResult.oldName} evolved into ${evoResult.newName}!`;
+                PT.Engine.GameState.addToLog(state, `${evoResult.oldName} evolved into ${evoResult.newName}!`);
+            }
 
             div.innerHTML = `
                 <div class="event-title">VICTORY!</div>
@@ -98,8 +100,7 @@
                     <div class="gym-leader-name"><span class="badge-earned">${leader.badge}</span></div>
                     <div class="gym-challenge-text">${leader.victoryText}</div>
                     <div style="font-size: 8px; margin-top: 12px;">
-                        Earned: <span class="badge-earned">${leader.badge}</span> + $${leader.reward.money}
-                        <br>${xpLine}
+                        Earned: <span class="badge-earned">${leader.badge}</span> + $${leader.reward.money}${evoLine}
                         <br>Win chance was ${chance}%
                     </div>
                 </div>
@@ -111,12 +112,6 @@
             if (pokemon.hp <= 0) state.pokemonLost++;
             PT.Engine.GameState.addToLog(state, `Lost to ${leader.name}. ${pokemon.name} was hurt.`);
 
-            // Award small consolation XP on loss
-            const lossXP = 10;
-            const lossXpResult = PT.Engine.GameState.awardXP(pokemon, lossXP);
-            let lossXpLine = `${pokemon.name} gained ${lossXP} XP.`;
-            if (lossXpResult.leveled) lossXpLine += ` ${pokemon.name} grew to Lv.${lossXpResult.newLevel}!`;
-
             div.innerHTML = `
                 <div class="event-title">DEFEAT...</div>
                 <div class="gym-leader-area">
@@ -124,7 +119,6 @@
                     <div class="gym-challenge-text">${leader.defeatText}</div>
                     <div style="font-size: 8px; margin-top: 12px;">
                         ${pokemon.name} takes 2 damage!
-                        <br>${lossXpLine}
                         <br>Win chance was ${chance}%
                         <br>You can try again next time you visit.
                     </div>

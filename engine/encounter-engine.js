@@ -34,10 +34,8 @@
 
         let catchChance = (baseCatch[ballType] || 40) + (rarityMod[pokemon.rarity] || 0);
 
-        // Level difference bonus
-        const avgPartyLevel = state.party.reduce((sum, p) => sum + p.level, 0) / state.party.length;
-        const levelDiff = Math.max(-20, Math.min(20, (avgPartyLevel - pokemon.level) * 2));
-        catchChance += levelDiff;
+        // Badge bonus: +2% per badge
+        catchChance += (state.badges.length * 2);
 
         // Clamp
         catchChance = Math.max(5, Math.min(95, catchChance));
@@ -51,14 +49,10 @@
             state.ballsWasted++;
         }
 
-        // XP reward: more for successful catch, small amount for failed attempt
-        const xpEarned = success ? 15 + (pokemon.level * 2) : 5;
-
         return {
             success,
             catchChance: Math.round(catchChance),
-            shakes: success ? 3 : state.rng.randInt(0, 2),
-            xpEarned
+            shakes: success ? 3 : state.rng.randInt(0, 2)
         };
     }
 
@@ -75,9 +69,8 @@
             return { success: true, message: "The legendary Pokemon watches you leave." };
         }
 
-        // Higher level Pokemon harder to flee from
-        const avgLevel = state.party.reduce((sum, p) => sum + p.level, 0) / state.party.length;
-        if (pokemon.level > avgLevel + 10) fleeChance -= 20;
+        // Rare Pokemon harder to flee from
+        if (pokemon.rarity === 'rare') fleeChance -= 10;
 
         const success = state.rng.chance(fleeChance);
         if (!success) {
@@ -101,7 +94,7 @@
         // Add to party if space
         if (state.party.length < 6) {
             const pokemonData = PT.Data.Pokemon.find(p => p.id === pokemon.id);
-            const partyMember = PT.Engine.GameState.createPartyPokemon(pokemonData, pokemon.level);
+            const partyMember = PT.Engine.GameState.createPartyPokemon(pokemonData);
             state.party.push(partyMember);
             return { added: true, message: `${pokemon.name} joined your team!` };
         } else {
