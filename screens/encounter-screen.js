@@ -103,8 +103,10 @@
                     // Wild Pokemon attacks
                     const victim = state.rng.pick(PT.Engine.GameState.getAliveParty(state));
                     if (victim && state.rng.chance(40)) {
-                        PT.Engine.GameState.damagePokemon(victim, 1);
-                        messageBox.textContent += ` ${pokemon.name} attacks ${victim.name}!`;
+                        const fainted = PT.Engine.GameState.damagePokemon(victim, 1, state);
+                        messageBox.textContent += fainted
+                            ? ` ${pokemon.name} killed ${victim.name}! 💀`
+                            : ` ${pokemon.name} attacks ${victim.name}!`;
                     }
                 }
             });

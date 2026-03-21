@@ -80,12 +80,12 @@
 
         // Party damage
         if (effects.partyDamage) {
-            const alive = PT.Engine.GameState.getAliveParty(state);
-            for (let i = 0; i < effects.partyDamage && alive.length > 0; i++) {
+            for (let i = 0; i < effects.partyDamage; i++) {
+                const alive = PT.Engine.GameState.getAliveParty(state);
+                if (alive.length === 0) break;
                 const victim = state.rng.pick(alive);
                 if (victim) {
-                    const fainted = PT.Engine.GameState.damagePokemon(victim, 1);
-                    if (fainted) state.pokemonLost++;
+                    PT.Engine.GameState.damagePokemon(victim, 1, state);
                 }
             }
         }

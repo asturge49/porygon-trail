@@ -99,11 +99,19 @@
         return true;
     }
 
-    function damagePokemon(pokemon, amount) {
+    function damagePokemon(pokemon, amount, state) {
         pokemon.hp = Math.max(0, pokemon.hp - amount);
         if (pokemon.hp <= 0) {
             pokemon.hp = 0;
             pokemon.status = 'fainted';
+            // Remove fainted Pokemon from party (unless it's the last one)
+            if (state && state.party.length > 1) {
+                const idx = state.party.indexOf(pokemon);
+                if (idx !== -1) {
+                    state.party.splice(idx, 1);
+                    state.pokemonLost++;
+                }
+            }
             return true; // fainted
         }
         return false;

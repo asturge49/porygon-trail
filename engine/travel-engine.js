@@ -74,7 +74,7 @@
             // Starvation damage
             const victim = state.rng.pick(PT.Engine.GameState.getAliveParty(state));
             if (victim) {
-                PT.Engine.GameState.damagePokemon(victim, 1);
+                PT.Engine.GameState.damagePokemon(victim, 1, state);
                 results.messages.push(`${victim.name} is weakened from hunger!`);
             }
         } else {
@@ -108,20 +108,18 @@
         if (pace.injuryChance && state.rng.chance(pace.injuryChance)) {
             const victim = state.rng.pick(PT.Engine.GameState.getAliveParty(state));
             if (victim) {
-                PT.Engine.GameState.damagePokemon(victim, 1);
+                PT.Engine.GameState.damagePokemon(victim, 1, state);
                 results.messages.push(`The grueling pace injured ${victim.name}!`);
             }
         }
 
         // --- Poison tick ---
-        state.party.forEach(p => {
+        [...state.party].forEach(p => {
             if (p.status === 'poisoned') {
-                const fainted = PT.Engine.GameState.damagePokemon(p, 1);
+                const fainted = PT.Engine.GameState.damagePokemon(p, 1, state);
                 results.messages.push(`${p.name} takes poison damage!`);
                 if (fainted) {
-                    results.messages.push(`${p.name} fainted from poison!`);
-                    state.pokemonLost++;
-                }
+                    results.messages.push(`${p.name} died from poison! 💀`);
             }
         });
 

@@ -108,9 +108,12 @@
             `;
         } else {
             if (PT.Engine.Audio) PT.Engine.Audio.gymDefeat();
-            PT.Engine.GameState.damagePokemon(pokemon, 2);
-            if (pokemon.hp <= 0) state.pokemonLost++;
-            PT.Engine.GameState.addToLog(state, `Lost to ${leader.name}. ${pokemon.name} was hurt.`);
+            const gymFainted = PT.Engine.GameState.damagePokemon(pokemon, 2, state);
+            if (gymFainted) {
+                PT.Engine.GameState.addToLog(state, `Lost to ${leader.name}. ${pokemon.name} was killed in battle! 💀`);
+            } else {
+                PT.Engine.GameState.addToLog(state, `Lost to ${leader.name}. ${pokemon.name} was hurt.`);
+            }
 
             div.innerHTML = `
                 <div class="event-title">DEFEAT...</div>
@@ -118,9 +121,11 @@
                     <div class="gym-leader-name">${leader.name} wins</div>
                     <div class="gym-challenge-text">${leader.defeatText}</div>
                     <div style="font-size: 8px; margin-top: 12px;">
-                        ${pokemon.name} takes 2 damage!
+                        ${gymFainted
+                            ? `💀 ${pokemon.name} was lost forever!`
+                            : `${pokemon.name} takes 2 damage!`}
                         <br>Win chance was ${chance}%
-                        <br>You can try again next time you visit.
+                        ${gymFainted ? '' : '<br>You can try again next time you visit.'}
                     </div>
                 </div>
                 <button class="btn btn-wide" id="btn-continue">CONTINUE</button>
