@@ -141,6 +141,89 @@
         }
     };
 
+    function showPartyFullOptions(state, pokemon, addResult, msgEl, actionsDiv) {
+        const pokemonData = addResult.pokemonData;
+        const foodAmount = PT.Engine.GameState.pokemonToFood(pokemon.rarity);
+        const spriteUrl = PT.Engine.GameState.getSpriteUrl(pokemon.id);
+
+        msgEl.innerHTML = `
+            <div style="text-align: center; margin-bottom: 4px;">
+                <strong>Gotcha! ${pokemon.name} was caught!</strong>
+                <br>But your party is full (6/6).
+            </div>
+        `;
+
+        actionsDiv.innerHTML = `
+            <div style="text-align: center; margin-bottom: 8px;">
+                <img src="${spriteUrl}" alt="${pokemon.name}" style="width: 40px; height: 40px; image-rendering: pixelated;"
+                     onerror="this.style.display='none'">
+                <div style="font-size: 7px;">${pokemon.name} | ${pokemon.types.join('/')} | ${pokemon.rarity.toUpperCase()}</div>
+            </div>
+            <button class="btn btn-small" id="btn-swap">SWAP WITH PARTY</button>
+            <button class="btn btn-small" id="btn-butcher-catch">BUTCHER FOR FOOD (+${foodAmount})</button>
+            <button class="btn btn-small" id="btn-release-catch">RELEASE</button>
+        `;
+
+        // SWAP — show party picker
+        document.getElementById('btn-swap').addEventListener('click', () => {
+            actionsDiv.innerHTML = `
+                <div style="font-size: 7px; margin-bottom: 4px; font-weight: bold;">Replace which Pokemon with ${pokemon.name}?</div>
+                <div class="potion-pokemon-list">
+                    ${state.party.map((p, i) => `
+                        <button class="potion-target-btn" data-idx="${i}">
+                            <img class="potion-target-sprite" src="${p.spriteUrl}" alt="${p.name}"
+                                 onerror="this.style.display='none'">
+                            <div class="potion-target-info">
+                                <div style="font-weight: bold;">${p.name}</div>
+                                <div>${p.types.join('/')} | HP: ${p.hp}/${p.maxHp}</div>
+                            </div>
+                        </button>
+                    `).join('')}
+                </div>
+                <button class="btn btn-small" id="btn-swap-cancel" style="margin-top: 6px; width: 100%;">CANCEL</button>
+            `;
+
+            document.querySelectorAll('.potion-target-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const idx = parseInt(btn.dataset.idx);
+                    const replaced = state.party[idx];
+                    const newMember = PT.Engine.GameState.createPartyPokemon(pokemonData);
+                    state.party[idx] = newMember;
+                    PT.Engine.GameState.addToLog(state, `Swapped ${replaced.name} for ${pokemon.name}!`);
+                    if (PT.Engine.Audio) PT.Engine.Audio.buy();
+
+                    msgEl.innerHTML = `<strong>${replaced.name}</strong> was released. <strong>${pokemon.name}</strong> joined your team!`;
+                    actionsDiv.innerHTML = '<button class="btn btn-wide" id="btn-continue">CONTINUE</button>';
+                    document.getElementById('btn-continue').addEventListener('click', () => PT.App.goto('TRAVEL'));
+                });
+            });
+
+            document.getElementById('btn-swap-cancel').addEventListener('click', () => {
+                showPartyFullOptions(state, pokemon, addResult, msgEl, actionsDiv);
+            });
+        });
+
+        // BUTCHER FOR FOOD
+        document.getElementById('btn-butcher-catch').addEventListener('click', () => {
+            state.resources.food += foodAmount;
+            PT.Engine.GameState.addToLog(state, `Butchered ${pokemon.name} for ${foodAmount} food.`);
+            if (PT.Engine.Audio) PT.Engine.Audio.buy();
+
+            msgEl.innerHTML = `<strong>${pokemon.name}</strong> was butchered for <strong>${foodAmount} food</strong>. Registered in Pokedex.`;
+            actionsDiv.innerHTML = '<button class="btn btn-wide" id="btn-continue">CONTINUE</button>';
+            document.getElementById('btn-continue').addEventListener('click', () => PT.App.goto('TRAVEL'));
+        });
+
+        // RELEASE
+        document.getElementById('btn-release-catch').addEventListener('click', () => {
+            PT.Engine.GameState.addToLog(state, `Released ${pokemon.name}. Registered in Pokedex.`);
+
+            msgEl.innerHTML = `<strong>${pokemon.name}</strong> was released. Registered in Pokedex.`;
+            actionsDiv.innerHTML = '<button class="btn btn-wide" id="btn-continue">CONTINUE</button>';
+            document.getElementById('btn-continue').addEventListener('click', () => PT.App.goto('TRAVEL'));
+        });
+    }
+
     function handleCatchResult(result, pokemon, state, showResult) {
         const A = PT.Engine.Audio;
         const msgEl = document.getElementById('encounter-message');
@@ -168,7 +251,12 @@
                     if (A) A.catchSuccess();
                     if (sprite) sprite.classList.add('catch-sparkle');
 
-                    showResult(`${'shake... '.repeat(result.shakes)}CLICK!\n\nGotcha! ${pokemon.name} was caught! ${addResult.message}`);
+                    if (addResult.partyFull) {
+                        // Party full — show swap/food/release options
+                        showPartyFullOptions(state, pokemon, addResult, msgEl, actionsDiv);
+                    } else {
+                        showResult(`${'shake... '.repeat(result.shakes)}CLICK!\n\nGotcha! ${pokemon.name} was caught! ${addResult.message}`);
+                    }
                 } else {
                     if (A) A.catchFail();
                     if (sprite) sprite.classList.add('damage-flash');

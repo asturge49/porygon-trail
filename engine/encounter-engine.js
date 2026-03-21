@@ -98,7 +98,8 @@
             state.party.push(partyMember);
             return { added: true, message: `${pokemon.name} joined your team!` };
         } else {
-            return { added: false, message: `${pokemon.name} was caught! But your party is full. Registered in Pokedex.` };
+            const pokemonData = PT.Data.Pokemon.find(p => p.id === pokemon.id);
+            return { added: false, partyFull: true, pokemonData: pokemonData, message: `${pokemon.name} was caught! But your party is full.` };
         }
     }
 

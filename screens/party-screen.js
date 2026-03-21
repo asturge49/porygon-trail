@@ -24,7 +24,12 @@
                                 </div>
                                 <div style="font-size: 6px;">HP: ${p.hp}/${p.maxHp}</div>
                             </div>
-                            ${state.party.length > 1 && p.status !== 'fainted' ? `<button class="btn btn-small release-btn" data-index="${i}" style="font-size:6px; padding:3px 6px;">DROP</button>` : ''}
+                            ${state.party.length > 1 && p.status !== 'fainted' ? `
+                                <div style="display: flex; gap: 4px;">
+                                    <button class="btn btn-small release-btn" data-index="${i}" style="font-size:6px; padding:3px 6px;">DROP</button>
+                                    <button class="btn btn-small butcher-btn" data-index="${i}" style="font-size:6px; padding:3px 6px;">BUTCHER (+${PT.Engine.GameState.pokemonToFood(p.rarity)})</button>
+                                </div>
+                            ` : ''}
                         </div>
                     `).join('')}
                     ${Array(6 - state.party.length).fill(0).map(() => `
@@ -53,6 +58,29 @@
                         PT.App._render();
                     } else {
                         msg.textContent = `Release ${pokemon.name}? Click DROP again to confirm.`;
+                        btn.dataset.confirm = 'true';
+                        btn.style.background = 'var(--gb-darkest)';
+                        btn.style.color = 'var(--gb-lightest)';
+                    }
+                });
+            });
+
+            // Butcher Pokemon for food
+            document.querySelectorAll('.butcher-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const index = parseInt(btn.dataset.index);
+                    const pokemon = state.party[index];
+                    if (state.party.length <= 1) return;
+                    const msg = document.getElementById('party-message');
+                    const foodAmount = PT.Engine.GameState.pokemonToFood(pokemon.rarity);
+                    if (btn.dataset.confirm === 'true') {
+                        state.party.splice(index, 1);
+                        state.resources.food += foodAmount;
+                        PT.Engine.GameState.addToLog(state, `Butchered ${pokemon.name} for ${foodAmount} food.`);
+                        if (PT.Engine.Audio) PT.Engine.Audio.buy();
+                        PT.App._render();
+                    } else {
+                        msg.textContent = `Butcher ${pokemon.name} for ${foodAmount} food? Click BUTCHER again to confirm.`;
                         btn.dataset.confirm = 'true';
                         btn.style.background = 'var(--gb-darkest)';
                         btn.style.color = 'var(--gb-lightest)';

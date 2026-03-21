@@ -187,6 +187,12 @@
         return { killed: true, name: victim.name };
     }
 
+    // Convert Pokemon to food (rarity = size = more food)
+    function pokemonToFood(rarity) {
+        const foodValues = { common: 5, uncommon: 10, rare: 20, legendary: 40 };
+        return foodValues[rarity] || 5;
+    }
+
     PT.Engine.GameState = {
         createNewGame,
         createPartyPokemon,
@@ -200,6 +206,7 @@
         getCurrentRoute,
         getNextRoute,
         evolvePokemon,
-        killPokemon
+        killPokemon,
+        pokemonToFood
     };
 })();
