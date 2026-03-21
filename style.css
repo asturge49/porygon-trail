@@ -1055,6 +1055,72 @@ body {
 }
 
 /* ============================================
+   POTION PICKER POPUP
+   ============================================ */
+
+.potion-picker {
+    text-align: left;
+}
+
+.potion-pokemon-list {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.potion-target-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+    padding: 6px 8px;
+    border: 2px solid var(--gb-darkest);
+    background: var(--gb-lightest);
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 7px;
+    text-align: left;
+}
+
+.potion-target-btn:hover {
+    background: var(--gb-white);
+    border-color: var(--gb-dark);
+}
+
+.potion-target-sprite {
+    width: 32px;
+    height: 32px;
+    image-rendering: pixelated;
+}
+
+.potion-target-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.potion-result {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    justify-content: center;
+    padding: 4px 0;
+}
+
+.potion-result-sprite {
+    width: 40px;
+    height: 40px;
+    image-rendering: pixelated;
+}
+
+.potion-result-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    font-size: 7px;
+}
+
+/* ============================================
    LEADERBOARD SCREEN
    ============================================ */
 

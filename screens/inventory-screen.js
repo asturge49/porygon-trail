@@ -42,26 +42,89 @@
 
             const msg = document.getElementById('inv-message');
 
+            // --- USE POTION: show Pokemon picker ---
             document.getElementById('btn-use-potion').addEventListener('click', () => {
                 const injured = state.party.filter(p => p.status !== 'fainted' && p.hp < p.maxHp);
                 if (injured.length === 0) {
                     msg.textContent = "No Pokemon need healing!";
                     return;
                 }
-                const target = injured[0];
-                if (state.resources.superPotions > 0) {
-                    state.resources.superPotions--;
-                    PT.Engine.GameState.healPokemon(target, 2);
-                    msg.textContent = `Used Super Potion on ${target.name}! +2 HP`;
-                } else {
-                    state.resources.potions--;
-                    PT.Engine.GameState.healPokemon(target, 1);
-                    msg.textContent = `Used Potion on ${target.name}! +1 HP`;
-                }
-                // Re-render without clearing the screen stack
-                PT.App._render();
+
+                // Determine potion type
+                const isSuper = state.resources.superPotions > 0;
+                const potionName = isSuper ? 'Super Potion' : 'Potion';
+                const healAmt = isSuper ? 2 : 1;
+                const potionCount = isSuper ? state.resources.superPotions : state.resources.potions;
+
+                // Build picker popup
+                msg.innerHTML = `
+                    <div class="potion-picker">
+                        <div style="margin-bottom: 6px; font-weight: bold;">Use ${potionName} (+${healAmt} HP) on who? <span style="color: var(--gb-dark);">(${potionCount} left)</span></div>
+                        <div class="potion-pokemon-list">
+                            ${injured.map((p, i) => `
+                                <button class="potion-target-btn" data-idx="${state.party.indexOf(p)}">
+                                    <img class="potion-target-sprite" src="${p.spriteUrl}" alt="${p.name}"
+                                         onerror="this.style.display='none'">
+                                    <div class="potion-target-info">
+                                        <div style="font-weight: bold;">${p.name}</div>
+                                        <div class="hp-bar" style="width: 60px; height: 6px;">
+                                            <div class="hp-bar-fill ${p.hp <= 1 ? 'low' : ''}" style="width: ${(p.hp / p.maxHp) * 100}%"></div>
+                                        </div>
+                                        <div>HP: ${p.hp}/${p.maxHp}</div>
+                                    </div>
+                                </button>
+                            `).join('')}
+                        </div>
+                        <button class="btn btn-small" id="btn-potion-cancel" style="margin-top: 6px; width: 100%;">CANCEL</button>
+                    </div>
+                `;
+
+                // Bind target buttons
+                document.querySelectorAll('.potion-target-btn').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        const idx = parseInt(btn.dataset.idx);
+                        const target = state.party[idx];
+                        if (!target) return;
+
+                        // Use potion
+                        if (isSuper) {
+                            state.resources.superPotions--;
+                        } else {
+                            state.resources.potions--;
+                        }
+                        const oldHp = target.hp;
+                        PT.Engine.GameState.healPokemon(target, healAmt);
+                        const newHp = target.hp;
+                        if (PT.Engine.Audio) PT.Engine.Audio.buy();
+
+                        // Show result popup with OK button
+                        msg.innerHTML = `
+                            <div class="potion-result">
+                                <img class="potion-result-sprite" src="${target.spriteUrl}" alt="${target.name}"
+                                     onerror="this.style.display='none'">
+                                <div class="potion-result-info">
+                                    <div style="font-weight: bold;">${target.name}</div>
+                                    <div>${potionName} used! +${newHp - oldHp} HP</div>
+                                    <div class="hp-bar" style="width: 80px; height: 8px;">
+                                        <div class="hp-bar-fill ${newHp <= 1 ? 'low' : ''}" style="width: ${(newHp / target.maxHp) * 100}%"></div>
+                                    </div>
+                                    <div>HP: ${oldHp} → ${newHp}/${target.maxHp} ${target.status === 'healthy' ? '✓ Healthy' : ''}</div>
+                                </div>
+                            </div>
+                            <button class="btn btn-small" id="btn-potion-ok" style="margin-top: 6px; width: 100%;">OK</button>
+                        `;
+                        document.getElementById('btn-potion-ok').addEventListener('click', () => {
+                            PT.App._render();
+                        });
+                    });
+                });
+
+                document.getElementById('btn-potion-cancel').addEventListener('click', () => {
+                    msg.textContent = '';
+                });
             });
 
+            // --- USE RARE CANDY ---
             document.getElementById('btn-use-candy').addEventListener('click', () => {
                 if (state.resources.rareCandy <= 0) return;
                 const alive = PT.Engine.GameState.getAliveParty(state);
