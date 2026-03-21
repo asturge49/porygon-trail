@@ -120,6 +120,7 @@
                 results.messages.push(`${p.name} takes poison damage!`);
                 if (fainted) {
                     results.messages.push(`${p.name} died from poison! 💀`);
+                }
             }
         });
 
