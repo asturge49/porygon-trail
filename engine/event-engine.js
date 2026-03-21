@@ -160,10 +160,10 @@
             }
         }
 
-        // Check all fainted
-        if (PT.Engine.GameState.getAliveParty(state).length === 0) {
+        // Check all dead
+        if (state.party.length === 0) {
             state.isGameOver = true;
-            state.gameOverReason = "blackout";
+            if (!state.gameOverReason) state.gameOverReason = "party_wiped";
         }
     }
 

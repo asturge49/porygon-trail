@@ -134,9 +134,9 @@
         container.appendChild(div);
 
         document.getElementById('btn-continue').addEventListener('click', () => {
-            if (state.isGameOver || PT.Engine.GameState.getAliveParty(state).length === 0) {
+            if (state.isGameOver || state.party.length === 0) {
                 state.isGameOver = true;
-                state.gameOverReason = 'blackout';
+                if (!state.gameOverReason) state.gameOverReason = 'party_wiped';
                 PT.App.goto('GAMEOVER');
             } else {
                 PT.App.goto('TRAVEL');

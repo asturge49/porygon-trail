@@ -988,6 +988,47 @@ body {
     border-top: 2px solid var(--gb-darkest);
 }
 
+/* Memorial (Game Over) */
+.memorial-section {
+    width: 100%;
+    max-width: 500px;
+    border: 3px solid var(--gb-darkest);
+    background: var(--gb-white);
+    padding: 12px;
+}
+
+.memorial-label {
+    font-size: 8px;
+    text-align: center;
+    margin-bottom: 8px;
+    color: var(--gb-dark);
+}
+
+.memorial-pokemon-grid {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.memorial-pokemon {
+    text-align: center;
+    padding: 4px;
+}
+
+.memorial-sprite {
+    width: 40px;
+    height: 40px;
+    image-rendering: pixelated;
+    filter: grayscale(50%);
+}
+
+.memorial-name {
+    font-size: 6px;
+    margin-top: 2px;
+    color: var(--gb-dark);
+}
+
 .hall-of-fame-team {
     display: flex;
     gap: 12px;

@@ -104,15 +104,20 @@
         if (pokemon.hp <= 0) {
             pokemon.hp = 0;
             pokemon.status = 'fainted';
-            // Remove fainted Pokemon from party (unless it's the last one)
-            if (state && state.party.length > 1) {
+            // Remove fainted Pokemon from party permanently
+            if (state) {
                 const idx = state.party.indexOf(pokemon);
                 if (idx !== -1) {
                     state.party.splice(idx, 1);
                     state.pokemonLost++;
                 }
+                // If party is empty, game over
+                if (state.party.length === 0) {
+                    state.isGameOver = true;
+                    state.gameOverReason = 'party_wiped';
+                }
             }
-            return true; // fainted
+            return true; // fainted/died
         }
         return false;
     }
@@ -168,12 +173,17 @@
     // Permanent Death
     function killPokemon(state) {
         const alive = getAliveParty(state);
-        if (alive.length <= 1) return null; // Never kill last Pokemon
+        if (alive.length === 0) return null;
         const victim = state.rng.pick(alive);
         const idx = state.party.indexOf(victim);
         if (idx === -1) return null;
         state.party.splice(idx, 1);
         state.pokemonLost++;
+        // If party is empty, game over
+        if (state.party.length === 0) {
+            state.isGameOver = true;
+            state.gameOverReason = 'party_wiped';
+        }
         return { killed: true, name: victim.name };
     }
 

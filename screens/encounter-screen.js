@@ -65,7 +65,15 @@
             function showResult(text, callback) {
                 messageBox.textContent = text;
                 actionsDiv.innerHTML = '<button class="btn btn-wide" id="btn-continue">CONTINUE</button>';
-                document.getElementById('btn-continue').addEventListener('click', callback || (() => PT.App.goto('TRAVEL')));
+                document.getElementById('btn-continue').addEventListener('click', callback || (() => {
+                    if (state.isGameOver || state.party.length === 0) {
+                        state.isGameOver = true;
+                        if (!state.gameOverReason) state.gameOverReason = 'party_wiped';
+                        PT.App.goto('GAMEOVER');
+                    } else {
+                        PT.App.goto('TRAVEL');
+                    }
+                }));
             }
 
             // Throw Poke Ball
