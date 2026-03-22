@@ -145,8 +145,11 @@
                     <button class="btn btn-small" id="btn-party">PARTY (${state.party.length})</button>
                     <button class="btn btn-small" id="btn-inventory">ITEMS</button>
                     ${route.hasShop ? '<button class="btn btn-small" id="btn-shop">SHOP</button>' : '<button class="btn btn-small" disabled>NO SHOP</button>'}
-                    ${route.hasGym && !state.badges.includes(PT.Data.GymLeaders[route.gymLeader]?.badge) ? `<button class="btn btn-small" id="btn-gym">GYM</button>` : '<button class="btn btn-small" disabled>NO GYM</button>'}
-                    ${route.id === 'indigo_plateau' && !state.hasWon ? `<button class="btn btn-small" id="btn-elite-four" style="font-weight: bold;">ELITE 4</button>` : ''}
+                    ${route.id === 'indigo_plateau' && !state.hasWon
+                        ? '<button class="btn btn-small" id="btn-elite-four" style="font-weight: bold;">ELITE 4</button>'
+                        : route.hasGym && !state.badges.includes(PT.Data.GymLeaders[route.gymLeader]?.badge)
+                            ? `<button class="btn btn-small" id="btn-gym">GYM</button>`
+                            : '<button class="btn btn-small" disabled>NO GYM</button>'}
                     <button class="btn btn-small" id="btn-use-repel" ${state.resources.repels <= 0 || state.repelSteps > 0 ? 'disabled' : ''}>REPEL${state.repelSteps > 0 ? ` (${state.repelSteps})` : ''}</button>
                 </div>
 
