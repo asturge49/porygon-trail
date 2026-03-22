@@ -144,9 +144,10 @@
                 {
                     text: "Accept his challenge!",
                     outcomes: [
-                        { weight: 45, narration: "Your Pokemon outperform Gary's! \"Hmph! I'll beat you next time!\"", effects: { money: 500 } },
-                        { weight: 35, narration: "A close match! Gary barely wins. \"I knew I was better!\"", effects: { partyDamage: 1 } },
-                        { weight: 20, narration: "Gary's team is surprisingly strong. He takes some of your money.", effects: { partyDamage: 1, money: -200 } }
+                        { weight: 30, narration: "Your Pokemon outperform Gary's! The battle experience strengthens your team! \"Hmph! I'll beat you next time!\"", effects: { money: 500, trainPokemon: true } },
+                        { weight: 30, narration: "A close match! Gary barely wins. \"I knew I was better!\" Your Pokemon limps back, battered.", effects: { partyDamage: 1, money: -200 } },
+                        { weight: 25, narration: "Gary's team is surprisingly strong. He wipes the floor with you and takes your money.", effects: { partyDamage: 2, money: -300 } },
+                        { weight: 15, narration: "Gary absolutely destroys you. \"You're pathetic!\" One of your Pokemon doesn't get back up.", effects: { pokemonDeath: true, money: -500 } }
                     ]
                 },
                 {
@@ -1154,9 +1155,11 @@
                 {
                     text: "Accept the challenge!",
                     outcomes: [
-                        { weight: 40, narration: "Your Pokemon outperforms theirs! The trainer pays up.", effects: { money: 800 } },
-                        { weight: 30, narration: "A close battle! You win and the trainer shares some tips and food.", effects: { money: 400, food: 5 } },
-                        { weight: 30, narration: "Their Pokemon is too strong! You lose the match and some cash.", effects: { partyDamage: 1, money: -300 } }
+                        { weight: 25, narration: "Your Pokemon outperforms theirs! The battle experience strengthens your team! The trainer pays up.", effects: { money: 800, trainPokemon: true } },
+                        { weight: 25, narration: "A close battle! You win and the trainer shares some tips and food.", effects: { money: 400, food: 5, trainPokemon: true } },
+                        { weight: 25, narration: "Their Pokemon is too strong! You lose the match and some cash.", effects: { partyDamage: 1, money: -300 } },
+                        { weight: 15, narration: "A brutal defeat! Their Pokemon lands a critical hit. Yours is badly hurt.", effects: { partyDamage: 2, money: -400 } },
+                        { weight: 10, narration: "A devastating loss. The trainer's Pokemon was far too powerful. Your Pokemon doesn't recover.", effects: { pokemonDeath: true, money: -500 } }
                     ]
                 },
                 {
@@ -3788,8 +3791,10 @@
                     { weight: 20, narration: "They teach your Pokemon a new technique! Everyone's energized!", effects: { healAll: true } }
                 ]},
                 { text: "Challenge them instead", outcomes: [
-                    { weight: 50, narration: "You win! They hand over prize money.", effects: { money: 400, partyDamage: 1 } },
-                    { weight: 50, narration: "They're tougher than they look! You lose.", effects: { partyDamage: 1 } }
+                    { weight: 30, narration: "You win! The intense battle strengthens your Pokemon! They hand over prize money.", effects: { money: 400, trainPokemon: true } },
+                    { weight: 30, narration: "A narrow win! Your Pokemon takes a beating but learns from the experience.", effects: { money: 200, partyDamage: 1, trainPokemon: true } },
+                    { weight: 25, narration: "They're tougher than they look! Your Pokemon is badly hurt.", effects: { partyDamage: 2 } },
+                    { weight: 15, narration: "They completely outclass you. Your Pokemon takes a devastating hit and doesn't get back up.", effects: { pokemonDeath: true } }
                 ]}
             ]
         },
@@ -3900,9 +3905,11 @@
             minDay: 4,
             choices: [
                 { text: "Battle your rival!", outcomes: [
-                    { weight: 40, narration: "You beat your rival! \"Smell ya later!\" They drop prize money.", effects: { money: 800, partyDamage: 1 } },
-                    { weight: 40, narration: "A close match but your rival wins this time.", effects: { partyDamage: 1 } },
-                    { weight: 20, narration: "Crushing victory! Your rival is speechless!", effects: { money: 1000 } }
+                    { weight: 25, narration: "You beat your rival! The fierce battle makes your team stronger! \"Smell ya later!\"", effects: { money: 800, trainPokemon: true } },
+                    { weight: 25, narration: "Crushing victory! Your rival is speechless! Your Pokemon grows from the experience!", effects: { money: 1000, trainPokemon: true } },
+                    { weight: 25, narration: "A close match but your rival wins this time. Your Pokemon is battered.", effects: { partyDamage: 1, money: -200 } },
+                    { weight: 15, narration: "Your rival's team has gotten much stronger. They thrash you badly.", effects: { partyDamage: 2, money: -400 } },
+                    { weight: 10, narration: "\"Is that the best you've got?!\" Your rival's Pokemon delivers a fatal blow. One of yours doesn't survive.", effects: { pokemonDeath: true, money: -500 } }
                 ]},
                 { text: "Ignore them", outcomes: [
                     { weight: 60, narration: "Your rival runs off, annoyed you didn't engage.", effects: {} },

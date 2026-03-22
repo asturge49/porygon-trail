@@ -107,6 +107,9 @@
             const p = PT.Data.Pokemon.find(pk => pk.id === effects.catchPokemon2);
             if (p) lines.push(`${p.name} joined your team!`);
         }
+        if (effects.trainPokemon && effects._trainResult && effects._trainResult.evolved) {
+            lines.push(`⬆ ${effects._trainResult.oldName} evolved into ${effects._trainResult.newName}!`);
+        }
         if (effects.champion) lines.push('YOU BECAME CHAMPION!');
         if (effects.pokemonDeath && effects._deathResult && effects._deathResult.killed) {
             lines.push(`💀 ${effects._deathResult.name} was lost forever!`);

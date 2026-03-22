@@ -141,6 +141,23 @@
             }
         }
 
+        // Train Pokemon (evolve a random eligible party member)
+        if (effects.trainPokemon) {
+            const alive = PT.Engine.GameState.getAliveParty(state);
+            const canEvolve = alive.filter(p => {
+                const d = PT.Data.Pokemon.find(pk => pk.id === p.id);
+                return d && d.evolvesTo;
+            });
+            if (canEvolve.length > 0) {
+                const target = state.rng.pick(canEvolve);
+                const evoResult = PT.Engine.GameState.evolvePokemon(target);
+                if (evoResult.evolved) {
+                    effects._trainResult = evoResult;
+                    PT.Engine.GameState.addToLog(state, `${evoResult.oldName} evolved into ${evoResult.newName}!`);
+                }
+            }
+        }
+
         // Permanent Pokemon death
         if (effects.pokemonDeath) {
             const deathResult = PT.Engine.GameState.killPokemon(state);
