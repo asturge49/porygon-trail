@@ -289,8 +289,8 @@
         {
             id: "indigo_plateau",
             name: "Indigo Plateau",
-            description: "Victory Road and the Pokemon League.",
-            distanceToNext: 0,
+            description: "Victory Road — the final stretch before the Pokemon League.",
+            distanceToNext: 15,
             terrain: "mountain",
             hasShop: true,
             hasGym: false,
@@ -310,8 +310,21 @@
                 { pokemonId: 148, weight: 7 },  // Dragonair
                 { pokemonId: 18, weight: 5 }    // Pidgeot
             ],
-            eventPool: ["victory_road_cave", "elite_four_challenge", "champion_battle", "mewtwo_cave"],
+            eventPool: ["victory_road_cave", "champion_battle", "mewtwo_cave"],
             flavor: "Victory Road stretches before you. Only the strongest trainers make it this far."
+        },
+        {
+            id: "pokemon_league",
+            name: "Pokemon League",
+            description: "The Elite Four and Champion await.",
+            distanceToNext: 0,
+            terrain: "mountain",
+            hasShop: false,
+            hasGym: false,
+            gymLeader: null,
+            encounterTable: [],
+            eventPool: [],
+            flavor: "The doors to the Pokemon League open. There is no turning back."
         }
     ];
 })();

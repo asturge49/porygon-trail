@@ -145,9 +145,7 @@
                     <button class="btn btn-small" id="btn-party">PARTY (${state.party.length})</button>
                     <button class="btn btn-small" id="btn-inventory">ITEMS</button>
                     ${route.hasShop ? '<button class="btn btn-small" id="btn-shop">SHOP</button>' : '<button class="btn btn-small" disabled>NO SHOP</button>'}
-                    ${route.id === 'indigo_plateau' && !state.hasWon
-                        ? '<button class="btn btn-small" id="btn-elite-four" style="font-weight: bold;">ELITE 4</button>'
-                        : route.hasGym && !state.badges.includes(PT.Data.GymLeaders[route.gymLeader]?.badge)
+                    ${route.hasGym && !state.badges.includes(PT.Data.GymLeaders[route.gymLeader]?.badge)
                             ? `<button class="btn btn-small" id="btn-gym">GYM</button>`
                             : '<button class="btn btn-small" disabled>NO GYM</button>'}
                     <button class="btn btn-small" id="btn-use-repel" ${state.resources.repels <= 0 || state.repelSteps > 0 ? 'disabled' : ''}>REPEL${state.repelSteps > 0 ? ` (${state.repelSteps})` : ''}</button>
@@ -265,14 +263,6 @@
                 });
             }
 
-            // Elite Four button
-            const e4Btn = document.getElementById('btn-elite-four');
-            if (e4Btn) {
-                e4Btn.addEventListener('click', () => {
-                    PT.App.goto('ELITEFOUR');
-                });
-            }
-
             // Repel button
             document.getElementById('btn-use-repel').addEventListener('click', () => {
                 if (state.resources.repels > 0 && state.repelSteps <= 0) {
@@ -295,15 +285,13 @@
             return;
         }
 
-        // Final destination - only go to victory if champion
-        if (state.currentLocationIndex >= PT.Data.Routes.length - 1) {
+        // Pokemon League — auto-trigger Elite Four gauntlet
+        if (route.id === 'pokemon_league') {
             if (state.hasWon) {
                 PT.App.goto('VICTORY');
                 return;
             }
-            // Not champion yet — keep rolling events (Elite Four, etc.)
-            // If no events triggered, just re-render travel
-            PT.App.goto('TRAVEL');
+            PT.App.goto('ELITEFOUR');
             return;
         }
 
