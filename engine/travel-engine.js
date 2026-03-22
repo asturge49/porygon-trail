@@ -4,10 +4,9 @@
     PT.Engine = PT.Engine || {};
 
     const PACE_CONFIG = {
-        resting: { distance: 0, foodMult: 0.5, encounterMod: -15, eventMod: -5, healParty: true },
+        explore: { distance: 0, foodMult: 0.5, encounterMod: 20, eventMod: 25, healParty: true },
         steady: { distance: 12, foodMult: 1, encounterMod: 0, eventMod: 0 },
-        fast: { distance: 17, foodMult: 1.5, encounterMod: 15, eventMod: 8 },
-        grueling: { distance: 22, foodMult: 2.5, encounterMod: 25, eventMod: 15, injuryChance: 15 }
+        push: { distance: 20, foodMult: 2, encounterMod: 10, eventMod: 15, injuryChance: 20 }
     };
 
     function advanceDay(state) {
@@ -134,7 +133,7 @@
         }
 
         // --- Encounter roll ---
-        if (!results.arrivedAtLocation && nextRoute) {
+        if (!results.arrivedAtLocation || pace.distance === 0) {
             const encounterChance = 30 + (pace.encounterMod || 0);
             if (state.repelSteps > 0) {
                 state.repelSteps--;
@@ -150,7 +149,7 @@
         }
 
         // --- Event roll ---
-        if (!results.encounter && !results.arrivedAtLocation) {
+        if (!results.encounter && (!results.arrivedAtLocation || pace.distance === 0)) {
             const eventChance = 25 + (pace.eventMod || 0);
             if (state.rng.chance(eventChance)) {
                 results.event = PT.Engine.EventEngine.rollEvent(state);

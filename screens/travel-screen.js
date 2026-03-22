@@ -135,7 +135,7 @@
                 </div>
 
                 <div class="pace-selector" style="justify-content: center; margin: 4px 0;">
-                    ${['resting', 'steady', 'fast', 'grueling'].map(p => `
+                    ${['explore', 'steady', 'push'].map(p => `
                         <button class="pace-btn ${state.pace === p ? 'active' : ''}" data-pace="${p}">${p.toUpperCase()}</button>
                     `).join('')}
                 </div>
@@ -168,12 +168,7 @@
             });
 
             // Continue button
-            document.getElementById('btn-continue').addEventListener('click', () => {
-                if (isAtDestination) {
-                    // Trigger final events or victory
-                    handleArrival(state);
-                    return;
-                }
+            function proceedWithDay() {
                 const results = PT.Engine.TravelEngine.advanceDay(state);
                 results.messages.forEach(msg => PT.Engine.GameState.addToLog(state, msg));
 
@@ -193,12 +188,51 @@
                 }
 
                 if (results.arrivedAtLocation) {
+                    state._gymWarningShown = null; // Reset gym warning for new location
                     handleArrival(state);
                     return;
                 }
 
                 // Re-render travel screen
                 PT.App.goto('TRAVEL');
+            }
+
+            document.getElementById('btn-continue').addEventListener('click', () => {
+                if (isAtDestination) {
+                    handleArrival(state);
+                    return;
+                }
+
+                // Gym departure warning — only when pace would move you (not explore)
+                const gymLeaderData = route.hasGym ? PT.Data.GymLeaders[route.gymLeader] : null;
+                const hasUnbeatenGym = gymLeaderData && !state.badges.includes(gymLeaderData.badge);
+                const wouldProgress = state.pace !== 'explore';
+
+                if (hasUnbeatenGym && wouldProgress && state._gymWarningShown !== route.id) {
+                    state._gymWarningShown = route.id;
+                    const logDiv = document.getElementById('travel-log');
+                    if (logDiv) {
+                        logDiv.innerHTML = `
+                            <div style="text-align: center; padding: 8px;">
+                                <div style="font-weight: bold; margin-bottom: 6px;">⚠️ There's a GYM here you haven't beaten!</div>
+                                <div style="font-size: 7px; margin-bottom: 8px;">${gymLeaderData.name} awaits at the ${gymLeaderData.badge} gym. Are you sure you want to leave?</div>
+                                <div style="display: flex; gap: 8px; justify-content: center;">
+                                    <button class="btn btn-small" id="btn-gym-warn-stay">FIGHT GYM</button>
+                                    <button class="btn btn-small" id="btn-gym-warn-leave">LEAVE ANYWAY</button>
+                                </div>
+                            </div>
+                        `;
+                        document.getElementById('btn-gym-warn-stay').addEventListener('click', () => {
+                            PT.App.goto('GYM', { gymLeader: route.gymLeader });
+                        });
+                        document.getElementById('btn-gym-warn-leave').addEventListener('click', () => {
+                            proceedWithDay();
+                        });
+                    }
+                    return;
+                }
+
+                proceedWithDay();
             });
 
             // Party button

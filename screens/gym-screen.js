@@ -108,11 +108,27 @@
             `;
         } else {
             if (PT.Engine.Audio) PT.Engine.Audio.gymDefeat();
-            const gymFainted = PT.Engine.GameState.damagePokemon(pokemon, 2, state);
-            if (gymFainted) {
+
+            // 40% chance of outright death on gym loss
+            let gymKilled = false;
+            let gymFainted = false;
+            if (state.rng.chance(40)) {
+                const idx = state.party.indexOf(pokemon);
+                if (idx !== -1) {
+                    state.party.splice(idx, 1);
+                    state.pokemonLost++;
+                    gymKilled = true;
+                }
+            } else {
+                // Survive but take heavy damage (3)
+                gymFainted = PT.Engine.GameState.damagePokemon(pokemon, 3, state);
+            }
+
+            const died = gymKilled || gymFainted;
+            if (died) {
                 PT.Engine.GameState.addToLog(state, `Lost to ${leader.name}. ${pokemon.name} was killed in battle! 💀`);
             } else {
-                PT.Engine.GameState.addToLog(state, `Lost to ${leader.name}. ${pokemon.name} was hurt.`);
+                PT.Engine.GameState.addToLog(state, `Lost to ${leader.name}. ${pokemon.name} was badly hurt.`);
             }
 
             div.innerHTML = `
@@ -121,11 +137,11 @@
                     <div class="gym-leader-name">${leader.name} wins</div>
                     <div class="gym-challenge-text">${leader.defeatText}</div>
                     <div style="font-size: 8px; margin-top: 12px;">
-                        ${gymFainted
+                        ${died
                             ? `💀 ${pokemon.name} was lost forever!`
-                            : `${pokemon.name} takes 2 damage!`}
+                            : `${pokemon.name} takes 3 damage!`}
                         <br>Win chance was ${chance}%
-                        ${gymFainted ? '' : '<br>You can try again next time you visit.'}
+                        ${died ? '' : '<br>You can try again next time you visit.'}
                     </div>
                 </div>
                 <button class="btn btn-wide" id="btn-continue">CONTINUE</button>
