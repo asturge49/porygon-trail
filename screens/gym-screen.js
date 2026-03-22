@@ -14,6 +14,13 @@
             const opponentSprite = PT.Engine.GameState.getSpriteUrl(opponent.id);
             const isAce = !!opponent.ace;
 
+            // Look up opponent Pokemon's actual types
+            const opponentData = PT.Data.Pokemon.find(p => p.id === opponent.id);
+            const opponentTypes = opponentData ? opponentData.types : [leader.type];
+
+            // Build type effectiveness lookup based on opponent's types
+            const typeChart = getTypeWeaknesses(opponentTypes);
+
             const div = document.createElement('div');
             div.className = 'screen gym-screen';
             div.innerHTML = `
@@ -34,19 +41,20 @@
                                  style="width: 80px; height: 80px; image-rendering: pixelated;"
                                  onerror="this.style.display='none'; this.parentElement.querySelector('.gym-opponent-name').style.marginTop='40px';">
                             <div class="gym-opponent-name" style="font-size: 9px; font-weight: bold;">${opponent.name}</div>
+                            <div style="font-size: 6px;">${opponentTypes.join('/').toUpperCase()}</div>
                             ${isAce ? '<div style="font-size: 7px; color: var(--gb-darkest);">⭐ ACE POKEMON</div>' : ''}
                         </div>
                     </div>
                     <div class="gym-challenge-text">${leader.name} sends out ${opponent.name}!</div>
                 </div>
                 <div class="text-box" style="font-size: 7px;">
-                    Choose your Pokemon! Type advantages matter.
-                    <br>Strong vs: ${leader.strongAgainst.join(', ')} | Weak vs: ${leader.weakAgainst.join(', ')}
+                    Choose your Pokemon! ${opponent.name} is ${opponentTypes.join('/')}-type.
+                    <br>Weak to: ${typeChart.weakTo.join(', ') || 'none'} | Resists: ${typeChart.strongTo.join(', ') || 'none'}
                 </div>
                 <div class="event-choices" id="gym-choices">
                     ${PT.Engine.GameState.getAliveParty(state).map((p, i) => {
-                        const hasAdvantage = p.types.some(t => leader.weakAgainst.includes(t));
-                        const hasDisadvantage = p.types.some(t => leader.strongAgainst.includes(t));
+                        const hasAdvantage = p.types.some(t => typeChart.weakTo.includes(t));
+                        const hasDisadvantage = p.types.some(t => typeChart.strongTo.includes(t));
                         let label = `${p.name} (${p.types.join('/')})`;
                         if (hasAdvantage) label += ' [SUPER EFFECTIVE!]';
                         if (hasDisadvantage) label += ' [NOT VERY EFFECTIVE...]';
@@ -73,16 +81,58 @@
         }
     };
 
+    // Gen 1 type chart — returns what types the given types are weak to and resist
+    function getTypeWeaknesses(types) {
+        const weaknesses = {
+            normal:   { weakTo: ['fighting'], resistedBy: ['rock'], immuneBy: ['ghost'] },
+            fire:     { weakTo: ['water', 'ground', 'rock'], resistedBy: ['fire', 'grass', 'ice', 'bug'] },
+            water:    { weakTo: ['electric', 'grass'], resistedBy: ['fire', 'water', 'ice'] },
+            electric: { weakTo: ['ground'], resistedBy: ['electric', 'flying'] },
+            grass:    { weakTo: ['fire', 'ice', 'poison', 'flying', 'bug'], resistedBy: ['water', 'grass', 'electric', 'ground'] },
+            ice:      { weakTo: ['fire', 'fighting', 'rock'], resistedBy: ['ice'] },
+            fighting: { weakTo: ['flying', 'psychic'], resistedBy: ['bug', 'rock'] },
+            poison:   { weakTo: ['ground', 'psychic', 'bug'], resistedBy: ['grass', 'fighting', 'poison'] },
+            ground:   { weakTo: ['water', 'grass', 'ice'], resistedBy: ['poison', 'rock'], immuneBy: ['electric'] },
+            flying:   { weakTo: ['electric', 'ice', 'rock'], resistedBy: ['grass', 'fighting', 'bug'], immuneBy: ['ground'] },
+            psychic:  { weakTo: ['bug'], resistedBy: ['fighting', 'psychic'] },
+            bug:      { weakTo: ['fire', 'flying', 'rock'], resistedBy: ['grass', 'fighting', 'ground'] },
+            rock:     { weakTo: ['water', 'grass', 'fighting', 'ground'], resistedBy: ['normal', 'fire', 'poison', 'flying'] },
+            ghost:    { weakTo: ['ghost'], resistedBy: ['poison', 'bug'], immuneBy: ['normal', 'fighting'] },
+            dragon:   { weakTo: ['ice', 'dragon'], resistedBy: ['fire', 'water', 'electric', 'grass'] }
+        };
+
+        const weakTo = new Set();
+        const strongTo = new Set();
+
+        types.forEach(type => {
+            const entry = weaknesses[type.toLowerCase()];
+            if (!entry) return;
+            entry.weakTo.forEach(t => weakTo.add(t));
+            (entry.resistedBy || []).forEach(t => strongTo.add(t));
+        });
+
+        // Remove types that appear in both (dual-type cancellation)
+        return {
+            weakTo: [...weakTo].filter(t => !strongTo.has(t)),
+            strongTo: [...strongTo].filter(t => !weakTo.has(t))
+        };
+    }
+
     function resolveGymBattle(pokemon, leader, leaderId, state, container, opponent) {
         const isAce = !!opponent.ace;
         const opponentSprite = PT.Engine.GameState.getSpriteUrl(opponent.id);
 
+        // Look up opponent Pokemon's actual types for battle calc
+        const opponentData = PT.Data.Pokemon.find(p => p.id === opponent.id);
+        const opponentTypes = opponentData ? opponentData.types : [leader.type];
+        const typeChart = getTypeWeaknesses(opponentTypes);
+
         // Calculate success chance
         let chance = 50;
 
-        // Type advantage
-        const hasAdvantage = pokemon.types.some(t => leader.weakAgainst.includes(t));
-        const hasDisadvantage = pokemon.types.some(t => leader.strongAgainst.includes(t));
+        // Type advantage based on opponent Pokemon's types
+        const hasAdvantage = pokemon.types.some(t => typeChart.weakTo.includes(t));
+        const hasDisadvantage = pokemon.types.some(t => typeChart.strongTo.includes(t));
         if (hasAdvantage) chance += 25;
         if (hasDisadvantage) chance -= 25;
 
