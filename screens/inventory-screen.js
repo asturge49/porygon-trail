@@ -129,27 +129,81 @@
                 if (state.resources.rareCandy <= 0) return;
                 const alive = PT.Engine.GameState.getAliveParty(state);
                 if (alive.length === 0) { msg.textContent = "No alive Pokemon!"; return; }
-                // Find first Pokemon that can evolve
-                let target = null;
-                for (const p of alive) {
+
+                // Find Pokemon that can evolve
+                const canEvolve = alive.filter(p => {
                     const data = PT.Data.Pokemon.find(pk => pk.id === p.id);
-                    if (data && data.evolvesTo) { target = p; break; }
-                }
-                if (!target) {
+                    return data && data.evolvesTo;
+                });
+
+                if (canEvolve.length === 0) {
                     msg.textContent = "No Pokemon can evolve!";
                     return;
                 }
-                state.resources.rareCandy--;
-                const evoResult = PT.Engine.GameState.evolvePokemon(target);
-                if (evoResult.evolved) {
-                    msg.textContent = `${evoResult.oldName} evolved into ${evoResult.newName}!`;
-                    PT.Engine.GameState.addToLog(state, `${evoResult.oldName} evolved into ${evoResult.newName}!`);
-                } else {
-                    msg.textContent = `${target.name} couldn't evolve. Rare Candy had no effect!`;
-                    state.resources.rareCandy++; // Refund
-                }
-                if (PT.Engine.Audio) PT.Engine.Audio.buy();
-                PT.App._render();
+
+                // Build picker popup
+                msg.innerHTML = `
+                    <div class="potion-picker">
+                        <div style="margin-bottom: 6px; font-weight: bold;">Use Rare Candy on who? <span style="color: var(--gb-dark);">(${state.resources.rareCandy} left)</span></div>
+                        <div class="potion-pokemon-list">
+                            ${canEvolve.map(p => {
+                                const data = PT.Data.Pokemon.find(pk => pk.id === p.id);
+                                const evoData = PT.Data.Pokemon.find(pk => pk.id === data.evolvesTo);
+                                const evoName = evoData ? evoData.name : '???';
+                                return `
+                                <button class="potion-target-btn candy-target-btn" data-idx="${state.party.indexOf(p)}">
+                                    <img class="potion-target-sprite" src="${p.spriteUrl}" alt="${p.name}"
+                                         onerror="this.style.display='none'">
+                                    <div class="potion-target-info">
+                                        <div style="font-weight: bold;">${p.name}</div>
+                                        <div style="font-size: 6px;">→ ${evoName}</div>
+                                        <div>HP: ${p.hp}/${p.maxHp}</div>
+                                    </div>
+                                </button>
+                            `}).join('')}
+                        </div>
+                        <button class="btn btn-small" id="btn-candy-cancel" style="margin-top: 6px; width: 100%;">CANCEL</button>
+                    </div>
+                `;
+
+                // Bind target buttons
+                document.querySelectorAll('.candy-target-btn').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        const idx = parseInt(btn.dataset.idx);
+                        const target = state.party[idx];
+                        if (!target) return;
+
+                        state.resources.rareCandy--;
+                        const evoResult = PT.Engine.GameState.evolvePokemon(target);
+                        if (PT.Engine.Audio) PT.Engine.Audio.buy();
+
+                        if (evoResult.evolved) {
+                            PT.Engine.GameState.addToLog(state, `${evoResult.oldName} evolved into ${evoResult.newName}!`);
+                            // Show result
+                            msg.innerHTML = `
+                                <div class="potion-result">
+                                    <img class="potion-result-sprite" src="${target.spriteUrl}" alt="${target.name}"
+                                         onerror="this.style.display='none'">
+                                    <div class="potion-result-info">
+                                        <div style="font-weight: bold;">${evoResult.oldName} evolved into ${evoResult.newName}!</div>
+                                    </div>
+                                </div>
+                                <button class="btn btn-small" id="btn-candy-ok" style="margin-top: 6px; width: 100%;">OK</button>
+                            `;
+                            document.getElementById('btn-candy-ok').addEventListener('click', () => {
+                                PT.App._render();
+                            });
+                        } else {
+                            msg.textContent = `${target.name} couldn't evolve. Rare Candy had no effect!`;
+                            state.resources.rareCandy++; // Refund
+                            PT.App._render();
+                        }
+                    });
+                });
+
+                document.getElementById('btn-candy-cancel').addEventListener('click', () => {
+                    msg.textContent = '';
+                });
             });
 
             document.getElementById('btn-back').addEventListener('click', () => {
