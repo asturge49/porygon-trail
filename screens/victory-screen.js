@@ -8,6 +8,10 @@
             const { score, breakdown } = PT.Engine.Scoring.calculateScore(state);
             const survivors = state.party.filter(p => p.status !== 'fainted');
 
+            // Use e4EntryParty if available (full party that entered Elite Four)
+            const hofTeam = state.e4EntryParty || survivors;
+            const aliveNames = state.party.map(p => p.name);
+
             // Save score
             PT.Engine.Scoring.saveToLeaderboard({
                 name: state.trainerName,
@@ -28,13 +32,16 @@
                     <br>You've reached the Indigo Plateau${state.badges.includes('champion') ? ' and became CHAMPION!' : '!'}
                 </div>
                 <div class="hall-of-fame-team">
-                    ${survivors.map(p => `
-                        <div class="hof-pokemon">
+                    ${hofTeam.map(p => {
+                        const isAlive = aliveNames.includes(p.name);
+                        return `
+                        <div class="hof-pokemon" style="${!isAlive ? 'opacity: 0.4;' : ''}">
                             <img class="hof-sprite" src="${p.spriteUrl}" alt="${p.name}"
                                  onerror="this.style.display='none'">
-                            <div class="hof-name">${p.name}</div>
+                            <div class="hof-name" style="${!isAlive ? 'text-decoration: line-through;' : ''}">${p.name}</div>
+                            ${!isAlive ? '<div style="font-size: 5px;">💀</div>' : ''}
                         </div>
-                    `).join('')}
+                    `}).join('')}
                 </div>
                 <div class="score-breakdown" style="font-size: 7px;">
                     ${breakdown.victory ? `<div>Victory Bonus: +${breakdown.victory}</div>` : ''}

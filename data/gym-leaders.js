@@ -158,12 +158,57 @@
         }
     };
 
-    // Elite Four - treated as a final event rather than gym battles
+    // Elite Four + Champion - gauntlet battles
     PT.Data.EliteFour = [
-        { name: "Lorelei", type: "ice", level: 54 },
-        { name: "Bruno", type: "fighting", level: 55 },
-        { name: "Agatha", type: "ghost", level: 56 },
-        { name: "Lance", type: "dragon", level: 58 },
-        { name: "Champion", type: "mixed", level: 60 }
+        {
+            name: "Lorelei", title: "Ice Master", type: "ice",
+            introText: "Lorelei adjusts her glasses. \"Welcome to the Pokemon League. I am the first of the Elite Four. Let me freeze you in your tracks.\"",
+            defeatText: "\"How dare you! You won't get past the others!\"",
+            pokemon: [
+                { id: 87, name: "Dewgong", ace: true },
+                { id: 80, name: "Slowbro", ace: true },
+                { id: 131, name: "Lapras", ace: true }
+            ]
+        },
+        {
+            name: "Bruno", title: "Fighting Elite", type: "fighting",
+            introText: "Bruno flexes his muscles. \"I trained with my Pokemon in the mountains. We've pushed beyond our limits. Can you match our power?\"",
+            defeatText: "\"My fighting spirit wasn't enough?! Go... prove yourself to the rest.\"",
+            pokemon: [
+                { id: 106, name: "Hitmonlee", ace: true },
+                { id: 107, name: "Hitmonchan", ace: true },
+                { id: 68, name: "Machamp", ace: true }
+            ]
+        },
+        {
+            name: "Agatha", title: "Ghost Specialist", type: "ghost",
+            introText: "Agatha cackles. \"I see the fear in your eyes, child. My ghosts will drag your Pokemon into the shadows!\"",
+            defeatText: "\"Hmph! You're tougher than you look. But the worst is yet to come...\"",
+            pokemon: [
+                { id: 94, name: "Gengar", ace: true },
+                { id: 24, name: "Arbok", ace: true },
+                { id: 97, name: "Hypno", ace: true }
+            ]
+        },
+        {
+            name: "Lance", title: "Dragon Master", type: "dragon",
+            introText: "Lance's cape billows behind him. \"I am the last of the Elite Four. My dragons have never been defeated. You will fall here.\"",
+            defeatText: "\"I can't believe it... You've earned the right to face the Champion!\"",
+            pokemon: [
+                { id: 149, name: "Dragonite", ace: true },
+                { id: 130, name: "Gyarados", ace: true },
+                { id: 142, name: "Aerodactyl", ace: true }
+            ]
+        },
+        {
+            name: "Blue", title: "Pokemon Champion", type: "mixed",
+            introText: "Blue smirks. \"Well, well. Look who made it. I've been waiting for you. Let's see if you've got what it takes to dethrone me!\"",
+            defeatText: "\"No way! I can't believe I lost! You're the new Champion!\"",
+            pokemon: [
+                { id: 6, name: "Charizard", ace: true },
+                { id: 9, name: "Blastoise", ace: true },
+                { id: 3, name: "Venusaur", ace: true }
+            ]
+        }
     ];
 })();

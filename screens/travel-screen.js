@@ -146,6 +146,7 @@
                     <button class="btn btn-small" id="btn-inventory">ITEMS</button>
                     ${route.hasShop ? '<button class="btn btn-small" id="btn-shop">SHOP</button>' : '<button class="btn btn-small" disabled>NO SHOP</button>'}
                     ${route.hasGym && !state.badges.includes(PT.Data.GymLeaders[route.gymLeader]?.badge) ? `<button class="btn btn-small" id="btn-gym">GYM</button>` : '<button class="btn btn-small" disabled>NO GYM</button>'}
+                    ${route.id === 'indigo_plateau' && !state.hasWon ? `<button class="btn btn-small" id="btn-elite-four" style="font-weight: bold;">ELITE 4</button>` : ''}
                     <button class="btn btn-small" id="btn-use-repel" ${state.resources.repels <= 0 || state.repelSteps > 0 ? 'disabled' : ''}>REPEL${state.repelSteps > 0 ? ` (${state.repelSteps})` : ''}</button>
                 </div>
 
@@ -258,6 +259,14 @@
             if (gymBtn) {
                 gymBtn.addEventListener('click', () => {
                     PT.App.goto('GYM', { gymLeader: route.gymLeader });
+                });
+            }
+
+            // Elite Four button
+            const e4Btn = document.getElementById('btn-elite-four');
+            if (e4Btn) {
+                e4Btn.addEventListener('click', () => {
+                    PT.App.goto('ELITEFOUR');
                 });
             }
 

@@ -815,33 +815,7 @@
                 }
             ]
         },
-        {
-            id: "elite_four_challenge",
-            type: "special",
-            name: "The Elite Four!",
-            description: "You've reached the Pokemon League! The Elite Four await. This is the final challenge!",
-            weight: 60,
-            oneTime: false,
-            locationIds: ["indigo_plateau"],
-            minBadges: 4,
-            choices: [
-                {
-                    text: "Challenge the Elite Four!",
-                    outcomes: [
-                        { weight: 25, narration: "Against all odds, you defeat all four and become CHAMPION! Your name will be remembered forever!", effects: { partyDamage: 2, champion: true } },
-                        { weight: 35, narration: "You defeat Lorelei and Bruno, but Agatha's ghosts overwhelm you. A valiant effort!", effects: { partyDamage: 3, money: 2000 } },
-                        { weight: 25, narration: "Lorelei's ice types freeze your team. You're eliminated in the first round.", effects: { partyDamage: 2, money: 1000 } },
-                        { weight: 15, narration: "You defeat ALL FOUR and become Champion! Lance himself congratulates you!", effects: { partyDamage: 3, champion: true, money: 5000 } }
-                    ]
-                },
-                {
-                    text: "You've made it far enough",
-                    outcomes: [
-                        { weight: 100, narration: "You decide reaching the Plateau is victory enough. And that's okay.", effects: {} }
-                    ]
-                }
-            ]
-        },
+        // Elite Four is now handled by the dedicated ELITEFOUR screen
 
         // ===== PERMANENT DEATH EVENTS =====
         // Forest / Route Deaths
