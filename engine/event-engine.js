@@ -21,7 +21,7 @@
             // Route event pool check (if event has no location restriction, it can happen anywhere)
             if (!event.locationIds && !event.terrainTypes && route.eventPool && !route.eventPool.includes(event.id)) {
                 // General events can still occur anywhere
-                if (event.type === 'combat' || event.type === 'weather' || event.type === 'discovery' || event.type === 'hazard' || event.type === 'story') {
+                if (event.type === 'combat' || event.type === 'weather' || event.type === 'discovery' || event.type === 'hazard' || event.type === 'story' || event.type === 'legendary' || event.type === 'special') {
                     // Allow general events
                 } else {
                     return false;
@@ -155,6 +155,30 @@
                     effects._trainResult = evoResult;
                     PT.Engine.GameState.addToLog(state, `${evoResult.oldName} evolved into ${evoResult.newName}!`);
                 }
+            }
+        }
+
+        // Boost a random Pokemon's max HP
+        if (effects.boostPokemonMaxHp) {
+            const alive = PT.Engine.GameState.getAliveParty(state);
+            if (alive.length > 0) {
+                const target = state.rng.pick(alive);
+                const oldMax = target.maxHp;
+                target.maxHp = Math.min(target.maxHp + effects.boostPokemonMaxHp, 6);
+                target.hp = Math.min(target.hp + effects.boostPokemonMaxHp, target.maxHp);
+                effects._boostResult = { name: target.name, oldMax: oldMax, newMax: target.maxHp };
+            }
+        }
+
+        // Reduce a random Pokemon's max HP permanently
+        if (effects.reducePokemonMaxHp) {
+            const alive = PT.Engine.GameState.getAliveParty(state);
+            if (alive.length > 0) {
+                const target = state.rng.pick(alive);
+                const oldMax = target.maxHp;
+                target.maxHp = Math.max(1, target.maxHp - effects.reducePokemonMaxHp);
+                target.hp = Math.min(target.hp, target.maxHp);
+                effects._reduceResult = { name: target.name, oldMax: oldMax, newMax: target.maxHp };
             }
         }
 

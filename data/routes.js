@@ -19,7 +19,7 @@
                 { pokemonId: 43, weight: 15 },  // Oddish
                 { pokemonId: 69, weight: 15 }   // Bellsprout
             ],
-            eventPool: ["prof_oak_advice", "gary_rival"],
+            eventPool: ["prof_oak_advice", "gary_rival", "ash_pikachu_challenge"],
             flavor: "The smell of fresh grass fills the air. Mom waves goodbye from the doorstep."
         },
         {
@@ -99,7 +99,7 @@
                 { pokemonId: 60, weight: 15 },  // Poliwag
                 { pokemonId: 63, weight: 5 }    // Abra
             ],
-            eventPool: ["nugget_bridge", "team_rocket_ambush", "misty_fishing", "bill_event"],
+            eventPool: ["nugget_bridge", "team_rocket_ambush", "misty_fishing", "bill_event", "nugget_bridge_gauntlet", "power_plant_overload"],
             flavor: "The sound of flowing water fills the air. Nugget Bridge stretches north."
         },
         {
@@ -120,7 +120,7 @@
                 { pokemonId: 21, weight: 10 },  // Spearow
                 { pokemonId: 96, weight: 10 }   // Drowzee
             ],
-            eventPool: ["ss_anne_event", "lt_surge_trash_cans", "diglett_cave_shortcut"],
+            eventPool: ["ss_anne_event", "lt_surge_trash_cans", "diglett_cave_shortcut", "magikarp_salesman", "surge_minefield"],
             flavor: "The S.S. Anne docks at the harbor. Lt. Surge's gym crackles with electricity."
         },
         {
@@ -140,7 +140,7 @@
                 { pokemonId: 96, weight: 10 },  // Drowzee
                 { pokemonId: 48, weight: 10 }   // Venonat
             ],
-            eventPool: ["ghost_encounter", "pokemon_tower", "channeler_curse", "mr_fuji_rescue"],
+            eventPool: ["ghost_encounter", "pokemon_tower", "channeler_curse", "mr_fuji_rescue", "cubone_mother", "drowzee_dream", "mr_fuji_blessing", "ghost_rival_past"],
             flavor: "An eerie melody plays somewhere. The Pokemon Tower looms overhead."
         },
         {
@@ -162,7 +162,7 @@
                 { pokemonId: 37, weight: 10 },  // Vulpix
                 { pokemonId: 58, weight: 10 }   // Growlithe
             ],
-            eventPool: ["game_corner", "team_rocket_hideout", "dept_store_sale", "eevee_gift"],
+            eventPool: ["game_corner", "team_rocket_hideout", "dept_store_sale", "eevee_gift", "game_corner_porygon", "eevee_rooftop", "rocket_shakedown"],
             flavor: "Neon lights and the scent of perfume. The Game Corner beckons."
         },
         {
@@ -186,7 +186,7 @@
                 { pokemonId: 137, weight: 5 },  // Porygon
                 { pokemonId: 52, weight: 10 }   // Meowth
             ],
-            eventPool: ["silph_co_siege", "team_rocket_ambush", "fighting_dojo", "lapras_gift"],
+            eventPool: ["silph_co_siege", "team_rocket_ambush", "fighting_dojo", "lapras_gift", "copycat_ditto"],
             flavor: "Silph Co. towers over everything. Something sinister is happening inside."
         },
         {
@@ -258,7 +258,7 @@
                 { pokemonId: 140, weight: 5 },  // Kabuto
                 { pokemonId: 142, weight: 3 }   // Aerodactyl
             ],
-            eventPool: ["pokemon_mansion", "mewtwo_journal", "fossil_revival", "blaine_quiz"],
+            eventPool: ["pokemon_mansion", "mewtwo_journal", "fossil_revival", "blaine_quiz", "cinnabar_experiment"],
             flavor: "Volcanic heat rises from the ground. The abandoned Pokemon Mansion hides secrets."
         },
         {

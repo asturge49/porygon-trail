@@ -28,6 +28,9 @@
                         if (choice.requiresKeyItem && !state.keyItems.includes(choice.requiresKeyItem)) {
                             label += ` (Need ${choice.requiresKeyItem})`;
                         }
+                        if (choice.requiresPartySize && PT.Engine.GameState.getAliveParty(state).length < choice.requiresPartySize) {
+                            label += ` (Need ${choice.requiresPartySize}+ Pokemon)`;
+                        }
                         if (choice.bonusAbility && PT.Engine.GameState.hasAbility(state, choice.bonusAbility)) {
                             label += ` [${choice.bonusAbility.toUpperCase()} BONUS!]`;
                         }
@@ -109,6 +112,12 @@
         }
         if (effects.trainPokemon && effects._trainResult && effects._trainResult.evolved) {
             lines.push(`⬆ ${effects._trainResult.oldName} evolved into ${effects._trainResult.newName}!`);
+        }
+        if (effects.boostPokemonMaxHp && effects._boostResult) {
+            lines.push(`💪 ${effects._boostResult.name} max HP: ${effects._boostResult.oldMax} → ${effects._boostResult.newMax}!`);
+        }
+        if (effects.reducePokemonMaxHp && effects._reduceResult) {
+            lines.push(`⬇ ${effects._reduceResult.name} max HP: ${effects._reduceResult.oldMax} → ${effects._reduceResult.newMax}!`);
         }
         if (effects.champion) lines.push('YOU BECAME CHAMPION!');
         if (effects.pokemonDeath && effects._deathResult && effects._deathResult.killed) {

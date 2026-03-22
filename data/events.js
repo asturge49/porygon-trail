@@ -185,18 +185,27 @@
             ]
         },
         {
-            id: "ash_pikachu",
-            type: "story",
-            name: "Ash & Pikachu!",
-            description: "A kid with a Pikachu on his shoulder waves at you. \"Hey! I'm gonna be a Pokemon Master too! Want some help?\"",
-            weight: 6,
-            oneTime: false,
+            id: "ash_pikachu_challenge",
+            type: "legendary",
+            name: "Ash's Pikachu!",
+            description: "A kid in a red cap grins at you. His Pikachu's cheeks spark with terrifying power. \"I've beaten the Indigo League, y'know! My Pikachu can take on anyone. Wanna try?\"",
+            weight: 4,
+            oneTime: true,
+            locationIds: ["pallet_town"],
             choices: [
                 {
-                    text: "Travel together for a bit",
+                    text: "Challenge Ash's Pikachu!",
                     outcomes: [
-                        { weight: 70, narration: "Ash's Pikachu cheers up your Pokemon! One is healed.", effects: { healOne: true } },
-                        { weight: 30, narration: "Ash shares his food and some Pokemon wisdom. Your team feels stronger!", effects: { food: 5, healOne: true } }
+                        { weight: 25, narration: "Your Pokemon fights valiantly and somehow overpowers Ash's Pikachu! Ash stares in disbelief. \"Wow... you're the real deal. Pikachu, go with them.\" The battle-hardened Pikachu joins your team — but it has a stubborn streak.", effects: { catchPokemon: 25, partyDamage: 1 } },
+                        { weight: 35, narration: "Ash's Pikachu is on another level. Thunderbolt after Thunderbolt rains down on your team. You lose badly. Ash helps patch up your Pokemon, but the damage is done.", effects: { partyDamage: 2 } },
+                        { weight: 25, narration: "Pikachu's Thunder knocks your Pokemon out cold. It doesn't get back up. Ash looks horrified. \"I... I'm sorry. Pikachu doesn't know its own strength.\"", effects: { pokemonDeath: true } },
+                        { weight: 15, narration: "A close fight! Your Pokemon holds its own but ultimately falls. Ash is impressed. \"You've got guts. Here, take these.\" He hands you supplies.", effects: { partyDamage: 1, potions: 3, food: 10 } }
+                    ]
+                },
+                {
+                    text: "\"Maybe another time, Ash.\"",
+                    outcomes: [
+                        { weight: 100, narration: "Ash shrugs. \"Your loss! Come on, Pikachu!\" They disappear down Route 1, Pikachu riding on his shoulder.", effects: {} }
                     ]
                 }
             ]
@@ -288,22 +297,28 @@
         {
             id: "fossil_discovery",
             type: "discovery",
-            name: "Fossil Discovery!",
-            description: "You find ancient fossils embedded in the cave wall!",
+            name: "Fossil Resurrection!",
+            description: "Deep in Mt. Moon, you find two ancient fossils embedded in the cave wall — one spiral-shaped, one dome-shaped. A scientist nearby has portable revival equipment, but the process requires enormous energy. \"I can only revive ONE, and it'll drain all your supplies. The other fossil will crumble when removed.\" This is a permanent choice.",
             weight: 6,
             oneTime: true,
             locationIds: ["mt_moon"],
             choices: [
                 {
-                    text: "Take the Helix Fossil",
+                    text: "Revive Omanyte (Helix Fossil) — costs 20 food",
                     outcomes: [
-                        { weight: 100, narration: "You carefully extract the Helix Fossil. Maybe someone can revive it!", effects: { keyItem: "Helix Fossil" } }
+                        { weight: 100, narration: "The machine whirs to life. The Helix Fossil glows, cracks, and an Omanyte blinks up at you. The Dome Fossil crumbles to dust. It cost you dearly, but you have a living fossil.", effects: { food: -20, catchPokemon: 138 } }
                     ]
                 },
                 {
-                    text: "Take the Dome Fossil",
+                    text: "Revive Kabuto (Dome Fossil) — costs 20 food",
                     outcomes: [
-                        { weight: 100, narration: "You carefully extract the Dome Fossil. It looks ancient!", effects: { keyItem: "Dome Fossil" } }
+                        { weight: 100, narration: "The machine hums with power. The Dome Fossil splits open and Kabuto skitters out, alive after millions of years. The Helix Fossil turns to powder. A heavy price for a miracle.", effects: { food: -20, catchPokemon: 140 } }
+                    ]
+                },
+                {
+                    text: "Leave the fossils alone",
+                    outcomes: [
+                        { weight: 100, narration: "You can't afford to lose those supplies. The fossils remain embedded in the cave wall, waiting for another trainer.", effects: {} }
                     ]
                 }
             ]
@@ -4758,6 +4773,398 @@
                     { weight: 50, narration: "They grumble but deal with it.", effects: {} },
                     { weight: 50, narration: "They sneak food when you're not looking.", effects: { food: -3 } }
                 ]}
+            ]
+        },
+
+        // ===== SCRIPTED SPECIAL ENCOUNTERS =====
+
+        // #3 - Cubone's Mother (Lavender Town)
+        {
+            id: "cubone_mother",
+            type: "story",
+            name: "The Ghost of Marowak!",
+            description: "The top floor of Pokemon Tower is ice cold. A spectral Marowak materializes, bone raised, blocking the stairway. Behind her, a small Cubone whimpers. She died protecting her child from Team Rocket. She won't let anyone pass — dead or alive.",
+            weight: 8,
+            oneTime: true,
+            locationIds: ["lavender_town"],
+            choices: [
+                {
+                    text: "Fight through the ghost",
+                    outcomes: [
+                        { weight: 35, narration: "Your Pokemon battles the spectral Marowak. It's brutal — she fights with the fury of a mother. Your Pokemon is badly hurt, but the ghost finally fades. The Cubone looks at you with wide, tearful eyes... and follows you. It has no one else.", effects: { partyDamage: 2, catchPokemon: 104 } },
+                        { weight: 35, narration: "The ghost Marowak is relentless. Your Pokemon takes devastating hits. One doesn't survive the onslaught. But the ghost finally finds peace, and the orphaned Cubone joins you.", effects: { pokemonDeath: true, catchPokemon: 104 } },
+                        { weight: 30, narration: "Marowak's ghost is too powerful. Your team is battered and you're forced to retreat. The Cubone watches you go.", effects: { partyDamage: 3 } }
+                    ]
+                },
+                {
+                    text: "Leave them in peace",
+                    outcomes: [
+                        { weight: 100, narration: "You bow your head and back away slowly. Some bonds shouldn't be broken. The ghost cradles her child as you descend the tower. You feel... lighter, somehow.", effects: { healOne: true } }
+                    ]
+                }
+            ]
+        },
+
+        // #4 - Game Corner Porygon (Celadon City)
+        {
+            id: "game_corner_porygon",
+            type: "special",
+            name: "Shady Porygon Deal!",
+            description: "In the back room of the Celadon Game Corner, a Rocket grunt pulls you aside. \"Psst. I got something special. A Porygon — digital Pokemon, one of a kind. But nothing's free, kid. I want $1500 AND one of your Pokemon. A trade's a trade.\"",
+            weight: 5,
+            oneTime: true,
+            locationIds: ["celadon_city"],
+            choices: [
+                {
+                    text: "Pay $1500 and trade a Pokemon",
+                    requiresMoney: 1500,
+                    requiresPartySize: 2,
+                    outcomes: [
+                        { weight: 70, narration: "The grunt snatches your money and takes one of your Pokemon. He slides a Poke Ball across the table. Inside, a Porygon hums with digital energy. The deal stings, but Porygon is genuinely remarkable.", effects: { money: -1500, pokemonDeath: true, catchPokemon: 137 } },
+                        { weight: 30, narration: "You hand over the cash and a Pokemon. The grunt grins — then the Porygon's ball clicks open. It's real, and it's powerful. But as you leave, you can't shake the guilt of what you traded away.", effects: { money: -1500, pokemonDeath: true, catchPokemon: 137 } }
+                    ]
+                },
+                {
+                    text: "\"I don't deal with Rockets.\"",
+                    outcomes: [
+                        { weight: 70, narration: "\"Your loss, kid.\" The grunt melts back into the shadows. You leave the Game Corner with your conscience and your team intact.", effects: {} },
+                        { weight: 30, narration: "The grunt doesn't take rejection well. \"Nobody says no to us.\" You're shoved out and lose some cash in the scuffle.", effects: { money: -200 } }
+                    ]
+                }
+            ]
+        },
+
+        // #5 - Eevee's Burden (Celadon City)
+        {
+            id: "eevee_rooftop",
+            type: "story",
+            name: "Abandoned Eevee!",
+            description: "On the rooftop of the Celadon Mansion, you find a small Eevee shivering in a cardboard box. It's been abandoned — malnourished, sick, barely clinging to life. Its eyes meet yours. It needs help desperately, but nursing it back to health will drain your supplies.",
+            weight: 6,
+            oneTime: true,
+            locationIds: ["celadon_city"],
+            choices: [
+                {
+                    text: "Take Eevee in",
+                    outcomes: [
+                        { weight: 60, narration: "You scoop up the trembling Eevee and use your potions to stabilize it. It's weak — barely standing — but alive. It nuzzles into your arms. This one's going to need a lot of care.", effects: { catchPokemon: 133, potions: -2 } },
+                        { weight: 40, narration: "You don't have enough potions, so you share your food instead. A lot of it. Eevee slowly recovers enough to stand and follows you, wobbly but determined. It'll be a burden for now.", effects: { catchPokemon: 133, food: -15 } }
+                    ]
+                },
+                {
+                    text: "You can't afford another mouth to feed",
+                    outcomes: [
+                        { weight: 100, narration: "You close the box gently and walk away. The sound of Eevee's cries follows you down the stairs. Sometimes survival means making choices that haunt you.", effects: {} }
+                    ]
+                }
+            ]
+        },
+
+        // #6 - Mew Apparition (Anywhere)
+        {
+            id: "mew_apparition",
+            type: "legendary",
+            name: "Mew!",
+            description: "The air shimmers. A pink, cat-like Pokemon materializes out of thin air, floating inches from your face. It giggles — actually giggles — and does a backflip. This is Mew. The original. The mythical ancestor of all Pokemon. You have one shot.",
+            weight: 1,
+            oneTime: true,
+            minDay: 10,
+            choices: [
+                {
+                    text: "Throw your best ball!",
+                    requiresItem: "ultraballs",
+                    outcomes: [
+                        { weight: 5, narration: "The Ultra Ball connects. Mew looks at it curiously... and lets itself be caught. It CHOSE you. The ball clicks shut and glows with ancient power. You just caught a god.", effects: { ultraballs: -1, catchPokemon: 151 } },
+                        { weight: 55, narration: "The Ultra Ball phases right through Mew like it isn't there. Mew giggles again, and a psychic shockwave ripples through your team. Then it vanishes. Gone. Forever.", effects: { ultraballs: -1, partyDamage: 2 } },
+                        { weight: 40, narration: "Mew bats the ball away playfully. Then its eyes glow, and your entire team is hit with a psychic pulse. Pokemon cry out in pain. Mew tilts its head, waves goodbye, and disappears.", effects: { ultraballs: -1, partyDamage: 3 } }
+                    ]
+                },
+                {
+                    text: "Just... watch it",
+                    outcomes: [
+                        { weight: 60, narration: "Mew floats around you, examining your Pokemon with ancient curiosity. It touches your lead Pokemon's forehead — a warm glow spreads through them. Then Mew vanishes in a flash of light. You'll never see it again, but you'll never forget.", effects: { healAll: true, seePokemon: 151 } },
+                        { weight: 40, narration: "Mew studies you for a long moment, as if deciding something. Then it waves a tiny paw and disappears. Your team feels strangely energized, like they've been blessed by something beyond understanding.", effects: { healAll: true, boostPokemonMaxHp: 1, seePokemon: 151 } }
+                    ]
+                }
+            ]
+        },
+
+        // #7 - Magikarp Salesman (Vermilion City)
+        {
+            id: "magikarp_salesman",
+            type: "story",
+            name: "The Magikarp Salesman!",
+            description: "A shifty man in a trench coat blocks your path. \"Hey kid! You look like a smart trainer. Have I got a deal for you! This Magikarp — this SPECIFIC Magikarp — is absolutely one of a kind! Only $500! You won't regret it!\" He's sweating.",
+            weight: 7,
+            oneTime: true,
+            locationIds: ["vermilion_city"],
+            choices: [
+                {
+                    text: "Buy the Magikarp ($500)",
+                    requiresMoney: 500,
+                    outcomes: [
+                        { weight: 60, narration: "You hand over the cash. The man practically runs away. You're now the proud owner of... a Magikarp. It flops pathetically in its ball. What have you done. But hey — Magikarp evolves into Gyarados. Right? ...Right?", effects: { money: -500, catchPokemon: 129 } },
+                        { weight: 40, narration: "\"SOLD!\" He grabs your money and shoves a Poke Ball into your hands. The Magikarp inside looks completely ordinary. You feel like an idiot. But deep down, something tells you this fish has potential.", effects: { money: -500, catchPokemon: 129 } }
+                    ]
+                },
+                {
+                    text: "\"Do I look stupid to you?\"",
+                    outcomes: [
+                        { weight: 70, narration: "\"Your loss, kid! This is a PREMIUM fish!\" He shuffles off to find his next victim. Your wallet thanks you.", effects: {} },
+                        { weight: 30, narration: "\"Fine! How about a discount — $200! No? Okay here, just take this junk.\" He throws some Poke Balls at you and storms off.", effects: { pokeballs: 3 } }
+                    ]
+                }
+            ]
+        },
+
+        // #8 - Drowzee's Dream (Lavender Town)
+        {
+            id: "drowzee_dream",
+            type: "story",
+            name: "Drowzee's Dream!",
+            description: "A wild Drowzee emerges from the fog and locks eyes with your lead Pokemon. Before you can react, your Pokemon's eyes glaze over — it's been put into a deep, unnatural sleep. The Drowzee is feeding on its dreams. You need to act fast.",
+            weight: 5,
+            oneTime: true,
+            locationIds: ["lavender_town"],
+            choices: [
+                {
+                    text: "Use food to lure Drowzee away (20 food)",
+                    outcomes: [
+                        { weight: 100, narration: "You spread out your supplies — the smell breaks Drowzee's concentration. It shuffles toward the food, gorging itself. Your Pokemon wakes up, shaken but unharmed. Twenty rations gone to save one Pokemon. Worth it.", effects: { food: -20 } }
+                    ]
+                },
+                {
+                    text: "Let your Pokemon dream",
+                    outcomes: [
+                        { weight: 45, narration: "Your Pokemon writhes in its sleep. The dream goes deeper. When it finally wakes, something has changed — it feels STRONGER. The nightmare forged it. Drowzee flees, overfed.", effects: { boostPokemonMaxHp: 1 } },
+                        { weight: 55, narration: "The dream turns into a nightmare. Your Pokemon screams in its sleep. When it wakes, it's dazed and weakened. The Drowzee drained something vital. Your Pokemon will never be quite the same.", effects: { partyDamage: 2 } }
+                    ]
+                }
+            ]
+        },
+
+        // #9 - Lt. Surge's Minefield (Vermilion City)
+        {
+            id: "surge_minefield",
+            type: "hazard",
+            name: "Lt. Surge's Minefield!",
+            description: "The road ahead crackles with residual electricity — Lt. Surge's old training ground. Electric traps are scattered across the path. \"DANGER: LIVE CURRENT\" reads a rusted sign. You can see the safe route, but it'll take time to navigate. Or you could just run for it.",
+            weight: 6,
+            oneTime: true,
+            locationIds: ["vermilion_city"],
+            choices: [
+                {
+                    text: "Navigate carefully (lose 1 day)",
+                    bonusAbility: "flash",
+                    outcomes: [
+                        { weight: 70, narration: "Step by careful step, you weave through the electric traps. It takes all day, but you and your team make it through unscathed.", effects: { daysLost: 1 } },
+                        { weight: 30, narration: "You're almost through when a hidden trap triggers! A small shock, but nothing serious. Better than rushing.", effects: { daysLost: 1, partyDamage: 1 } }
+                    ],
+                    bonusOutcome: { weight: 100, narration: "Your Electric-type senses the current and guides you through safely in no time!", effects: {} }
+                },
+                {
+                    text: "Sprint through!",
+                    outcomes: [
+                        { weight: 25, narration: "You bolt through the minefield, dodging sparks left and right. By some miracle, you make it! Your heart is pounding out of your chest.", effects: {} },
+                        { weight: 40, narration: "ZAP! ZAP! ZAP! Your Pokemon take hits from all sides! You make it through, but everyone's hurting.", effects: { partyDamage: 2 } },
+                        { weight: 35, narration: "A massive surge hits your team! A Pokemon is paralyzed and badly injured. You barely make it to the other side.", effects: { partyDamage: 3, statusRandom: "paralyzed" } }
+                    ]
+                }
+            ]
+        },
+
+        // #10 - Mr. Fuji's Blessing (Lavender Town)
+        {
+            id: "mr_fuji_blessing",
+            type: "story",
+            name: "Mr. Fuji's Offer!",
+            description: "The kind old Mr. Fuji tends to abandoned Pokemon in his home. He looks at your battered team with gentle concern. \"I can heal all of your Pokemon completely — I have the medicine and the skill. But I must ask something in return. One of your Pokemon... let me care for it here. It will live peacefully. I promise.\"",
+            weight: 5,
+            oneTime: true,
+            locationIds: ["lavender_town"],
+            requiresPartySize: 2,
+            choices: [
+                {
+                    text: "Accept — release a Pokemon for a full heal",
+                    requiresPartySize: 2,
+                    outcomes: [
+                        { weight: 100, narration: "You choose one of your Pokemon and hand its ball to Mr. Fuji. It looks back at you one last time before being led inside. Mr. Fuji keeps his word — your remaining team is healed completely. The house is warm. Your Pokemon will be safe. But the team feels smaller.", effects: { pokemonDeath: true, healAll: true } }
+                    ]
+                },
+                {
+                    text: "Decline his offer",
+                    outcomes: [
+                        { weight: 60, narration: "\"I understand, dear child. Your bond with them is strong.\" He gives you a single potion and a sad smile. \"Take care of them.\"", effects: { potions: 1 } },
+                        { weight: 40, narration: "Mr. Fuji nods understandingly. \"Then at least take this.\" He hands you some medicine and food from his own supplies.", effects: { potions: 2, food: 5 } }
+                    ]
+                }
+            ]
+        },
+
+        // #11 - Team Rocket Shakedown (Celadon City)
+        {
+            id: "rocket_shakedown",
+            type: "combat",
+            name: "Rocket Shakedown!",
+            description: "Three Rocket grunts corner you in an alley behind the Game Corner. \"Nice Pokemon you got there. Here's how this works: give us one of your Pokemon as a 'protection fee,' and we'll let you into our stash. Refuse, and we take one anyway. Your call, trainer.\"",
+            weight: 5,
+            oneTime: true,
+            locationIds: ["celadon_city"],
+            choices: [
+                {
+                    text: "Hand over a Pokemon willingly",
+                    requiresPartySize: 2,
+                    outcomes: [
+                        { weight: 100, narration: "You hand over a Poke Ball. The grunt inspects it, nods, and opens a hidden door. Inside: cash, candy, the works. It's a king's ransom. But on the walk home, you keep reaching for a Poke Ball that isn't there anymore.", effects: { pokemonDeath: true, money: 1000, rareCandy: 1 } }
+                    ]
+                },
+                {
+                    text: "Fight your way out!",
+                    outcomes: [
+                        { weight: 35, narration: "Your Pokemon explodes out of its ball and sends the grunts scrambling! You grab what you can from the chaos and run. A smaller haul, but you kept your team.", effects: { money: 400 } },
+                        { weight: 35, narration: "You fight hard and win, but your Pokemon takes serious hits. The grunts flee cursing. Victory, but it cost you.", effects: { partyDamage: 2, money: 200 } },
+                        { weight: 30, narration: "Three on one. Your Pokemon fights bravely but they overpower you. They take a Pokemon AND rough up the rest of your team.", effects: { pokemonDeath: true, partyDamage: 1 } }
+                    ]
+                }
+            ]
+        },
+
+        // #12 - Cinnabar Lab Experiment (Cinnabar Island)
+        {
+            id: "cinnabar_experiment",
+            type: "special",
+            name: "Cinnabar Lab Experiment!",
+            description: "In the ruins of the Cinnabar Research Lab, you find scientists continuing their work in secret. \"We've perfected our enhancement serum — the same research that created Mewtwo, refined and safer. We can make one of your Pokemon significantly stronger. But there's a 30% chance of... cellular rejection. We've lost subjects before. Your choice.\"",
+            weight: 4,
+            oneTime: true,
+            locationIds: ["cinnabar_island"],
+            choices: [
+                {
+                    text: "Enhance a Pokemon",
+                    outcomes: [
+                        { weight: 70, narration: "Your Pokemon is strapped into the machine. Lights flash. It screams. Then silence. When the pod opens, your Pokemon stands taller, stronger. Its eyes glow briefly. The enhancement worked. +2 max HP. The scientists cheer.", effects: { boostPokemonMaxHp: 2 } },
+                        { weight: 30, narration: "The machine sparks. Your Pokemon convulses. Alarms blare. The scientists scramble but it's too late. \"Cellular rejection...\" one whispers. Your Pokemon is gone. The same technology that created Mewtwo just destroyed one of yours.", effects: { pokemonDeath: true } }
+                    ]
+                },
+                {
+                    text: "Walk away from this madness",
+                    outcomes: [
+                        { weight: 100, narration: "\"This is what created Mewtwo. No thanks.\" You leave the lab. The lead scientist calls after you: \"It's SAFE now!\" You don't look back.", effects: {} }
+                    ]
+                }
+            ]
+        },
+
+        // #13 - Copycat's Trick (Saffron City)
+        {
+            id: "copycat_ditto",
+            type: "special",
+            name: "Copycat's Ditto!",
+            description: "The famous Copycat girl of Saffron City finds you. \"My Ditto can copy ANY Pokemon perfectly! Want to test your strongest against its own mirror?\" Her Ditto transforms into an exact copy of your lead Pokemon. A mirror match — your Pokemon versus itself.",
+            weight: 5,
+            oneTime: true,
+            locationIds: ["saffron_city"],
+            choices: [
+                {
+                    text: "Accept the mirror match!",
+                    outcomes: [
+                        { weight: 35, narration: "Your Pokemon faces its perfect clone. The battle is surreal — identical moves, identical strength. But YOUR Pokemon has heart. The real thing beats the copy. Copycat is thrilled: \"Amazing! Ditto, go with them!\" Ditto joins your team!", effects: { catchPokemon: 132 } },
+                        { weight: 35, narration: "The mirror match is brutal. Your Pokemon fights itself to a standstill. Both collapse. Your Pokemon recovers, but something's been drained — permanently. Copycat recalls her Ditto sheepishly. \"Sorry... Ditto doesn't hold back.\"", effects: { partyDamage: 1, reducePokemonMaxHp: 1 } },
+                        { weight: 30, narration: "Your Pokemon wins! Barely. The effort was immense. Copycat laughs and hands over Ditto's ball. \"You earned it!\" But your team is exhausted from watching.", effects: { catchPokemon: 132, partyDamage: 1 } }
+                    ]
+                },
+                {
+                    text: "Decline the challenge",
+                    outcomes: [
+                        { weight: 100, narration: "\"Aww, no fun!\" Copycat pouts. Her Ditto reverts to a pink blob and waves at you as they leave.", effects: {} }
+                    ]
+                }
+            ]
+        },
+
+        // #14 - Nugget Bridge Gauntlet (Cerulean City)
+        {
+            id: "nugget_bridge_gauntlet",
+            type: "combat",
+            name: "Nugget Bridge Gauntlet!",
+            description: "Five trainers stand in a line across Nugget Bridge. A sign reads: \"DEFEAT ALL 5 TRAINERS, WIN THE NUGGET! $500 PER WIN! $5000 COMPLETION BONUS!\" The first trainer cracks their knuckles. Once you start, there's no turning back. Each round hits harder.",
+            weight: 6,
+            oneTime: true,
+            locationIds: ["cerulean_city"],
+            choices: [
+                {
+                    text: "Take on the gauntlet!",
+                    outcomes: [
+                        { weight: 15, narration: "You are UNSTOPPABLE. Five trainers, five victories. Your Pokemon barely breaks a sweat. The final trainer hands you the Nugget and a fat stack of cash. \"Nobody's ever swept us like that!\" Your team is battle-hardened and your wallet is full.", effects: { money: 7500, rareCandy: 1, trainPokemon: true } },
+                        { weight: 25, narration: "Four down, one to go — but the fifth trainer is brutal. Your Pokemon wins by a thread. You collect the full prize, but your team is battered. Every dollar was earned in blood.", effects: { money: 7500, rareCandy: 1, partyDamage: 2, trainPokemon: true } },
+                        { weight: 30, narration: "You beat three trainers before your Pokemon can't continue. $1500 earned, but the Nugget slips through your fingers. Your team took a serious beating on the bridge.", effects: { money: 1500, partyDamage: 2 } },
+                        { weight: 20, narration: "The second trainer wipes the floor with you. $500 for one win, and your team is wrecked. You limp off the bridge, humbled.", effects: { money: 500, partyDamage: 2 } },
+                        { weight: 10, narration: "A complete disaster. The first trainer's Pokemon lands a devastating critical hit. Yours doesn't get up. You're carried off the bridge. No money. No Nugget. Just loss.", effects: { pokemonDeath: true } }
+                    ]
+                },
+                {
+                    text: "Not worth the risk",
+                    outcomes: [
+                        { weight: 100, narration: "\"Smart move,\" mutters a trainer who looks like he's seen better days. You cross the bridge quietly and move on.", effects: {} }
+                    ]
+                }
+            ]
+        },
+
+        // #15 - Ghost of Rival Past (Lavender Town)
+        {
+            id: "ghost_rival_past",
+            type: "story",
+            name: "A Familiar Grave...",
+            description: "In Pokemon Tower, a small gravestone catches your eye. The name on it is... your rival's Pokemon. The one from your first battle. Did it... die? A spectral shape rises from the grave — not a ghost type, but something worse. A memory. It attacks, driven by guilt and grief. There is no winning this fight.",
+            weight: 3,
+            oneTime: true,
+            locationIds: ["lavender_town"],
+            minDay: 8,
+            choices: [
+                {
+                    text: "Endure the haunting",
+                    outcomes: [
+                        { weight: 50, narration: "The spectral Pokemon rages against your team. It can't be fought — only survived. Your Pokemon take hits. Your food scatters. When it finally fades, the tower is silent. The grave is just a grave again. But the question remains: was it your fault?", effects: { partyDamage: 2, food: -8 } },
+                        { weight: 50, narration: "The ghost tears through your supplies in blind fury. A Pokemon cries out in pain. When the haunting ends, you're shaken to your core. Some victories have consequences you never see.", effects: { partyDamage: 1, food: -10, money: -200 } }
+                    ]
+                },
+                {
+                    text: "Use a Potion as an offering",
+                    requiresItem: "potions",
+                    outcomes: [
+                        { weight: 60, narration: "You place the potion at the gravestone. The ghost pauses. Studies it. The rage fades from its eyes. It dissolves peacefully, and you find $300 scattered where it stood — left by previous trainers who weren't as kind.", effects: { potions: -1, money: 300 } },
+                        { weight: 40, narration: "The potion offering angers it further — you can't heal the dead. The ghost lashes out before finally dissipating. You managed to calm it eventually, but not before taking damage.", effects: { potions: -1, partyDamage: 1 } }
+                    ]
+                }
+            ]
+        },
+
+        // #16 - Power Plant Overload (Cerulean City area)
+        {
+            id: "power_plant_overload",
+            type: "hazard",
+            name: "Power Plant Overload!",
+            description: "The abandoned Power Plant is surging with uncontrolled energy. Sparks fly from every surface. An electric overload is building — someone needs to absorb the excess current or it'll fry everything in the area. An Electric-type Pokemon could channel it, but the voltage is dangerous.",
+            weight: 4,
+            oneTime: true,
+            locationIds: ["cerulean_city"],
+            choices: [
+                {
+                    text: "Send in a Pokemon to absorb it",
+                    outcomes: [
+                        { weight: 50, narration: "Your Pokemon charges into the plant and absorbs the overload! The electricity courses through it — agonizing, but empowering. It emerges stronger than before, crackling with residual energy. But the strain took a physical toll.", effects: { boostPokemonMaxHp: 1, partyDamage: 2 } },
+                        { weight: 30, narration: "The voltage is too much! Your Pokemon absorbs what it can but gets badly shocked in the process. No permanent boost — just pain.", effects: { partyDamage: 3 } },
+                        { weight: 20, narration: "Your Pokemon channels the electricity perfectly! The overload stabilizes. Your Pokemon THRIVES on the energy, emerging significantly stronger.", effects: { boostPokemonMaxHp: 1, partyDamage: 1 } }
+                    ]
+                },
+                {
+                    text: "Stay clear of the plant",
+                    outcomes: [
+                        { weight: 60, narration: "The overload discharges on its own in a massive explosion. Debris and sparks fly — your supplies take the hit.", effects: { food: -5, money: -200 } },
+                        { weight: 40, narration: "You keep your distance. The surge eventually dies down. No harm done, but no gain either. The Power Plant falls silent.", effects: {} }
+                    ]
+                }
             ]
         }
     ];
