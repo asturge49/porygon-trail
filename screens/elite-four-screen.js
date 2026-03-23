@@ -190,13 +190,13 @@
         const typeChart = getTypeWeaknesses(opponentTypes);
 
         // Calculate success chance — HARDER than gyms
-        let chance = 40; // Base 40% (gym is 50%)
+        let chance = 35; // Base 35% (gym is 45%)
 
         // Type advantage (smaller bonus than gyms)
         const hasAdvantage = pokemon.types.some(t => typeChart.weakTo.includes(t));
         const hasDisadvantage = pokemon.types.some(t => typeChart.strongTo.includes(t));
-        if (hasAdvantage) chance += 20;
-        if (hasDisadvantage) chance -= 20;
+        if (hasAdvantage) chance += 15;
+        if (hasDisadvantage) chance -= 15;
 
         // Badge bonus (smaller than gym)
         chance += state.badges.filter(b => b !== 'champion').length * 2;
@@ -206,7 +206,7 @@
         chance += aliveCount * 2;
 
         // Lower ceiling than gyms
-        chance = Math.max(10, Math.min(75, chance));
+        chance = Math.max(10, Math.min(65, chance));
 
         const won = state.rng.chance(chance);
 

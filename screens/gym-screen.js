@@ -128,23 +128,23 @@
         const typeChart = getTypeWeaknesses(opponentTypes);
 
         // Calculate success chance
-        let chance = 50;
+        let chance = 45;
 
         // Type advantage based on opponent Pokemon's types
         const hasAdvantage = pokemon.types.some(t => typeChart.weakTo.includes(t));
         const hasDisadvantage = pokemon.types.some(t => typeChart.strongTo.includes(t));
-        if (hasAdvantage) chance += 25;
-        if (hasDisadvantage) chance -= 25;
+        if (hasAdvantage) chance += 20;
+        if (hasDisadvantage) chance -= 20;
 
         // Badge count bonus
-        chance += state.badges.length * 3;
+        chance += state.badges.length * 2;
 
         // Party size bonus
         const aliveCount = PT.Engine.GameState.getAliveParty(state).length;
         chance += aliveCount * 2;
 
         // Clamp
-        chance = Math.max(10, Math.min(90, chance));
+        chance = Math.max(10, Math.min(80, chance));
 
         const won = state.rng.chance(chance);
 
