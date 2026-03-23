@@ -275,32 +275,16 @@
             });
 
         } else {
-            // Loss — Pokemon takes heavy damage, high death chance
+            // Loss — the fighting Pokemon is always killed
             if (PT.Engine.Audio) PT.Engine.Audio.gymDefeat();
 
-            const damage = 3;
-            // Low HP mons (1-2 HP) have 80% death chance, otherwise 60%
-            const deathChance = pokemon.hp <= 2 ? 80 : 60;
-
-            let killed = false;
-            let fainted = false;
-            if (state.rng.chance(deathChance)) {
-                const idx = state.party.indexOf(pokemon);
-                if (idx !== -1) {
-                    state.party.splice(idx, 1);
-                    state.pokemonLost++;
-                    killed = true;
-                }
-            } else {
-                fainted = PT.Engine.GameState.damagePokemon(pokemon, damage, state);
+            const idx = state.party.indexOf(pokemon);
+            if (idx !== -1) {
+                state.party.splice(idx, 1);
+                state.pokemonLost++;
             }
 
-            const died = killed || fainted;
-            if (died) {
-                PT.Engine.GameState.addToLog(state, `${pokemon.name} was killed by ${trainer.name}'s ${opponent.name}! 💀`);
-            } else {
-                PT.Engine.GameState.addToLog(state, `${pokemon.name} was badly hurt by ${trainer.name}'s ${opponent.name}.`);
-            }
+            PT.Engine.GameState.addToLog(state, `${pokemon.name} was killed by ${trainer.name}'s ${opponent.name}! 💀`);
 
             const aliveAfter = PT.Engine.GameState.getAliveParty(state);
             const partyWiped = aliveAfter.length === 0;
@@ -318,10 +302,8 @@
                     </div>
                     <div class="gym-leader-name">${trainer.name} wins</div>
                     <div style="font-size: 8px; margin-top: 8px;">
-                        ${died
-                            ? `💀 ${pokemon.name} was killed by ${opponent.name}!`
-                            : `${pokemon.name} takes ${damage} damage from ${opponent.name}!`}
-                        <br><span style="font-size: 6px;">Win chance was ${chance}%${pokemon.hp <= 2 && !died ? ' | Low HP = higher death risk!' : ''}</span>
+                        💀 ${pokemon.name} was killed by ${opponent.name}!
+                        <br><span style="font-size: 6px;">Win chance was ${chance}%</span>
                         ${partyWiped
                             ? '<br><strong>All your Pokemon have fallen...</strong>'
                             : `<br>You must defeat ${trainer.name}'s ${opponent.name} to advance.`}
