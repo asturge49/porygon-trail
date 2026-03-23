@@ -52,11 +52,12 @@
             hasGym: true,
             gymLeader: "brock",
             encounterTable: [
-                { pokemonId: 74, weight: 30 },  // Geodude
+                { pokemonId: 74, weight: 25 },  // Geodude
                 { pokemonId: 27, weight: 20 },  // Sandshrew
                 { pokemonId: 21, weight: 20 },  // Spearow
                 { pokemonId: 23, weight: 15 },  // Ekans
-                { pokemonId: 56, weight: 15 }   // Mankey
+                { pokemonId: 56, weight: 12 },  // Mankey
+                { pokemonId: 39, weight: 8 }    // Jigglypuff
             ],
             eventPool: ["museum_visit", "brock_roadblock", "fossil_merchant"],
             flavor: "The Pewter Museum stands tall. Brock's Gym awaits challengers."
@@ -71,13 +72,14 @@
             hasGym: false,
             gymLeader: null,
             encounterTable: [
-                { pokemonId: 41, weight: 35 },  // Zubat
+                { pokemonId: 41, weight: 30 },  // Zubat
                 { pokemonId: 74, weight: 20 },  // Geodude
                 { pokemonId: 46, weight: 15 },  // Paras
                 { pokemonId: 35, weight: 10 },  // Clefairy
-                { pokemonId: 27, weight: 10 },  // Sandshrew
+                { pokemonId: 27, weight: 8 },   // Sandshrew
                 { pokemonId: 95, weight: 5 },   // Onix
-                { pokemonId: 104, weight: 5 }   // Cubone
+                { pokemonId: 104, weight: 5 },  // Cubone
+                { pokemonId: 39, weight: 7 }    // Jigglypuff
             ],
             eventPool: ["team_rocket_ambush", "fossil_discovery", "moon_stone_event", "cave_collapse"],
             flavor: "Darkness surrounds you. Strange sounds echo through the cavern."
@@ -92,12 +94,14 @@
             hasGym: true,
             gymLeader: "misty",
             encounterTable: [
-                { pokemonId: 54, weight: 25 },  // Psyduck
-                { pokemonId: 118, weight: 20 }, // Goldeen
-                { pokemonId: 120, weight: 15 }, // Staryu
-                { pokemonId: 129, weight: 20 }, // Magikarp
-                { pokemonId: 60, weight: 15 },  // Poliwag
-                { pokemonId: 63, weight: 5 }    // Abra
+                { pokemonId: 54, weight: 20 },  // Psyduck
+                { pokemonId: 118, weight: 15 }, // Goldeen
+                { pokemonId: 120, weight: 12 }, // Staryu
+                { pokemonId: 129, weight: 18 }, // Magikarp
+                { pokemonId: 60, weight: 12 },  // Poliwag
+                { pokemonId: 63, weight: 5 },   // Abra
+                { pokemonId: 79, weight: 10 },  // Slowpoke
+                { pokemonId: 98, weight: 8 }    // Krabby
             ],
             eventPool: ["nugget_bridge", "team_rocket_ambush", "misty_fishing", "bill_event", "nugget_bridge_gauntlet", "power_plant_overload"],
             flavor: "The sound of flowing water fills the air. Nugget Bridge stretches north."
@@ -112,13 +116,17 @@
             hasGym: true,
             gymLeader: "lt_surge",
             encounterTable: [
-                { pokemonId: 25, weight: 15 },  // Pikachu
-                { pokemonId: 50, weight: 20 },  // Diglett
-                { pokemonId: 100, weight: 15 }, // Voltorb
-                { pokemonId: 81, weight: 15 },  // Magnemite
-                { pokemonId: 52, weight: 15 },  // Meowth
-                { pokemonId: 21, weight: 10 },  // Spearow
-                { pokemonId: 96, weight: 10 }   // Drowzee
+                { pokemonId: 25, weight: 12 },  // Pikachu
+                { pokemonId: 50, weight: 18 },  // Diglett
+                { pokemonId: 100, weight: 12 }, // Voltorb
+                { pokemonId: 81, weight: 12 },  // Magnemite
+                { pokemonId: 52, weight: 12 },  // Meowth
+                { pokemonId: 21, weight: 8 },   // Spearow
+                { pokemonId: 96, weight: 8 },   // Drowzee
+                { pokemonId: 83, weight: 3 },   // Farfetch'd
+                { pokemonId: 98, weight: 8 },   // Krabby
+                { pokemonId: 125, weight: 4 },  // Electabuzz
+                { pokemonId: 84, weight: 3 }    // Doduo
             ],
             eventPool: ["ss_anne_event", "lt_surge_trash_cans", "diglett_cave_shortcut", "magikarp_salesman", "surge_minefield"],
             flavor: "The S.S. Anne docks at the harbor. Lt. Surge's gym crackles with electricity."
@@ -153,14 +161,17 @@
             hasGym: true,
             gymLeader: "erika",
             encounterTable: [
-                { pokemonId: 43, weight: 20 },  // Oddish
-                { pokemonId: 44, weight: 10 },  // Gloom
-                { pokemonId: 69, weight: 20 },  // Bellsprout
-                { pokemonId: 102, weight: 15 }, // Exeggcute
-                { pokemonId: 114, weight: 10 }, // Tangela
+                { pokemonId: 43, weight: 18 },  // Oddish
+                { pokemonId: 44, weight: 8 },   // Gloom
+                { pokemonId: 69, weight: 18 },  // Bellsprout
+                { pokemonId: 102, weight: 12 }, // Exeggcute
+                { pokemonId: 114, weight: 8 },  // Tangela
                 { pokemonId: 133, weight: 5 },  // Eevee
-                { pokemonId: 37, weight: 10 },  // Vulpix
-                { pokemonId: 58, weight: 10 }   // Growlithe
+                { pokemonId: 37, weight: 8 },   // Vulpix
+                { pokemonId: 58, weight: 8 },   // Growlithe
+                { pokemonId: 143, weight: 3 },  // Snorlax
+                { pokemonId: 108, weight: 4 },  // Lickitung
+                { pokemonId: 84, weight: 8 }    // Doduo
             ],
             eventPool: ["game_corner", "team_rocket_hideout", "dept_store_sale", "eevee_gift", "game_corner_porygon", "eevee_rooftop", "rocket_shakedown"],
             flavor: "Neon lights and the scent of perfume. The Game Corner beckons."
@@ -175,16 +186,19 @@
             hasGym: true,
             gymLeader: "sabrina",
             encounterTable: [
-                { pokemonId: 63, weight: 20 },  // Abra
-                { pokemonId: 64, weight: 10 },  // Kadabra
-                { pokemonId: 96, weight: 20 },  // Drowzee
-                { pokemonId: 97, weight: 10 },  // Hypno
+                { pokemonId: 63, weight: 18 },  // Abra
+                { pokemonId: 64, weight: 8 },   // Kadabra
+                { pokemonId: 96, weight: 18 },  // Drowzee
+                { pokemonId: 97, weight: 8 },   // Hypno
                 { pokemonId: 122, weight: 5 },  // Mr. Mime
                 { pokemonId: 106, weight: 5 },  // Hitmonlee
                 { pokemonId: 107, weight: 5 },  // Hitmonchan
-                { pokemonId: 132, weight: 10 }, // Ditto
+                { pokemonId: 132, weight: 8 },  // Ditto
                 { pokemonId: 137, weight: 5 },  // Porygon
-                { pokemonId: 52, weight: 10 }   // Meowth
+                { pokemonId: 52, weight: 8 },   // Meowth
+                { pokemonId: 143, weight: 3 },  // Snorlax
+                { pokemonId: 124, weight: 4 },  // Jynx
+                { pokemonId: 108, weight: 5 }   // Lickitung
             ],
             eventPool: ["silph_co_siege", "team_rocket_ambush", "fighting_dojo", "lapras_gift", "copycat_ditto"],
             flavor: "Silph Co. towers over everything. Something sinister is happening inside."
@@ -199,17 +213,21 @@
             hasGym: true,
             gymLeader: "koga",
             encounterTable: [
-                { pokemonId: 48, weight: 15 },  // Venonat
-                { pokemonId: 49, weight: 10 },  // Venomoth
-                { pokemonId: 109, weight: 15 }, // Koffing
-                { pokemonId: 88, weight: 15 },  // Grimer
+                { pokemonId: 48, weight: 12 },  // Venonat
+                { pokemonId: 49, weight: 8 },   // Venomoth
+                { pokemonId: 109, weight: 12 }, // Koffing
+                { pokemonId: 88, weight: 12 },  // Grimer
                 { pokemonId: 128, weight: 5 },  // Tauros
                 { pokemonId: 115, weight: 5 },  // Kangaskhan
                 { pokemonId: 123, weight: 5 },  // Scyther
                 { pokemonId: 127, weight: 5 },  // Pinsir
                 { pokemonId: 113, weight: 5 },  // Chansey
                 { pokemonId: 147, weight: 5 },  // Dratini
-                { pokemonId: 111, weight: 10 }  // Rhyhorn
+                { pokemonId: 111, weight: 8 },  // Rhyhorn
+                { pokemonId: 84, weight: 8 },   // Doduo
+                { pokemonId: 85, weight: 3 },   // Dodrio
+                { pokemonId: 108, weight: 4 },  // Lickitung
+                { pokemonId: 79, weight: 3 }    // Slowpoke
             ],
             eventPool: ["safari_zone", "koga_invisible_walls", "warden_teeth", "rare_pokemon_sighting"],
             flavor: "The Safari Zone gates stand open. Koga's gym is full of invisible walls."
@@ -224,15 +242,18 @@
             hasGym: false,
             gymLeader: null,
             encounterTable: [
-                { pokemonId: 86, weight: 20 },  // Seel
-                { pokemonId: 87, weight: 10 },  // Dewgong
-                { pokemonId: 90, weight: 20 },  // Shellder
-                { pokemonId: 116, weight: 15 }, // Horsea
-                { pokemonId: 117, weight: 10 }, // Seadra
-                { pokemonId: 72, weight: 15 },  // Tentacool
+                { pokemonId: 86, weight: 18 },  // Seel
+                { pokemonId: 87, weight: 8 },   // Dewgong
+                { pokemonId: 90, weight: 18 },  // Shellder
+                { pokemonId: 116, weight: 12 }, // Horsea
+                { pokemonId: 117, weight: 8 },  // Seadra
+                { pokemonId: 72, weight: 12 },  // Tentacool
                 { pokemonId: 131, weight: 5 },  // Lapras
                 { pokemonId: 144, weight: 2 },  // Articuno
-                { pokemonId: 120, weight: 3 }   // Staryu
+                { pokemonId: 120, weight: 3 },  // Staryu
+                { pokemonId: 124, weight: 5 },  // Jynx
+                { pokemonId: 79, weight: 5 },   // Slowpoke
+                { pokemonId: 98, weight: 4 }    // Krabby
             ],
             eventPool: ["articuno_encounter", "ice_cave_puzzle", "strong_current", "frozen_trainer"],
             flavor: "Ice crystals shimmer in the dark. The cave grows colder with each step."
