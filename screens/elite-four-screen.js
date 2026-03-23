@@ -220,7 +220,7 @@
             PT.Engine.GameState.addToLog(state, `Defeated ${trainer.name}'s ${opponent.name} in the Elite Four!`);
 
             // Try evolution
-            const evoResult = PT.Engine.GameState.evolvePokemon(pokemon);
+            const evoResult = PT.Engine.GameState.evolvePokemon(pokemon, state);
             let evoLine = '';
             if (evoResult.evolved) {
                 evoLine = `<br>${evoResult.oldName} evolved into ${evoResult.newName}!`;

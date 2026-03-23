@@ -160,7 +160,7 @@
             if (PT.Engine.Audio) PT.Engine.Audio.gymVictory();
 
             // Try to evolve the chosen Pokemon after gym victory
-            const evoResult = PT.Engine.GameState.evolvePokemon(pokemon);
+            const evoResult = PT.Engine.GameState.evolvePokemon(pokemon, state);
             let evoLine = '';
             if (evoResult.evolved) {
                 evoLine = `<br>${evoResult.oldName} evolved into ${evoResult.newName}!`;

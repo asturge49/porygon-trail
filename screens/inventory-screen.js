@@ -174,7 +174,7 @@
                         if (!target) return;
 
                         state.resources.rareCandy--;
-                        const evoResult = PT.Engine.GameState.evolvePokemon(target);
+                        const evoResult = PT.Engine.GameState.evolvePokemon(target, state);
                         if (PT.Engine.Audio) PT.Engine.Audio.buy();
 
                         if (evoResult.evolved) {

@@ -150,7 +150,7 @@
             });
             if (canEvolve.length > 0) {
                 const target = state.rng.pick(canEvolve);
-                const evoResult = PT.Engine.GameState.evolvePokemon(target);
+                const evoResult = PT.Engine.GameState.evolvePokemon(target, state);
                 if (evoResult.evolved) {
                     effects._trainResult = evoResult;
                     PT.Engine.GameState.addToLog(state, `${evoResult.oldName} evolved into ${evoResult.newName}!`);

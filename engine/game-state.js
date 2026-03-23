@@ -145,7 +145,7 @@
     }
 
     // Evolution System
-    function evolvePokemon(partyMon) {
+    function evolvePokemon(partyMon, state) {
         const data = PT.Data.Pokemon.find(p => p.id === partyMon.id);
         if (!data || !data.evolvesTo) return { evolved: false };
         // Support branching evolution (e.g. Eevee -> [Vaporeon, Jolteon, Flareon])
@@ -167,6 +167,17 @@
         if (partyMon.maxHp < 6) partyMon.maxHp += 1;
         // Heal 1 HP on evolution
         partyMon.hp = Math.min(partyMon.hp + 1, partyMon.maxHp);
+
+        // Register evolution in Pokedex
+        if (state) {
+            if (!state.pokedexSeen.includes(evoData.id)) {
+                state.pokedexSeen.push(evoData.id);
+            }
+            if (!state.pokedexCaught.includes(evoData.id)) {
+                state.pokedexCaught.push(evoData.id);
+            }
+        }
+
         return { evolved: true, oldName: oldName, newName: evoData.name };
     }
 
