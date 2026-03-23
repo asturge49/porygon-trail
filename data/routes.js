@@ -277,7 +277,8 @@
                 { pokemonId: 146, weight: 2 },  // Moltres
                 { pokemonId: 138, weight: 5 },  // Omanyte
                 { pokemonId: 140, weight: 5 },  // Kabuto
-                { pokemonId: 142, weight: 3 }   // Aerodactyl
+                { pokemonId: 142, weight: 3 },  // Aerodactyl
+                { pokemonId: 0, weight: 1 }     // MissingNo.
             ],
             eventPool: ["pokemon_mansion", "mewtwo_journal", "fossil_revival", "blaine_quiz", "cinnabar_experiment"],
             flavor: "Volcanic heat rises from the ground. The abandoned Pokemon Mansion hides secrets."

@@ -154,6 +154,7 @@
         { id: 148, name: "Dragonair", types: ["dragon"], rarity: "rare", baseLevel: 30, travelAbility: "surf", evolvesTo: 149 },
         { id: 149, name: "Dragonite", types: ["dragon","flying"], rarity: "rare", baseLevel: 55, travelAbility: "fly" },
         { id: 150, name: "Mewtwo", types: ["psychic"], rarity: "legendary", baseLevel: 70, travelAbility: "psychic" },
-        { id: 151, name: "Mew", types: ["psychic"], rarity: "legendary", baseLevel: 50, travelAbility: "psychic" }
+        { id: 151, name: "Mew", types: ["psychic"], rarity: "legendary", baseLevel: 50, travelAbility: "psychic" },
+        { id: 0, name: "MissingNo.", types: ["normal","bird"], rarity: "legendary", baseLevel: 33, travelAbility: "glitch" }
     ];
 })();
