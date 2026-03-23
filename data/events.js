@@ -5166,6 +5166,388 @@
                     ]
                 }
             ]
+        },
+
+        // ============================================
+        // NEW EVENTS: Filling underserved locations
+        // ============================================
+
+        // #17 - Old Man's Parting Gift (Viridian City)
+        {
+            id: "old_man_last_lesson",
+            type: "story",
+            name: "The Old Man's Parting Gift!",
+            description: "The old man who once taught you how to catch Pokemon stops you on the road out of Viridian. \"I'm retiring, kid. Heading to Cinnabar to live out my days. But I've got one last thing — my Abra. He's a good one. Teleported me out of more scrapes than I can count. I'll sell him to you for $800. Or... I can teach your lead Pokemon one last trick. Free of charge.\"",
+            weight: 6,
+            oneTime: true,
+            locationIds: ["viridian_city"],
+            choices: [
+                {
+                    text: "Buy his Abra ($800)",
+                    requiresMoney: 800,
+                    outcomes: [
+                        { weight: 60, narration: "You hand over the cash. The old man pats the Poke Ball fondly before giving it up. \"Take care of him.\" The Abra inside immediately teleports to the top of your head, then back into its ball. It's going to be a handful.", effects: { money: -800, catchPokemon: 63 } },
+                        { weight: 40, narration: "\"Good choice, kid.\" The Abra is strong — clearly well-trained over decades. It regards you with sleepy but intelligent eyes. The old man walks away without looking back.", effects: { money: -800, catchPokemon: 63 } }
+                    ]
+                },
+                {
+                    text: "Take the free training",
+                    outcomes: [
+                        { weight: 100, narration: "The old man spends an hour with your lead Pokemon, drilling techniques you've never seen. Ancient battle wisdom, passed down from a lifetime of training. Your Pokemon emerges tougher, harder, BETTER. \"That's my legacy now,\" the old man says, tipping his hat. \"Make it count.\"", effects: { boostPokemonMaxHp: 1 } }
+                    ]
+                },
+                {
+                    text: "\"Thanks, but I'm good.\"",
+                    outcomes: [
+                        { weight: 100, narration: "\"Suit yourself.\" He shuffles off toward Route 1. You wonder if you'll regret that.", effects: {} }
+                    ]
+                }
+            ]
+        },
+
+        // #18 - Pikachu in the Forest (Viridian City)
+        {
+            id: "viridian_pikachu_chase",
+            type: "special",
+            name: "Pikachu in the Forest!",
+            description: "A flash of yellow darts through the tall grass at the edge of Viridian Forest. A wild Pikachu — and not just any Pikachu. This one is FAST. Its cheeks spark dangerously as it watches you from behind a tree. You've heard stories about powerful wild Pikachu in this forest. This could be your only chance.",
+            weight: 6,
+            oneTime: true,
+            locationIds: ["viridian_city"],
+            choices: [
+                {
+                    text: "Chase it down! (5 Poke Balls)",
+                    requiresItem: "pokeballs",
+                    outcomes: [
+                        { weight: 30, narration: "You tear through the undergrowth, burning through Poke Balls. The Pikachu zips left, right, up a tree — but your fifth ball catches it mid-leap! The ball shakes once... twice... CLICK. You've got a Pikachu! Your team took some Thundershocks during the chase though.", effects: { pokeballs: -5, catchPokemon: 25, partyDamage: 1 } },
+                        { weight: 40, narration: "Five Poke Balls, five misses. The Pikachu Thundershocks your whole team on its way out, laughing — actually laughing — as it vanishes into the forest. Five balls wasted and your Pokemon are scorched.", effects: { pokeballs: -5, partyDamage: 2 } },
+                        { weight: 30, narration: "The chase is on! Branches whip your face, your Pokemon take electric shocks — but that last ball connects! Pikachu glares at you from inside the Poke Ball, then settles down. Hard-won, but worth every bruise.", effects: { pokeballs: -5, catchPokemon: 25, partyDamage: 2 } }
+                    ]
+                },
+                {
+                    text: "Leave out food as bait (12 food)",
+                    outcomes: [
+                        { weight: 60, narration: "You pile up your best rations and wait. The Pikachu's nose twitches. It creeps closer... closer... and starts eating. You gently roll a Poke Ball. It barely resists. Sometimes patience beats speed.", effects: { food: -12, catchPokemon: 25 } },
+                        { weight: 40, narration: "The Pikachu eats every last scrap of your food — then bolts. Not even a backward glance. Twelve rations gone for nothing. You can almost hear it mocking you from the forest.", effects: { food: -12 } }
+                    ]
+                },
+                {
+                    text: "Let it go",
+                    outcomes: [
+                        { weight: 100, narration: "The Pikachu watches you for a long moment, cheeks sparking. Then it nods — almost respectfully — and disappears into the forest. Not every encounter needs to end in a catch.", effects: {} }
+                    ]
+                }
+            ]
+        },
+
+        // #19 - Museum Heist (Pewter City)
+        {
+            id: "pewter_museum_heist",
+            type: "combat",
+            name: "Museum Heist!",
+            description: "You stumble into chaos at the Pewter Museum. Three Team Rocket grunts are trying to steal the Aerodactyl fossil from the back room. A grunt spots you: \"Hey kid, help us crack this display case and we'll split the goods. Or try to stop us — see how that goes.\"",
+            weight: 5,
+            oneTime: true,
+            locationIds: ["pewter_city"],
+            minDay: 3,
+            choices: [
+                {
+                    text: "Help Team Rocket",
+                    outcomes: [
+                        { weight: 60, narration: "You help the grunts smash the case. The Aerodactyl fossil crumbles — but inside is a perfectly preserved Poke Ball. An actual living Aerodactyl! The grunts toss you the ball and $1000. \"Pleasure doing business, kid.\" You feel dirty. But powerful.", effects: { catchPokemon: 142, money: 1000 } },
+                        { weight: 40, narration: "You help break the case, but it's a double-cross. The grunts grab the fossil AND your money. \"Thanks for the help, sucker!\" They shove you into the display and bolt. The museum guard finds you covered in glass.", effects: { money: -500, partyDamage: 1 } }
+                    ]
+                },
+                {
+                    text: "Defend the museum!",
+                    outcomes: [
+                        { weight: 30, narration: "You and your Pokemon fight off all three grunts! The museum curator is overjoyed. \"Take this — you've earned it.\" He hands you a rare fossil specimen and a cash reward. Your Pokemon are battered but proud.", effects: { money: 800, rareCandy: 1, partyDamage: 2 } },
+                        { weight: 40, narration: "You drive them off, but not before they trash the place. The curator gives you what he can — some cash and supplies — but your team took a beating in the three-on-one brawl.", effects: { money: 400, potions: 2, partyDamage: 2 } },
+                        { weight: 30, narration: "Three against one isn't fair. Your Pokemon fights bravely but gets overwhelmed. The grunts escape with the fossil while you nurse your wounded team. At least you tried.", effects: { partyDamage: 3 } }
+                    ]
+                }
+            ]
+        },
+
+        // #20 - Brock's Breeding Program (Pewter City)
+        {
+            id: "brock_secret_breeder",
+            type: "special",
+            name: "Brock's Breeding Program!",
+            description: "Behind Pewter Gym, Brock is tending to a nest of Pokemon eggs. He waves you over. \"Hey — I've been working on a breeding program. Got an Onix egg here that's about to hatch. Strong bloodline. I'll let you have it, but raising an Onix takes serious food. 25 rations and one day's rest for the hatching. Deal?\"",
+            weight: 5,
+            oneTime: true,
+            locationIds: ["pewter_city"],
+            choices: [
+                {
+                    text: "Take the Onix egg (25 food, 1 day)",
+                    outcomes: [
+                        { weight: 70, narration: "You hand over the food and make camp. The egg cracks at dawn — a baby Onix bursts free, already six feet long and solid as granite. Brock grins: \"She's got good genes.\" The food investment stings, but this Onix is a wall.", effects: { food: -25, daysLost: 1, catchPokemon: 95 } },
+                        { weight: 30, narration: "The egg hatches into a massive Onix — even Brock is surprised. \"This one's special. Extra tough.\" It immediately starts eating rocks. Your food stores are depleted but your team just got a LOT harder to kill.", effects: { food: -25, daysLost: 1, catchPokemon: 95, boostPokemonMaxHp: 1 } }
+                    ]
+                },
+                {
+                    text: "\"Can't spare the food, sorry.\"",
+                    outcomes: [
+                        { weight: 100, narration: "Brock nods understandingly. \"Survival comes first. I respect that.\" He gives you a few potions for the road. \"Good luck out there.\"", effects: { potions: 1 } }
+                    ]
+                }
+            ]
+        },
+
+        // #21 - Warden's Gold Teeth (Fuchsia City)
+        {
+            id: "warden_gold_teeth",
+            type: "story",
+            name: "The Warden's Gold Teeth!",
+            description: "The Safari Zone Warden grabs your arm. \"MY TEEF! I lost my gold dentures somewhere in the Safari Zone! Find them and I'll give you HM03 — Surf! But the Zone is dangerous. Your Pokemon WILL get hurt in there. Or... you could just explore and keep whatever rare Pokemon you find instead.\"",
+            weight: 5,
+            oneTime: true,
+            locationIds: ["fuchsia_city"],
+            choices: [
+                {
+                    text: "Search for the teeth",
+                    outcomes: [
+                        { weight: 50, narration: "Hours of searching through swamps and tall grass. Your Pokemon fend off wild attacks the whole time. Finally — gold glinting in the mud! The Warden is thrilled. \"SURF IS YOURS!\" Your team is exhausted but you've got a key item.", effects: { keyItem: "HM Surf", partyDamage: 2 } },
+                        { weight: 30, narration: "You find the teeth quickly — wedged in a Victreebel's mouth. Getting them OUT is the hard part. Your Pokemon take a beating, but the Warden gives you Surf AND throws in some cash. \"You're braver than you look!\"", effects: { keyItem: "HM Surf", money: 500, partyDamage: 1 } },
+                        { weight: 20, narration: "The search drags on for a full day. Wild Pokemon attack relentlessly. You finally find the teeth, but your team is wrecked. The Warden hands you Surf with a toothless grin. Was it worth it?", effects: { keyItem: "HM Surf", partyDamage: 3, daysLost: 1 } }
+                    ]
+                },
+                {
+                    text: "Explore the Safari Zone instead",
+                    outcomes: [
+                        { weight: 25, narration: "Forget the teeth — the Safari Zone has DRATINI! You spot one near the lake and carefully lure it in. A rare catch! The Warden is disappointed but you've got something better.", effects: { catchPokemon: 147, partyDamage: 1 } },
+                        { weight: 35, narration: "You explore deep into the Zone and find a Scyther! Fast, fierce, and yours. The Warden grumbles about his teeth but you're too busy admiring your new bug.", effects: { catchPokemon: 123, partyDamage: 1 } },
+                        { weight: 40, narration: "The Safari Zone is a bust. You wander for hours, find nothing rare, and your Pokemon get beat up by wild Tauros. No teeth, no rare catch, just bruises.", effects: { partyDamage: 2, food: -5 } }
+                    ]
+                }
+            ]
+        },
+
+        // #22 - Koga's Invisible Trial (Fuchsia City)
+        {
+            id: "koga_invisible_trial",
+            type: "special",
+            name: "Koga's Invisible Trial!",
+            description: "Koga appears from thin air — literally. \"You seek strength? My invisible maze holds a prize at its center. Walk it blindfolded, and what you find is yours. But the walls are laced with poison. Or... pay $1000 and I'll show you the safe path. Choose wisely, trainer.\"",
+            weight: 5,
+            oneTime: true,
+            locationIds: ["fuchsia_city"],
+            minBadges: 4,
+            choices: [
+                {
+                    text: "Walk the maze blindfolded",
+                    bonusAbility: "psychic",
+                    bonusOutcome: { narration: "Your Psychic-type senses the walls before you hit them! You glide through the maze untouched and find the prize: a Rare Candy AND a Venomoth, trained by Koga himself. \"Impressive,\" he admits. \"The psychic's foresight serves you well.\"", effects: { rareCandy: 1, catchPokemon: 49 } },
+                    outcomes: [
+                        { weight: 25, narration: "You stumble, you slam into walls, poison seeps through your clothes — but you make it! At the center: a Rare Candy and one of Koga's own Venomoth. \"You have the heart of a ninja,\" Koga says approvingly.", effects: { rareCandy: 1, catchPokemon: 49, partyDamage: 1 } },
+                        { weight: 40, narration: "The maze is brutal. Poison barbs catch your Pokemon at every turn. You reach the center and grab the Rare Candy, but the toll is severe.", effects: { rareCandy: 1, partyDamage: 2 } },
+                        { weight: 35, narration: "You're hopelessly lost. The invisible walls close in. Poison damage accumulates. By the time Koga pulls you out, your team is in rough shape and you found nothing.", effects: { partyDamage: 3 } }
+                    ]
+                },
+                {
+                    text: "Pay for the safe path ($1000)",
+                    requiresMoney: 1000,
+                    outcomes: [
+                        { weight: 100, narration: "Koga nods and reveals the path with a wave of his hand. You walk straight to the center and collect a Rare Candy. \"Money buys safety,\" Koga says. \"But not respect.\" Still — you're alive and richer in candy.", effects: { money: -1000, rareCandy: 1 } }
+                    ]
+                },
+                {
+                    text: "\"I'll pass on the death maze.\"",
+                    outcomes: [
+                        { weight: 70, narration: "\"A wise choice... or a cowardly one.\" Koga vanishes. As you leave, you notice 5 of your Poke Balls are missing. Ninja theft. Classic Koga.", effects: { pokeballs: -5 } },
+                        { weight: 30, narration: "Koga shrugs and disappears. You check your bag — everything's intact. Maybe he respects the honest answer.", effects: {} }
+                    ]
+                }
+            ]
+        },
+
+        // #23 - The Frozen Trainer (Seafoam Islands)
+        {
+            id: "seafoam_frozen_trainer",
+            type: "discovery",
+            name: "The Frozen Trainer!",
+            description: "Deep in the Seafoam caves, you find something horrifying: a trainer frozen solid in a block of ancient ice. They've been here for... years? Decades? But their belt still holds two Poke Balls, and inside, you can see Pokemon — alive, preserved by the cold. You could thaw them out.",
+            weight: 4,
+            oneTime: true,
+            locationIds: ["seafoam_islands"],
+            choices: [
+                {
+                    text: "Carefully thaw one Poke Ball",
+                    outcomes: [
+                        { weight: 35, narration: "You use your Pokemon's warmth to slowly thaw one ball. It pops open — a Dewgong emerges, confused but healthy. It's been frozen for who knows how long. It looks at the frozen trainer, then at you, and accepts its new reality.", effects: { catchPokemon: 87, partyDamage: 1 } },
+                        { weight: 35, narration: "The ice cracks and releases — a Jynx! It shivers violently, then steadies itself. It examines the frozen trainer with what looks like grief, then turns to you. A new partner, born from tragedy.", effects: { catchPokemon: 124, partyDamage: 1 } },
+                        { weight: 30, narration: "A Lapras emerges from the thawed ball! Rare and powerful. It sings a mournful note toward the frozen trainer — a farewell — then nuzzles against you. The cold damaged your team slightly during the thawing.", effects: { catchPokemon: 131, partyDamage: 1 } }
+                    ]
+                },
+                {
+                    text: "Thaw BOTH Poke Balls",
+                    outcomes: [
+                        { weight: 30, narration: "Greedy but effective! Both balls crack open. A Dewgong and a Jynx emerge, shaken but alive. The effort drains your team — thawing that much ice takes everything. But two new Pokemon is two new Pokemon.", effects: { catchPokemon: 87, catchPokemon2: 124, partyDamage: 3 } },
+                        { weight: 70, narration: "The second ball shatters during thawing — too much thermal shock. The Pokemon inside doesn't make it. Your team watches in horror. At least the first one survived: a Dewgong, traumatized but alive.", effects: { catchPokemon: 87, partyDamage: 2, pokemonDeath: true } }
+                    ]
+                },
+                {
+                    text: "Leave them frozen",
+                    outcomes: [
+                        { weight: 100, narration: "Some things are better left undisturbed. You bow your head to the frozen trainer and move on. The cold seems to ease around your team — as if the cave approves of your restraint.", effects: { healOne: true } }
+                    ]
+                }
+            ]
+        },
+
+        // #24 - The Killing Current (Seafoam Islands)
+        {
+            id: "seafoam_current_sacrifice",
+            type: "hazard",
+            name: "The Killing Current!",
+            description: "A raging underground river blocks your path through Seafoam Islands. The current is VICIOUS — it's already swept away debris, supplies, maybe trainers. A massive boulder could redirect the flow, but pushing it requires serious strength. Your other options aren't great either.",
+            weight: 5,
+            oneTime: true,
+            locationIds: ["seafoam_islands"],
+            choices: [
+                {
+                    text: "Push the boulder",
+                    bonusAbility: "strength",
+                    bonusOutcome: { narration: "Your Strength-user slams into the boulder and it MOVES. The current redirects perfectly. Your team crosses safely. Brute force wins again.", effects: {} },
+                    outcomes: [
+                        { weight: 40, narration: "Your Pokemon heaves against the boulder. It moves — barely — redirecting enough of the current to cross. But the strain is immense. Your Pokemon's muscles are torn from the effort.", effects: { reducePokemonMaxHp: 1, partyDamage: 1 } },
+                        { weight: 35, narration: "The boulder shifts! The current weakens just enough to wade through. Your team gets soaked and battered but makes it across in one piece.", effects: { partyDamage: 2 } },
+                        { weight: 25, narration: "The boulder won't budge. Your Pokemon exhausts itself trying. You're forced to wade through the current anyway. Supplies are swept away in the torrent.", effects: { partyDamage: 2, food: -8, pokeballs: -3 } }
+                    ]
+                },
+                {
+                    text: "Use Escape Ropes to cross (2 ropes)",
+                    requiresItem: "escapeRope",
+                    outcomes: [
+                        { weight: 100, narration: "You tie the ropes across the river — one as a handhold, one as a safety line. Your team crosses carefully. The ropes fray and snap behind you, but everyone makes it. Smart use of resources.", effects: { escapeRope: -2 } }
+                    ]
+                },
+                {
+                    text: "Wait for the current to die down",
+                    outcomes: [
+                        { weight: 100, narration: "You make camp and wait. Two days pass. The current finally weakens. You cross safely, but the delay cost you time and food. Sometimes patience is just another word for losing.", effects: { daysLost: 2, food: -10 } }
+                    ]
+                }
+            ]
+        },
+
+        // #25 - Giovanni's Final Offer (Viridian City Return)
+        {
+            id: "giovanni_final_offer",
+            type: "story",
+            name: "Giovanni's Final Offer!",
+            description: "After defeating his gym, Giovanni catches you outside. He's not angry — he's impressed. \"You beat me fairly. That's rare. I'm disbanding Team Rocket.\" He pauses. \"But before I go... I have an offer. Join me. Not Rocket — something new. I'll give you $5000, a Rare Candy, and make your strongest Pokemon even stronger. All I need is... one of your Pokemon. A show of loyalty.\"",
+            weight: 5,
+            oneTime: true,
+            locationIds: ["viridian_city_return"],
+            choices: [
+                {
+                    text: "Accept Giovanni's offer",
+                    requiresPartySize: 2,
+                    outcomes: [
+                        { weight: 50, narration: "Giovanni takes one of your Pokemon — you don't get to choose which. The money appears in your account. The Rare Candy is real. Your lead Pokemon glows with new power. But as Giovanni walks away with your Pokemon, you wonder what you've become.", effects: { money: 5000, rareCandy: 1, boostPokemonMaxHp: 1, pokemonDeath: true } },
+                        { weight: 50, narration: "You shake his hand. The deal is done. $5000, candy, and raw power. But the Pokemon he takes cries out as he walks away. The other members of your team look at you differently now. Was this worth it?", effects: { money: 5000, rareCandy: 1, boostPokemonMaxHp: 1, pokemonDeath: true } }
+                    ]
+                },
+                {
+                    text: "\"I'll never join you.\"",
+                    outcomes: [
+                        { weight: 25, narration: "Giovanni smiles — genuinely. \"I hoped you'd say that.\" He snaps his fingers. Nothing happens. \"Just testing you. The world needs trainers with conviction, not sellouts. Go win the League.\" He walks into the sunset.", effects: {} },
+                        { weight: 75, narration: "\"Disappointing.\" Giovanni whistles. Three Rocket grunts emerge from the shadows and rough up your team. \"Consider that a parting gift.\" By the time you recover, Giovanni is gone. Your team is battered but your soul is intact.", effects: { partyDamage: 2, money: -300 } }
+                    ]
+                }
+            ]
+        },
+
+        // #26 - Rival's Last Stand (Viridian City Return)
+        {
+            id: "gary_last_stand",
+            type: "combat",
+            name: "Rival's Last Stand!",
+            description: "Gary blocks Victory Road. He looks different — older, harder. \"One more time. You and me. Right here. No badges on the line, no prize money — just proof of who's the better trainer. Unless you want to shake hands and walk into the League together. Your call.\"",
+            weight: 5,
+            oneTime: true,
+            locationIds: ["viridian_city_return"],
+            minBadges: 7,
+            choices: [
+                {
+                    text: "Battle Gary one last time!",
+                    outcomes: [
+                        { weight: 20, narration: "You DESTROY him. Every Pokemon, every move — perfection. Gary recalls his last Pokemon and laughs. \"I knew it. You're better than me. Always were.\" He hands you $2000, a Rare Candy, and evolves your lead Pokemon through sheer competitive fire. This is what rivalry is for.", effects: { money: 2000, rareCandy: 1, trainPokemon: true } },
+                        { weight: 30, narration: "A brutal, grinding fight. Both teams are wrecked by the end, but your last Pokemon stands. Gary nods. \"Close. But close only counts in horseshoes.\" He hands over $2000 and leaves. Your Pokemon grew from the fight — literally.", effects: { money: 2000, partyDamage: 2, trainPokemon: true } },
+                        { weight: 30, narration: "Gary pulls ahead mid-fight. You claw it back. In the end, it's a draw — both last Pokemon faint simultaneously. \"Call it even,\" Gary mutters. You split the stakes.", effects: { money: -500, partyDamage: 2 } },
+                        { weight: 20, narration: "Gary wins. Fair and square. He doesn't gloat — just pockets the money and nods. \"See you at the League.\" Your team is wrecked and your wallet is lighter. But the fire to win has never burned hotter.", effects: { money: -2000, partyDamage: 3, pokemonDeath: true } }
+                    ]
+                },
+                {
+                    text: "Shake hands and call a truce",
+                    outcomes: [
+                        { weight: 100, narration: "Gary hesitates... then grips your hand. \"Partners. Just this once.\" He patches up your Pokemon and shares his supplies. It feels strange — good strange. You walk toward Victory Road together. Rivals turned allies, at least for now.", effects: { healAll: true, food: 10, potions: 2 } }
+                    ]
+                }
+            ]
+        },
+
+        // #27 - Victory Road Guardian (Indigo Plateau)
+        {
+            id: "victory_road_guardian",
+            type: "combat",
+            name: "Victory Road Guardian!",
+            description: "A massive Machamp blocks the exit of Victory Road. It's been here for years — a self-appointed guardian that tests every trainer who passes. Its four arms crack menacingly. No trainer has EVER just walked past it. You either fight, or you find another way.",
+            weight: 4,
+            oneTime: true,
+            locationIds: ["indigo_plateau"],
+            minBadges: 7,
+            choices: [
+                {
+                    text: "Challenge the Machamp!",
+                    bonusAbility: "psychic",
+                    bonusOutcome: { narration: "Your Psychic-type reaches into Machamp's mind. It freezes. Its eyes go wide. Then it steps aside, bowing deeply. Psychic trumps Fighting — every time. You walk through untouched, and Machamp joins your team out of respect.", effects: { catchPokemon: 68 } },
+                    outcomes: [
+                        { weight: 15, narration: "An INCREDIBLE battle! Your Pokemon matches Machamp blow for blow and lands the final hit. Machamp kneels. It's been defeated for the first time in years. It offers its Poke Ball — it WANTS to join a trainer this strong. Your lead Pokemon grew from the fight.", effects: { catchPokemon: 68, trainPokemon: true, partyDamage: 1 } },
+                        { weight: 20, narration: "Your Pokemon wins, but barely. Machamp is a monster. It nods respectfully and steps aside, but the fight cost you dearly. Your team can barely stand.", effects: { partyDamage: 3, trainPokemon: true } },
+                        { weight: 35, narration: "Machamp is too strong. Four arms, four times the punishment. Your Pokemon fights bravely but gets overwhelmed. Machamp lets you pass — you proved your courage — but a Pokemon didn't make it.", effects: { pokemonDeath: true, partyDamage: 2 } },
+                        { weight: 30, narration: "A grueling fight that leaves both sides damaged. Machamp finally steps aside, breathing hard. You're through, but your team paid the price.", effects: { partyDamage: 3 } }
+                    ]
+                },
+                {
+                    text: "Squeeze through the side passage",
+                    outcomes: [
+                        { weight: 50, narration: "You find a narrow crack in the wall. Your Pokemon squeeze through one by one. It's tight, dark, and your supplies get scraped off — but you make it past the Machamp unscathed.", effects: { food: -5 } },
+                        { weight: 30, narration: "The side passage is tighter than it looks. A rockslide catches your team mid-squeeze. Minor injuries, lost supplies, but you're through.", effects: { partyDamage: 1, food: -8, pokeballs: -2 } },
+                        { weight: 20, narration: "The passage collapses! You barely escape as rocks rain down. Your team takes hits, food and balls scatter into the rubble. But you're past the guardian.", effects: { partyDamage: 2, food: -10, pokeballs: -3 } }
+                    ]
+                }
+            ]
+        },
+
+        // #28 - The Champion's Ghost (Indigo Plateau)
+        {
+            id: "champion_ghost",
+            type: "story",
+            name: "The Champion's Ghost!",
+            description: "At the entrance to the Pokemon League, a translucent figure materializes. An old Champion — from a generation long past — stands before you. \"I've watched you, trainer. You've earned the right to be here.\" The ghost smiles. \"Let me give you one last gift. Strength of body... or wisdom of mind. Choose.\"",
+            weight: 4,
+            oneTime: true,
+            locationIds: ["indigo_plateau"],
+            minBadges: 8,
+            choices: [
+                {
+                    text: "\"Give me strength.\"",
+                    outcomes: [
+                        { weight: 50, narration: "The ghost touches your lead Pokemon. A golden light surges through it — muscles tighten, bones harden, resolve deepens. Your Pokemon is PERMANENTLY stronger. The ghost fades with a smile. \"Win it for both of us.\"", effects: { boostPokemonMaxHp: 1, healAll: true } },
+                        { weight: 50, narration: "Power floods through your entire team. Every Pokemon stands taller, heals completely. The ghost nods. \"Strength is nothing without the heart to use it. You have both.\" Then it's gone.", effects: { boostPokemonMaxHp: 1, healAll: true } }
+                    ]
+                },
+                {
+                    text: "\"Give me wisdom.\"",
+                    outcomes: [
+                        { weight: 50, narration: "The ghost whispers battle strategies from a bygone era. Your bag fills with supplies — Super Potions, a Rare Candy, knowledge crystallized into items. \"The mind outlasts the body,\" the ghost says. \"Remember that against the Elite Four.\"", effects: { superPotions: 3, rareCandy: 1 } },
+                        { weight: 50, narration: "Ancient knowledge pours into you. Your supplies multiply — potions, food, the accumulated wisdom of a Champion's lifetime distilled into resources. \"Wisdom is knowing when NOT to fight,\" the ghost says, fading. \"Good luck.\"", effects: { potions: 3, food: 15, rareCandy: 1 } }
+                    ]
+                }
+            ]
         }
     ];
 })();

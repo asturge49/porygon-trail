@@ -39,7 +39,7 @@
                 { pokemonId: 29, weight: 5 },   // Nidoran F
                 { pokemonId: 32, weight: 5 }    // Nidoran M
             ],
-            eventPool: ["nurse_joy", "old_man_tutorial", "mysterious_package"],
+            eventPool: ["nurse_joy", "old_man_tutorial", "mysterious_package", "old_man_last_lesson", "viridian_pikachu_chase"],
             flavor: "Viridian Forest looms to the north. The local shop has basic supplies."
         },
         {
@@ -59,7 +59,7 @@
                 { pokemonId: 56, weight: 12 },  // Mankey
                 { pokemonId: 39, weight: 8 }    // Jigglypuff
             ],
-            eventPool: ["museum_visit", "brock_roadblock", "fossil_merchant"],
+            eventPool: ["museum_visit", "brock_roadblock", "fossil_merchant", "pewter_museum_heist", "brock_secret_breeder"],
             flavor: "The Pewter Museum stands tall. Brock's Gym awaits challengers."
         },
         {
@@ -229,7 +229,7 @@
                 { pokemonId: 108, weight: 4 },  // Lickitung
                 { pokemonId: 79, weight: 3 }    // Slowpoke
             ],
-            eventPool: ["safari_zone", "koga_invisible_walls", "warden_teeth", "rare_pokemon_sighting"],
+            eventPool: ["safari_zone", "koga_invisible_walls", "warden_teeth", "rare_pokemon_sighting", "warden_gold_teeth", "koga_invisible_trial"],
             flavor: "The Safari Zone gates stand open. Koga's gym is full of invisible walls."
         },
         {
@@ -255,7 +255,7 @@
                 { pokemonId: 79, weight: 5 },   // Slowpoke
                 { pokemonId: 98, weight: 4 }    // Krabby
             ],
-            eventPool: ["articuno_encounter", "ice_cave_puzzle", "strong_current", "frozen_trainer"],
+            eventPool: ["articuno_encounter", "ice_cave_puzzle", "strong_current", "frozen_trainer", "seafoam_frozen_trainer", "seafoam_current_sacrifice"],
             flavor: "Ice crystals shimmer in the dark. The cave grows colder with each step."
         },
         {
@@ -305,7 +305,7 @@
                 { pokemonId: 145, weight: 2 },  // Zapdos
                 { pokemonId: 53, weight: 3 }    // Persian
             ],
-            eventPool: ["giovanni_reveal", "team_rocket_final", "gary_final_rival"],
+            eventPool: ["giovanni_reveal", "team_rocket_final", "gary_final_rival", "giovanni_final_offer", "gary_last_stand"],
             flavor: "You've come full circle. The gym that was once locked now opens its doors."
         },
         {
@@ -332,7 +332,7 @@
                 { pokemonId: 148, weight: 7 },  // Dragonair
                 { pokemonId: 18, weight: 5 }    // Pidgeot
             ],
-            eventPool: ["victory_road_cave", "champion_battle", "mewtwo_cave"],
+            eventPool: ["victory_road_cave", "champion_battle", "mewtwo_cave", "victory_road_guardian", "champion_ghost"],
             flavor: "Victory Road stretches before you. Only the strongest trainers make it this far."
         },
         {
