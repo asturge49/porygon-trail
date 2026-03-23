@@ -121,10 +121,10 @@
 
         // Catch Pokemon
         if (effects.catchPokemon) {
-            catchFromEffect(effects.catchPokemon, state);
+            catchFromEffect(effects.catchPokemon, state, effects);
         }
         if (effects.catchPokemon2) {
-            catchFromEffect(effects.catchPokemon2, state);
+            catchFromEffect(effects.catchPokemon2, state, effects);
         }
 
         // See Pokemon
@@ -208,18 +208,21 @@
         }
     }
 
-    function catchFromEffect(pokemonId, state) {
+    function catchFromEffect(pokemonId, state, effects) {
         if (!state.pokedexCaught.includes(pokemonId)) {
             state.pokedexCaught.push(pokemonId);
         }
         if (!state.pokedexSeen.includes(pokemonId)) {
             state.pokedexSeen.push(pokemonId);
         }
+        const data = PT.Data.Pokemon.find(p => p.id === pokemonId);
+        if (!data) return;
         if (state.party.length < 6) {
-            const data = PT.Data.Pokemon.find(p => p.id === pokemonId);
-            if (data) {
-                state.party.push(PT.Engine.GameState.createPartyPokemon(data));
-            }
+            state.party.push(PT.Engine.GameState.createPartyPokemon(data));
+        } else if (effects) {
+            // Party full — flag for swap UI in event screen
+            if (!effects._pendingCatch) effects._pendingCatch = [];
+            effects._pendingCatch.push(data);
         }
     }
 
