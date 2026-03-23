@@ -75,6 +75,17 @@
     PT.Screens.TRAVEL = {
         render(container, state) {
             const route = PT.Engine.GameState.getCurrentRoute(state);
+
+            // Pokemon League — never show travel screen, go straight to E4
+            if (route.id === 'pokemon_league') {
+                if (state.hasWon) {
+                    PT.App.goto('VICTORY');
+                } else {
+                    PT.App.goto('ELITEFOUR');
+                }
+                return;
+            }
+
             const nextRoute = PT.Engine.GameState.getNextRoute(state);
             const scene = TERRAIN_SCENES[route.terrain] || TERRAIN_SCENES.route;
             const progress = nextRoute ? Math.min(100, (state.distanceTraveled / route.distanceToNext) * 100) : 100;
@@ -278,20 +289,20 @@
     function handleArrival(state) {
         const route = PT.Engine.GameState.getCurrentRoute(state);
 
-        // Check for location-specific events
-        const locationEvent = PT.Engine.EventEngine.rollEvent(state);
-        if (locationEvent) {
-            PT.App.goto('EVENT', { event: locationEvent });
-            return;
-        }
-
-        // Pokemon League — auto-trigger Elite Four gauntlet
+        // Pokemon League — skip everything, go straight to E4 gauntlet
         if (route.id === 'pokemon_league') {
             if (state.hasWon) {
                 PT.App.goto('VICTORY');
                 return;
             }
             PT.App.goto('ELITEFOUR');
+            return;
+        }
+
+        // Check for location-specific events
+        const locationEvent = PT.Engine.EventEngine.rollEvent(state);
+        if (locationEvent) {
+            PT.App.goto('EVENT', { event: locationEvent });
             return;
         }
 
