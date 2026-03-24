@@ -161,7 +161,7 @@
             <div style="text-align: center; margin-bottom: 8px;">
                 <img src="${spriteUrl}" alt="${pokemonData.name}" style="width: 40px; height: 40px; image-rendering: pixelated;"
                      onerror="this.style.display='none'">
-                <div style="font-size: 7px;">${pokemonData.name} | ${pokemonData.types.join('/')} | ${pokemonData.rarity.toUpperCase()}</div>
+                <div style="font-size: 7px;">${pokemonData.name} | ${pokemonData.types.join('/')} | ${pokemonData.rarity.toUpperCase()} | HP: ${pokemonData.rarity === 'legendary' ? 5 : pokemonData.rarity === 'rare' ? 4 : 3}/${pokemonData.rarity === 'legendary' ? 5 : pokemonData.rarity === 'rare' ? 4 : 3}</div>
                 <div style="font-size: 7px; margin-top: 4px;">Party full (6/6) — what do you want to do?</div>
             </div>
             <button class="btn btn-small" id="btn-evt-swap">SWAP WITH PARTY</button>
@@ -172,7 +172,7 @@
         // SWAP — show party picker
         document.getElementById('btn-evt-swap').addEventListener('click', () => {
             choicesDiv.innerHTML = `
-                <div style="font-size: 7px; margin-bottom: 4px; font-weight: bold;">Replace which Pokemon with ${pokemonData.name}?</div>
+                <div style="font-size: 7px; margin-bottom: 4px; font-weight: bold;">Replace which Pokemon with ${pokemonData.name} (HP: ${pokemonData.rarity === 'legendary' ? 5 : pokemonData.rarity === 'rare' ? 4 : 3}/${pokemonData.rarity === 'legendary' ? 5 : pokemonData.rarity === 'rare' ? 4 : 3})?</div>
                 <div class="potion-pokemon-list">
                     ${state.party.map((p, i) => `
                         <button class="potion-target-btn" data-idx="${i}">
