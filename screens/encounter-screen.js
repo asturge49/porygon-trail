@@ -50,7 +50,7 @@
                     <button class="btn btn-small" id="btn-ultraball" ${state.resources.ultraballs <= 0 ? 'disabled' : ''}>
                         ULTRA BALL (${state.resources.ultraballs})
                     </button>
-                    <button class="btn btn-small" id="btn-observe">OBSERVE</button>
+                    <button class="btn btn-small" id="btn-battle">BATTLE</button>
                     <button class="btn btn-small" id="btn-flee">FLEE</button>
                     <button class="btn btn-small" id="btn-use-item" ${state.resources.potions + state.resources.superPotions <= 0 ? 'disabled' : ''}>
                         USE POTION
@@ -94,10 +94,46 @@
                 handleCatchResult(result, pokemon, state, showResult);
             });
 
-            // Observe
-            document.getElementById('btn-observe').addEventListener('click', () => {
-                PT.Engine.GameState.addToLog(state, `Observed wild ${pokemon.name}.`);
-                showResult(`You carefully observe the wild ${pokemon.name}. Its travel ability is "${pokemon.travelAbility}". ${pokemon.name} wanders away.`);
+            // Battle — show party picker like a gym battle
+            document.getElementById('btn-battle').addEventListener('click', () => {
+                const pokemonData = PT.Data.Pokemon.find(p => p.id === pokemon.id);
+                const opponentTypes = pokemonData ? pokemonData.types : pokemon.types;
+                const typeChart = getWildTypeWeaknesses(opponentTypes);
+                const wildHp = PT.Engine.GameState.getMaxHpForPokemon(pokemon);
+                const lossDamage = Math.max(1, wildHp - 1);
+
+                messageBox.innerHTML = `
+                    <div style="font-size: 7px;">
+                        Choose a Pokemon to battle wild ${pokemon.name}!
+                        <br>${pokemon.types.join('/')}-type | Weak to: ${typeChart.weakTo.join(', ') || 'none'} | Resists: ${typeChart.strongTo.join(', ') || 'none'}
+                        <br><span style="font-size: 6px;">If you lose, your Pokemon takes ${lossDamage} damage.</span>
+                    </div>
+                `;
+
+                const aliveParty = PT.Engine.GameState.getAliveParty(state);
+                actionsDiv.innerHTML = `
+                    ${aliveParty.map((p, i) => {
+                        const hasAdvantage = p.types.some(t => typeChart.weakTo.includes(t));
+                        const hasDisadvantage = p.types.some(t => typeChart.strongTo.includes(t));
+                        let label = `${p.name} (${p.types.join('/')} | HP:${p.hp}/${p.maxHp})`;
+                        if (hasAdvantage) label += ' [SE!]';
+                        if (hasDisadvantage) label += ' [NVE]';
+                        return `<button class="btn btn-wide battle-pick-btn" data-battle-idx="${i}">${label}</button>`;
+                    }).join('')}
+                    <button class="btn btn-wide" id="btn-battle-cancel">CANCEL</button>
+                `;
+
+                document.querySelectorAll('.battle-pick-btn').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        const idx = parseInt(btn.dataset.battleIdx);
+                        const chosen = aliveParty[idx];
+                        resolveWildBattle(chosen, pokemon, state, messageBox, actionsDiv, showResult);
+                    });
+                });
+
+                document.getElementById('btn-battle-cancel').addEventListener('click', () => {
+                    PT.App.goto('ENCOUNTER', { pokemon });
+                });
             });
 
             // Flee
@@ -273,5 +309,138 @@
                 }
             }
         }, 500);
+    }
+
+    // Type chart for wild battles (same as gym-screen)
+    function getWildTypeWeaknesses(types) {
+        const weaknesses = {
+            normal:   { weakTo: ['fighting'], resistedBy: ['rock'], immuneBy: ['ghost'] },
+            fire:     { weakTo: ['water', 'ground', 'rock'], resistedBy: ['fire', 'grass', 'ice', 'bug'] },
+            water:    { weakTo: ['electric', 'grass'], resistedBy: ['fire', 'water', 'ice'] },
+            electric: { weakTo: ['ground'], resistedBy: ['electric', 'flying'] },
+            grass:    { weakTo: ['fire', 'ice', 'poison', 'flying', 'bug'], resistedBy: ['water', 'grass', 'electric', 'ground'] },
+            ice:      { weakTo: ['fire', 'fighting', 'rock'], resistedBy: ['ice'] },
+            fighting: { weakTo: ['flying', 'psychic'], resistedBy: ['bug', 'rock'] },
+            poison:   { weakTo: ['ground', 'psychic', 'bug'], resistedBy: ['grass', 'fighting', 'poison'] },
+            ground:   { weakTo: ['water', 'grass', 'ice'], resistedBy: ['poison', 'rock'], immuneBy: ['electric'] },
+            flying:   { weakTo: ['electric', 'ice', 'rock'], resistedBy: ['grass', 'fighting', 'bug'], immuneBy: ['ground'] },
+            psychic:  { weakTo: ['bug'], resistedBy: ['fighting', 'psychic'] },
+            bug:      { weakTo: ['fire', 'flying', 'rock'], resistedBy: ['grass', 'fighting', 'ground'] },
+            rock:     { weakTo: ['water', 'grass', 'fighting', 'ground'], resistedBy: ['normal', 'fire', 'poison', 'flying'] },
+            ghost:    { weakTo: ['ghost'], resistedBy: ['poison', 'bug'], immuneBy: ['normal', 'fighting'] },
+            dragon:   { weakTo: ['ice', 'dragon'], resistedBy: ['fire', 'water', 'electric', 'grass'] },
+            bird:     { weakTo: ['electric', 'ice', 'rock'], resistedBy: ['grass', 'fighting', 'bug'] }
+        };
+
+        const weakTo = new Set();
+        const strongTo = new Set();
+
+        types.forEach(type => {
+            const entry = weaknesses[type.toLowerCase()];
+            if (!entry) return;
+            entry.weakTo.forEach(t => weakTo.add(t));
+            (entry.resistedBy || []).forEach(t => strongTo.add(t));
+        });
+
+        return {
+            weakTo: [...weakTo].filter(t => !strongTo.has(t)),
+            strongTo: [...strongTo].filter(t => !weakTo.has(t))
+        };
+    }
+
+    function resolveWildBattle(chosen, pokemon, state, msgEl, actionsDiv, showResult) {
+        const pokemonData = PT.Data.Pokemon.find(p => p.id === pokemon.id);
+        const opponentTypes = pokemonData ? pokemonData.types : pokemon.types;
+        const typeChart = getWildTypeWeaknesses(opponentTypes);
+
+        // Calculate win chance — wild battles are easier than gyms
+        let chance = 55;
+
+        // Type advantage
+        const hasAdvantage = chosen.types.some(t => typeChart.weakTo.includes(t));
+        const hasDisadvantage = chosen.types.some(t => typeChart.strongTo.includes(t));
+        if (hasAdvantage) chance += 20;
+        if (hasDisadvantage) chance -= 20;
+
+        // Rarity of wild Pokemon affects difficulty
+        if (pokemon.rarity === 'legendary') chance -= 15;
+        if (pokemon.rarity === 'rare') chance -= 5;
+
+        // Badge bonus
+        chance += state.badges.length * 2;
+
+        // Clamp
+        chance = Math.max(15, Math.min(85, chance));
+
+        const won = state.rng.chance(chance);
+        const wildHp = PT.Engine.GameState.getMaxHpForPokemon(pokemon);
+        const lossDamage = Math.max(1, wildHp - 1);
+
+        if (won) {
+            if (PT.Engine.Audio) PT.Engine.Audio.gymVictory();
+            PT.Engine.GameState.addToLog(state, `${chosen.name} defeated wild ${pokemon.name}!`);
+
+            // Try to evolve the battler
+            const evoResult = PT.Engine.GameState.evolvePokemon(chosen, state);
+            let evoLine = '';
+            if (evoResult.evolved) {
+                evoLine = `<br>${evoResult.oldName} evolved into ${evoResult.newName}!`;
+                PT.Engine.GameState.addToLog(state, `${evoResult.oldName} evolved into ${evoResult.newName}!`);
+            }
+
+            // Reward: small money bounty
+            const moneyReward = pokemon.rarity === 'legendary' ? 500 : pokemon.rarity === 'rare' ? 200 : pokemon.rarity === 'uncommon' ? 100 : 50;
+            state.resources.money += moneyReward;
+
+            msgEl.innerHTML = `
+                <div style="text-align: center;">
+                    <strong>${chosen.name} defeated wild ${pokemon.name}!</strong>
+                    <br>Won $${moneyReward}!${evoLine}
+                    <br><span style="font-size: 6px;">Win chance was ${chance}%</span>
+                </div>
+            `;
+            actionsDiv.innerHTML = '<button class="btn btn-wide" id="btn-continue">CONTINUE</button>';
+            document.getElementById('btn-continue').addEventListener('click', () => {
+                if (state.isGameOver || state.party.length === 0) {
+                    state.isGameOver = true;
+                    if (!state.gameOverReason) state.gameOverReason = 'party_wiped';
+                    PT.App.goto('GAMEOVER');
+                } else {
+                    PT.App.goto('TRAVEL');
+                }
+            });
+        } else {
+            if (PT.Engine.Audio) PT.Engine.Audio.gymDefeat();
+
+            // Loss: damage = wild Pokemon's HP - 1
+            const fainted = PT.Engine.GameState.damagePokemon(chosen, lossDamage, state);
+            const died = fainted || chosen.hp <= 0;
+
+            if (died) {
+                PT.Engine.GameState.addToLog(state, `${chosen.name} was killed by wild ${pokemon.name}! 💀`);
+            } else {
+                PT.Engine.GameState.addToLog(state, `${chosen.name} took ${lossDamage} damage from wild ${pokemon.name}.`);
+            }
+
+            msgEl.innerHTML = `
+                <div style="text-align: center;">
+                    <strong>${chosen.name} lost to wild ${pokemon.name}!</strong>
+                    <br>${died
+                        ? `💀 ${chosen.name} was killed!`
+                        : `💥 ${chosen.name} took ${lossDamage} damage! (${chosen.hp}/${chosen.maxHp} HP)`}
+                    <br><span style="font-size: 6px;">Win chance was ${chance}% | Wild ${pokemon.name} HP: ${wildHp}</span>
+                </div>
+            `;
+            actionsDiv.innerHTML = '<button class="btn btn-wide" id="btn-continue">CONTINUE</button>';
+            document.getElementById('btn-continue').addEventListener('click', () => {
+                if (state.isGameOver || state.party.length === 0) {
+                    state.isGameOver = true;
+                    if (!state.gameOverReason) state.gameOverReason = 'party_wiped';
+                    PT.App.goto('GAMEOVER');
+                } else {
+                    PT.App.goto('TRAVEL');
+                }
+            });
+        }
     }
 })();
