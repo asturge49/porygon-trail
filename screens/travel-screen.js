@@ -72,6 +72,89 @@
         }
     };
 
+    // Time-of-day cycle based on days elapsed
+    function getTimeOfDay(daysElapsed) {
+        const phases = ['morning', 'day', 'evening', 'night'];
+        return phases[daysElapsed % 4];
+    }
+
+    // Deterministic weather based on day + location (no flicker on re-render)
+    function getWeather(state, route) {
+        // Caves have no weather
+        if (route.terrain === 'cave') return { type: 'clear', html: '' };
+
+        // Seed: combine day and route id for deterministic result
+        const seed = state.daysElapsed * 31 + route.id.length * 7;
+        const roll = ((seed * 9301 + 49297) % 233280) / 233280; // Simple LCG
+
+        // 30% chance of weather
+        if (roll > 0.30) return { type: 'clear', html: '' };
+
+        // Pick weather type based on terrain
+        const weatherRoll = ((seed * 7919 + 12345) % 233280) / 233280;
+        let weatherType;
+
+        if (route.terrain === 'water' || route.id === 'seafoam_islands') {
+            weatherType = weatherRoll < 0.4 ? 'rain' : (weatherRoll < 0.7 ? 'fog' : 'snow');
+        } else if (route.terrain === 'mountain') {
+            weatherType = weatherRoll < 0.4 ? 'rain' : (weatherRoll < 0.7 ? 'fog' : 'wind');
+        } else {
+            weatherType = weatherRoll < 0.6 ? 'rain' : 'fog';
+        }
+
+        // Seafoam always snows instead of rains
+        if (route.id === 'seafoam_islands' && weatherType === 'rain') weatherType = 'snow';
+
+        let html = '';
+        if (weatherType === 'rain') {
+            let drops = '';
+            for (let i = 0; i < 18; i++) {
+                const left = (i * 5.5 + 2) % 100;
+                const delay = (i * 0.15) % 1.5;
+                drops += `<div class="weather-drop" style="left:${left}%;animation-delay:${delay}s;">|</div>`;
+            }
+            html = `<div class="weather-rain">${drops}</div>`;
+        } else if (weatherType === 'fog') {
+            html = `<div class="weather-fog"><div class="fog-layer fog-layer-1"></div><div class="fog-layer fog-layer-2"></div></div>`;
+        } else if (weatherType === 'wind') {
+            let gusts = '';
+            for (let i = 0; i < 8; i++) {
+                const top = 15 + (i * 10) % 70;
+                const delay = (i * 0.3) % 2;
+                gusts += `<div class="weather-gust" style="top:${top}%;animation-delay:${delay}s;">~~</div>`;
+            }
+            html = `<div class="weather-wind">${gusts}</div>`;
+        } else if (weatherType === 'snow') {
+            let flakes = '';
+            for (let i = 0; i < 15; i++) {
+                const left = (i * 6.5 + 3) % 100;
+                const delay = (i * 0.2) % 2;
+                const char = i % 3 === 0 ? '*' : '.';
+                flakes += `<div class="weather-flake" style="left:${left}%;animation-delay:${delay}s;">${char}</div>`;
+            }
+            html = `<div class="weather-snow">${flakes}</div>`;
+        }
+
+        return { type: weatherType, html };
+    }
+
+    // Time-of-day bonus elements (stars at night, sun glow at morning)
+    function getTimeElements(timeOfDay) {
+        if (timeOfDay === 'night') {
+            return `<div class="time-stars">
+                <div class="time-star" style="top:12%;left:15%;">.</div>
+                <div class="time-star" style="top:8%;left:45%;">*</div>
+                <div class="time-star" style="top:18%;left:75%;">.</div>
+                <div class="time-star" style="top:5%;left:88%;">.</div>
+                <div class="time-star" style="top:22%;left:32%;">*</div>
+            </div>`;
+        }
+        if (timeOfDay === 'morning') {
+            return `<div class="time-sun" style="top:10%;right:10%;">*</div>`;
+        }
+        return '';
+    }
+
     PT.Screens.TRAVEL = {
         render(container, state) {
             const route = PT.Engine.GameState.getCurrentRoute(state);
@@ -87,9 +170,23 @@
             }
 
             const nextRoute = PT.Engine.GameState.getNextRoute(state);
-            const scene = TERRAIN_SCENES[route.terrain] || TERRAIN_SCENES.route;
+            // Two-tier scene lookup: per-location first, then terrain fallback
+            const locationScenes = PT.Data.LocationScenes || {};
+            const scene = locationScenes[route.id] || TERRAIN_SCENES[route.terrain] || TERRAIN_SCENES.route;
             const progress = nextRoute ? Math.min(100, (state.distanceTraveled / route.distanceToNext) * 100) : 100;
             const isAtDestination = state.currentLocationIndex >= PT.Data.Routes.length - 1;
+
+            // Dynamic state elements
+            const timeOfDay = getTimeOfDay(state.daysElapsed);
+            const weather = getWeather(state, route);
+            const timeElements = route.terrain !== 'cave' ? getTimeElements(timeOfDay) : '';
+
+            // Lead Pokemon sprite
+            const leadPokemon = state.party.find(p => p.status !== 'fainted' && p.hp > 0) || state.party[0];
+            const leadSpriteUrl = leadPokemon ? PT.Engine.GameState.getSpriteUrl(leadPokemon.id) : null;
+            const trainerHtml = leadSpriteUrl
+                ? `<img class="lead-pokemon-sprite" src="${leadSpriteUrl}" alt="${leadPokemon.name}" onerror="this.parentNode.innerHTML='&#9658;'">`
+                : '&#9658;';
 
             const div = document.createElement('div');
             div.className = 'screen travel-screen';
@@ -99,17 +196,20 @@
                     <span>${state.badges.filter(b => b !== 'champion').length} Badges | ${state.pokedexCaught.length} Caught</span>
                 </div>
 
-                <div class="travel-scene" style="background: ${scene.sky}">
+                <div class="travel-scene" data-time="${timeOfDay}" style="background: ${scene.sky}">
                     <div class="scene-terrain">
                         <div class="scene-sky">
                             ${scene.art || ''}
+                            ${timeElements}
                         </div>
                         <div class="scene-location-name">${route.name}</div>
                         <div class="scene-ground" style="background: ${scene.ground}">
                             <div class="scene-path"></div>
-                            <div class="scene-trainer" id="scene-trainer">&#9658;</div>
+                            <div class="scene-trainer" id="scene-trainer">${trainerHtml}</div>
                         </div>
                     </div>
+                    ${weather.html}
+                    <div class="time-overlay"></div>
                 </div>
 
                 <div class="travel-progress">

@@ -541,14 +541,397 @@ body {
     top: 2px;
     font-size: 10px;
     color: var(--gb-darkest);
-    animation: trainerWalk 2s steps(2) infinite;
+    animation: trainerWalk 2s ease-in-out infinite;
     z-index: 3;
 }
 
 @keyframes trainerWalk {
-    0% { left: 30%; }
-    50% { left: 32%; }
-    100% { left: 30%; }
+    0%   { left: 30%; transform: translateY(0); }
+    25%  { left: 31%; transform: translateY(-2px); }
+    50%  { left: 32%; transform: translateY(0); }
+    75%  { left: 31%; transform: translateY(-2px); }
+    100% { left: 30%; transform: translateY(0); }
+}
+
+/* Lead Pokemon sprite on path */
+.lead-pokemon-sprite {
+    width: 24px;
+    height: 24px;
+    image-rendering: pixelated;
+    filter: brightness(0.8) sepia(1) hue-rotate(70deg) saturate(3);
+    position: relative;
+    top: -8px;
+}
+
+/* ===== ADDITIONAL SCENE ELEMENTS ===== */
+
+.pixel-fence {
+    position: absolute;
+    font-size: 6px;
+    color: var(--gb-dark);
+    letter-spacing: 1px;
+}
+
+.pixel-npc {
+    position: absolute;
+    font-size: 8px;
+    color: var(--gb-darkest);
+}
+
+.pixel-fossil {
+    position: absolute;
+    color: var(--gb-dark);
+    opacity: 0.7;
+}
+
+.pixel-bridge {
+    position: absolute;
+    font-size: 7px;
+    color: var(--gb-darkest);
+}
+
+.pixel-waterfall {
+    position: absolute;
+    font-size: 6px;
+    color: var(--gb-dark);
+    line-height: 0.8;
+    animation: waterfallFlow 1s steps(2) infinite;
+}
+
+@keyframes waterfallFlow {
+    0%   { transform: translateY(0); opacity: 0.8; }
+    50%  { transform: translateY(2px); opacity: 1; }
+    100% { transform: translateY(0); opacity: 0.8; }
+}
+
+.pixel-seagull {
+    position: absolute;
+    font-size: 8px;
+    color: var(--gb-dark);
+    animation: seagullFly 6s linear infinite;
+}
+
+@keyframes seagullFly {
+    0%   { transform: translateX(0) translateY(0); }
+    50%  { transform: translateX(15px) translateY(-5px); }
+    100% { transform: translateX(30px) translateY(0); }
+}
+
+.pixel-crane {
+    position: absolute;
+    font-size: 7px;
+    color: var(--gb-darkest);
+}
+
+.pixel-ship {
+    position: absolute;
+    font-size: 7px;
+    line-height: 1.1;
+    color: var(--gb-darkest);
+    text-align: center;
+}
+
+.pixel-dock {
+    position: absolute;
+    font-size: 6px;
+    color: var(--gb-dark);
+}
+
+.pixel-gravestone {
+    position: absolute;
+    font-size: 10px;
+    color: var(--gb-dark);
+}
+
+.pixel-ghost {
+    position: absolute;
+    font-size: 8px;
+    color: var(--gb-light);
+    line-height: 1;
+    text-align: center;
+    animation: ghostFloat 4s ease-in-out infinite;
+    opacity: 0.6;
+}
+
+@keyframes ghostFloat {
+    0%, 100% { transform: translateY(0); opacity: 0.4; }
+    50%      { transform: translateY(-8px); opacity: 0.8; }
+}
+
+.pixel-fog {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(48, 98, 48, 0.2);
+    animation: fogPulse 6s ease-in-out infinite;
+    pointer-events: none;
+}
+
+@keyframes fogPulse {
+    0%, 100% { opacity: 0.3; }
+    50%      { opacity: 0.6; }
+}
+
+.pixel-flower {
+    position: absolute;
+    color: var(--gb-light);
+    animation: flowerSway 3s ease-in-out infinite;
+}
+
+@keyframes flowerSway {
+    0%, 100% { transform: rotate(0deg); }
+    50%      { transform: rotate(5deg); }
+}
+
+.pixel-helicopter {
+    position: absolute;
+    font-size: 6px;
+    color: var(--gb-dark);
+    animation: helicopterFly 8s linear infinite;
+}
+
+@keyframes helicopterFly {
+    0%   { transform: translateX(0); }
+    100% { transform: translateX(-40px); }
+}
+
+.pixel-gate {
+    position: absolute;
+    font-size: 7px;
+    line-height: 1.2;
+    color: var(--gb-darkest);
+    text-align: center;
+}
+
+.pixel-icicle {
+    position: absolute;
+    font-size: 10px;
+    color: var(--gb-light);
+}
+
+.pixel-ice {
+    position: absolute;
+    color: var(--gb-light);
+}
+
+.pixel-bird {
+    position: absolute;
+    color: var(--gb-light);
+    animation: glow 3s ease-in-out infinite;
+}
+
+.pixel-snow-particle {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    pointer-events: none;
+}
+
+.pixel-smoke {
+    position: absolute;
+    font-size: 7px;
+    color: var(--gb-dark);
+    opacity: 0.6;
+    animation: smokeRise 4s ease-out infinite;
+}
+
+@keyframes smokeRise {
+    0%   { transform: translateY(0); opacity: 0.6; }
+    100% { transform: translateY(-15px); opacity: 0; }
+}
+
+.pixel-volcano {
+    position: absolute;
+    font-size: 10px;
+    line-height: 1;
+    color: var(--gb-darkest);
+    text-align: center;
+}
+
+.cinnabar-glow {
+    animation: cinnabarGlow 2s ease-in-out infinite !important;
+}
+
+@keyframes cinnabarGlow {
+    0%, 100% { opacity: 0.4; color: var(--gb-light); }
+    50%      { opacity: 1; color: var(--gb-lightest); }
+}
+
+.pixel-stairs {
+    position: absolute;
+    font-size: 6px;
+    color: var(--gb-dark);
+}
+
+.pixel-torch {
+    position: absolute;
+    font-size: 8px;
+    color: var(--gb-light);
+    animation: glow 1.5s ease-in-out infinite;
+}
+
+/* Lavender Town scene override */
+.lavender-scene {
+    background: var(--gb-dark) !important;
+}
+
+/* ===== TIME-OF-DAY OVERLAYS ===== */
+
+.time-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    pointer-events: none;
+    z-index: 4;
+    transition: background 0.5s;
+}
+
+.travel-scene[data-time="morning"] .time-overlay {
+    background: rgba(155, 188, 15, 0.08);
+}
+
+.travel-scene[data-time="day"] .time-overlay {
+    background: none;
+}
+
+.travel-scene[data-time="evening"] .time-overlay {
+    background: rgba(48, 98, 48, 0.15);
+}
+
+.travel-scene[data-time="night"] .time-overlay {
+    background: rgba(15, 56, 15, 0.25);
+}
+
+/* Stars at night */
+.time-stars {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 40px;
+    pointer-events: none;
+    z-index: 2;
+}
+
+.time-star {
+    position: absolute;
+    font-size: 8px;
+    color: var(--gb-light);
+    animation: twinkle 2s ease-in-out infinite;
+}
+
+.time-star:nth-child(odd) {
+    animation-delay: -1s;
+}
+
+@keyframes twinkle {
+    0%, 100% { opacity: 0.3; }
+    50%      { opacity: 1; }
+}
+
+/* Morning sun */
+.time-sun {
+    position: absolute;
+    font-size: 14px;
+    color: var(--gb-lightest);
+    animation: glow 3s ease-in-out infinite;
+    z-index: 2;
+}
+
+/* ===== WEATHER OVERLAYS ===== */
+
+.weather-rain, .weather-fog, .weather-wind, .weather-snow {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    pointer-events: none;
+    z-index: 3;
+    overflow: hidden;
+}
+
+/* Rain */
+.weather-drop {
+    position: absolute;
+    top: -10px;
+    font-size: 7px;
+    color: var(--gb-dark);
+    opacity: 0.6;
+    animation: rainDrop 0.8s linear infinite;
+}
+
+@keyframes rainDrop {
+    0%   { transform: translateY(-10px); opacity: 0.6; }
+    100% { transform: translateY(150px); opacity: 0; }
+}
+
+/* Fog */
+.fog-layer {
+    position: absolute;
+    top: 0;
+    left: -20%;
+    width: 140%;
+    height: 100%;
+    background: rgba(139, 172, 15, 0.15);
+    border-radius: 50%;
+}
+
+.fog-layer-1 {
+    animation: fogDrift1 8s ease-in-out infinite;
+}
+
+.fog-layer-2 {
+    animation: fogDrift2 12s ease-in-out infinite;
+    opacity: 0.7;
+    top: 20%;
+}
+
+@keyframes fogDrift1 {
+    0%, 100% { transform: translateX(0); }
+    50%      { transform: translateX(15px); }
+}
+
+@keyframes fogDrift2 {
+    0%, 100% { transform: translateX(0); }
+    50%      { transform: translateX(-10px); }
+}
+
+/* Wind */
+.weather-gust {
+    position: absolute;
+    left: 110%;
+    font-size: 7px;
+    color: var(--gb-dark);
+    opacity: 0.5;
+    animation: windBlow 2s linear infinite;
+}
+
+@keyframes windBlow {
+    0%   { transform: translateX(0); opacity: 0.5; }
+    100% { transform: translateX(-250px); opacity: 0; }
+}
+
+/* Snow */
+.weather-flake {
+    position: absolute;
+    top: -10px;
+    font-size: 7px;
+    color: var(--gb-light);
+    opacity: 0.7;
+    animation: snowFall 3s ease-in-out infinite;
+}
+
+@keyframes snowFall {
+    0%   { transform: translateY(-10px) translateX(0); opacity: 0.7; }
+    50%  { transform: translateY(70px) translateX(8px); opacity: 0.9; }
+    100% { transform: translateY(150px) translateX(-3px); opacity: 0; }
 }
 
 .travel-progress {
