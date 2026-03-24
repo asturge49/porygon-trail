@@ -65,9 +65,37 @@
         };
     }
 
+    // Per-Pokemon HP overrides (id → HP)
+    const HP_OVERRIDES = {
+        // Legendaries → 6 HP
+        144: 6, 145: 6, 146: 6, 150: 6, 151: 6, 0: 6,
+        // Powerful fully-evolved rares → 5 HP
+        3: 5, 6: 5, 9: 5,       // Venusaur, Charizard, Blastoise
+        31: 5, 34: 5,            // Nidoqueen, Nidoking
+        65: 5, 68: 5,            // Alakazam, Machamp
+        59: 5,                   // Arcanine
+        94: 5,                   // Gengar
+        113: 5, 115: 5,          // Chansey, Kangaskhan
+        123: 5, 125: 5, 126: 5, // Scyther, Electabuzz, Magmar
+        127: 5,                  // Pinsir
+        130: 5, 131: 5,          // Gyarados, Lapras
+        137: 5,                  // Porygon
+        139: 5, 141: 5,          // Omastar, Kabutops
+        142: 5,                  // Aerodactyl
+        143: 5,                  // Snorlax
+        103: 5,                  // Exeggutor
+        149: 5,                  // Dragonite
+        // Tough uncommons → 4 HP
+        12: 4, 15: 4,            // Butterfree, Beedrill
+        18: 4,                   // Pidgeot
+        114: 4,                  // Tangela
+        148: 4                   // Dragonair
+    };
+
     function createPartyPokemon(data) {
-        const maxHp = data.rarity === 'legendary' ? 5 :
-                      data.rarity === 'rare' ? 4 : 3;
+        const baseHp = data.rarity === 'legendary' ? 6 :
+                       data.rarity === 'rare' ? 4 : 3;
+        const maxHp = HP_OVERRIDES[data.id] !== undefined ? HP_OVERRIDES[data.id] : baseHp;
         return {
             id: data.id,
             name: data.name,
@@ -198,6 +226,12 @@
         return { killed: true, name: victim.name };
     }
 
+    // Get max HP for a Pokemon data entry (respects overrides)
+    function getMaxHpForPokemon(data) {
+        if (HP_OVERRIDES[data.id] !== undefined) return HP_OVERRIDES[data.id];
+        return data.rarity === 'legendary' ? 6 : data.rarity === 'rare' ? 4 : 3;
+    }
+
     // Convert Pokemon to food (rarity = size = more food)
     function pokemonToFood(rarity) {
         const foodValues = { common: 5, uncommon: 10, rare: 20, legendary: 40 };
@@ -207,6 +241,7 @@
     PT.Engine.GameState = {
         createNewGame,
         createPartyPokemon,
+        getMaxHpForPokemon,
         getSpriteUrl,
         addToLog,
         healPokemon,
