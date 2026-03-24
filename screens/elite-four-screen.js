@@ -97,7 +97,6 @@
             </div>
             <div class="event-choices">
                 <button class="btn btn-wide" id="btn-begin-e4">BEGIN THE GAUNTLET</button>
-                <button class="btn btn-wide" id="btn-leave-e4">NOT YET...</button>
             </div>
         `;
         container.appendChild(div);
@@ -107,10 +106,6 @@
                 e4Index: 0,
                 opponents: opponents
             });
-        });
-
-        document.getElementById('btn-leave-e4').addEventListener('click', () => {
-            PT.App.goto('TRAVEL');
         });
     }
 
