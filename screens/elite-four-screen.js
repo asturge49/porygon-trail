@@ -270,19 +270,33 @@
             });
 
         } else {
-            // Loss — the fighting Pokemon is always killed
+            // Loss — the fighting Pokemon takes 4 HP damage
             if (PT.Engine.Audio) PT.Engine.Audio.gymDefeat();
 
-            const idx = state.party.indexOf(pokemon);
-            if (idx !== -1) {
-                state.party.splice(idx, 1);
-                state.pokemonLost++;
+            const E4_LOSS_DAMAGE = 4;
+            const oldHp = pokemon.hp;
+            pokemon.hp = Math.max(0, pokemon.hp - E4_LOSS_DAMAGE);
+            const killed = pokemon.hp <= 0;
+
+            if (killed) {
+                const idx = state.party.indexOf(pokemon);
+                if (idx !== -1) {
+                    state.party.splice(idx, 1);
+                    state.pokemonLost++;
+                }
             }
 
-            PT.Engine.GameState.addToLog(state, `${pokemon.name} was killed by ${trainer.name}'s ${opponent.name}! 💀`);
+            const dmgMsg = killed
+                ? `${pokemon.name} was killed by ${trainer.name}'s ${opponent.name}! 💀`
+                : `${pokemon.name} took ${E4_LOSS_DAMAGE} damage from ${trainer.name}'s ${opponent.name}! (${pokemon.hp}/${pokemon.maxHp} HP)`;
+            PT.Engine.GameState.addToLog(state, dmgMsg);
 
             const aliveAfter = PT.Engine.GameState.getAliveParty(state);
             const partyWiped = aliveAfter.length === 0;
+
+            const statusMsg = killed
+                ? `💀 ${pokemon.name} was killed by ${opponent.name}!`
+                : `💥 ${pokemon.name} took ${E4_LOSS_DAMAGE} damage! (${pokemon.hp}/${pokemon.maxHp} HP remaining)`;
 
             div.innerHTML = `
                 <div class="event-title">DEFEAT...</div>
@@ -297,7 +311,7 @@
                     </div>
                     <div class="gym-leader-name">${trainer.name} wins</div>
                     <div style="font-size: 8px; margin-top: 8px;">
-                        💀 ${pokemon.name} was killed by ${opponent.name}!
+                        ${statusMsg}
                         <br><span style="font-size: 6px;">Win chance was ${chance}%</span>
                         ${partyWiped
                             ? '<br><strong>All your Pokemon have fallen...</strong>'
