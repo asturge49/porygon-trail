@@ -9,7 +9,7 @@
         greatballs: { name: "Great Ball", price: 600, desc: "Better ball. Catch rate: 60%", icon: "O" },
         ultraballs: { name: "Ultra Ball", price: 1200, desc: "Best ball. Catch rate: 80%", icon: "@" },
         potions: { name: "Potion", price: 300, desc: "Restore 1 HP to a Pokemon.", icon: "+" },
-        superPotions: { name: "Super Potion", price: 700, desc: "Restore 2 HP to a Pokemon.", icon: "++" },
+        superPotions: { name: "Super Potion", price: 500, desc: "Restore 2 HP to a Pokemon.", icon: "++" },
         repels: { name: "Repel", price: 350, desc: "Avoid the next 3 encounters.", icon: "R" },
         rareCandy: { name: "Rare Candy", price: 2000, desc: "Level up a Pokemon, boosting effectiveness.", icon: "*" },
         escapeRope: { name: "Escape Rope", price: 550, desc: "Escape from dangerous events.", icon: "~" }
