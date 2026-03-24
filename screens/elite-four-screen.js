@@ -189,24 +189,24 @@
         const opponentTypes = opponentData ? opponentData.types : [trainer.type];
         const typeChart = getTypeWeaknesses(opponentTypes);
 
-        // Calculate success chance — HARDER than gyms
-        let chance = 35; // Base 35% (gym is 45%)
+        // Calculate success chance — BRUTAL Elite Four
+        let chance = 30; // Base 30% (was 35%, gym is 45%)
 
         // Type advantage (smaller bonus than gyms)
         const hasAdvantage = pokemon.types.some(t => typeChart.weakTo.includes(t));
         const hasDisadvantage = pokemon.types.some(t => typeChart.strongTo.includes(t));
-        if (hasAdvantage) chance += 15;
-        if (hasDisadvantage) chance -= 15;
+        if (hasAdvantage) chance += 20; // SE matchups are your lifeline
+        if (hasDisadvantage) chance -= 20; // NVE is near-suicide
 
-        // Badge bonus (smaller than gym)
-        chance += state.badges.filter(b => b !== 'champion').length * 2;
+        // Badge bonus (minimal)
+        chance += state.badges.filter(b => b !== 'champion').length * 1;
 
-        // Party size bonus
+        // Party size bonus (reduced — being outnumbered barely helps here)
         const aliveCount = PT.Engine.GameState.getAliveParty(state).length;
-        chance += aliveCount * 2;
+        chance += aliveCount * 1;
 
-        // Lower ceiling than gyms
-        chance = Math.max(10, Math.min(65, chance));
+        // Hard ceiling — even perfect conditions can't guarantee victory
+        chance = Math.max(8, Math.min(55, chance));
 
         const won = state.rng.chance(chance);
 

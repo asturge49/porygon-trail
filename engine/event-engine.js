@@ -18,6 +18,8 @@
             if (event.locationIds && !event.locationIds.includes(route.id)) return false;
             // Terrain check
             if (event.terrainTypes && !event.terrainTypes.includes(route.terrain)) return false;
+            // Party size requirement (for sacrifice events that need enough Pokemon)
+            if (event.requiresPartySize && PT.Engine.GameState.getAliveParty(state).length < event.requiresPartySize) return false;
             // Route event pool check (if event has no location restriction, it can happen anywhere)
             if (!event.locationIds && !event.terrainTypes && route.eventPool && !route.eventPool.includes(event.id)) {
                 // General events can still occur anywhere
@@ -78,7 +80,7 @@
             }
         });
 
-        // Party damage
+        // Party damage (hits random individual Pokemon per point)
         if (effects.partyDamage) {
             for (let i = 0; i < effects.partyDamage; i++) {
                 const alive = PT.Engine.GameState.getAliveParty(state);
@@ -88,6 +90,14 @@
                     PT.Engine.GameState.damagePokemon(victim, 1, state);
                 }
             }
+        }
+
+        // Party-wide damage (hits EVERY alive Pokemon)
+        if (effects.partyDamageAll) {
+            const alive = PT.Engine.GameState.getAliveParty(state);
+            alive.forEach(p => {
+                PT.Engine.GameState.damagePokemon(p, effects.partyDamageAll, state);
+            });
         }
 
         // Heal all
@@ -182,10 +192,18 @@
             }
         }
 
-        // Permanent Pokemon death
+        // Permanent Pokemon death (supports multi-kill via pokemonDeath2, pokemonDeath3)
         if (effects.pokemonDeath) {
             const deathResult = PT.Engine.GameState.killPokemon(state);
             effects._deathResult = deathResult;
+        }
+        if (effects.pokemonDeath2) {
+            const deathResult2 = PT.Engine.GameState.killPokemon(state);
+            effects._deathResult2 = deathResult2;
+        }
+        if (effects.pokemonDeath3) {
+            const deathResult3 = PT.Engine.GameState.killPokemon(state);
+            effects._deathResult3 = deathResult3;
         }
 
         // Days lost

@@ -18,7 +18,7 @@
                     text: "Battle them!",
                     outcomes: [
                         { weight: 50, narration: "Your Pokemon fight bravely and drive Team Rocket away!", effects: { money: 500 }, trackRocket: true },
-                        { weight: 30, narration: "A tough fight! You win, but your Pokemon take damage.", effects: { money: 200, partyDamage: 1 }, trackRocket: true },
+                        { weight: 30, narration: "A tough fight! You win, but your Pokemon take damage.", effects: { money: 200, partyDamageAll: 1 }, trackRocket: true },
                         { weight: 20, narration: "They overwhelm you and steal your supplies!", effects: { food: -10, pokeballs: -3 } }
                     ]
                 },
@@ -50,7 +50,7 @@
                     text: "Raid the hideout",
                     outcomes: [
                         { weight: 40, narration: "You find a stash of supplies! Team Rocket will be furious.", effects: { money: 1000, pokeballs: 5, potions: 3 }, trackRocket: true },
-                        { weight: 35, narration: "You grab some items but trigger an alarm! Your Pokemon take hits escaping.", effects: { money: 500, pokeballs: 3, partyDamage: 1 }, trackRocket: true },
+                        { weight: 35, narration: "You grab some items but trigger an alarm! Your Pokemon take hits escaping.", effects: { money: 500, pokeballs: 3, partyDamageAll: 1 }, trackRocket: true },
                         { weight: 25, narration: "It was a trap! Team Rocket ambushes you!", effects: { partyDamage: 2, food: -10 } }
                     ]
                 },
@@ -145,7 +145,7 @@
                     text: "Accept his challenge!",
                     outcomes: [
                         { weight: 30, narration: "Your Pokemon outperform Gary's! The battle experience strengthens your team! \"Hmph! I'll beat you next time!\"", effects: { money: 500, trainPokemon: true } },
-                        { weight: 30, narration: "A close match! Gary barely wins. \"I knew I was better!\" Your Pokemon limps back, battered.", effects: { partyDamage: 1, money: -200 } },
+                        { weight: 30, narration: "A close match! Gary barely wins. \"I knew I was better!\" Your Pokemon limps back, battered.", effects: { partyDamageAll: 1, money: -200 } },
                         { weight: 25, narration: "Gary's team is surprisingly strong. He wipes the floor with you and takes your money.", effects: { partyDamage: 2, money: -300 } },
                         { weight: 15, narration: "Gary absolutely destroys you. \"You're pathetic!\" One of your Pokemon doesn't get back up.", effects: { pokemonDeath: true, money: -500 } }
                     ]
@@ -171,7 +171,7 @@
                     text: "Battle them",
                     outcomes: [
                         { weight: 60, narration: "\"Team Rocket's blasting off again!\" They fly into the sky.", effects: { money: 300 }, trackRocket: true },
-                        { weight: 30, narration: "Meowth scratches your Pokemon! But you still win.", effects: { partyDamage: 1, money: 200 }, trackRocket: true },
+                        { weight: 30, narration: "Meowth scratches your Pokemon! But you still win.", effects: { partyDamageAll: 1, money: 200 }, trackRocket: true },
                         { weight: 10, narration: "Their Weezing's Smokescreen lets them steal some Pokeballs!", effects: { pokeballs: -3 } }
                     ]
                 },
@@ -196,10 +196,10 @@
                 {
                     text: "Challenge Ash's Pikachu!",
                     outcomes: [
-                        { weight: 25, narration: "Your Pokemon fights valiantly and somehow overpowers Ash's Pikachu! Ash stares in disbelief. \"Wow... you're the real deal. Pikachu, go with them.\" The battle-hardened Pikachu joins your team — but it has a stubborn streak.", effects: { catchPokemon: 25, partyDamage: 1 } },
+                        { weight: 25, narration: "Your Pokemon fights valiantly and somehow overpowers Ash's Pikachu! Ash stares in disbelief. \"Wow... you're the real deal. Pikachu, go with them.\" The battle-hardened Pikachu joins your team — but it has a stubborn streak.", effects: { catchPokemon: 25, partyDamageAll: 1 } },
                         { weight: 35, narration: "Ash's Pikachu is on another level. Thunderbolt after Thunderbolt rains down on your team. You lose badly. Ash helps patch up your Pokemon, but the damage is done.", effects: { partyDamage: 2 } },
                         { weight: 25, narration: "Pikachu's Thunder knocks your Pokemon out cold. It doesn't get back up. Ash looks horrified. \"I... I'm sorry. Pikachu doesn't know its own strength.\"", effects: { pokemonDeath: true } },
-                        { weight: 15, narration: "A close fight! Your Pokemon holds its own but ultimately falls. Ash is impressed. \"You've got guts. Here, take these.\" He hands you supplies.", effects: { partyDamage: 1, potions: 3, food: 10 } }
+                        { weight: 15, narration: "A close fight! Your Pokemon holds its own but ultimately falls. Ash is impressed. \"You've got guts. Here, take these.\" He hands you supplies.", effects: { partyDamageAll: 1, potions: 3, food: 10 } }
                     ]
                 },
                 {
@@ -225,7 +225,7 @@
                     text: "Push through",
                     bonusAbility: "flash",
                     outcomes: [
-                        { weight: 40, narration: "You brave the storm. It's miserable but you make it through.", effects: { partyDamage: 1 } },
+                        { weight: 40, narration: "You brave the storm. It's miserable but you make it through.", effects: { partyDamageAll: 1 } },
                         { weight: 30, narration: "Lightning strikes near your team! A Pokemon is paralyzed!", effects: { statusRandom: "paralyzed" } },
                         { weight: 30, narration: "The rain soaks your food supplies.", effects: { food: -8 } }
                     ],
@@ -253,7 +253,7 @@
                     bonusAbility: "surf",
                     outcomes: [
                         { weight: 50, narration: "The heat drains everyone. Extra food and water consumed.", effects: { food: -10 } },
-                        { weight: 30, narration: "A Pokemon collapses from heat. You use extra potions.", effects: { food: -5, partyDamage: 1 } },
+                        { weight: 30, narration: "A Pokemon collapses from heat. You use extra potions.", effects: { food: -5, partyDamageAll: 1 } },
                         { weight: 20, narration: "You find an oasis! But it's a mirage... mostly.", effects: { food: -8 } }
                     ],
                     bonusOutcome: { weight: 100, narration: "Your Water-type keeps everyone cool and hydrated!", effects: { food: -3 } }
@@ -336,7 +336,7 @@
                     text: "Take the Moon Stone",
                     outcomes: [
                         { weight: 70, narration: "You take the Moon Stone! It pulses with energy.", effects: { rareCandy: 1 } },
-                        { weight: 30, narration: "As you grab it, Clefairy appear and attack! But you keep the stone.", effects: { rareCandy: 1, partyDamage: 1 } }
+                        { weight: 30, narration: "As you grab it, Clefairy appear and attack! But you keep the stone.", effects: { rareCandy: 1, partyDamageAll: 1 } }
                     ]
                 },
                 {
@@ -394,7 +394,7 @@
                 {
                     text: "Try to communicate",
                     outcomes: [
-                        { weight: 40, narration: "The ghost wails and your Pokemon are frightened!", effects: { partyDamage: 1 } },
+                        { weight: 40, narration: "The ghost wails and your Pokemon are frightened!", effects: { partyDamageAll: 1 } },
                         { weight: 40, narration: "The ghost seems sad, not angry. It fades away, leaving a Rare Candy.", effects: { rareCandy: 1 } },
                         { weight: 20, narration: "Your bravery impresses a wild Gastly, who joins your team!", effects: { catchPokemon: 92 } }
                     ]
@@ -473,7 +473,7 @@
                     outcomes: [
                         { weight: 40, narration: "You fight through Team Rocket and save Silph Co.! The president gives you a Lapras and the Silph Scope!", effects: { catchPokemon: 131, keyItem: "Silph Scope", money: 2000 }, trackRocket: true },
                         { weight: 35, narration: "You rescue the employees but your team takes a beating. You get the Silph Scope!", effects: { partyDamage: 2, keyItem: "Silph Scope", money: 1000 }, trackRocket: true },
-                        { weight: 25, narration: "Team Rocket is too strong! You retreat with minor injuries.", effects: { partyDamage: 1 } }
+                        { weight: 25, narration: "Team Rocket is too strong! You retreat with minor injuries.", effects: { partyDamageAll: 1 } }
                     ]
                 },
                 {
@@ -600,7 +600,7 @@
                     text: "Shield your team",
                     bonusAbility: "surf",
                     outcomes: [
-                        { weight: 50, narration: "The heat is unbearable! A Pokemon is burned!", effects: { partyDamage: 1, seePokemon: 146 } },
+                        { weight: 50, narration: "The heat is unbearable! A Pokemon is burned!", effects: { partyDamageAll: 1, seePokemon: 146 } },
                         { weight: 50, narration: "You endure the heat as Moltres flies into the sky.", effects: { seePokemon: 146 } }
                     ],
                     bonusOutcome: { weight: 100, narration: "Your Water-type protects everyone from the heat!", effects: { seePokemon: 146 } }
@@ -623,14 +623,14 @@
                     outcomes: [
                         { weight: 10, narration: "The Ultra Ball shakes once... twice... three times... CLICK! You caught MEWTWO!", effects: { ultraballs: -1, catchPokemon: 150 } },
                         { weight: 50, narration: "Mewtwo psychically destroys the ball! Your team takes massive damage!", effects: { ultraballs: -1, partyDamage: 3 } },
-                        { weight: 40, narration: "Mewtwo swats the ball away and teleports. Your team is shaken.", effects: { ultraballs: -1, partyDamage: 1 } }
+                        { weight: 40, narration: "Mewtwo swats the ball away and teleports. Your team is shaken.", effects: { ultraballs: -1, partyDamageAll: 1 } }
                     ]
                 },
                 {
                     text: "Retreat immediately",
                     outcomes: [
                         { weight: 80, narration: "Wisdom prevails. You leave the cave unharmed.", effects: { seePokemon: 150 } },
-                        { weight: 20, narration: "As you turn, a psychic blast hits your team!", effects: { partyDamage: 1, seePokemon: 150 } }
+                        { weight: 20, narration: "As you turn, a psychic blast hits your team!", effects: { partyDamageAll: 1, seePokemon: 150 } }
                     ]
                 }
             ]
@@ -652,7 +652,7 @@
                     bonusAbility: "dig",
                     outcomes: [
                         { weight: 40, narration: "You sprint through the falling rocks! Everyone makes it!", effects: {} },
-                        { weight: 35, narration: "Rocks hit your team! A Pokemon is injured.", effects: { partyDamage: 1 } },
+                        { weight: 35, narration: "Rocks hit your team! A Pokemon is injured.", effects: { partyDamageAll: 1 } },
                         { weight: 25, narration: "A major collapse! Multiple Pokemon are hurt!", effects: { partyDamage: 2 } }
                     ],
                     bonusOutcome: { weight: 100, narration: "Your Ground-type digs a safe tunnel through the collapse!", effects: {} }
@@ -680,8 +680,8 @@
                     bonusAbility: "guard",
                     outcomes: [
                         { weight: 30, narration: "Your Pokemon shield you! But they take damage.", effects: { partyDamage: 2 } },
-                        { weight: 40, narration: "A Pokemon gets trampled! Food supplies are scattered!", effects: { partyDamage: 1, food: -10 } },
-                        { weight: 30, narration: "One Tauros stops and joins your team in respect!", effects: { partyDamage: 1, catchPokemon: 128 } }
+                        { weight: 40, narration: "A Pokemon gets trampled! Food supplies are scattered!", effects: { partyDamageAll: 1, food: -10 } },
+                        { weight: 30, narration: "One Tauros stops and joins your team in respect!", effects: { partyDamageAll: 1, catchPokemon: 128 } }
                     ],
                     bonusOutcome: { weight: 100, narration: "Your defensive Pokemon creates a barrier! The Tauros run around you!", effects: {} }
                 },
@@ -709,7 +709,7 @@
                     outcomes: [
                         { weight: 40, narration: "The toxic sludge poisons one of your Pokemon!", effects: { statusRandom: "poisoned" } },
                         { weight: 30, narration: "You make it through but feel sick. Food tastes wrong.", effects: { food: -5 } },
-                        { weight: 30, narration: "A wild Grimer attacks as you pass!", effects: { partyDamage: 1 } }
+                        { weight: 30, narration: "A wild Grimer attacks as you pass!", effects: { partyDamageAll: 1 } }
                     ],
                     bonusOutcome: { weight: 100, narration: "Your Poison-type navigates the swamp easily and keeps everyone safe!", effects: {} }
                 },
@@ -734,7 +734,7 @@
                     text: "Swim through",
                     bonusAbility: "surf",
                     outcomes: [
-                        { weight: 40, narration: "The current is brutal! A Pokemon is swept away... but returns safely.", effects: { partyDamage: 1 } },
+                        { weight: 40, narration: "The current is brutal! A Pokemon is swept away... but returns safely.", effects: { partyDamageAll: 1 } },
                         { weight: 30, narration: "You lose some supplies to the waves!", effects: { food: -8, pokeballs: -2 } },
                         { weight: 30, narration: "You fight the current and make it through exhausted.", effects: { food: -5 } }
                     ],
@@ -815,7 +815,7 @@
                 {
                     text: "Brave Victory Road!",
                     outcomes: [
-                        { weight: 30, narration: "Your team pushes through with determination! Indigo Plateau is in sight!", effects: { partyDamage: 1 } },
+                        { weight: 30, narration: "Your team pushes through with determination! Indigo Plateau is in sight!", effects: { partyDamageAll: 1 } },
                         { weight: 40, narration: "A brutal gauntlet! Your team is battered but standing!", effects: { partyDamage: 2 } },
                         { weight: 20, narration: "The cave nearly claims your team. Everyone is exhausted.", effects: { partyDamage: 3, food: -10 } },
                         { weight: 10, narration: "Incredibly, your team is inspired and powers through unscathed!", effects: {} }
@@ -825,8 +825,8 @@
                     text: "Use Escape Rope if things go bad",
                     requiresItem: "escapeRope",
                     outcomes: [
-                        { weight: 50, narration: "You make it through with minimal damage!", effects: { partyDamage: 1 } },
-                        { weight: 50, narration: "Things get bad — you use the rope but still take damage.", effects: { escapeRope: -1, partyDamage: 1 } }
+                        { weight: 50, narration: "You make it through with minimal damage!", effects: { partyDamageAll: 1 } },
+                        { weight: 50, narration: "Things get bad — you use the rope but still take damage.", effects: { escapeRope: -1, partyDamageAll: 1 } }
                     ]
                 }
             ]
@@ -849,9 +849,9 @@
                     text: "Run for it!",
                     bonusAbility: "fire",
                     outcomes: [
-                        { weight: 40, narration: "You escape but one of your Pokemon is stung badly and doesn't make it...", effects: { pokemonDeath: true, partyDamage: 1 } },
+                        { weight: 40, narration: "You escape but one of your Pokemon is stung badly and doesn't make it...", effects: { pokemonDeath: true, partyDamageAll: 1 } },
                         { weight: 40, narration: "The swarm is relentless! Your team takes heavy damage.", effects: { partyDamage: 2 } },
-                        { weight: 20, narration: "You sprint through the forest and barely escape!", effects: { partyDamage: 1 } }
+                        { weight: 20, narration: "You sprint through the forest and barely escape!", effects: { partyDamageAll: 1 } }
                     ],
                     bonusOutcome: { weight: 100, narration: "Your Fire-type scorches the air and the Beedrill scatter!", effects: {} }
                 },
@@ -879,9 +879,9 @@
                     text: "Shield your team!",
                     bonusAbility: "guard",
                     outcomes: [
-                        { weight: 35, narration: "The avalanche buries one of your Pokemon under tons of rock... they're gone.", effects: { pokemonDeath: true, partyDamage: 1 } },
+                        { weight: 35, narration: "The avalanche buries one of your Pokemon under tons of rock... they're gone.", effects: { pokemonDeath: true, partyDamageAll: 1 } },
                         { weight: 35, narration: "Your team is battered by rocks and snow. Everyone is hurt badly.", effects: { partyDamage: 2 } },
-                        { weight: 30, narration: "You find shelter behind a boulder just in time!", effects: { partyDamage: 1 } }
+                        { weight: 30, narration: "You find shelter behind a boulder just in time!", effects: { partyDamageAll: 1 } }
                     ],
                     bonusOutcome: { weight: 100, narration: "Your defensive Pokemon creates a barrier! The avalanche flows around you!", effects: {} }
                 },
@@ -910,8 +910,8 @@
                     bonusAbility: "surf",
                     outcomes: [
                         { weight: 40, narration: "The whirlpool drags one of your Pokemon into the depths... they don't resurface.", effects: { pokemonDeath: true } },
-                        { weight: 30, narration: "Everyone fights the current. Your supplies are scattered!", effects: { partyDamage: 1, food: -15, pokeballs: -3 } },
-                        { weight: 30, narration: "You narrowly escape the edge of the whirlpool!", effects: { partyDamage: 1 } }
+                        { weight: 30, narration: "Everyone fights the current. Your supplies are scattered!", effects: { partyDamageAll: 1, food: -15, pokeballs: -3 } },
+                        { weight: 30, narration: "You narrowly escape the edge of the whirlpool!", effects: { partyDamageAll: 1 } }
                     ],
                     bonusOutcome: { weight: 100, narration: "Your Water-type powers through the current and guides everyone to safety!", effects: {} }
                 }
@@ -933,7 +933,7 @@
                     bonusAbility: "poison",
                     outcomes: [
                         { weight: 35, narration: "One of your Pokemon inhales too much... the poison is fatal.", effects: { pokemonDeath: true, statusRandom: "poisoned" } },
-                        { weight: 35, narration: "Everyone is poisoned! You need medicine fast!", effects: { partyDamage: 1, statusRandom: "poisoned" } },
+                        { weight: 35, narration: "Everyone is poisoned! You need medicine fast!", effects: { partyDamageAll: 1, statusRandom: "poisoned" } },
                         { weight: 30, narration: "You hold your breath and make it through the gas cloud!", effects: {} }
                     ],
                     bonusOutcome: { weight: 100, narration: "Your Poison-type absorbs the toxic fumes — they're immune!", effects: {} }
@@ -962,9 +962,9 @@
                     text: "Flee the lava!",
                     bonusAbility: "fire",
                     outcomes: [
-                        { weight: 40, narration: "A lava flow cuts off one of your Pokemon... there's nothing you can do.", effects: { pokemonDeath: true, partyDamage: 1 } },
+                        { weight: 40, narration: "A lava flow cuts off one of your Pokemon... there's nothing you can do.", effects: { pokemonDeath: true, partyDamageAll: 1 } },
                         { weight: 30, narration: "The heat is unbearable! Your team suffers burns!", effects: { partyDamage: 2 } },
-                        { weight: 30, narration: "You outrun the lava flow! Close call!", effects: { partyDamage: 1 } }
+                        { weight: 30, narration: "You outrun the lava flow! Close call!", effects: { partyDamageAll: 1 } }
                     ],
                     bonusOutcome: { weight: 100, narration: "Your Fire-type navigates the lava flows and leads everyone to safety!", effects: {} }
                 }
@@ -987,7 +987,7 @@
                     outcomes: [
                         { weight: 40, narration: "The ghost's curse claims one of your Pokemon... they fade away before your eyes.", effects: { pokemonDeath: true } },
                         { weight: 30, narration: "The curse weakens your team! Everyone feels drained.", effects: { partyDamage: 2 } },
-                        { weight: 30, narration: "Your Pokemon resist the curse! The ghost wails and vanishes.", effects: { partyDamage: 1 } }
+                        { weight: 30, narration: "Your Pokemon resist the curse! The ghost wails and vanishes.", effects: { partyDamageAll: 1 } }
                     ],
                     bonusOutcome: { weight: 100, narration: "Your Psychic-type shields the team! The ghost is banished!", effects: {} }
                 },
@@ -995,7 +995,7 @@
                     text: "Flee the tower!",
                     outcomes: [
                         { weight: 70, narration: "You run from Pokemon Tower as fast as you can!", effects: {} },
-                        { weight: 30, narration: "The ghost follows you! One Pokemon is cursed!", effects: { partyDamage: 1 } }
+                        { weight: 30, narration: "The ghost follows you! One Pokemon is cursed!", effects: { partyDamageAll: 1 } }
                     ]
                 }
             ]
@@ -1014,9 +1014,9 @@
                 {
                     text: "Fight back!",
                     outcomes: [
-                        { weight: 35, narration: "Their Pokemon are brutal. One of yours falls and doesn't get back up...", effects: { pokemonDeath: true, partyDamage: 1 }, trackRocket: true },
+                        { weight: 35, narration: "Their Pokemon are brutal. One of yours falls and doesn't get back up...", effects: { pokemonDeath: true, partyDamageAll: 1 }, trackRocket: true },
                         { weight: 35, narration: "A vicious battle! Your team barely survives.", effects: { partyDamage: 2, money: -500 } },
-                        { weight: 30, narration: "Your team fights with everything they have and drives them off!", effects: { partyDamage: 1, money: 1000 }, trackRocket: true }
+                        { weight: 30, narration: "Your team fights with everything they have and drives them off!", effects: { partyDamageAll: 1, money: 1000 }, trackRocket: true }
                     ]
                 },
                 {
@@ -1041,7 +1041,7 @@
                     text: "Rush to find medicine!",
                     outcomes: [
                         { weight: 30, narration: "One of your Pokemon ate too many bad berries... they didn't make it. The Oregon Trail claims another victim.", effects: { pokemonDeath: true } },
-                        { weight: 40, narration: "Severe food poisoning! Everyone is sick for days.", effects: { partyDamage: 1, daysLost: 2 } },
+                        { weight: 40, narration: "Severe food poisoning! Everyone is sick for days.", effects: { partyDamageAll: 1, daysLost: 2 } },
                         { weight: 30, narration: "False alarm! Just some mild indigestion.", effects: { daysLost: 1 } }
                     ]
                 },
@@ -1096,7 +1096,7 @@
                     bonusAbility: "fly",
                     outcomes: [
                         { weight: 30, narration: "One of your Pokemon misjudges the jump and falls into the sinkhole...", effects: { pokemonDeath: true } },
-                        { weight: 40, narration: "Everyone makes it, but barely. That was terrifying.", effects: { partyDamage: 1 } },
+                        { weight: 40, narration: "Everyone makes it, but barely. That was terrifying.", effects: { partyDamageAll: 1 } },
                         { weight: 30, narration: "A perfect leap! Everyone clears the gap!", effects: {} }
                     ],
                     bonusOutcome: { weight: 100, narration: "Your Flying-type carries everyone safely over!", effects: {} }
@@ -1127,7 +1127,7 @@
                         { weight: 30, narration: "Jackpot! Food, Pokeballs, and money!", effects: { food: 15, pokeballs: 3, money: 500 } },
                         { weight: 30, narration: "Some supplies left behind. Better than nothing!", effects: { food: 8, potions: 1 } },
                         { weight: 20, narration: "A Rare Candy tucked in a backpack!", effects: { rareCandy: 1, food: 5 } },
-                        { weight: 20, narration: "The camp is booby-trapped! Team Rocket!", effects: { partyDamage: 1 } }
+                        { weight: 20, narration: "The camp is booby-trapped! Team Rocket!", effects: { partyDamageAll: 1 } }
                     ]
                 },
                 {
@@ -1172,7 +1172,7 @@
                     outcomes: [
                         { weight: 25, narration: "Your Pokemon outperforms theirs! The battle experience strengthens your team! The trainer pays up.", effects: { money: 800, trainPokemon: true } },
                         { weight: 25, narration: "A close battle! You win and the trainer shares some tips and food.", effects: { money: 400, food: 5, trainPokemon: true } },
-                        { weight: 25, narration: "Their Pokemon is too strong! You lose the match and some cash.", effects: { partyDamage: 1, money: -300 } },
+                        { weight: 25, narration: "Their Pokemon is too strong! You lose the match and some cash.", effects: { partyDamageAll: 1, money: -300 } },
                         { weight: 15, narration: "A brutal defeat! Their Pokemon lands a critical hit. Yours is badly hurt.", effects: { partyDamage: 2, money: -400 } },
                         { weight: 10, narration: "A devastating loss. The trainer's Pokemon was far too powerful. Your Pokemon doesn't recover.", effects: { pokemonDeath: true, money: -500 } }
                     ]
@@ -1358,8 +1358,8 @@
                     text: "Defend yourself!",
                     bonusAbility: "intimidate",
                     outcomes: [
-                        { weight: 40, narration: "Your Pokemon takes a hit defending you!", effects: { partyDamage: 1 } },
-                        { weight: 30, narration: "A nasty scratch! But you drive it off.", effects: { partyDamage: 1, food: -3 } },
+                        { weight: 40, narration: "Your Pokemon takes a hit defending you!", effects: { partyDamageAll: 1 } },
+                        { weight: 30, narration: "A nasty scratch! But you drive it off.", effects: { partyDamageAll: 1, food: -3 } },
                         { weight: 30, narration: "Your team scares it off! No harm done.", effects: {} }
                     ],
                     bonusOutcome: { weight: 100, narration: "Your Pokemon's intimidating presence scares it away immediately!", effects: {} }
@@ -1387,7 +1387,7 @@
                     text: "Push through",
                     bonusAbility: "dig",
                     outcomes: [
-                        { weight: 40, narration: "The sand tears at your team! A Pokemon is badly hurt!", effects: { partyDamage: 1, food: -5 } },
+                        { weight: 40, narration: "The sand tears at your team! A Pokemon is badly hurt!", effects: { partyDamageAll: 1, food: -5 } },
                         { weight: 30, narration: "You get disoriented in the storm! Lost a day wandering.", effects: { daysLost: 1 } },
                         { weight: 30, narration: "You huddle together and push through!", effects: { food: -3 } }
                     ],
@@ -1441,7 +1441,7 @@
                     outcomes: [
                         { weight: 35, narration: "A massive fissure opens! One of your Pokemon falls in and is lost forever!", effects: { pokemonDeath: true } },
                         { weight: 35, narration: "Falling debris hits your team! Everyone takes damage!", effects: { partyDamage: 2, food: -10 } },
-                        { weight: 30, narration: "The shaking stops. You're rattled but okay.", effects: { partyDamage: 1 } }
+                        { weight: 30, narration: "The shaking stops. You're rattled but okay.", effects: { partyDamageAll: 1 } }
                     ],
                     bonusOutcome: { weight: 100, narration: "Your Ground-type senses the quake early and leads everyone to safety!", effects: {} }
                 }
@@ -1463,7 +1463,7 @@
                     outcomes: [
                         { weight: 30, narration: "The cold claims one of your Pokemon... they freeze in the blizzard.", effects: { pokemonDeath: true } },
                         { weight: 35, narration: "Frostbite! Your team is badly hurt by the cold!", effects: { partyDamage: 2, food: -10 } },
-                        { weight: 35, narration: "You push through! Cold and hungry, but alive.", effects: { partyDamage: 1, food: -5 } }
+                        { weight: 35, narration: "You push through! Cold and hungry, but alive.", effects: { partyDamageAll: 1, food: -5 } }
                     ],
                     bonusOutcome: { weight: 100, narration: "Your Fire-type keeps everyone warm through the blizzard!", effects: { food: -3 } }
                 },
@@ -1607,7 +1607,7 @@
                     text: "Press forward",
                     bonusAbility: "flash",
                     outcomes: [
-                        { weight: 30, narration: "Ghost Pokemon torment your team all night! Everyone is exhausted.", effects: { partyDamage: 1, daysLost: 1 } },
+                        { weight: 30, narration: "Ghost Pokemon torment your team all night! Everyone is exhausted.", effects: { partyDamageAll: 1, daysLost: 1 } },
                         { weight: 30, narration: "You get lost in the twisting paths!", effects: { daysLost: 2 } },
                         { weight: 20, narration: "A wild Gastly is intrigued by your courage and joins you!", effects: { catchPokemon: 92 } },
                         { weight: 20, narration: "You find an ancient shrine with an offering — Escape Rope!", effects: { escapeRope: 1 } }
@@ -1636,7 +1636,7 @@
             choices: [
                 { text: "Try to flee", outcomes: [
                     { weight: 50, narration: "Your Pokemon didn't make it out of the swarm in time.", effects: { pokemonDeath: true } },
-                    { weight: 50, narration: "You barely escape the toxic cloud!", effects: { partyDamage: 1 } }
+                    { weight: 50, narration: "You barely escape the toxic cloud!", effects: { partyDamageAll: 1 } }
                 ]},
                 { text: "Use a Potion to help", requiresItem: "potions", outcomes: [
                     { weight: 70, narration: "You treat the poisoning just in time!", effects: { potions: -1 } },
@@ -1655,7 +1655,7 @@
             choices: [
                 { text: "Defend your Pokemon", outcomes: [
                     { weight: 40, narration: "The Fearow snatched one of your Pokemon from the group!", effects: { pokemonDeath: true } },
-                    { weight: 60, narration: "You drive the Fearow away, but your team is shaken.", effects: { partyDamage: 1 } }
+                    { weight: 60, narration: "You drive the Fearow away, but your team is shaken.", effects: { partyDamageAll: 1 } }
                 ]},
                 { text: "Hide and wait", outcomes: [
                     { weight: 70, narration: "The Fearow circles overhead then flies away.", effects: {} },
@@ -1674,7 +1674,7 @@
             choices: [
                 { text: "Run through the spores", outcomes: [
                     { weight: 45, narration: "The toxic spores overwhelmed one of your Pokemon.", effects: { pokemonDeath: true } },
-                    { weight: 55, narration: "Everyone makes it through coughing and wheezing!", effects: { partyDamage: 1 } }
+                    { weight: 55, narration: "Everyone makes it through coughing and wheezing!", effects: { partyDamageAll: 1 } }
                 ]},
                 { text: "Go around", outcomes: [
                     { weight: 100, narration: "You take the long way around the colony.", effects: { daysLost: 1 } }
@@ -1692,7 +1692,7 @@
             choices: [
                 { text: "Cut through the vines", outcomes: [
                     { weight: 50, narration: "You hack through the vines but your Pokemon was pulled too deep.", effects: { pokemonDeath: true } },
-                    { weight: 50, narration: "You free your Pokemon just in time!", effects: { partyDamage: 1 } }
+                    { weight: 50, narration: "You free your Pokemon just in time!", effects: { partyDamageAll: 1 } }
                 ]},
                 { text: "Use Escape Rope", requiresItem: "escapeRope", outcomes: [
                     { weight: 90, narration: "You lasso your Pokemon and pull it free!", effects: { escapeRope: -1 } },
@@ -1714,7 +1714,7 @@
                     { weight: 20, narration: "It wasn't enough. Your Pokemon fell violently ill and didn't recover.", effects: { potions: -1, pokemonDeath: true } }
                 ]},
                 { text: "Wait and hope for the best", outcomes: [
-                    { weight: 40, narration: "Your Pokemon recovers after a rough night.", effects: { partyDamage: 1, daysLost: 1 } },
+                    { weight: 40, narration: "Your Pokemon recovers after a rough night.", effects: { partyDamageAll: 1, daysLost: 1 } },
                     { weight: 60, narration: "The mushrooms were deadly. Your Pokemon didn't survive.", effects: { pokemonDeath: true } }
                 ]}
             ]
@@ -1731,11 +1731,11 @@
                 { text: "Fight through them", outcomes: [
                     { weight: 40, narration: "The swarm is too thick. One Pokemon goes down.", effects: { pokemonDeath: true } },
                     { weight: 40, narration: "Your team fights bravely through the swarm!", effects: { partyDamage: 2 } },
-                    { weight: 20, narration: "You scatter the swarm and find some dropped items!", effects: { partyDamage: 1, potions: 1 } }
+                    { weight: 20, narration: "You scatter the swarm and find some dropped items!", effects: { partyDamageAll: 1, potions: 1 } }
                 ]},
                 { text: "Use a Repel", requiresItem: "repels", outcomes: [
                     { weight: 90, narration: "The Repel drives the Beedrill away!", effects: { repels: -1 } },
-                    { weight: 10, narration: "The swarm is too large for the Repel to handle!", effects: { repels: -1, partyDamage: 1 } }
+                    { weight: 10, narration: "The swarm is too large for the Repel to handle!", effects: { repels: -1, partyDamageAll: 1 } }
                 ]}
             ]
         },
@@ -1750,7 +1750,7 @@
             choices: [
                 { text: "Search for your Pokemon", outcomes: [
                     { weight: 40, narration: "You search for hours but your Pokemon has vanished forever.", effects: { pokemonDeath: true, daysLost: 1 } },
-                    { weight: 40, narration: "You find your Pokemon scared but alive!", effects: { daysLost: 1, partyDamage: 1 } },
+                    { weight: 40, narration: "You find your Pokemon scared but alive!", effects: { daysLost: 1, partyDamageAll: 1 } },
                     { weight: 20, narration: "You find your Pokemon — and a wild Pokemon that wants to join!", effects: { daysLost: 1 } }
                 ]},
                 { text: "Move on without them", outcomes: [
@@ -1772,7 +1772,7 @@
             choices: [
                 { text: "Take cover!", outcomes: [
                     { weight: 40, narration: "A boulder crushed one of your Pokemon.", effects: { pokemonDeath: true } },
-                    { weight: 60, narration: "You find shelter just in time! Rocks crash around you.", effects: { partyDamage: 1 } }
+                    { weight: 60, narration: "You find shelter just in time! Rocks crash around you.", effects: { partyDamageAll: 1 } }
                 ]},
                 { text: "Run back!", outcomes: [
                     { weight: 50, narration: "You escape the rockslide but lose a day backtracking.", effects: { daysLost: 1 } },
@@ -1791,7 +1791,7 @@
             terrainTypes: ["mountain"],
             choices: [
                 { text: "Grab onto them!", outcomes: [
-                    { weight: 50, narration: "You catch your Pokemon just before they fall!", effects: { partyDamage: 1 } },
+                    { weight: 50, narration: "You catch your Pokemon just before they fall!", effects: { partyDamageAll: 1 } },
                     { weight: 50, narration: "The cliff edge crumbles. Your Pokemon plummets.", effects: { pokemonDeath: true } }
                 ]},
                 { text: "Use Escape Rope", requiresItem: "escapeRope", outcomes: [
@@ -1813,11 +1813,11 @@
                 { text: "Stand your ground", outcomes: [
                     { weight: 40, narration: "The Onix crushes one of your Pokemon beneath its massive body.", effects: { pokemonDeath: true } },
                     { weight: 40, narration: "Your team fights off the Onix!", effects: { partyDamage: 2 } },
-                    { weight: 20, narration: "Your team impresses the Onix! It calms down.", effects: { partyDamage: 1 } }
+                    { weight: 20, narration: "Your team impresses the Onix! It calms down.", effects: { partyDamageAll: 1 } }
                 ]},
                 { text: "Flee immediately", outcomes: [
                     { weight: 70, narration: "You escape the rampaging Onix!", effects: {} },
-                    { weight: 30, narration: "The Onix blocks your escape route!", effects: { partyDamage: 1, daysLost: 1 } }
+                    { weight: 30, narration: "The Onix blocks your escape route!", effects: { partyDamageAll: 1, daysLost: 1 } }
                 ]}
             ]
         },
@@ -1833,10 +1833,10 @@
             choices: [
                 { text: "Pull them out", outcomes: [
                     { weight: 45, narration: "One of your Pokemon was caught in a Self-Destruct!", effects: { pokemonDeath: true } },
-                    { weight: 55, narration: "You pull your Pokemon out just as a Graveler explodes!", effects: { partyDamage: 1 } }
+                    { weight: 55, narration: "You pull your Pokemon out just as a Graveler explodes!", effects: { partyDamageAll: 1 } }
                 ]},
                 { text: "Wait for it to end", outcomes: [
-                    { weight: 60, narration: "The brawl settles down. Your Pokemon is bruised but okay.", effects: { partyDamage: 1 } },
+                    { weight: 60, narration: "The brawl settles down. Your Pokemon is bruised but okay.", effects: { partyDamageAll: 1 } },
                     { weight: 40, narration: "A stray Self-Destruct hits your team!", effects: { partyDamage: 2 } }
                 ]}
             ]
@@ -1872,7 +1872,7 @@
             terrainTypes: ["mountain"],
             choices: [
                 { text: "Lunge to save them", outcomes: [
-                    { weight: 50, narration: "You grab your Pokemon just in time!", effects: { partyDamage: 1 } },
+                    { weight: 50, narration: "You grab your Pokemon just in time!", effects: { partyDamageAll: 1 } },
                     { weight: 50, narration: "Your Pokemon fell into the ravine and was lost.", effects: { pokemonDeath: true } }
                 ]},
                 { text: "Use Escape Rope", requiresItem: "escapeRope", outcomes: [
@@ -1896,7 +1896,7 @@
                 { text: "Fight back!", outcomes: [
                     { weight: 40, narration: "Your Pokemon was dragged underwater by the Gyarados.", effects: { pokemonDeath: true } },
                     { weight: 40, narration: "You drive the Gyarados back but your team is hurt!", effects: { partyDamage: 2 } },
-                    { weight: 20, narration: "Your team's courage impresses the Gyarados. It retreats!", effects: { partyDamage: 1 } }
+                    { weight: 20, narration: "Your team's courage impresses the Gyarados. It retreats!", effects: { partyDamageAll: 1 } }
                 ]},
                 { text: "Flee to shore", outcomes: [
                     { weight: 60, narration: "You escape to shallow water!", effects: { daysLost: 1 } },
@@ -1916,7 +1916,7 @@
             choices: [
                 { text: "Pull them from the water", outcomes: [
                     { weight: 45, narration: "The poison was too much. Your Pokemon didn't survive.", effects: { pokemonDeath: true } },
-                    { weight: 55, narration: "You pull them out covered in stings but alive!", effects: { partyDamage: 1 } }
+                    { weight: 55, narration: "You pull them out covered in stings but alive!", effects: { partyDamageAll: 1 } }
                 ]},
                 { text: "Use a Potion", requiresItem: "potions", outcomes: [
                     { weight: 80, narration: "You treat the stings quickly and your Pokemon recovers!", effects: { potions: -1 } },
@@ -1939,7 +1939,7 @@
                     { weight: 60, narration: "Everyone holds on! Bruised but alive.", effects: { partyDamage: 2 } }
                 ]},
                 { text: "Swim for calmer water", outcomes: [
-                    { weight: 50, narration: "You reach calmer waters safely!", effects: { partyDamage: 1 } },
+                    { weight: 50, narration: "You reach calmer waters safely!", effects: { partyDamageAll: 1 } },
                     { weight: 50, narration: "The current pulls one Pokemon under.", effects: { pokemonDeath: true } }
                 ]}
             ]
@@ -1976,7 +1976,7 @@
                 { text: "Push through the storm", outcomes: [
                     { weight: 40, narration: "Your Pokemon was lost during the violent sea storm.", effects: { pokemonDeath: true } },
                     { weight: 40, narration: "Everyone makes it through battered and exhausted!", effects: { partyDamage: 2, food: -5 } },
-                    { weight: 20, narration: "The storm passes quickly. You're okay!", effects: { partyDamage: 1 } }
+                    { weight: 20, narration: "The storm passes quickly. You're okay!", effects: { partyDamageAll: 1 } }
                 ]},
                 { text: "Wait it out", outcomes: [
                     { weight: 70, narration: "You hunker down until the storm passes.", effects: { daysLost: 1 } },
@@ -1997,7 +1997,7 @@
                 { text: "Brace for impact!", outcomes: [
                     { weight: 35, narration: "The hurricane winds scatter your team. One Pokemon is lost to the sea.", effects: { pokemonDeath: true } },
                     { weight: 45, narration: "You endure the hurricane! Your team is beaten but alive.", effects: { partyDamage: 2, food: -5 } },
-                    { weight: 20, narration: "The Dragonite flies off. The winds calm.", effects: { partyDamage: 1 } }
+                    { weight: 20, narration: "The Dragonite flies off. The winds calm.", effects: { partyDamageAll: 1 } }
                 ]},
                 { text: "Try to befriend it", outcomes: [
                     { weight: 20, narration: "The Dragonite is impressed by your courage and calms down!", effects: { seePokemon: 149 } },
@@ -2019,11 +2019,11 @@
             choices: [
                 { text: "Fight through!", outcomes: [
                     { weight: 35, narration: "The swarm overwhelmed one of your Pokemon.", effects: { pokemonDeath: true } },
-                    { weight: 65, narration: "Your team pushes through the swarm!", effects: { partyDamage: 1 } }
+                    { weight: 65, narration: "Your team pushes through the swarm!", effects: { partyDamageAll: 1 } }
                 ]},
                 { text: "Use a Repel", requiresItem: "repels", outcomes: [
                     { weight: 95, narration: "The Repel disperses the Zubat swarm!", effects: { repels: -1 } },
-                    { weight: 5, narration: "There are too many! The Repel barely helps!", effects: { repels: -1, partyDamage: 1 } }
+                    { weight: 5, narration: "There are too many! The Repel barely helps!", effects: { repels: -1, partyDamageAll: 1 } }
                 ]}
             ]
         },
@@ -2039,7 +2039,7 @@
             choices: [
                 { text: "Run for the exit!", outcomes: [
                     { weight: 40, narration: "A cave collapse trapped one of your Pokemon beneath the rubble.", effects: { pokemonDeath: true } },
-                    { weight: 60, narration: "Everyone makes it out as the cave collapses behind you!", effects: { partyDamage: 1 } }
+                    { weight: 60, narration: "Everyone makes it out as the cave collapses behind you!", effects: { partyDamageAll: 1 } }
                 ]},
                 { text: "Take shelter in an alcove", outcomes: [
                     { weight: 60, narration: "The alcove holds! You wait out the collapse.", effects: { daysLost: 1 } },
@@ -2059,11 +2059,11 @@
             choices: [
                 { text: "Call them back!", outcomes: [
                     { weight: 45, narration: "The Golbat drained too much blood. Your Pokemon collapsed.", effects: { pokemonDeath: true } },
-                    { weight: 55, narration: "You recall your Pokemon just in time! They're weak but alive.", effects: { partyDamage: 1 } }
+                    { weight: 55, narration: "You recall your Pokemon just in time! They're weak but alive.", effects: { partyDamageAll: 1 } }
                 ]},
                 { text: "Use a Repel", requiresItem: "repels", outcomes: [
                     { weight: 85, narration: "The Repel drives the Golbat back to their roost!", effects: { repels: -1 } },
-                    { weight: 15, narration: "The Golbat are too enraged! The Repel only partly works.", effects: { repels: -1, partyDamage: 1 } }
+                    { weight: 15, narration: "The Golbat are too enraged! The Repel only partly works.", effects: { repels: -1, partyDamageAll: 1 } }
                 ]}
             ]
         },
@@ -2099,11 +2099,11 @@
             choices: [
                 { text: "Dodge the debris!", outcomes: [
                     { weight: 40, narration: "The ceiling collapse buried one of your Pokemon.", effects: { pokemonDeath: true } },
-                    { weight: 60, narration: "Rocks rain down but everyone dodges!", effects: { partyDamage: 1 } }
+                    { weight: 60, narration: "Rocks rain down but everyone dodges!", effects: { partyDamageAll: 1 } }
                 ]},
                 { text: "Use Escape Rope", requiresItem: "escapeRope", outcomes: [
                     { weight: 90, narration: "You rappel to safety through a side tunnel!", effects: { escapeRope: -1 } },
-                    { weight: 10, narration: "The tunnel collapses before you can escape fully!", effects: { escapeRope: -1, partyDamage: 1 } }
+                    { weight: 10, narration: "The tunnel collapses before you can escape fully!", effects: { escapeRope: -1, partyDamageAll: 1 } }
                 ]}
             ]
         },
@@ -2139,7 +2139,7 @@
             choices: [
                 { text: "Hit the ground!", outcomes: [
                     { weight: 40, narration: "One of your Pokemon was trampled by the stampede.", effects: { pokemonDeath: true } },
-                    { weight: 60, narration: "The Tauros thunder over you! Everyone survives!", effects: { partyDamage: 1 } }
+                    { weight: 60, narration: "The Tauros thunder over you! Everyone survives!", effects: { partyDamageAll: 1 } }
                 ]},
                 { text: "Try to divert them", outcomes: [
                     { weight: 30, narration: "You successfully redirect the herd!", effects: {} },
@@ -2158,7 +2158,7 @@
             choices: [
                 { text: "Fight it off!", outcomes: [
                     { weight: 35, narration: "The Arbok's venom was fatal. One Pokemon didn't make it.", effects: { pokemonDeath: true } },
-                    { weight: 45, narration: "You drive the Arbok away but it left a nasty bite!", effects: { partyDamage: 1 } },
+                    { weight: 45, narration: "You drive the Arbok away but it left a nasty bite!", effects: { partyDamageAll: 1 } },
                     { weight: 20, narration: "Your Pokemon overpowers the Arbok!", effects: {} }
                 ]},
                 { text: "Use a Potion for the venom", requiresItem: "potions", outcomes: [
@@ -2177,7 +2177,7 @@
             minDay: 3,
             choices: [
                 { text: "Induce vomiting quickly", outcomes: [
-                    { weight: 60, narration: "Your Pokemon recovers after being violently sick.", effects: { partyDamage: 1 } },
+                    { weight: 60, narration: "Your Pokemon recovers after being violently sick.", effects: { partyDamageAll: 1 } },
                     { weight: 40, narration: "The berries were too toxic. Your Pokemon didn't survive.", effects: { pokemonDeath: true } }
                 ]},
                 { text: "Use a Potion", requiresItem: "potions", outcomes: [
@@ -2198,11 +2198,11 @@
                 { text: "Defend the camp!", outcomes: [
                     { weight: 40, narration: "The Nidoking's horn pierced one of your Pokemon. They didn't survive.", effects: { pokemonDeath: true } },
                     { weight: 40, narration: "Your team drives the Nidoking back!", effects: { partyDamage: 2 } },
-                    { weight: 20, narration: "The Nidoking decides you're not worth the fight.", effects: { partyDamage: 1 } }
+                    { weight: 20, narration: "The Nidoking decides you're not worth the fight.", effects: { partyDamageAll: 1 } }
                 ]},
                 { text: "Abandon camp and flee", outcomes: [
                     { weight: 60, narration: "You flee! The Nidoking destroys your camp supplies.", effects: { food: -15 } },
-                    { weight: 40, narration: "The Nidoking chases you! Everyone takes hits!", effects: { partyDamage: 1, food: -5 } }
+                    { weight: 40, narration: "The Nidoking chases you! Everyone takes hits!", effects: { partyDamageAll: 1, food: -5 } }
                 ]}
             ]
         },
@@ -2221,7 +2221,7 @@
                 ]},
                 { text: "Back away slowly", outcomes: [
                     { weight: 70, narration: "The Persian watches you leave its territory.", effects: {} },
-                    { weight: 30, narration: "It pounces as you turn your back!", effects: { partyDamage: 1 } }
+                    { weight: 30, narration: "It pounces as you turn your back!", effects: { partyDamageAll: 1 } }
                 ]}
             ]
         },
@@ -2239,7 +2239,7 @@
             choices: [
                 { text: "Jump to safety!", outcomes: [
                     { weight: 40, narration: "One Pokemon fell into the fissure before it closed.", effects: { pokemonDeath: true } },
-                    { weight: 60, narration: "Everyone leaps clear as the ground cracks!", effects: { partyDamage: 1 } }
+                    { weight: 60, narration: "Everyone leaps clear as the ground cracks!", effects: { partyDamageAll: 1 } }
                 ]},
                 { text: "Run from the area", outcomes: [
                     { weight: 50, narration: "You escape the volcanic zone!", effects: { daysLost: 1 } },
@@ -2262,7 +2262,7 @@
                     { weight: 25, narration: "The heat was too extreme. The Potion wasn't enough.", effects: { potions: -1, pokemonDeath: true } }
                 ]},
                 { text: "Find shade and rest", outcomes: [
-                    { weight: 50, narration: "Your Pokemon recovers after resting in the shade.", effects: { daysLost: 1, partyDamage: 1 } },
+                    { weight: 50, narration: "Your Pokemon recovers after resting in the shade.", effects: { daysLost: 1, partyDamageAll: 1 } },
                     { weight: 50, narration: "There's no escape from the heat. Your Pokemon succumbed.", effects: { pokemonDeath: true } }
                 ]}
             ]
@@ -2299,7 +2299,7 @@
             choices: [
                 { text: "Pull them back!", outcomes: [
                     { weight: 45, narration: "The ground gave way. Your Pokemon fell into the burning fissure.", effects: { pokemonDeath: true } },
-                    { weight: 55, narration: "You yank them away just as the edge crumbles!", effects: { partyDamage: 1 } }
+                    { weight: 55, narration: "You yank them away just as the edge crumbles!", effects: { partyDamageAll: 1 } }
                 ]},
                 { text: "Use Escape Rope to lasso them", requiresItem: "escapeRope", outcomes: [
                     { weight: 85, narration: "The rope catches and you pull them to safety!", effects: { escapeRope: -1 } },
@@ -2341,7 +2341,7 @@
             choices: [
                 { text: "Try to free them!", outcomes: [
                     { weight: 45, narration: "The spirit consumed your Pokemon's life force.", effects: { pokemonDeath: true } },
-                    { weight: 55, narration: "You perform a cleansing ritual and free your Pokemon!", effects: { partyDamage: 1 } }
+                    { weight: 55, narration: "You perform a cleansing ritual and free your Pokemon!", effects: { partyDamageAll: 1 } }
                 ]},
                 { text: "Use a Potion", requiresItem: "potions", outcomes: [
                     { weight: 70, narration: "The Potion's energy drives the spirit away!", effects: { potions: -1 } },
@@ -2361,7 +2361,7 @@
             choices: [
                 { text: "Follow the whispers", outcomes: [
                     { weight: 40, narration: "The ghosts led your Pokemon into the spirit world. They're gone.", effects: { pokemonDeath: true } },
-                    { weight: 40, narration: "You find your Pokemon in a trance but snap them out of it!", effects: { partyDamage: 1 } },
+                    { weight: 40, narration: "You find your Pokemon in a trance but snap them out of it!", effects: { partyDamageAll: 1 } },
                     { weight: 20, narration: "The whispers lead to a hidden offering — Rare Candy!", effects: { rareCandy: 1 } }
                 ]},
                 { text: "Cover your ears and move on", outcomes: [
@@ -2382,10 +2382,10 @@
             choices: [
                 { text: "Chase after them!", outcomes: [
                     { weight: 45, narration: "Your Pokemon ran off a ledge in their panic. They're gone.", effects: { pokemonDeath: true } },
-                    { weight: 55, narration: "You catch up and calm your terrified Pokemon.", effects: { partyDamage: 1 } }
+                    { weight: 55, narration: "You catch up and calm your terrified Pokemon.", effects: { partyDamageAll: 1 } }
                 ]},
                 { text: "Call out to them", outcomes: [
-                    { weight: 50, narration: "Your Pokemon hears your voice and comes back trembling.", effects: { partyDamage: 1 } },
+                    { weight: 50, narration: "Your Pokemon hears your voice and comes back trembling.", effects: { partyDamageAll: 1 } },
                     { weight: 50, narration: "They ran too far. You never see them again.", effects: { pokemonDeath: true } }
                 ]}
             ]
@@ -2402,7 +2402,7 @@
             choices: [
                 { text: "Fight the shadow!", outcomes: [
                     { weight: 45, narration: "The shadow drained too much life. Your Pokemon faded away.", effects: { pokemonDeath: true } },
-                    { weight: 55, narration: "Your team's combined strength drives the shadow away!", effects: { partyDamage: 1 } }
+                    { weight: 55, narration: "Your team's combined strength drives the shadow away!", effects: { partyDamageAll: 1 } }
                 ]},
                 { text: "Use Escape Rope to flee", requiresItem: "escapeRope", outcomes: [
                     { weight: 90, narration: "You escape the haunted area before the shadow strikes!", effects: { escapeRope: -1 } },
@@ -2422,7 +2422,7 @@
             choices: [
                 { text: "Shield your Pokemon!", outcomes: [
                     { weight: 40, narration: "A massive gravestone struck your Pokemon. They didn't recover.", effects: { pokemonDeath: true } },
-                    { weight: 60, narration: "You block most of the flying debris!", effects: { partyDamage: 1 } }
+                    { weight: 60, narration: "You block most of the flying debris!", effects: { partyDamageAll: 1 } }
                 ]},
                 { text: "Run from the tower!", outcomes: [
                     { weight: 70, narration: "You escape the poltergeist's range!", effects: {} },
@@ -2443,7 +2443,7 @@
             choices: [
                 { text: "Take cover!", outcomes: [
                     { weight: 35, narration: "A direct lightning hit. One Pokemon didn't survive.", effects: { pokemonDeath: true } },
-                    { weight: 65, narration: "The lightning misses! Everyone is shaken but alive.", effects: { partyDamage: 1 } }
+                    { weight: 65, narration: "The lightning misses! Everyone is shaken but alive.", effects: { partyDamageAll: 1 } }
                 ]},
                 { text: "Lie flat on the ground", outcomes: [
                     { weight: 70, narration: "The lightning passes overhead. Smart thinking!", effects: {} },
@@ -2461,7 +2461,7 @@
             minDay: 10,
             choices: [
                 { text: "Rest and treat them", outcomes: [
-                    { weight: 50, narration: "Rest helps, but your Pokemon is still weak.", effects: { daysLost: 1, partyDamage: 1 } },
+                    { weight: 50, narration: "Rest helps, but your Pokemon is still weak.", effects: { daysLost: 1, partyDamageAll: 1 } },
                     { weight: 50, narration: "Your Pokemon was too far gone. They didn't wake up.", effects: { daysLost: 1, pokemonDeath: true } }
                 ]},
                 { text: "Use a Potion", requiresItem: "potions", outcomes: [
@@ -2484,7 +2484,7 @@
                     { weight: 25, narration: "The contamination was too severe.", effects: { potions: -1, pokemonDeath: true } }
                 ]},
                 { text: "Let them rest it off", outcomes: [
-                    { weight: 40, narration: "After a rough night, your Pokemon recovers.", effects: { daysLost: 1, partyDamage: 1 } },
+                    { weight: 40, narration: "After a rough night, your Pokemon recovers.", effects: { daysLost: 1, partyDamageAll: 1 } },
                     { weight: 60, narration: "The illness was too much. Your Pokemon succumbed.", effects: { pokemonDeath: true } }
                 ]}
             ]
@@ -2499,7 +2499,7 @@
             minDay: 8,
             choices: [
                 { text: "Share what's left", outcomes: [
-                    { weight: 50, narration: "Everyone goes hungry but survives.", effects: { food: -10, partyDamage: 1 } },
+                    { weight: 50, narration: "Everyone goes hungry but survives.", effects: { food: -10, partyDamageAll: 1 } },
                     { weight: 50, narration: "There isn't enough. Your weakest Pokemon starved.", effects: { food: -5, pokemonDeath: true } }
                 ]},
                 { text: "Forage for food", outcomes: [
@@ -2522,7 +2522,7 @@
                     { weight: 30, narration: "Even the Super Potion can't cure this mystery illness.", effects: { superPotions: -1, pokemonDeath: true } }
                 ]},
                 { text: "Push onward and hope", outcomes: [
-                    { weight: 30, narration: "Your Pokemon fights off the illness on their own!", effects: { partyDamage: 1 } },
+                    { weight: 30, narration: "Your Pokemon fights off the illness on their own!", effects: { partyDamageAll: 1 } },
                     { weight: 70, narration: "The illness was fatal. Your Pokemon is gone.", effects: { pokemonDeath: true } }
                 ]}
             ]
@@ -2538,7 +2538,7 @@
             choices: [
                 { text: "Search for everyone", outcomes: [
                     { weight: 35, narration: "You find everyone except one. They were lost to the storm.", effects: { pokemonDeath: true, daysLost: 1 } },
-                    { weight: 65, narration: "You gather everyone back together by morning.", effects: { daysLost: 1, partyDamage: 1 } }
+                    { weight: 65, narration: "You gather everyone back together by morning.", effects: { daysLost: 1, partyDamageAll: 1 } }
                 ]},
                 { text: "Wait for dawn", outcomes: [
                     { weight: 50, narration: "By morning, everyone returns on their own!", effects: { daysLost: 1 } },
@@ -2559,7 +2559,7 @@
             choices: [
                 { text: "Chase them!", outcomes: [
                     { weight: 40, narration: "You catch up but they already harmed your Pokemon. It's too late.", effects: { pokemonDeath: true } },
-                    { weight: 60, narration: "You catch them and rescue your Pokemon!", effects: { partyDamage: 1 } }
+                    { weight: 60, narration: "You catch them and rescue your Pokemon!", effects: { partyDamageAll: 1 } }
                 ]},
                 { text: "Let them go", outcomes: [
                     { weight: 100, narration: "Team Rocket disappears into the night with your Pokemon forever.", effects: { pokemonDeath: true } }
@@ -2577,11 +2577,11 @@
             choices: [
                 { text: "Disarm the trap", outcomes: [
                     { weight: 45, narration: "The trap activated before you could reach it. Your Pokemon is badly hurt.", effects: { pokemonDeath: true } },
-                    { weight: 55, narration: "You carefully disarm the trap and free your Pokemon!", effects: { partyDamage: 1 } }
+                    { weight: 55, narration: "You carefully disarm the trap and free your Pokemon!", effects: { partyDamageAll: 1 } }
                 ]},
                 { text: "Use Escape Rope", requiresItem: "escapeRope", outcomes: [
                     { weight: 85, narration: "You use the rope to safely trigger and disable the trap!", effects: { escapeRope: -1 } },
-                    { weight: 15, narration: "The trap was more complex than expected.", effects: { escapeRope: -1, partyDamage: 1 } }
+                    { weight: 15, narration: "The trap was more complex than expected.", effects: { escapeRope: -1, partyDamageAll: 1 } }
                 ]}
             ]
         },
@@ -2615,7 +2615,7 @@
             choices: [
                 { text: "Track them down", outcomes: [
                     { weight: 40, narration: "You find the Rocket hideout but your Pokemon is already gone.", effects: { pokemonDeath: true } },
-                    { weight: 40, narration: "You rescue your Pokemon from a cage!", effects: { partyDamage: 1 } },
+                    { weight: 40, narration: "You rescue your Pokemon from a cage!", effects: { partyDamageAll: 1 } },
                     { weight: 20, narration: "You find and raid their stash during the rescue!", effects: { money: 500, pokeballs: 3 } }
                 ]},
                 { text: "They're gone...", outcomes: [
@@ -2660,7 +2660,7 @@
                 ]},
                 { text: "Find a cave!", outcomes: [
                     { weight: 60, narration: "You find shelter from the blizzard!", effects: { daysLost: 1, seePokemon: 144 } },
-                    { weight: 40, narration: "The cave is frozen too. It's bitter cold.", effects: { daysLost: 1, partyDamage: 1, seePokemon: 144 } }
+                    { weight: 40, narration: "The cave is frozen too. It's bitter cold.", effects: { daysLost: 1, partyDamageAll: 1, seePokemon: 144 } }
                 ]}
             ]
         },
@@ -2679,7 +2679,7 @@
                     { weight: 60, narration: "Moltres soars away. Your team is scorched but alive!", effects: { partyDamage: 2, seePokemon: 146 } }
                 ]},
                 { text: "Dive into water!", outcomes: [
-                    { weight: 70, narration: "The water protects you from the worst of the flames!", effects: { partyDamage: 1, seePokemon: 146 } },
+                    { weight: 70, narration: "The water protects you from the worst of the flames!", effects: { partyDamageAll: 1, seePokemon: 146 } },
                     { weight: 30, narration: "The water itself starts to boil!", effects: { partyDamage: 2, seePokemon: 146 } }
                 ]}
             ]
@@ -2714,7 +2714,7 @@
             choices: [
                 { text: "Shield your eyes!", outcomes: [
                     { weight: 35, narration: "One Pokemon collapsed from the energy burst and never recovered.", effects: { pokemonDeath: true } },
-                    { weight: 65, narration: "The light fades. Your team is shaken but okay. What was that?!", effects: { partyDamage: 1 } }
+                    { weight: 65, narration: "The light fades. Your team is shaken but okay. What was that?!", effects: { partyDamageAll: 1 } }
                 ]},
                 { text: "Reach out to it", outcomes: [
                     { weight: 20, narration: "The Pokemon seems to acknowledge you... then vanishes. Your team feels energized!", effects: { healAll: true } },
@@ -2774,7 +2774,7 @@
             choices: [
                 { text: "Use a Potion", requiresItem: "potions", outcomes: [
                     { weight: 85, narration: "The Potion settles their stomach. Lesson learned!", effects: { potions: -1 } },
-                    { weight: 15, narration: "Even the Potion can't fix this level of gluttony. Your Pokemon is very sick.", effects: { potions: -1, partyDamage: 1 } }
+                    { weight: 15, narration: "Even the Potion can't fix this level of gluttony. Your Pokemon is very sick.", effects: { potions: -1, partyDamageAll: 1 } }
                 ]},
                 { text: "Let nature take its course", outcomes: [
                     { weight: 60, narration: "After a miserable night, your Pokemon recovers.", effects: { daysLost: 1 } },
@@ -2793,7 +2793,7 @@
             choices: [
                 { text: "Intervene!", outcomes: [
                     { weight: 40, narration: "Too late. Your Pokemon challenged a Snorlax and lost. Badly.", effects: { pokemonDeath: true } },
-                    { weight: 60, narration: "You drag your battered Pokemon away from the fight!", effects: { partyDamage: 1 } }
+                    { weight: 60, narration: "You drag your battered Pokemon away from the fight!", effects: { partyDamageAll: 1 } }
                 ]},
                 { text: "Watch and hope", outcomes: [
                     { weight: 30, narration: "Somehow your Pokemon wins?! They strut back proudly.", effects: {} },
@@ -2849,7 +2849,7 @@
             minDay: 3,
             choices: [
                 { text: "Check the cliff edge", outcomes: [
-                    { weight: 50, narration: "You peer over the edge... they're on a ledge below, scared but alive!", effects: { partyDamage: 1 } },
+                    { weight: 50, narration: "You peer over the edge... they're on a ledge below, scared but alive!", effects: { partyDamageAll: 1 } },
                     { weight: 50, narration: "It's a long way down. Your Pokemon didn't make it.", effects: { pokemonDeath: true } }
                 ]},
                 { text: "Use Escape Rope to rescue", requiresItem: "escapeRope", outcomes: [
@@ -3004,7 +3004,7 @@
                 { text: "Investigate carefully", outcomes: [
                     { weight: 30, narration: "It's a Staryu! You catch it off guard!", effects: { catchPokemon: 120 } },
                     { weight: 40, narration: "Just some glowing moss. Disappointing.", effects: {} },
-                    { weight: 30, narration: "A Voltorb! It Self-Destructs!", effects: { partyDamage: 1 } }
+                    { weight: 30, narration: "A Voltorb! It Self-Destructs!", effects: { partyDamageAll: 1 } }
                 ]},
                 { text: "Throw a Great Ball!", requiresItem: "greatballs", outcomes: [
                     { weight: 60, narration: "Caught! It was a rare Pokemon hiding in the glow!", effects: { greatballs: -1, catchPokemon: 35 } },
@@ -3155,13 +3155,13 @@
             minDay: 4,
             choices: [
                 { text: "Accept the challenge!", outcomes: [
-                    { weight: 40, narration: "Your Pokemon defeats it! Impressed, it joins you!", effects: { catchPokemon: 66, partyDamage: 1 } },
-                    { weight: 40, narration: "A tough fight! It retreats with respect.", effects: { partyDamage: 1 } },
+                    { weight: 40, narration: "Your Pokemon defeats it! Impressed, it joins you!", effects: { catchPokemon: 66, partyDamageAll: 1 } },
+                    { weight: 40, narration: "A tough fight! It retreats with respect.", effects: { partyDamageAll: 1 } },
                     { weight: 20, narration: "Your team is overpowered!", effects: { partyDamage: 2 } }
                 ]},
                 { text: "Throw a Pokeball mid-roar!", requiresItem: "pokeballs", outcomes: [
                     { weight: 40, narration: "Caught while its guard was down!", effects: { pokeballs: -1, catchPokemon: 56 } },
-                    { weight: 60, narration: "It swats the ball away angrily!", effects: { pokeballs: -1, partyDamage: 1 } }
+                    { weight: 60, narration: "It swats the ball away angrily!", effects: { pokeballs: -1, partyDamageAll: 1 } }
                 ]}
             ]
         },
@@ -3198,7 +3198,7 @@
                 { text: "Take everything", outcomes: [
                     { weight: 60, narration: "Food, Pokeballs, and some money! Lucky find!", effects: { food: 10, pokeballs: 3, money: 200 } },
                     { weight: 30, narration: "Most of it is ruined, but you salvage some food.", effects: { food: 5 } },
-                    { weight: 10, narration: "It was a trap! Team Rocket ambushes you!", effects: { partyDamage: 1, money: -200 } }
+                    { weight: 10, narration: "It was a trap! Team Rocket ambushes you!", effects: { partyDamageAll: 1, money: -200 } }
                 ]},
                 { text: "Take only what you need", outcomes: [
                     { weight: 100, narration: "You take some food and leave the rest for others.", effects: { food: 5 } }
@@ -3220,7 +3220,7 @@
                 ]},
                 { text: "Check for a trap first", outcomes: [
                     { weight: 80, narration: "No trap — just free Pokeballs!", effects: { pokeballs: 5 } },
-                    { weight: 20, narration: "Good instinct! A Voltorb was hiding among them!", effects: { partyDamage: 1, pokeballs: 2 } }
+                    { weight: 20, narration: "Good instinct! A Voltorb was hiding among them!", effects: { partyDamageAll: 1, pokeballs: 2 } }
                 ]}
             ]
         },
@@ -3236,7 +3236,7 @@
                 { text: "Harvest them all", outcomes: [
                     { weight: 70, narration: "Your team fills up on delicious berries!", effects: { food: 12 } },
                     { weight: 20, narration: "Great harvest! Plus some medicinal berries.", effects: { food: 8, potions: 1 } },
-                    { weight: 10, narration: "Some berries were toxic! One Pokemon gets sick.", effects: { food: 5, partyDamage: 1 } }
+                    { weight: 10, narration: "Some berries were toxic! One Pokemon gets sick.", effects: { food: 5, partyDamageAll: 1 } }
                 ]},
                 { text: "Pick carefully", outcomes: [
                     { weight: 100, narration: "You carefully select only the safe-looking berries.", effects: { food: 6 } }
@@ -3273,7 +3273,7 @@
                 { text: "Join them", outcomes: [
                     { weight: 60, narration: "They share food and stories. A warm night!", effects: { food: 8, healOne: true } },
                     { weight: 30, narration: "They share everything they can spare!", effects: { food: 10, potions: 1 } },
-                    { weight: 10, narration: "They share food but their fire attracted wild Pokemon!", effects: { food: 5, partyDamage: 1 } }
+                    { weight: 10, narration: "They share food but their fire attracted wild Pokemon!", effects: { food: 5, partyDamageAll: 1 } }
                 ]},
                 { text: "Politely decline", outcomes: [
                     { weight: 100, narration: "You wave and continue on your way.", effects: {} }
@@ -3484,7 +3484,7 @@
                 { text: "Search inside", outcomes: [
                     { weight: 40, narration: "Old supplies and a journal with useful route information!", effects: { food: 5, potions: 1 } },
                     { weight: 30, narration: "A stash of items hidden under the floorboards!", effects: { money: 500, pokeballs: 3 } },
-                    { weight: 20, narration: "A wild Pokemon was nesting inside! It attacks!", effects: { partyDamage: 1 } },
+                    { weight: 20, narration: "A wild Pokemon was nesting inside! It attacks!", effects: { partyDamageAll: 1 } },
                     { weight: 10, narration: "You find a Rare Candy in a dusty drawer!", effects: { rareCandy: 1 } }
                 ]},
                 { text: "Rest here overnight", outcomes: [
@@ -3525,7 +3525,7 @@
                 { text: "Explore the ruins", outcomes: [
                     { weight: 30, narration: "Ancient treasure! Money and a rare item!", effects: { money: 800, escapeRope: 1 } },
                     { weight: 30, narration: "The ruins are mostly empty but you find some supplies.", effects: { potions: 2, food: 3 } },
-                    { weight: 20, narration: "Ghost Pokemon haunt the ruins! Your team is spooked!", effects: { partyDamage: 1 } },
+                    { weight: 20, narration: "Ghost Pokemon haunt the ruins! Your team is spooked!", effects: { partyDamageAll: 1 } },
                     { weight: 20, narration: "You discover ancient carvings that describe the legendary birds!", effects: { seePokemon: 144 } }
                 ]},
                 { text: "Too dangerous, move on", outcomes: [
@@ -3546,7 +3546,7 @@
                 { text: "Venture inside", outcomes: [
                     { weight: 30, narration: "A treasure trove! Pokeballs and money stashed by a trainer!", effects: { pokeballs: 5, money: 600 } },
                     { weight: 30, narration: "The cave holds medicinal hot springs! Your team heals up!", effects: { healAll: true } },
-                    { weight: 20, narration: "Wild Pokemon attack in the darkness!", effects: { partyDamage: 1 } },
+                    { weight: 20, narration: "Wild Pokemon attack in the darkness!", effects: { partyDamageAll: 1 } },
                     { weight: 20, narration: "You find ancient fossils worth a fortune!", effects: { money: 1000 } }
                 ]},
                 { text: "Mark it and continue", outcomes: [
@@ -3606,7 +3606,7 @@
                 { text: "Mine the crystals", outcomes: [
                     { weight: 40, narration: "The crystals are valuable! You sell them for a good price.", effects: { money: 800 } },
                     { weight: 30, narration: "One crystal pulses with energy — it's like a Rare Candy!", effects: { rareCandy: 1 } },
-                    { weight: 30, narration: "Mining disturbs wild Pokemon! They attack!", effects: { partyDamage: 1, money: 300 } }
+                    { weight: 30, narration: "Mining disturbs wild Pokemon! They attack!", effects: { partyDamageAll: 1, money: 300 } }
                 ]},
                 { text: "Admire and move on", outcomes: [
                     { weight: 100, narration: "Beautiful, but you leave them be.", effects: {} }
@@ -3645,7 +3645,7 @@
                 { text: "Push through the fog", outcomes: [
                     { weight: 30, narration: "The fog clears and you've actually made great progress!", effects: { daysLost: -1 } },
                     { weight: 40, narration: "You wander in circles and lose time.", effects: { daysLost: 1 } },
-                    { weight: 30, narration: "Strange shapes in the fog — Ghost Pokemon swirl around you!", effects: { partyDamage: 1 } }
+                    { weight: 30, narration: "Strange shapes in the fog — Ghost Pokemon swirl around you!", effects: { partyDamageAll: 1 } }
                 ]},
                 { text: "Wait for it to clear", outcomes: [
                     { weight: 60, narration: "The fog clears after a few hours.", effects: {} },
@@ -3665,7 +3665,7 @@
                 { text: "Investigate the lab", outcomes: [
                     { weight: 30, narration: "Research notes mention experiments on evolution! You find a Rare Candy!", effects: { rareCandy: 1 } },
                     { weight: 30, narration: "Potions and medical supplies in the storage room!", effects: { potions: 3, superPotions: 1 } },
-                    { weight: 20, narration: "An escaped lab Pokemon attacks!", effects: { partyDamage: 1 } },
+                    { weight: 20, narration: "An escaped lab Pokemon attacks!", effects: { partyDamageAll: 1 } },
                     { weight: 20, narration: "You find research data worth money to Professor Oak!", effects: { money: 1000 } }
                 ]},
                 { text: "Leave it alone", outcomes: [
@@ -3728,8 +3728,8 @@
                     { weight: 20, narration: "Brock gives you some supplies from his pack!", effects: { potions: 2, food: 5 } }
                 ]},
                 { text: "Challenge him to a battle", outcomes: [
-                    { weight: 40, narration: "Brock's Onix is tough but you win! He rewards you.", effects: { money: 500, partyDamage: 1 } },
-                    { weight: 60, narration: "Brock's rock-solid defense beats you. Good practice though!", effects: { partyDamage: 1 } }
+                    { weight: 40, narration: "Brock's Onix is tough but you win! He rewards you.", effects: { money: 500, partyDamageAll: 1 } },
+                    { weight: 60, narration: "Brock's rock-solid defense beats you. Good practice though!", effects: { partyDamageAll: 1 } }
                 ]}
             ]
         },
@@ -3763,7 +3763,7 @@
             choices: [
                 { text: "\"You're Team Rocket!\"", outcomes: [
                     { weight: 50, narration: "\"Blast off again!\" They flee, dropping some loot!", effects: { money: 300, pokeballs: 2 } },
-                    { weight: 30, narration: "They panic and battle you! A quick fight.", effects: { money: 500, partyDamage: 1 } },
+                    { weight: 30, narration: "They panic and battle you! A quick fight.", effects: { money: 500, partyDamageAll: 1 } },
                     { weight: 20, narration: "\"How did you know?!\" They drop everything and run!", effects: { food: 5, potions: 2, money: 200 } }
                 ]},
                 { text: "Play along with their scheme", outcomes: [
@@ -3807,7 +3807,7 @@
                 ]},
                 { text: "Challenge them instead", outcomes: [
                     { weight: 30, narration: "You win! The intense battle strengthens your Pokemon! They hand over prize money.", effects: { money: 400, trainPokemon: true } },
-                    { weight: 30, narration: "A narrow win! Your Pokemon takes a beating but learns from the experience.", effects: { money: 200, partyDamage: 1, trainPokemon: true } },
+                    { weight: 30, narration: "A narrow win! Your Pokemon takes a beating but learns from the experience.", effects: { money: 200, partyDamageAll: 1, trainPokemon: true } },
                     { weight: 25, narration: "They're tougher than they look! Your Pokemon is badly hurt.", effects: { partyDamage: 2 } },
                     { weight: 15, narration: "They completely outclass you. Your Pokemon takes a devastating hit and doesn't get back up.", effects: { pokemonDeath: true } }
                 ]}
@@ -3848,7 +3848,7 @@
                 ]},
                 { text: "\"I can handle it\"", outcomes: [
                     { weight: 50, narration: "Your confidence pays off! The danger wasn't that bad.", effects: {} },
-                    { weight: 50, narration: "Should have listened to the Ranger.", effects: { partyDamage: 1 } }
+                    { weight: 50, narration: "Should have listened to the Ranger.", effects: { partyDamageAll: 1 } }
                 ]}
             ]
         },
@@ -3883,7 +3883,7 @@
             choices: [
                 { text: "Battle the Bug Catcher", outcomes: [
                     { weight: 60, narration: "Easy win! Bug Catchers are enthusiastic but not strong.", effects: { money: 200 } },
-                    { weight: 40, narration: "Their Beedrill put up a surprising fight!", effects: { money: 300, partyDamage: 1 } }
+                    { weight: 40, narration: "Their Beedrill put up a surprising fight!", effects: { money: 300, partyDamageAll: 1 } }
                 ]},
                 { text: "Chat about bugs", outcomes: [
                     { weight: 50, narration: "They point out where rare Pokemon hide! Useful intel.", effects: {} },
@@ -3922,7 +3922,7 @@
                 { text: "Battle your rival!", outcomes: [
                     { weight: 25, narration: "You beat your rival! The fierce battle makes your team stronger! \"Smell ya later!\"", effects: { money: 800, trainPokemon: true } },
                     { weight: 25, narration: "Crushing victory! Your rival is speechless! Your Pokemon grows from the experience!", effects: { money: 1000, trainPokemon: true } },
-                    { weight: 25, narration: "A close match but your rival wins this time. Your Pokemon is battered.", effects: { partyDamage: 1, money: -200 } },
+                    { weight: 25, narration: "A close match but your rival wins this time. Your Pokemon is battered.", effects: { partyDamageAll: 1, money: -200 } },
                     { weight: 15, narration: "Your rival's team has gotten much stronger. They thrash you badly.", effects: { partyDamage: 2, money: -400 } },
                     { weight: 10, narration: "\"Is that the best you've got?!\" Your rival's Pokemon delivers a fatal blow. One of yours doesn't survive.", effects: { pokemonDeath: true, money: -500 } }
                 ]},
@@ -3943,7 +3943,7 @@
             choices: [
                 { text: "\"Not you two again...\"", outcomes: [
                     { weight: 50, narration: "Team Rocket blasts off again! They drop some items in the process.", effects: { pokeballs: 2, money: 200 } },
-                    { weight: 30, narration: "Their Meowth puts up a decent fight!", effects: { partyDamage: 1, money: 300 } },
+                    { weight: 30, narration: "Their Meowth puts up a decent fight!", effects: { partyDamageAll: 1, money: 300 } },
                     { weight: 20, narration: "They actually manage to steal some food!", effects: { food: -5 } }
                 ]},
                 { text: "Listen to their motto", outcomes: [
@@ -4042,8 +4042,8 @@
             minDay: 2,
             choices: [
                 { text: "Push through", outcomes: [
-                    { weight: 40, narration: "You slog through the storm and lose a day.", effects: { daysLost: 1, partyDamage: 1 } },
-                    { weight: 60, narration: "The storm passes quicker than expected!", effects: { partyDamage: 1 } }
+                    { weight: 40, narration: "You slog through the storm and lose a day.", effects: { daysLost: 1, partyDamageAll: 1 } },
+                    { weight: 60, narration: "The storm passes quicker than expected!", effects: { partyDamageAll: 1 } }
                 ]},
                 { text: "Make camp and wait", outcomes: [
                     { weight: 60, narration: "You wait out the storm safely.", effects: { daysLost: 1 } },
@@ -4100,12 +4100,12 @@
             choices: [
                 { text: "Stand guard all night", outcomes: [
                     { weight: 50, narration: "You keep them at bay but everyone's exhausted.", effects: { daysLost: 1 } },
-                    { weight: 30, narration: "They attack at dawn! Quick battle!", effects: { partyDamage: 1 } },
+                    { weight: 30, narration: "They attack at dawn! Quick battle!", effects: { partyDamageAll: 1 } },
                     { weight: 20, narration: "They lose interest and wander away.", effects: {} }
                 ]},
                 { text: "Use a Repel", requiresItem: "repels", outcomes: [
                     { weight: 90, narration: "The Repel keeps them away all night!", effects: { repels: -1 } },
-                    { weight: 10, narration: "The Repel wears off at dawn. They charge!", effects: { repels: -1, partyDamage: 1 } }
+                    { weight: 10, narration: "The Repel wears off at dawn. They charge!", effects: { repels: -1, partyDamageAll: 1 } }
                 ]}
             ]
         },
@@ -4123,8 +4123,8 @@
                     { weight: 40, narration: "The detour leads to useful supplies!", effects: { food: 5, pokeballs: 2 } }
                 ]},
                 { text: "Cut through the wilderness", outcomes: [
-                    { weight: 40, narration: "A rough shortcut, but you rejoin the trail!", effects: { partyDamage: 1 } },
-                    { weight: 60, narration: "The wilderness is harsh. Your team suffers.", effects: { partyDamage: 1, food: -5 } }
+                    { weight: 40, narration: "A rough shortcut, but you rejoin the trail!", effects: { partyDamageAll: 1 } },
+                    { weight: 60, narration: "The wilderness is harsh. Your team suffers.", effects: { partyDamageAll: 1, food: -5 } }
                 ]}
             ]
         },
@@ -4144,7 +4144,7 @@
                 ]},
                 { text: "Use Escape Rope to climb over", requiresItem: "escapeRope", outcomes: [
                     { weight: 80, narration: "You scale the rockslide and continue!", effects: { escapeRope: -1 } },
-                    { weight: 20, narration: "Tricky climb but you make it over!", effects: { escapeRope: -1, partyDamage: 1 } }
+                    { weight: 20, narration: "Tricky climb but you make it over!", effects: { escapeRope: -1, partyDamageAll: 1 } }
                 ]}
             ]
         },
@@ -4163,7 +4163,7 @@
                 ]},
                 { text: "Build a makeshift bridge", outcomes: [
                     { weight: 40, narration: "Your Pokemon help build a crossing! Teamwork!", effects: { daysLost: 1 } },
-                    { weight: 60, narration: "The makeshift bridge holds just long enough!", effects: { partyDamage: 1 } }
+                    { weight: 60, narration: "The makeshift bridge holds just long enough!", effects: { partyDamageAll: 1 } }
                 ]}
             ]
         },
@@ -4201,7 +4201,7 @@
                 ]},
                 { text: "Risk eating it", outcomes: [
                     { weight: 30, narration: "It's actually fine! You saved your food.", effects: {} },
-                    { weight: 70, narration: "Your Pokemon get sick from the contaminated food.", effects: { partyDamage: 1 } }
+                    { weight: 70, narration: "Your Pokemon get sick from the contaminated food.", effects: { partyDamageAll: 1 } }
                 ]}
             ]
         },
@@ -4215,8 +4215,8 @@
             minDay: 3,
             choices: [
                 { text: "Defend your supplies!", outcomes: [
-                    { weight: 40, narration: "You drive them off but they got some food!", effects: { food: -5, partyDamage: 1 } },
-                    { weight: 40, narration: "You protect everything! Your team stands guard.", effects: { partyDamage: 1 } },
+                    { weight: 40, narration: "You drive them off but they got some food!", effects: { food: -5, partyDamageAll: 1 } },
+                    { weight: 40, narration: "You protect everything! Your team stands guard.", effects: { partyDamageAll: 1 } },
                     { weight: 20, narration: "Complete defense! Nothing was taken!", effects: {} }
                 ]},
                 { text: "Let them take some", outcomes: [
@@ -4254,7 +4254,7 @@
             choices: [
                 { text: "Push through", outcomes: [
                     { weight: 40, narration: "You make it through but everyone is battered.", effects: { partyDamage: 2 } },
-                    { weight: 60, narration: "The storm weakens and you pass through.", effects: { partyDamage: 1 } }
+                    { weight: 60, narration: "The storm weakens and you pass through.", effects: { partyDamageAll: 1 } }
                 ]},
                 { text: "Take shelter and wait", outcomes: [
                     { weight: 60, narration: "You wait out the sandstorm safely.", effects: { daysLost: 1 } },
@@ -4273,7 +4273,7 @@
             choices: [
                 { text: "Wade through", outcomes: [
                     { weight: 40, narration: "You make it through the flood! Soggy but safe.", effects: { food: -5 } },
-                    { weight: 40, narration: "The current is strong! Your team struggles!", effects: { partyDamage: 1, food: -3 } },
+                    { weight: 40, narration: "The current is strong! Your team struggles!", effects: { partyDamageAll: 1, food: -3 } },
                     { weight: 20, narration: "The flood sweeps away some supplies!", effects: { food: -10, pokeballs: -2 } }
                 ]},
                 { text: "Wait for waters to recede", outcomes: [
@@ -4292,13 +4292,13 @@
             minDay: 4,
             choices: [
                 { text: "Fight them off!", outcomes: [
-                    { weight: 40, narration: "Your team battles bravely and drives them away!", effects: { partyDamage: 1 } },
+                    { weight: 40, narration: "Your team battles bravely and drives them away!", effects: { partyDamageAll: 1 } },
                     { weight: 40, narration: "A tough fight from all angles!", effects: { partyDamage: 2 } },
-                    { weight: 20, narration: "You scatter the ambush and find one wants to join you!", effects: { partyDamage: 1, catchPokemon: 23 } }
+                    { weight: 20, narration: "You scatter the ambush and find one wants to join you!", effects: { partyDamageAll: 1, catchPokemon: 23 } }
                 ]},
                 { text: "Use a Repel to escape", requiresItem: "repels", outcomes: [
                     { weight: 80, narration: "The Repel creates a path through the wild Pokemon!", effects: { repels: -1 } },
-                    { weight: 20, narration: "Too many to repel! You still take some hits.", effects: { repels: -1, partyDamage: 1 } }
+                    { weight: 20, narration: "Too many to repel! You still take some hits.", effects: { repels: -1, partyDamageAll: 1 } }
                 ]}
             ]
         },
@@ -4314,12 +4314,12 @@
             choices: [
                 { text: "Cross carefully", outcomes: [
                     { weight: 50, narration: "Slow and steady wins the race! Everyone crosses safely.", effects: { daysLost: 1 } },
-                    { weight: 30, narration: "A close call — rocks crumble but everyone makes it!", effects: { partyDamage: 1 } },
+                    { weight: 30, narration: "A close call — rocks crumble but everyone makes it!", effects: { partyDamageAll: 1 } },
                     { weight: 20, narration: "Part of the path gives way!", effects: { partyDamage: 2 } }
                 ]},
                 { text: "Use Escape Rope for safety", requiresItem: "escapeRope", outcomes: [
                     { weight: 90, narration: "You use the rope as a safety line. Everyone crosses!", effects: { escapeRope: -1 } },
-                    { weight: 10, narration: "The rope helps but the path is still treacherous.", effects: { escapeRope: -1, partyDamage: 1 } }
+                    { weight: 10, narration: "The rope helps but the path is still treacherous.", effects: { escapeRope: -1, partyDamageAll: 1 } }
                 ]}
             ]
         },
@@ -4334,12 +4334,12 @@
             choices: [
                 { text: "Tread lightly", outcomes: [
                     { weight: 50, narration: "You carefully pick your way across!", effects: {} },
-                    { weight: 30, narration: "A section collapses but everyone jumps clear!", effects: { partyDamage: 1 } },
+                    { weight: 30, narration: "A section collapses but everyone jumps clear!", effects: { partyDamageAll: 1 } },
                     { weight: 20, narration: "The whole area gives way! Rough tumble!", effects: { partyDamage: 2 } }
                 ]},
                 { text: "Find a way around", outcomes: [
                     { weight: 60, narration: "A longer route but much safer.", effects: { daysLost: 1 } },
-                    { weight: 40, narration: "The detour has its own hazards.", effects: { partyDamage: 1 } }
+                    { weight: 40, narration: "The detour has its own hazards.", effects: { partyDamageAll: 1 } }
                 ]}
             ]
         },
@@ -4353,7 +4353,7 @@
             minDay: 5,
             choices: [
                 { text: "Confront it!", outcomes: [
-                    { weight: 30, narration: "It's a wild Pokemon! It attacks!", effects: { partyDamage: 1 } },
+                    { weight: 30, narration: "It's a wild Pokemon! It attacks!", effects: { partyDamageAll: 1 } },
                     { weight: 30, narration: "It's a lost Pokemon! It wants to join your team!", effects: { catchPokemon: 48 } },
                     { weight: 40, narration: "Nothing there. Maybe you imagined it.", effects: {} }
                 ]},
@@ -4393,12 +4393,12 @@
             minDay: 12,
             choices: [
                 { text: "Investigate the source", outcomes: [
-                    { weight: 30, narration: "You glimpse Zapdos at the storm's center! Awe-inspiring!", effects: { seePokemon: 145, partyDamage: 1 } },
+                    { weight: 30, narration: "You glimpse Zapdos at the storm's center! Awe-inspiring!", effects: { seePokemon: 145, partyDamageAll: 1 } },
                     { weight: 70, narration: "The storm is too dangerous to approach. You take shelter.", effects: { daysLost: 1 } }
                 ]},
                 { text: "Take cover immediately", outcomes: [
                     { weight: 70, narration: "You shelter until the unnatural storm passes.", effects: { daysLost: 1 } },
-                    { weight: 30, narration: "Even in shelter, the storm's power is felt!", effects: { partyDamage: 1 } }
+                    { weight: 30, narration: "Even in shelter, the storm's power is felt!", effects: { partyDamageAll: 1 } }
                 ]}
             ]
         },
@@ -4432,7 +4432,7 @@
             choices: [
                 { text: "Look for the source", outcomes: [
                     { weight: 30, narration: "You spot Articuno perched on a distant peak!", effects: { seePokemon: 144 } },
-                    { weight: 70, narration: "The cold is unbearable. Your team shivers and presses on.", effects: { partyDamage: 1 } }
+                    { weight: 70, narration: "The cold is unbearable. Your team shivers and presses on.", effects: { partyDamageAll: 1 } }
                 ]},
                 { text: "Huddle for warmth", outcomes: [
                     { weight: 60, narration: "The cold passes as quickly as it came.", effects: {} },
@@ -4452,7 +4452,7 @@
                 { text: "Investigate", outcomes: [
                     { weight: 20, narration: "You find massive footprints — something enormous was here!", effects: { daysLost: 1 } },
                     { weight: 40, narration: "The roar fades. Whatever it was is gone.", effects: {} },
-                    { weight: 40, narration: "Wild Pokemon in the area are spooked and aggressive!", effects: { partyDamage: 1 } }
+                    { weight: 40, narration: "Wild Pokemon in the area are spooked and aggressive!", effects: { partyDamageAll: 1 } }
                 ]},
                 { text: "Stay away from the sound", outcomes: [
                     { weight: 100, narration: "Wisdom is knowing when to be cautious.", effects: {} }
@@ -4469,13 +4469,13 @@
             minDay: 15,
             choices: [
                 { text: "Push through the pain", outcomes: [
-                    { weight: 40, narration: "The wave passes. Your team is dazed but okay.", effects: { partyDamage: 1 } },
+                    { weight: 40, narration: "The wave passes. Your team is dazed but okay.", effects: { partyDamageAll: 1 } },
                     { weight: 30, narration: "The psychic energy actually strengthens your bond!", effects: { healOne: true } },
-                    { weight: 30, narration: "You glimpse a vision of Mewtwo's cave!", effects: { seePokemon: 150, partyDamage: 1 } }
+                    { weight: 30, narration: "You glimpse a vision of Mewtwo's cave!", effects: { seePokemon: 150, partyDamageAll: 1 } }
                 ]},
                 { text: "Take shelter", outcomes: [
                     { weight: 60, narration: "You shield your team from the worst of it.", effects: {} },
-                    { weight: 40, narration: "The psychic power penetrates even shelter.", effects: { partyDamage: 1 } }
+                    { weight: 40, narration: "The psychic power penetrates even shelter.", effects: { partyDamageAll: 1 } }
                 ]}
             ]
         },
@@ -4511,7 +4511,7 @@
                 { text: "Search the area", outcomes: [
                     { weight: 30, narration: "A feather from Moltres! It radiates healing warmth!", effects: { seePokemon: 146, healAll: true } },
                     { weight: 40, narration: "Just scorched earth. But the warmth is comforting.", effects: { healOne: true } },
-                    { weight: 30, narration: "The residual heat is dangerous! Pokemon get burned!", effects: { partyDamage: 1 } }
+                    { weight: 30, narration: "The residual heat is dangerous! Pokemon get burned!", effects: { partyDamageAll: 1 } }
                 ]},
                 { text: "Avoid the area", outcomes: [
                     { weight: 100, narration: "Something that can scorch the earth like this isn't to be trifled with.", effects: {} }
@@ -4530,7 +4530,7 @@
                 { text: "Touch the shrine", outcomes: [
                     { weight: 30, narration: "Incredible power flows through your team! Everyone is fully healed!", effects: { healAll: true, rareCandy: 1 } },
                     { weight: 40, narration: "The shrine bestows a blessing on your journey!", effects: { healAll: true } },
-                    { weight: 30, narration: "The energy is too intense! Your team is knocked back!", effects: { partyDamage: 1 } }
+                    { weight: 30, narration: "The energy is too intense! Your team is knocked back!", effects: { partyDamageAll: 1 } }
                 ]},
                 { text: "Observe from a distance", outcomes: [
                     { weight: 60, narration: "The glow fades. Whatever it was, the moment has passed.", effects: {} },
@@ -4587,13 +4587,13 @@
             minDay: 10,
             choices: [
                 { text: "Brace for it", outcomes: [
-                    { weight: 40, narration: "The storm unleashes fury but passes quickly!", effects: { partyDamage: 1 } },
-                    { weight: 30, narration: "Lightning strikes reveal a nearby supply cache!", effects: { partyDamage: 1, potions: 2, money: 300 } },
+                    { weight: 40, narration: "The storm unleashes fury but passes quickly!", effects: { partyDamageAll: 1 } },
+                    { weight: 30, narration: "Lightning strikes reveal a nearby supply cache!", effects: { partyDamageAll: 1, potions: 2, money: 300 } },
                     { weight: 30, narration: "The storm scatters some of your supplies!", effects: { food: -5 } }
                 ]},
                 { text: "Run for cover!", outcomes: [
                     { weight: 60, narration: "You find shelter just in time!", effects: {} },
-                    { weight: 40, narration: "Can't outrun this storm!", effects: { partyDamage: 1 } }
+                    { weight: 40, narration: "Can't outrun this storm!", effects: { partyDamageAll: 1 } }
                 ]}
             ]
         },
@@ -4653,7 +4653,7 @@
                 ]},
                 { text: "Ignore the sulking", outcomes: [
                     { weight: 50, narration: "They get over it on their own.", effects: {} },
-                    { weight: 50, narration: "The sulking is contagious. Everyone's moody now.", effects: { partyDamage: 1 } }
+                    { weight: 50, narration: "The sulking is contagious. Everyone's moody now.", effects: { partyDamageAll: 1 } }
                 ]}
             ]
         },
@@ -4727,7 +4727,7 @@
             choices: [
                 { text: "Channel the energy into travel", outcomes: [
                     { weight: 50, narration: "They run ahead and you make great time!", effects: { daysLost: -1 } },
-                    { weight: 30, narration: "They're so hyper they exhaust themselves.", effects: { partyDamage: 1 } },
+                    { weight: 30, narration: "They're so hyper they exhaust themselves.", effects: { partyDamageAll: 1 } },
                     { weight: 20, narration: "The excitement is contagious! Everyone moves faster!", effects: {} }
                 ]},
                 { text: "Try to calm them down", outcomes: [
@@ -4748,11 +4748,11 @@
                 { text: "Scout ahead carefully", outcomes: [
                     { weight: 30, narration: "Good instincts! You spot a hazard and avoid it!", effects: {} },
                     { weight: 40, narration: "Nothing dangerous ahead. Your Pokemon was being paranoid.", effects: {} },
-                    { weight: 30, narration: "There IS something ahead — wild Pokemon blocking the path!", effects: { partyDamage: 1 } }
+                    { weight: 30, narration: "There IS something ahead — wild Pokemon blocking the path!", effects: { partyDamageAll: 1 } }
                 ]},
                 { text: "\"It's fine, let's go\"", outcomes: [
                     { weight: 60, narration: "It was fine. Your Pokemon relaxes eventually.", effects: {} },
-                    { weight: 40, narration: "Maybe you should have listened...", effects: { partyDamage: 1 } }
+                    { weight: 40, narration: "Maybe you should have listened...", effects: { partyDamageAll: 1 } }
                 ]}
             ]
         },
@@ -4958,7 +4958,7 @@
                     bonusAbility: "flash",
                     outcomes: [
                         { weight: 70, narration: "Step by careful step, you weave through the electric traps. It takes all day, but you and your team make it through unscathed.", effects: { daysLost: 1 } },
-                        { weight: 30, narration: "You're almost through when a hidden trap triggers! A small shock, but nothing serious. Better than rushing.", effects: { daysLost: 1, partyDamage: 1 } }
+                        { weight: 30, narration: "You're almost through when a hidden trap triggers! A small shock, but nothing serious. Better than rushing.", effects: { daysLost: 1, partyDamageAll: 1 } }
                     ],
                     bonusOutcome: { weight: 100, narration: "Your Electric-type senses the current and guides you through safely in no time!", effects: {} }
                 },
@@ -5023,7 +5023,7 @@
                     outcomes: [
                         { weight: 35, narration: "Your Pokemon explodes out of its ball and sends the grunts scrambling! You grab what you can from the chaos and run. A smaller haul, but you kept your team.", effects: { money: 400 } },
                         { weight: 35, narration: "You fight hard and win, but your Pokemon takes serious hits. The grunts flee cursing. Victory, but it cost you.", effects: { partyDamage: 2, money: 200 } },
-                        { weight: 30, narration: "Three on one. Your Pokemon fights bravely but they overpower you. They take a Pokemon AND rough up the rest of your team.", effects: { pokemonDeath: true, partyDamage: 1 } }
+                        { weight: 30, narration: "Three on one. Your Pokemon fights bravely but they overpower you. They take a Pokemon AND rough up the rest of your team.", effects: { pokemonDeath: true, partyDamageAll: 1 } }
                     ]
                 }
             ]
@@ -5069,8 +5069,8 @@
                     text: "Accept the mirror match!",
                     outcomes: [
                         { weight: 35, narration: "Your Pokemon faces its perfect clone. The battle is surreal — identical moves, identical strength. But YOUR Pokemon has heart. The real thing beats the copy. Copycat is thrilled: \"Amazing! Ditto, go with them!\" Ditto joins your team!", effects: { catchPokemon: 132 } },
-                        { weight: 35, narration: "The mirror match is brutal. Your Pokemon fights itself to a standstill. Both collapse. Your Pokemon recovers, but something's been drained — permanently. Copycat recalls her Ditto sheepishly. \"Sorry... Ditto doesn't hold back.\"", effects: { partyDamage: 1, reducePokemonMaxHp: 1 } },
-                        { weight: 30, narration: "Your Pokemon wins! Barely. The effort was immense. Copycat laughs and hands over Ditto's ball. \"You earned it!\" But your team is exhausted from watching.", effects: { catchPokemon: 132, partyDamage: 1 } }
+                        { weight: 35, narration: "The mirror match is brutal. Your Pokemon fights itself to a standstill. Both collapse. Your Pokemon recovers, but something's been drained — permanently. Copycat recalls her Ditto sheepishly. \"Sorry... Ditto doesn't hold back.\"", effects: { partyDamageAll: 1, reducePokemonMaxHp: 1 } },
+                        { weight: 30, narration: "Your Pokemon wins! Barely. The effort was immense. Copycat laughs and hands over Ditto's ball. \"You earned it!\" But your team is exhausted from watching.", effects: { catchPokemon: 132, partyDamageAll: 1 } }
                     ]
                 },
                 {
@@ -5126,7 +5126,7 @@
                     text: "Endure the haunting",
                     outcomes: [
                         { weight: 50, narration: "The spectral Pokemon rages against your team. It can't be fought — only survived. Your Pokemon take hits. Your food scatters. When it finally fades, the tower is silent. The grave is just a grave again. But the question remains: was it your fault?", effects: { partyDamage: 2, food: -8 } },
-                        { weight: 50, narration: "The ghost tears through your supplies in blind fury. A Pokemon cries out in pain. When the haunting ends, you're shaken to your core. Some victories have consequences you never see.", effects: { partyDamage: 1, food: -10, money: -200 } }
+                        { weight: 50, narration: "The ghost tears through your supplies in blind fury. A Pokemon cries out in pain. When the haunting ends, you're shaken to your core. Some victories have consequences you never see.", effects: { partyDamageAll: 1, food: -10, money: -200 } }
                     ]
                 },
                 {
@@ -5134,7 +5134,7 @@
                     requiresItem: "potions",
                     outcomes: [
                         { weight: 60, narration: "You place the potion at the gravestone. The ghost pauses. Studies it. The rage fades from its eyes. It dissolves peacefully, and you find $300 scattered where it stood — left by previous trainers who weren't as kind.", effects: { potions: -1, money: 300 } },
-                        { weight: 40, narration: "The potion offering angers it further — you can't heal the dead. The ghost lashes out before finally dissipating. You managed to calm it eventually, but not before taking damage.", effects: { potions: -1, partyDamage: 1 } }
+                        { weight: 40, narration: "The potion offering angers it further — you can't heal the dead. The ghost lashes out before finally dissipating. You managed to calm it eventually, but not before taking damage.", effects: { potions: -1, partyDamageAll: 1 } }
                     ]
                 }
             ]
@@ -5155,7 +5155,7 @@
                     outcomes: [
                         { weight: 50, narration: "Your Pokemon charges into the plant and absorbs the overload! The electricity courses through it — agonizing, but empowering. It emerges stronger than before, crackling with residual energy. But the strain took a physical toll.", effects: { boostPokemonMaxHp: 1, partyDamage: 2 } },
                         { weight: 30, narration: "The voltage is too much! Your Pokemon absorbs what it can but gets badly shocked in the process. No permanent boost — just pain.", effects: { partyDamage: 3 } },
-                        { weight: 20, narration: "Your Pokemon channels the electricity perfectly! The overload stabilizes. Your Pokemon THRIVES on the energy, emerging significantly stronger.", effects: { boostPokemonMaxHp: 1, partyDamage: 1 } }
+                        { weight: 20, narration: "Your Pokemon channels the electricity perfectly! The overload stabilizes. Your Pokemon THRIVES on the energy, emerging significantly stronger.", effects: { boostPokemonMaxHp: 1, partyDamageAll: 1 } }
                     ]
                 },
                 {
@@ -5219,7 +5219,7 @@
                     text: "Chase it down! (5 Poke Balls)",
                     requiresItem: "pokeballs",
                     outcomes: [
-                        { weight: 30, narration: "You tear through the undergrowth, burning through Poke Balls. The Pikachu zips left, right, up a tree — but your fifth ball catches it mid-leap! The ball shakes once... twice... CLICK. You've got a Pikachu! Your team took some Thundershocks during the chase though.", effects: { pokeballs: -5, catchPokemon: 25, partyDamage: 1 } },
+                        { weight: 30, narration: "You tear through the undergrowth, burning through Poke Balls. The Pikachu zips left, right, up a tree — but your fifth ball catches it mid-leap! The ball shakes once... twice... CLICK. You've got a Pikachu! Your team took some Thundershocks during the chase though.", effects: { pokeballs: -5, catchPokemon: 25, partyDamageAll: 1 } },
                         { weight: 40, narration: "Five Poke Balls, five misses. The Pikachu Thundershocks your whole team on its way out, laughing — actually laughing — as it vanishes into the forest. Five balls wasted and your Pokemon are scorched.", effects: { pokeballs: -5, partyDamage: 2 } },
                         { weight: 30, narration: "The chase is on! Branches whip your face, your Pokemon take electric shocks — but that last ball connects! Pikachu glares at you from inside the Poke Ball, then settles down. Hard-won, but worth every bruise.", effects: { pokeballs: -5, catchPokemon: 25, partyDamage: 2 } }
                     ]
@@ -5255,7 +5255,7 @@
                     text: "Help Team Rocket",
                     outcomes: [
                         { weight: 60, narration: "You help the grunts smash the case. The Aerodactyl fossil crumbles — but inside is a perfectly preserved Poke Ball. An actual living Aerodactyl! The grunts toss you the ball and $1000. \"Pleasure doing business, kid.\" You feel dirty. But powerful.", effects: { catchPokemon: 142, money: 1000 } },
-                        { weight: 40, narration: "You help break the case, but it's a double-cross. The grunts grab the fossil AND your money. \"Thanks for the help, sucker!\" They shove you into the display and bolt. The museum guard finds you covered in glass.", effects: { money: -500, partyDamage: 1 } }
+                        { weight: 40, narration: "You help break the case, but it's a double-cross. The grunts grab the fossil AND your money. \"Thanks for the help, sucker!\" They shove you into the display and bolt. The museum guard finds you covered in glass.", effects: { money: -500, partyDamageAll: 1 } }
                     ]
                 },
                 {
@@ -5309,15 +5309,15 @@
                     text: "Search for the teeth",
                     outcomes: [
                         { weight: 50, narration: "Hours of searching through swamps and tall grass. Your Pokemon fend off wild attacks the whole time. Finally — gold glinting in the mud! The Warden is thrilled. \"SURF IS YOURS!\" Your team is exhausted but you've got a key item.", effects: { keyItem: "HM Surf", partyDamage: 2 } },
-                        { weight: 30, narration: "You find the teeth quickly — wedged in a Victreebel's mouth. Getting them OUT is the hard part. Your Pokemon take a beating, but the Warden gives you Surf AND throws in some cash. \"You're braver than you look!\"", effects: { keyItem: "HM Surf", money: 500, partyDamage: 1 } },
+                        { weight: 30, narration: "You find the teeth quickly — wedged in a Victreebel's mouth. Getting them OUT is the hard part. Your Pokemon take a beating, but the Warden gives you Surf AND throws in some cash. \"You're braver than you look!\"", effects: { keyItem: "HM Surf", money: 500, partyDamageAll: 1 } },
                         { weight: 20, narration: "The search drags on for a full day. Wild Pokemon attack relentlessly. You finally find the teeth, but your team is wrecked. The Warden hands you Surf with a toothless grin. Was it worth it?", effects: { keyItem: "HM Surf", partyDamage: 3, daysLost: 1 } }
                     ]
                 },
                 {
                     text: "Explore the Safari Zone instead",
                     outcomes: [
-                        { weight: 25, narration: "Forget the teeth — the Safari Zone has DRATINI! You spot one near the lake and carefully lure it in. A rare catch! The Warden is disappointed but you've got something better.", effects: { catchPokemon: 147, partyDamage: 1 } },
-                        { weight: 35, narration: "You explore deep into the Zone and find a Scyther! Fast, fierce, and yours. The Warden grumbles about his teeth but you're too busy admiring your new bug.", effects: { catchPokemon: 123, partyDamage: 1 } },
+                        { weight: 25, narration: "Forget the teeth — the Safari Zone has DRATINI! You spot one near the lake and carefully lure it in. A rare catch! The Warden is disappointed but you've got something better.", effects: { catchPokemon: 147, partyDamageAll: 1 } },
+                        { weight: 35, narration: "You explore deep into the Zone and find a Scyther! Fast, fierce, and yours. The Warden grumbles about his teeth but you're too busy admiring your new bug.", effects: { catchPokemon: 123, partyDamageAll: 1 } },
                         { weight: 40, narration: "The Safari Zone is a bust. You wander for hours, find nothing rare, and your Pokemon get beat up by wild Tauros. No teeth, no rare catch, just bruises.", effects: { partyDamage: 2, food: -5 } }
                     ]
                 }
@@ -5340,7 +5340,7 @@
                     bonusAbility: "psychic",
                     bonusOutcome: { narration: "Your Psychic-type senses the walls before you hit them! You glide through the maze untouched and find the prize: a Rare Candy AND a Venomoth, trained by Koga himself. \"Impressive,\" he admits. \"The psychic's foresight serves you well.\"", effects: { rareCandy: 1, catchPokemon: 49 } },
                     outcomes: [
-                        { weight: 25, narration: "You stumble, you slam into walls, poison seeps through your clothes — but you make it! At the center: a Rare Candy and one of Koga's own Venomoth. \"You have the heart of a ninja,\" Koga says approvingly.", effects: { rareCandy: 1, catchPokemon: 49, partyDamage: 1 } },
+                        { weight: 25, narration: "You stumble, you slam into walls, poison seeps through your clothes — but you make it! At the center: a Rare Candy and one of Koga's own Venomoth. \"You have the heart of a ninja,\" Koga says approvingly.", effects: { rareCandy: 1, catchPokemon: 49, partyDamageAll: 1 } },
                         { weight: 40, narration: "The maze is brutal. Poison barbs catch your Pokemon at every turn. You reach the center and grab the Rare Candy, but the toll is severe.", effects: { rareCandy: 1, partyDamage: 2 } },
                         { weight: 35, narration: "You're hopelessly lost. The invisible walls close in. Poison damage accumulates. By the time Koga pulls you out, your team is in rough shape and you found nothing.", effects: { partyDamage: 3 } }
                     ]
@@ -5375,9 +5375,9 @@
                 {
                     text: "Carefully thaw one Poke Ball",
                     outcomes: [
-                        { weight: 35, narration: "You use your Pokemon's warmth to slowly thaw one ball. It pops open — a Dewgong emerges, confused but healthy. It's been frozen for who knows how long. It looks at the frozen trainer, then at you, and accepts its new reality.", effects: { catchPokemon: 87, partyDamage: 1 } },
-                        { weight: 35, narration: "The ice cracks and releases — a Jynx! It shivers violently, then steadies itself. It examines the frozen trainer with what looks like grief, then turns to you. A new partner, born from tragedy.", effects: { catchPokemon: 124, partyDamage: 1 } },
-                        { weight: 30, narration: "A Lapras emerges from the thawed ball! Rare and powerful. It sings a mournful note toward the frozen trainer — a farewell — then nuzzles against you. The cold damaged your team slightly during the thawing.", effects: { catchPokemon: 131, partyDamage: 1 } }
+                        { weight: 35, narration: "You use your Pokemon's warmth to slowly thaw one ball. It pops open — a Dewgong emerges, confused but healthy. It's been frozen for who knows how long. It looks at the frozen trainer, then at you, and accepts its new reality.", effects: { catchPokemon: 87, partyDamageAll: 1 } },
+                        { weight: 35, narration: "The ice cracks and releases — a Jynx! It shivers violently, then steadies itself. It examines the frozen trainer with what looks like grief, then turns to you. A new partner, born from tragedy.", effects: { catchPokemon: 124, partyDamageAll: 1 } },
+                        { weight: 30, narration: "A Lapras emerges from the thawed ball! Rare and powerful. It sings a mournful note toward the frozen trainer — a farewell — then nuzzles against you. The cold damaged your team slightly during the thawing.", effects: { catchPokemon: 131, partyDamageAll: 1 } }
                     ]
                 },
                 {
@@ -5411,7 +5411,7 @@
                     bonusAbility: "strength",
                     bonusOutcome: { narration: "Your Strength-user slams into the boulder and it MOVES. The current redirects perfectly. Your team crosses safely. Brute force wins again.", effects: {} },
                     outcomes: [
-                        { weight: 40, narration: "Your Pokemon heaves against the boulder. It moves — barely — redirecting enough of the current to cross. But the strain is immense. Your Pokemon's muscles are torn from the effort.", effects: { reducePokemonMaxHp: 1, partyDamage: 1 } },
+                        { weight: 40, narration: "Your Pokemon heaves against the boulder. It moves — barely — redirecting enough of the current to cross. But the strain is immense. Your Pokemon's muscles are torn from the effort.", effects: { reducePokemonMaxHp: 1, partyDamageAll: 1 } },
                         { weight: 35, narration: "The boulder shifts! The current weakens just enough to wade through. Your team gets soaked and battered but makes it across in one piece.", effects: { partyDamage: 2 } },
                         { weight: 25, narration: "The boulder won't budge. Your Pokemon exhausts itself trying. You're forced to wade through the current anyway. Supplies are swept away in the torrent.", effects: { partyDamage: 2, food: -8, pokeballs: -3 } }
                     ]
@@ -5505,7 +5505,7 @@
                     bonusAbility: "psychic",
                     bonusOutcome: { narration: "Your Psychic-type reaches into Machamp's mind. It freezes. Its eyes go wide. Then it steps aside, bowing deeply. Psychic trumps Fighting — every time. You walk through untouched, and Machamp joins your team out of respect.", effects: { catchPokemon: 68 } },
                     outcomes: [
-                        { weight: 15, narration: "An INCREDIBLE battle! Your Pokemon matches Machamp blow for blow and lands the final hit. Machamp kneels. It's been defeated for the first time in years. It offers its Poke Ball — it WANTS to join a trainer this strong. Your lead Pokemon grew from the fight.", effects: { catchPokemon: 68, trainPokemon: true, partyDamage: 1 } },
+                        { weight: 15, narration: "An INCREDIBLE battle! Your Pokemon matches Machamp blow for blow and lands the final hit. Machamp kneels. It's been defeated for the first time in years. It offers its Poke Ball — it WANTS to join a trainer this strong. Your lead Pokemon grew from the fight.", effects: { catchPokemon: 68, trainPokemon: true, partyDamageAll: 1 } },
                         { weight: 20, narration: "Your Pokemon wins, but barely. Machamp is a monster. It nods respectfully and steps aside, but the fight cost you dearly. Your team can barely stand.", effects: { partyDamage: 3, trainPokemon: true } },
                         { weight: 35, narration: "Machamp is too strong. Four arms, four times the punishment. Your Pokemon fights bravely but gets overwhelmed. Machamp lets you pass — you proved your courage — but a Pokemon didn't make it.", effects: { pokemonDeath: true, partyDamage: 2 } },
                         { weight: 30, narration: "A grueling fight that leaves both sides damaged. Machamp finally steps aside, breathing hard. You're through, but your team paid the price.", effects: { partyDamage: 3 } }
@@ -5515,7 +5515,7 @@
                     text: "Squeeze through the side passage",
                     outcomes: [
                         { weight: 50, narration: "You find a narrow crack in the wall. Your Pokemon squeeze through one by one. It's tight, dark, and your supplies get scraped off — but you make it past the Machamp unscathed.", effects: { food: -5 } },
-                        { weight: 30, narration: "The side passage is tighter than it looks. A rockslide catches your team mid-squeeze. Minor injuries, lost supplies, but you're through.", effects: { partyDamage: 1, food: -8, pokeballs: -2 } },
+                        { weight: 30, narration: "The side passage is tighter than it looks. A rockslide catches your team mid-squeeze. Minor injuries, lost supplies, but you're through.", effects: { partyDamageAll: 1, food: -8, pokeballs: -2 } },
                         { weight: 20, narration: "The passage collapses! You barely escape as rocks rain down. Your team takes hits, food and balls scatter into the rubble. But you're past the guardian.", effects: { partyDamage: 2, food: -10, pokeballs: -3 } }
                     ]
                 }
@@ -5545,6 +5545,312 @@
                     outcomes: [
                         { weight: 50, narration: "The ghost whispers battle strategies from a bygone era. Your bag fills with supplies — Super Potions, a Rare Candy, knowledge crystallized into items. \"The mind outlasts the body,\" the ghost says. \"Remember that against the Elite Four.\"", effects: { superPotions: 3, rareCandy: 1 } },
                         { weight: 50, narration: "Ancient knowledge pours into you. Your supplies multiply — potions, food, the accumulated wisdom of a Champion's lifetime distilled into resources. \"Wisdom is knowing when NOT to fight,\" the ghost says, fading. \"Good luck.\"", effects: { potions: 3, food: 15, rareCandy: 1 } }
+                    ]
+                }
+            ]
+        },
+        // ===== SACRIFICE / SOPHIE'S CHOICE EVENTS =====
+
+        // Seafoam Islands - Drowning Rescue
+        {
+            id: "seafoam_drowning",
+            type: "hazard",
+            name: "Drowning in the Current!",
+            description: "A massive wave crashes through the Seafoam cave! Two of your Pokemon are swept into the raging underground river, clinging to rocks as the freezing current pulls them under. You can only reach one in time. The other will be lost to the sea.",
+            weight: 6,
+            oneTime: true,
+            locationIds: ["seafoam_islands"],
+            requiresPartySize: 3,
+            choices: [
+                {
+                    text: "Save the one closest to you",
+                    outcomes: [
+                        { weight: 100, narration: "You dive in and grab the nearest Pokemon, hauling it to safety. But you can only watch as the current drags the other beneath the waves. It's gone. The cave echoes with silence.", effects: { pokemonDeath: true, partyDamageAll: 1 } }
+                    ]
+                },
+                {
+                    text: "Swim for the one further away",
+                    outcomes: [
+                        { weight: 60, narration: "You fight the current with everything you have and reach the far Pokemon just in time. But the closer one lost its grip waiting. It slips beneath the water without a sound.", effects: { pokemonDeath: true, partyDamageAll: 1 } },
+                        { weight: 40, narration: "The current is too strong. You don't reach either in time. One is dragged under. You barely pull yourself and the other to shore, battered and broken.", effects: { pokemonDeath: true, partyDamage: 2 } }
+                    ]
+                }
+            ]
+        },
+
+        // Cinnabar Island - Volcano's Edge
+        {
+            id: "cinnabar_volcano_edge",
+            type: "hazard",
+            name: "The Volcano's Edge!",
+            description: "The ground shakes violently on Cinnabar! A fissure cracks open and two of your Pokemon tumble toward the edge, dangling over a river of molten lava below. The rock is crumbling fast — you can pull one back, but reaching both is impossible.",
+            weight: 6,
+            oneTime: true,
+            locationIds: ["cinnabar_island"],
+            requiresPartySize: 3,
+            choices: [
+                {
+                    text: "Grab the one on the left",
+                    outcomes: [
+                        { weight: 100, narration: "You lunge left and grab hold. The other Pokemon looks at you with understanding as the ledge crumbles beneath it. It falls silently into the lava below. You hold the survivor tight, both trembling.", effects: { pokemonDeath: true, partyDamageAll: 1 } }
+                    ]
+                },
+                {
+                    text: "Grab the one on the right",
+                    outcomes: [
+                        { weight: 100, narration: "You reach right and pull with all your strength. The rock beneath the other Pokemon gives way instantly — it's gone before you can even scream. The heat from below scorches your entire team.", effects: { pokemonDeath: true, partyDamageAll: 1 } }
+                    ]
+                },
+                {
+                    text: "Try to save both",
+                    outcomes: [
+                        { weight: 25, narration: "Against all odds, you stretch between them, grabbing one in each hand. Your arms nearly tear from their sockets, but you haul them both back. The fissure seals behind you. A miracle.", effects: { partyDamageAll: 1 } },
+                        { weight: 75, narration: "You overreach and the ledge collapses under your weight. You fall, catching one Pokemon, but the other plummets into the lava. The heat blast sears your entire team.", effects: { pokemonDeath: true, partyDamage: 2 } }
+                    ]
+                }
+            ]
+        },
+
+        // Mt. Moon - Cave Collapse Sacrifice
+        {
+            id: "mt_moon_collapse_sacrifice",
+            type: "hazard",
+            name: "The Cave is Collapsing!",
+            description: "A massive cave-in seals the exit! Boulders rain from the ceiling. One of your Pokemon could hold back the rocks long enough for the rest to escape — but it would be crushed. Or you all try to run together, and pray.",
+            weight: 5,
+            oneTime: true,
+            locationIds: ["mt_moon"],
+            requiresPartySize: 3,
+            choices: [
+                {
+                    text: "One Pokemon holds the line",
+                    outcomes: [
+                        { weight: 100, narration: "Your Pokemon braces against the falling stone, roaring with defiance as the rest of you scramble to safety. The tunnel collapses behind you. When the dust settles, there's only silence from the other side. It gave its life for the team.", effects: { pokemonDeath: true } }
+                    ]
+                },
+                {
+                    text: "Everyone runs together!",
+                    outcomes: [
+                        { weight: 30, narration: "You all sprint for it! Rocks crash around you, but somehow everyone makes it through a narrow gap just before the ceiling comes down. Battered, but alive.", effects: { partyDamageAll: 1 } },
+                        { weight: 45, narration: "You run, but the slowest Pokemon doesn't make it. A boulder pins it and the tunnel seals. The rest of your team is bruised and bleeding from the debris.", effects: { pokemonDeath: true, partyDamageAll: 1 } },
+                        { weight: 25, narration: "The collapse is too fast. Rocks crush from every direction. Two of your Pokemon go down before you reach daylight. The survivors are badly hurt.", effects: { pokemonDeath: true, pokemonDeath2: true, partyDamageAll: 1 } }
+                    ]
+                }
+            ]
+        },
+
+        // Rock Tunnel - Toxic Gas Sacrifice
+        {
+            id: "rock_tunnel_gas",
+            type: "hazard",
+            name: "Toxic Gas Fills the Tunnel!",
+            description: "A pocket of poisonous gas erupts from a crack in the tunnel wall! The fumes are spreading fast. You have one Escape Rope — but it can only carry half your team to safety. The others would have to brave the gas.",
+            weight: 5,
+            oneTime: true,
+            locationIds: ["rock_tunnel"],
+            requiresPartySize: 3,
+            choices: [
+                {
+                    text: "Use the Escape Rope for half",
+                    requiresItem: "escapeRope",
+                    outcomes: [
+                        { weight: 60, narration: "You rope half your team to safety. The others struggle through the gas, choking and stumbling. One doesn't make it out. The gas was too thick.", effects: { escapeRope: -1, pokemonDeath: true } },
+                        { weight: 40, narration: "Half your team escapes via rope. The others fight through the poison, barely emerging alive but deeply weakened.", effects: { escapeRope: -1, partyDamage: 3 } }
+                    ]
+                },
+                {
+                    text: "Everyone holds their breath and runs",
+                    outcomes: [
+                        { weight: 25, narration: "You all charge through together, eyes burning, lungs screaming. Somehow everyone makes it to fresh air. Barely.", effects: { partyDamageAll: 1 } },
+                        { weight: 50, narration: "The gas is overwhelming. One of your Pokemon collapses and can't be revived. The rest are badly poisoned.", effects: { pokemonDeath: true, partyDamageAll: 1 } },
+                        { weight: 25, narration: "It's a slaughter. The gas is far worse than you thought. Two Pokemon suffocate before you reach the exit. The survivors wheeze and collapse.", effects: { pokemonDeath: true, pokemonDeath2: true, partyDamageAll: 1 } }
+                    ]
+                }
+            ]
+        },
+
+        // Lavender Town - Spirit Possession
+        {
+            id: "lavender_spirit_choice",
+            type: "hazard",
+            name: "A Spirit Demands a Host!",
+            description: "In the Pokemon Tower, a powerful ghost blocks your path. \"ONE WILL STAY WITH ME,\" it hisses. \"Choose which Pokemon remains... or I take TWO by force.\" The spirit's eyes burn with cold fire. This is no bluff.",
+            weight: 5,
+            oneTime: true,
+            locationIds: ["lavender_town"],
+            requiresPartySize: 2,
+            choices: [
+                {
+                    text: "Offer one willingly",
+                    outcomes: [
+                        { weight: 100, narration: "You choose. The spirit wraps around your Pokemon like a cold wind and they fade together into the tower walls. The remaining team shivers. \"A fair trade,\" echoes through the darkness. \"Leave. Now.\"", effects: { pokemonDeath: true } }
+                    ]
+                },
+                {
+                    text: "Refuse — fight the spirit!",
+                    outcomes: [
+                        { weight: 25, narration: "Your team battles the spirit with everything they have! Against all odds, they drive it back into the shadows. But the effort leaves everyone drained.", effects: { partyDamageAll: 1 } },
+                        { weight: 50, narration: "You fight, but the spirit is too powerful. It seizes one of your Pokemon and drags it into the walls. Your team takes spiritual damage from the battle.", effects: { pokemonDeath: true, partyDamageAll: 1 } },
+                        { weight: 25, narration: "The spirit is furious. \"THEN I TAKE WHAT I WANT!\" Two of your Pokemon are pulled screaming into the walls. The rest flee in terror.", effects: { pokemonDeath: true, pokemonDeath2: true } }
+                    ]
+                },
+                {
+                    text: "Use Silph Scope to weaken it",
+                    requiresKeyItem: "silph_scope",
+                    outcomes: [
+                        { weight: 70, narration: "The Silph Scope reveals the spirit's true form — a tormented Marowak. It calms, weeping. \"I just miss my child...\" The spirit fades peacefully. Your team is shaken but alive.", effects: { partyDamageAll: 1 } },
+                        { weight: 30, narration: "The Silph Scope reveals its form but the spirit resists! It lashes out before fading, injuring your team badly.", effects: { partyDamage: 2 } }
+                    ]
+                }
+            ]
+        },
+
+        // Viridian Forest - Beedrill Swarm Sacrifice
+        {
+            id: "viridian_beedrill_swarm",
+            type: "hazard",
+            name: "Beedrill Swarm!",
+            description: "You've stumbled into a massive Beedrill nest! Hundreds of them swarm toward you, stingers gleaming. One of your Pokemon could create a distraction to let the rest escape, but it would be overwhelmed.",
+            weight: 6,
+            oneTime: true,
+            locationIds: ["viridian_forest"],
+            requiresPartySize: 3,
+            choices: [
+                {
+                    text: "Send one as a distraction",
+                    outcomes: [
+                        { weight: 100, narration: "Your Pokemon charges bravely into the swarm, drawing them away with attacks and noise. You hear its cries grow weaker as you flee. By the time the swarm disperses... it's too late. A hero's sacrifice.", effects: { pokemonDeath: true } }
+                    ]
+                },
+                {
+                    text: "Everyone runs together!",
+                    outcomes: [
+                        { weight: 20, narration: "You sprint as a group! The Beedrill give chase but lose interest as you leave their territory. Everyone is stung but alive.", effects: { partyDamageAll: 1 } },
+                        { weight: 50, narration: "The swarm descends on your slowest Pokemon. It goes down under a cloud of stingers. The rest of you barely escape, badly stung.", effects: { pokemonDeath: true, partyDamageAll: 1 } },
+                        { weight: 30, narration: "The swarm is relentless. Two Pokemon are overwhelmed before you escape the forest. Poison courses through the survivors.", effects: { pokemonDeath: true, pokemonDeath2: true, partyDamageAll: 1 } }
+                    ]
+                }
+            ]
+        },
+
+        // Power Plant - Electrical Overload
+        {
+            id: "power_plant_overload",
+            type: "hazard",
+            name: "Electrical Overload!",
+            description: "The Power Plant's generators are going critical! Arcs of electricity leap across the floor. The main circuit breaker is on the far wall — one of your Pokemon could absorb the surge to shut it down, but the voltage would be lethal.",
+            weight: 5,
+            oneTime: true,
+            locationIds: ["power_plant"],
+            requiresPartySize: 2,
+            choices: [
+                {
+                    text: "One Pokemon absorbs the surge",
+                    outcomes: [
+                        { weight: 80, narration: "Your Pokemon grabs the circuit breaker. Electricity engulfs its body — it convulses, screams, and finally goes still as the generators spin down. The lights flicker off. It saved everyone. But it's gone.", effects: { pokemonDeath: true } },
+                        { weight: 20, narration: "Your Pokemon grabs the breaker and somehow survives the surge! It's badly burned and barely breathing, but alive. The generators shut down safely.", effects: { partyDamage: 3 } }
+                    ]
+                },
+                {
+                    text: "Everyone runs for the exit",
+                    outcomes: [
+                        { weight: 30, narration: "You all bolt for the door as electricity arcs everywhere. Everyone takes jolts but nobody goes down. Lucky.", effects: { partyDamageAll: 1 } },
+                        { weight: 40, narration: "An arc catches one of your Pokemon square in the chest. It drops instantly. The rest of you make it out, tingling and burned.", effects: { pokemonDeath: true, partyDamageAll: 1 } },
+                        { weight: 30, narration: "The overload cascades. Lightning bounces between your Pokemon like a pinball. Two go down before the breaker trips on its own. The survivors are in shock.", effects: { pokemonDeath: true, pokemonDeath2: true } }
+                    ]
+                }
+            ]
+        },
+
+        // Victory Road - Rockslide Gauntlet (rare multi-kill)
+        {
+            id: "victory_road_gauntlet",
+            type: "hazard",
+            name: "Victory Road Gauntlet!",
+            description: "The final stretch of Victory Road triggers a chain reaction! The ceiling is crumbling, lava seeps through cracks, and a wild Onix rampages through the chaos. This is the road's final test — and it's brutal.",
+            weight: 4,
+            oneTime: true,
+            locationIds: ["victory_road"],
+            requiresPartySize: 3,
+            choices: [
+                {
+                    text: "Charge straight through!",
+                    outcomes: [
+                        { weight: 20, narration: "You run. Your Pokemon shield you with their bodies. Rocks bounce off, lava hisses past, the Onix barely misses. Somehow, impossibly, you all emerge on the other side. Battered beyond belief, but alive. Victory Road earned its name.", effects: { partyDamageAll: 1 } },
+                        { weight: 40, narration: "You charge into the chaos. One Pokemon is crushed by a falling boulder. The rest push through, dodging lava and the rampaging Onix. It's hell, but you make it.", effects: { pokemonDeath: true, partyDamageAll: 1 } },
+                        { weight: 25, narration: "The gauntlet is merciless. Rocks fall. Lava flows. The Onix strikes. Two of your Pokemon don't make it through. You crawl out the other side, clutching the survivors.", effects: { pokemonDeath: true, pokemonDeath2: true, partyDamageAll: 1 } },
+                        { weight: 15, narration: "Victory Road shows no mercy. The chain reaction is catastrophic. Three Pokemon are lost — to rocks, to lava, to the Onix. You emerge with barely anyone left, shaking. The Indigo Plateau looms ahead, and you have almost nothing left.", effects: { pokemonDeath: true, pokemonDeath2: true, pokemonDeath3: true, partyDamageAll: 1 } }
+                    ]
+                },
+                {
+                    text: "Take it slow and careful",
+                    outcomes: [
+                        { weight: 35, narration: "You inch forward carefully, dodging debris and routing around the Onix. It takes ages but your team makes it through in one piece. Barely.", effects: { partyDamageAll: 1, daysLost: 2 } },
+                        { weight: 40, narration: "Careful doesn't help when the ceiling collapses. One Pokemon is buried. The rest escape, but the trauma lingers.", effects: { pokemonDeath: true, daysLost: 1 } },
+                        { weight: 25, narration: "The road punishes caution too. The Onix finds you hiding and attacks. Two Pokemon fall before you can flee to safety.", effects: { pokemonDeath: true, pokemonDeath2: true } }
+                    ]
+                }
+            ]
+        },
+
+        // S.S. Anne - Ship Sinking
+        {
+            id: "ss_anne_sinking",
+            type: "hazard",
+            name: "The S.S. Anne is Sinking!",
+            description: "An explosion rocks the S.S. Anne! Water floods the lower decks. Two of your Pokemon are trapped in separate compartments — water rushing in fast. You can only pry one door open before the ship goes under.",
+            weight: 5,
+            oneTime: true,
+            locationIds: ["vermilion_city"],
+            requiresPartySize: 3,
+            choices: [
+                {
+                    text: "Pry open the left door",
+                    outcomes: [
+                        { weight: 100, narration: "You wrench the left door open and your Pokemon swims out gasping. From behind the right door, you hear frantic splashing that slowly goes silent. The ship groans and lists. You escape to the deck, one Pokemon fewer.", effects: { pokemonDeath: true, partyDamageAll: 1 } }
+                    ]
+                },
+                {
+                    text: "Pry open the right door",
+                    outcomes: [
+                        { weight: 100, narration: "The right door gives way and your Pokemon bursts through. Water surges through the left corridor — there's no going back. You swim for the surface knowing one of your team is still down there. Gone.", effects: { pokemonDeath: true, partyDamageAll: 1 } }
+                    ]
+                },
+                {
+                    text: "Use Surf to flood both rooms equally",
+                    bonusAbility: "surf",
+                    bonusOutcome: { narration: "Your Surf Pokemon creates a controlled current, equalizing the pressure on both doors! They burst open simultaneously. Everyone swims to safety — soaked and terrified, but alive.", effects: { partyDamageAll: 1 } },
+                    outcomes: [
+                        { weight: 100, narration: "Without a Surf Pokemon, the water wins. You manage to open one door but the other is sealed by pressure. One Pokemon is lost to the deep.", effects: { pokemonDeath: true, partyDamageAll: 1 } }
+                    ]
+                }
+            ]
+        },
+
+        // Safari Zone - Stampede
+        {
+            id: "safari_stampede",
+            type: "hazard",
+            name: "Safari Zone Stampede!",
+            description: "A herd of Tauros stampedes through the Safari Zone! Your team is directly in their path. You could shield your team behind a single Pokemon to absorb the charge, or scatter and hope for the best.",
+            weight: 5,
+            oneTime: true,
+            locationIds: ["fuchsia_city"],
+            requiresPartySize: 3,
+            choices: [
+                {
+                    text: "One Pokemon stands as a shield",
+                    outcomes: [
+                        { weight: 70, narration: "Your Pokemon stands its ground as the Tauros herd crashes over it like a wave. The rest of your team shelters behind its body. When the dust clears... the shield Pokemon is gone. Trampled flat. But everyone else is alive.", effects: { pokemonDeath: true } },
+                        { weight: 30, narration: "Incredibly, your Pokemon holds! The Tauros part around it like water around a rock. It's battered beyond belief, but still breathing. A true tank.", effects: { partyDamage: 3 } }
+                    ]
+                },
+                {
+                    text: "SCATTER!",
+                    outcomes: [
+                        { weight: 25, narration: "Everyone dives in different directions! The Tauros thunder past, missing everyone by inches. Hearts pounding, your team regroups. All present and accounted for.", effects: { partyDamageAll: 1 } },
+                        { weight: 45, narration: "Most of your team dodges, but one isn't fast enough. The herd runs it down. The rest are bruised from diving into rocks and trees.", effects: { pokemonDeath: true, partyDamageAll: 1 } },
+                        { weight: 30, narration: "Scattering was a mistake. The herd splits and catches Pokemon on both flanks. Two go down under thundering hooves. The survivors limp together, bloodied and grieving.", effects: { pokemonDeath: true, pokemonDeath2: true } }
                     ]
                 }
             ]

@@ -22,16 +22,16 @@
         breakdown.speedBonus = Math.max(0, 500 - (state.daysElapsed * 10));
         score += breakdown.speedBonus;
 
-        // Pokedex entries
-        breakdown.pokedexCaught = state.pokedexCaught.length * 10;
+        // Pokedex entries (tripled)
+        breakdown.pokedexCaught = state.pokedexCaught.length * 30;
         score += breakdown.pokedexCaught;
 
-        // Rare catches
+        // Rare catches (tripled)
         const rareCaught = state.pokedexCaught.filter(id => {
             const p = PT.Data.Pokemon.find(pk => pk.id === id);
             return p && p.rarity === 'rare';
         }).length;
-        breakdown.rarePokemon = rareCaught * 25;
+        breakdown.rarePokemon = rareCaught * 75;
         score += breakdown.rarePokemon;
 
         // Legendary catches
