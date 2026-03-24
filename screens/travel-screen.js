@@ -3,6 +3,40 @@
     const PT = window.PorygonTrail;
     PT.Screens = PT.Screens || {};
 
+    // Pokemon size categories based on actual game sizes
+    // small: ~0-3ft, medium: ~3-6ft, large: 6ft+
+    const POKEMON_SIZE = {
+        // Small: tiny/baby Pokemon
+        10: 's', 11: 's', 13: 's', 14: 's', 16: 's', 19: 's', 21: 's', 23: 's',
+        25: 's', 27: 's', 29: 's', 32: 's', 35: 's', 37: 's', 39: 's', 41: 's',
+        43: 's', 46: 's', 48: 's', 50: 's', 52: 's', 54: 's', 56: 's', 60: 's',
+        63: 's', 66: 's', 69: 's', 72: 's', 74: 's', 77: 's', 79: 's', 81: 's',
+        84: 's', 86: 's', 88: 's', 90: 's', 92: 's', 96: 's', 98: 's', 100: 's',
+        102: 's', 104: 's', 109: 's', 116: 's', 118: 's', 120: 's', 129: 's',
+        132: 's', 133: 's', 138: 's', 140: 's', 147: 's',
+        // Medium: mid-size Pokemon
+        1: 'm', 2: 'm', 4: 'm', 5: 'm', 7: 'm', 8: 'm', 12: 'm', 15: 'm',
+        17: 'm', 20: 'm', 22: 'm', 24: 'm', 26: 'm', 28: 'm', 30: 'm', 33: 'm',
+        36: 'm', 38: 'm', 40: 'm', 42: 'm', 44: 'm', 45: 'm', 47: 'm', 49: 'm',
+        51: 'm', 53: 'm', 55: 'm', 57: 'm', 58: 'm', 61: 'm', 64: 'm', 67: 'm',
+        70: 'm', 71: 'm', 73: 'm', 75: 'm', 78: 'm', 80: 'm', 82: 'm', 83: 'm',
+        85: 'm', 87: 'm', 89: 'm', 91: 'm', 93: 'm', 97: 'm', 99: 'm', 101: 'm',
+        105: 'm', 106: 'm', 107: 'm', 108: 'm', 110: 'm', 111: 'm', 113: 'm',
+        114: 'm', 117: 'm', 119: 'm', 121: 'm', 122: 'm', 123: 'm', 124: 'm',
+        125: 'm', 126: 'm', 127: 'm', 128: 'm', 131: 'm', 134: 'm', 135: 'm',
+        136: 'm', 137: 'm', 139: 'm', 141: 'm', 142: 'm', 148: 'm', 151: 'm',
+        // Large: fully evolved beasts, legendaries
+        3: 'l', 6: 'l', 9: 'l', 18: 'l', 31: 'l', 34: 'l', 59: 'l', 62: 'l',
+        65: 'l', 68: 'l', 76: 'l', 94: 'l', 95: 'l', 103: 'l', 112: 'l',
+        115: 'l', 130: 'l', 143: 'l', 144: 'l', 145: 'l', 146: 'l', 149: 'l',
+        150: 'l', 0: 'l'
+    };
+
+    function getPokemonSizeClass(pokemonId) {
+        const size = POKEMON_SIZE[pokemonId] || 'm';
+        return 'poke-size-' + size;
+    }
+
     const TERRAIN_SCENES = {
         town: {
             sky: '#9bbc0f', ground: '#306230',
@@ -181,14 +215,18 @@
             const weather = getWeather(state, route);
             const timeElements = route.terrain !== 'cave' ? getTimeElements(timeOfDay) : '';
 
-            // Party Pokemon sprites — all alive members walk in a line
+            // Party Pokemon sprites — all alive members walk in a line, sized by actual Pokemon size
             const aliveParty = state.party.filter(p => p.status !== 'fainted' && p.hp > 0);
             const partySprites = aliveParty.map((p, i) => {
                 const spriteUrl = PT.Engine.GameState.getSpriteUrl(p.id);
                 const delay = i * 0.15; // stagger the bounce
-                return `<img class="trail-pokemon-sprite" src="${spriteUrl}" alt="${p.name}" style="animation-delay:${delay}s;" onerror="this.style.display='none'">`;
+                const sizeClass = getPokemonSizeClass(p.id);
+                return `<img class="trail-pokemon-sprite ${sizeClass}" src="${spriteUrl}" alt="${p.name}" style="animation-delay:${delay}s;" onerror="this.style.display='none'">`;
             }).join('');
             const trainerHtml = partySprites || '&#9658;';
+
+            // Position party group along the path based on travel progress
+            const trainerLeft = Math.max(3, Math.min(75, progress * 0.75 + 3));
 
             const div = document.createElement('div');
             div.className = 'screen travel-screen';
@@ -207,7 +245,7 @@
                         <div class="scene-location-name">${route.name}</div>
                         <div class="scene-ground" style="background: ${scene.ground}">
                             <div class="scene-path"></div>
-                            <div class="scene-trainer" id="scene-trainer">${trainerHtml}</div>
+                            <div class="scene-trainer" id="scene-trainer" style="left:${trainerLeft}%">${trainerHtml}</div>
                         </div>
                     </div>
                     ${weather.html}

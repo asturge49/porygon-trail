@@ -546,8 +546,9 @@ body {
     z-index: 3;
     display: flex;
     align-items: flex-end;
-    gap: 2px;
+    gap: 1px;
     left: 8%;
+    transition: left 0.5s ease;
 }
 
 @keyframes trainerWalk {
@@ -566,10 +567,8 @@ body {
     top: -8px;
 }
 
-/* Party parade — individual sprite styles */
+/* Party parade — base sprite styles */
 .trail-pokemon-sprite {
-    width: 16px;
-    height: 16px;
     image-rendering: pixelated;
     filter: brightness(0.8) sepia(1) hue-rotate(70deg) saturate(3);
     position: relative;
@@ -577,37 +576,26 @@ body {
     flex-shrink: 0;
 }
 
-/* Leader is bigger and in front */
-.trail-pokemon-sprite:first-child {
-    width: 22px;
-    height: 22px;
-    z-index: 2;
+/* Size classes based on actual Pokemon dimensions */
+.trail-pokemon-sprite.poke-size-s {
+    width: 12px;
+    height: 12px;
 }
 
-/* Second and third are medium */
-.trail-pokemon-sprite:nth-child(2),
-.trail-pokemon-sprite:nth-child(3) {
+.trail-pokemon-sprite.poke-size-m {
     width: 18px;
     height: 18px;
 }
 
-/* Back of the pack gets smaller and dimmer */
-.trail-pokemon-sprite:nth-child(4) {
-    width: 16px;
-    height: 16px;
-    opacity: 0.9;
+.trail-pokemon-sprite.poke-size-l {
+    width: 24px;
+    height: 24px;
+    z-index: 2;
 }
 
-.trail-pokemon-sprite:nth-child(5) {
-    width: 14px;
-    height: 14px;
-    opacity: 0.8;
-}
-
-.trail-pokemon-sprite:nth-child(6) {
-    width: 13px;
-    height: 13px;
-    opacity: 0.7;
+/* Leader gets a subtle glow to stand out */
+.trail-pokemon-sprite:first-child {
+    z-index: 3;
 }
 
 @keyframes trailBounce {
