@@ -181,12 +181,14 @@
             const weather = getWeather(state, route);
             const timeElements = route.terrain !== 'cave' ? getTimeElements(timeOfDay) : '';
 
-            // Lead Pokemon sprite
-            const leadPokemon = state.party.find(p => p.status !== 'fainted' && p.hp > 0) || state.party[0];
-            const leadSpriteUrl = leadPokemon ? PT.Engine.GameState.getSpriteUrl(leadPokemon.id) : null;
-            const trainerHtml = leadSpriteUrl
-                ? `<img class="lead-pokemon-sprite" src="${leadSpriteUrl}" alt="${leadPokemon.name}" onerror="this.parentNode.innerHTML='&#9658;'">`
-                : '&#9658;';
+            // Party Pokemon sprites — all alive members walk in a line
+            const aliveParty = state.party.filter(p => p.status !== 'fainted' && p.hp > 0);
+            const partySprites = aliveParty.map((p, i) => {
+                const spriteUrl = PT.Engine.GameState.getSpriteUrl(p.id);
+                const delay = i * 0.15; // stagger the bounce
+                return `<img class="trail-pokemon-sprite" src="${spriteUrl}" alt="${p.name}" style="animation-delay:${delay}s;" onerror="this.style.display='none'">`;
+            }).join('');
+            const trainerHtml = partySprites || '&#9658;';
 
             const div = document.createElement('div');
             div.className = 'screen travel-screen';
