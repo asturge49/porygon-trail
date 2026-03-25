@@ -124,6 +124,32 @@
         }
     }
 
+    // Build reverse evolution map: { evolvedId -> preEvoId }
+    // e.g. { 9: 8, 8: 7 } means Blastoise(9) <- Wartortle(8) <- Squirtle(7)
+    function buildPreEvoMap() {
+        const map = {};
+        PT.Data.Pokemon.forEach(p => {
+            if (p.evolvesTo) {
+                const targets = Array.isArray(p.evolvesTo) ? p.evolvesTo : [p.evolvesTo];
+                targets.forEach(evoId => {
+                    map[evoId] = p.id;
+                });
+            }
+        });
+        return map;
+    }
+
+    // Get all pre-evolutions of a Pokemon (walking the chain backwards)
+    function getPreEvolutions(pokemonId, preEvoMap) {
+        const preEvos = [];
+        let current = preEvoMap[pokemonId];
+        while (current !== undefined) {
+            preEvos.push(current);
+            current = preEvoMap[current];
+        }
+        return preEvos;
+    }
+
     // Merge a completed run's data into the global Pokedex
     function updateGlobalPokedex(state) {
         const dex = getGlobalPokedex();
@@ -138,11 +164,21 @@
             if (!dex.caught.includes(id)) dex.caught.push(id);
         });
 
-        // If won, add surviving party as champions
+        // If won, add surviving party as champions + their pre-evolutions
         if (state.hasWon) {
+            const preEvoMap = buildPreEvoMap();
             state.party.forEach(p => {
-                if (p.hp > 0 && p.status !== 'fainted' && !dex.champions.includes(p.id)) {
-                    dex.champions.push(p.id);
+                if (p.hp > 0 && p.status !== 'fainted') {
+                    // Register the champion itself
+                    if (!dex.champions.includes(p.id)) {
+                        dex.champions.push(p.id);
+                    }
+                    // Register all pre-evolutions as champions too
+                    getPreEvolutions(p.id, preEvoMap).forEach(preEvoId => {
+                        if (!dex.champions.includes(preEvoId)) {
+                            dex.champions.push(preEvoId);
+                        }
+                    });
                 }
             });
         }
