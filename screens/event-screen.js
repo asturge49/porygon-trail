@@ -52,26 +52,167 @@
             document.querySelectorAll('[data-choice]').forEach(btn => {
                 btn.addEventListener('click', () => {
                     const choiceIndex = parseInt(btn.dataset.choice);
-                    const result = PT.Engine.EventEngine.resolveChoice(event, choiceIndex, state);
+                    const choice = event.choices[choiceIndex];
 
-                    PT.Engine.GameState.addToLog(state, `${event.name}: ${result.narration.substring(0, 60)}...`);
-
-                    // Show outcome with effects summary
-                    narrative.innerHTML = result.narration + buildEffectsSummary(result.effects);
-                    if (result.bonusUsed) {
-                        narrative.innerHTML += '<br><br><strong>Your Pokemon\'s ability made the difference!</strong>';
+                    // Event battle — show Pokemon picker for 1v1 fight
+                    if (choice.eventBattle) {
+                        const opponent = PT.Engine.EventEngine.pickEventBattleOpponent(choice.eventBattle.pool, state);
+                        if (!opponent) {
+                            // Fallback to normal resolution if pool fails
+                            handleNormalChoice(event, choiceIndex, state, narrative, choicesDiv);
+                            return;
+                        }
+                        showEventBattlePicker(event, choice, opponent, state, narrative, choicesDiv);
+                        return;
                     }
 
-                    // Check if any Pokemon are waiting to join (party full)
-                    if (result.effects && result.effects._pendingCatch && result.effects._pendingCatch.length > 0) {
-                        showEventSwapQueue(state, result.effects._pendingCatch.slice(), choicesDiv, narrative);
-                    } else {
-                        showEventContinue(state, choicesDiv);
-                    }
+                    // Normal choice resolution
+                    handleNormalChoice(event, choiceIndex, state, narrative, choicesDiv);
                 });
             });
         }
     };
+
+    function handleNormalChoice(event, choiceIndex, state, narrative, choicesDiv) {
+        const result = PT.Engine.EventEngine.resolveChoice(event, choiceIndex, state);
+        PT.Engine.GameState.addToLog(state, `${event.name}: ${result.narration.substring(0, 60)}...`);
+        narrative.innerHTML = result.narration + buildEffectsSummary(result.effects);
+        if (result.bonusUsed) {
+            narrative.innerHTML += '<br><br><strong>Your Pokemon\'s ability made the difference!</strong>';
+        }
+        if (result.effects && result.effects._pendingCatch && result.effects._pendingCatch.length > 0) {
+            showEventSwapQueue(state, result.effects._pendingCatch.slice(), choicesDiv, narrative);
+        } else {
+            showEventContinue(state, choicesDiv);
+        }
+    }
+
+    function showEventBattlePicker(event, choice, opponent, state, narrative, choicesDiv) {
+        const battle = choice.eventBattle;
+        const opponentSprite = opponent.spriteUrl;
+        const opponentHp = PT.Engine.GameState.getMaxHpForPokemon(opponent);
+        const lossDamage = Math.max(1, opponentHp - 1);
+
+        // Type weaknesses for display
+        const weaknesses = {
+            normal: { weakTo: ['fighting'] }, fire: { weakTo: ['water', 'ground', 'rock'] },
+            water: { weakTo: ['electric', 'grass'] }, electric: { weakTo: ['ground'] },
+            grass: { weakTo: ['fire', 'ice', 'poison', 'flying', 'bug'] },
+            ice: { weakTo: ['fire', 'fighting', 'rock'] }, fighting: { weakTo: ['flying', 'psychic'] },
+            poison: { weakTo: ['ground', 'psychic'] }, ground: { weakTo: ['water', 'grass', 'ice'] },
+            flying: { weakTo: ['electric', 'ice', 'rock'] }, psychic: { weakTo: ['bug'] },
+            bug: { weakTo: ['fire', 'flying', 'rock'] },
+            rock: { weakTo: ['water', 'grass', 'fighting', 'ground'] },
+            ghost: { weakTo: ['ghost'] }, dragon: { weakTo: ['ice', 'dragon'] },
+            bird: { weakTo: ['electric', 'ice', 'rock'] }
+        };
+        const weakTo = new Set();
+        opponent.types.forEach(t => { if (weaknesses[t]) weaknesses[t].weakTo.forEach(w => weakTo.add(w)); });
+
+        const trainerLabel = battle.trainerName || 'Opponent';
+
+        narrative.innerHTML = `
+            <div style="text-align: center; margin-bottom: 4px;">
+                <strong>${trainerLabel} sends out ${opponent.name}!</strong>
+                <br><img src="${opponentSprite}" style="width: 48px; height: 48px; image-rendering: pixelated; margin: 4px 0;" onerror="this.style.display='none'">
+                <br><span style="font-size: 7px;">${opponent.types.join('/')} | Weak to: ${[...weakTo].join(', ') || 'none'}</span>
+                <br><span style="font-size: 6px;">If you lose, your Pokemon takes ${lossDamage} damage.</span>
+            </div>
+        `;
+
+        const aliveParty = PT.Engine.GameState.getAliveParty(state);
+        choicesDiv.innerHTML = `
+            <div style="font-size: 7px; margin-bottom: 4px; font-weight: bold;">Choose your Pokemon for a 1v1 battle!</div>
+            ${aliveParty.map((p, i) => {
+                const hasAdv = p.types.some(t => weakTo.has(t));
+                let label = `${p.name} (${p.types.join('/')} | HP:${p.hp}/${p.maxHp})`;
+                if (hasAdv) label += ' [SE!]';
+                return `<button class="btn btn-wide evt-battle-pick" data-eidx="${i}">${label}</button>`;
+            }).join('')}
+        `;
+
+        document.querySelectorAll('.evt-battle-pick').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const idx = parseInt(btn.dataset.eidx);
+                const chosen = aliveParty[idx];
+                resolveEventBattleResult(event, choice, chosen, opponent, state, narrative, choicesDiv);
+            });
+        });
+    }
+
+    function resolveEventBattleResult(event, choice, chosen, opponent, state, narrative, choicesDiv) {
+        const battle = choice.eventBattle;
+        const difficulty = battle.difficulty || 'medium';
+        const result = PT.Engine.EventEngine.resolveEventBattle(chosen, opponent, state, difficulty);
+
+        if (result.won) {
+            // Victory — apply win effects
+            if (PT.Engine.Audio) PT.Engine.Audio.gymVictory();
+            const winEffects = battle.winEffects || {};
+            PT.Engine.EventEngine.applyEffects(winEffects, state);
+            PT.Engine.GameState.addToLog(state, `${chosen.name} defeated ${battle.trainerName || 'trainer'}'s ${opponent.name}!`);
+
+            // Track Team Rocket defeats
+            const rocketPools = ['rocket_grunt', 'jessie_james', 'giovanni'];
+            if (rocketPools.includes(battle.pool)) {
+                state.teamRocketDefeated++;
+            }
+
+            // Try evolution
+            const evoResult = PT.Engine.GameState.evolvePokemon(chosen, state);
+            let evoLine = '';
+            if (evoResult.evolved) {
+                evoLine = `<br>⬆ ${evoResult.oldName} evolved into ${evoResult.newName}!`;
+                PT.Engine.GameState.addToLog(state, `${evoResult.oldName} evolved into ${evoResult.newName}!`);
+            }
+
+            const winNarration = battle.winNarration || `${chosen.name} won the battle!`;
+            narrative.innerHTML = `
+                <div style="text-align: center;">
+                    <strong>${winNarration}</strong>${evoLine}
+                    <br><span style="font-size: 6px;">Win chance: ${result.chance}%${result.battleBonuses.length > 0 ? ' (' + result.battleBonuses.join(', ') + ')' : ''}</span>
+                </div>
+            ` + buildEffectsSummary(winEffects);
+
+            if (winEffects._pendingCatch && winEffects._pendingCatch.length > 0) {
+                showEventSwapQueue(state, winEffects._pendingCatch.slice(), choicesDiv, narrative);
+            } else {
+                showEventContinue(state, choicesDiv);
+            }
+        } else {
+            // Loss — apply loss effects, damage the chosen Pokemon
+            if (PT.Engine.Audio) PT.Engine.Audio.gymDefeat();
+            const fainted = PT.Engine.GameState.damagePokemon(chosen, result.lossDamage, state);
+            const died = fainted || chosen.hp <= 0;
+
+            const lossEffects = battle.lossEffects || {};
+            PT.Engine.EventEngine.applyEffects(lossEffects, state);
+
+            if (died) {
+                PT.Engine.GameState.addToLog(state, `${chosen.name} was killed by ${opponent.name}! 💀`);
+            } else {
+                PT.Engine.GameState.addToLog(state, `${chosen.name} lost to ${opponent.name}, took ${result.lossDamage} damage.`);
+            }
+
+            const lossNarration = battle.lossNarration || `${chosen.name} lost the battle!`;
+            narrative.innerHTML = `
+                <div style="text-align: center;">
+                    <strong>${lossNarration}</strong>
+                    <br>${died
+                        ? `💀 ${chosen.name} was killed!`
+                        : `💥 ${chosen.name} took ${result.lossDamage} damage! (${chosen.hp}/${chosen.maxHp} HP)`}
+                    <br><span style="font-size: 6px;">Win chance: ${result.chance}%${result.battleBonuses.length > 0 ? ' (' + result.battleBonuses.join(', ') + ')' : ''}</span>
+                </div>
+            ` + buildEffectsSummary(lossEffects);
+
+            if (state.isGameOver || state.party.length === 0) {
+                choicesDiv.innerHTML = '<button class="btn btn-wide" id="btn-event-continue">CONTINUE</button>';
+                document.getElementById('btn-event-continue').addEventListener('click', () => PT.App.goto('GAMEOVER'));
+            } else {
+                showEventContinue(state, choicesDiv);
+            }
+        }
+    }
 
     function buildEffectsSummary(effects) {
         if (!effects) return '';

@@ -3,6 +3,203 @@
     const PT = window.PorygonTrail;
     PT.Engine = PT.Engine || {};
 
+    // Themed opponent pools for event battles
+    // Each pool has tiers based on game progression (badges)
+    const EVENT_BATTLE_OPPONENTS = {
+        // Jesse & James — anime-accurate teams
+        jessie_james: [
+            { id: 23, name: "Ekans" },      // Jessie's Ekans
+            { id: 109, name: "Koffing" },    // James's Koffing
+            { id: 52, name: "Meowth" },      // Meowth (that's right!)
+            { id: 24, name: "Arbok" },       // Jessie's evolved Ekans
+            { id: 110, name: "Weezing" },    // James's evolved Koffing
+            { id: 108, name: "Lickitung" },  // Jessie's Lickitung
+        ],
+        // Giovanni — boss-level, game/anime accurate
+        giovanni: [
+            { id: 53, name: "Persian" },     // His signature
+            { id: 111, name: "Rhyhorn" },
+            { id: 112, name: "Rhydon" },
+            { id: 34, name: "Nidoking" },
+            { id: 31, name: "Nidoqueen" },
+            { id: 51, name: "Dugtrio" },
+        ],
+        // Team Rocket grunts — poison/dark themed
+        rocket_grunt: {
+            early: [
+                { id: 19, name: "Rattata" }, { id: 41, name: "Zubat" },
+                { id: 23, name: "Ekans" }, { id: 109, name: "Koffing" },
+                { id: 88, name: "Grimer" }, { id: 52, name: "Meowth" },
+            ],
+            mid: [
+                { id: 20, name: "Raticate" }, { id: 42, name: "Golbat" },
+                { id: 24, name: "Arbok" }, { id: 110, name: "Weezing" },
+                { id: 89, name: "Muk" }, { id: 53, name: "Persian" },
+                { id: 93, name: "Haunter" },
+            ],
+            late: [
+                { id: 24, name: "Arbok" }, { id: 110, name: "Weezing" },
+                { id: 89, name: "Muk" }, { id: 53, name: "Persian" },
+                { id: 94, name: "Gengar" }, { id: 34, name: "Nidoking" },
+                { id: 112, name: "Rhydon" },
+            ]
+        },
+        // Random trainers — normal mix, scales with progression
+        trainer: {
+            early: [
+                { id: 16, name: "Pidgey" }, { id: 19, name: "Rattata" },
+                { id: 10, name: "Caterpie" }, { id: 13, name: "Weedle" },
+                { id: 21, name: "Spearow" }, { id: 39, name: "Jigglypuff" },
+                { id: 27, name: "Sandshrew" }, { id: 43, name: "Oddish" },
+            ],
+            mid: [
+                { id: 17, name: "Pidgeotto" }, { id: 20, name: "Raticate" },
+                { id: 25, name: "Pikachu" }, { id: 58, name: "Growlithe" },
+                { id: 67, name: "Machoke" }, { id: 77, name: "Ponyta" },
+                { id: 61, name: "Poliwhirl" }, { id: 75, name: "Graveler" },
+                { id: 64, name: "Kadabra" }, { id: 82, name: "Magneton" },
+            ],
+            late: [
+                { id: 18, name: "Pidgeot" }, { id: 59, name: "Arcanine" },
+                { id: 68, name: "Machamp" }, { id: 65, name: "Alakazam" },
+                { id: 78, name: "Rapidash" }, { id: 76, name: "Golem" },
+                { id: 55, name: "Golduck" }, { id: 91, name: "Cloyster" },
+                { id: 103, name: "Exeggutor" }, { id: 128, name: "Tauros" },
+            ]
+        },
+        // Gary/Rival — strong mixed teams
+        gary: {
+            early: [
+                { id: 17, name: "Pidgeotto" }, { id: 20, name: "Raticate" },
+                { id: 22, name: "Fearow" }, { id: 58, name: "Growlithe" },
+            ],
+            mid: [
+                { id: 18, name: "Pidgeot" }, { id: 59, name: "Arcanine" },
+                { id: 65, name: "Alakazam" }, { id: 130, name: "Gyarados" },
+            ],
+            late: [
+                { id: 59, name: "Arcanine" }, { id: 130, name: "Gyarados" },
+                { id: 65, name: "Alakazam" }, { id: 103, name: "Exeggutor" },
+                { id: 112, name: "Rhydon" },
+            ]
+        },
+        // Wild dangerous Pokemon (for hazard-type events like Arbok ambush)
+        wild_danger: {
+            early: [
+                { id: 23, name: "Ekans" }, { id: 15, name: "Beedrill" },
+                { id: 56, name: "Mankey" },
+            ],
+            mid: [
+                { id: 24, name: "Arbok" }, { id: 57, name: "Primeape" },
+                { id: 73, name: "Tentacruel" },
+            ],
+            late: [
+                { id: 24, name: "Arbok" }, { id: 57, name: "Primeape" },
+                { id: 94, name: "Gengar" }, { id: 130, name: "Gyarados" },
+            ]
+        }
+    };
+
+    // Pick an opponent from a pool based on current progression
+    function pickEventBattleOpponent(poolName, state) {
+        let pool;
+        const entry = EVENT_BATTLE_OPPONENTS[poolName];
+        if (!entry) return null;
+
+        if (Array.isArray(entry)) {
+            // Flat pool (jessie_james, giovanni) — pick randomly
+            pool = entry;
+        } else {
+            // Tiered pool — pick by badge count
+            const badges = state.badges.filter(b => b !== 'champion').length;
+            if (badges >= 6) pool = entry.late;
+            else if (badges >= 3) pool = entry.mid;
+            else pool = entry.early;
+        }
+
+        const pick = state.rng.pick(pool);
+        if (!pick) return null;
+
+        const pokemonData = PT.Data.Pokemon.find(p => p.id === pick.id);
+        if (!pokemonData) return null;
+
+        return {
+            id: pokemonData.id,
+            name: pokemonData.name,
+            types: pokemonData.types,
+            rarity: pokemonData.rarity,
+            spriteUrl: PT.Engine.GameState.getSpriteUrl(pokemonData.id)
+        };
+    }
+
+    // Resolve a 1v1 event battle — returns { won, chance, opponent, battleBonuses }
+    function resolveEventBattle(chosen, opponent, state, difficulty) {
+        // difficulty: 'easy' (random trainers), 'medium' (rockets), 'hard' (giovanni/gary late)
+        const baseChance = difficulty === 'easy' ? 60 : difficulty === 'hard' ? 40 : 50;
+
+        // Type calc
+        const opponentData = PT.Data.Pokemon.find(p => p.id === opponent.id);
+        const opponentTypes = opponentData ? opponentData.types : ['normal'];
+
+        const weaknesses = {
+            normal: { weakTo: ['fighting'], resistedBy: ['rock'], immuneBy: ['ghost'] },
+            fire: { weakTo: ['water', 'ground', 'rock'], resistedBy: ['fire', 'grass', 'ice', 'bug'] },
+            water: { weakTo: ['electric', 'grass'], resistedBy: ['fire', 'water', 'ice'] },
+            electric: { weakTo: ['ground'], resistedBy: ['electric', 'flying'] },
+            grass: { weakTo: ['fire', 'ice', 'poison', 'flying', 'bug'], resistedBy: ['water', 'grass', 'electric', 'ground'] },
+            ice: { weakTo: ['fire', 'fighting', 'rock'], resistedBy: ['ice'] },
+            fighting: { weakTo: ['flying', 'psychic'], resistedBy: ['bug', 'rock'] },
+            poison: { weakTo: ['ground', 'psychic'], resistedBy: ['grass', 'fighting', 'poison', 'bug'] },
+            ground: { weakTo: ['water', 'grass', 'ice'], resistedBy: ['electric', 'rock', 'poison'], immuneBy: ['electric'] },
+            flying: { weakTo: ['electric', 'ice', 'rock'], resistedBy: ['grass', 'fighting', 'bug'] },
+            psychic: { weakTo: ['bug'], resistedBy: ['fighting', 'psychic'] },
+            bug: { weakTo: ['fire', 'flying', 'rock'], resistedBy: ['grass', 'fighting', 'ground'] },
+            rock: { weakTo: ['water', 'grass', 'fighting', 'ground'], resistedBy: ['normal', 'fire', 'poison', 'flying'] },
+            ghost: { weakTo: ['ghost'], resistedBy: ['poison', 'bug'], immuneBy: ['normal', 'fighting'] },
+            dragon: { weakTo: ['ice', 'dragon'], resistedBy: ['fire', 'water', 'electric', 'grass'] },
+            bird: { weakTo: ['electric', 'ice', 'rock'], resistedBy: ['grass', 'fighting', 'bug'] }
+        };
+
+        const weakTo = new Set();
+        const strongTo = new Set();
+        opponentTypes.forEach(t => {
+            const info = weaknesses[t];
+            if (!info) return;
+            info.weakTo.forEach(w => weakTo.add(w));
+            if (info.resistedBy) info.resistedBy.forEach(r => strongTo.add(r));
+        });
+
+        let chance = baseChance;
+        let battleBonuses = [];
+
+        const hasAdvantage = chosen.types.some(t => weakTo.has(t));
+        const hasDisadvantage = chosen.types.some(t => strongTo.has(t));
+        if (hasAdvantage) { chance += 20; battleBonuses.push('SE +20%'); }
+        if (hasDisadvantage) { chance -= 15; battleBonuses.push('NVE -15%'); }
+
+        // Badge bonus
+        chance += state.badges.filter(b => b !== 'champion').length * 2;
+
+        // Poison ability
+        if (PT.Engine.GameState.hasAbility(state, 'poison')) {
+            chance += 5;
+            battleBonuses.push('☠️ POISON +5%');
+        }
+        // Intimidate ability
+        if (PT.Engine.GameState.hasAbility(state, 'intimidate')) {
+            chance += 5;
+            battleBonuses.push('😤 INTIMIDATE +5%');
+        }
+
+        chance = Math.max(15, Math.min(85, chance));
+
+        const won = state.rng.chance(chance);
+        const opponentHp = PT.Engine.GameState.getMaxHpForPokemon(opponent);
+        const lossDamage = Math.max(1, opponentHp - 1);
+
+        return { won, chance, opponent, lossDamage, battleBonuses, hasAdvantage, hasDisadvantage };
+    }
+
     function rollEvent(state) {
         const route = PT.Engine.GameState.getCurrentRoute(state);
         const availableEvents = PT.Data.Events.filter(event => {
@@ -252,5 +449,5 @@
         return true;
     }
 
-    PT.Engine.EventEngine = { rollEvent, resolveChoice, applyEffects, canChoose };
+    PT.Engine.EventEngine = { rollEvent, resolveChoice, applyEffects, canChoose, pickEventBattleOpponent, resolveEventBattle };
 })();

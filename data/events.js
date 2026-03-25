@@ -16,11 +16,15 @@
             choices: [
                 {
                     text: "Battle them!",
-                    outcomes: [
-                        { weight: 50, narration: "Your Pokemon fight bravely and drive Team Rocket away!", effects: { money: 500 }, trackRocket: true },
-                        { weight: 30, narration: "A tough fight! You win, but your Pokemon take damage.", effects: { money: 200, partyDamageAll: 1 }, trackRocket: true },
-                        { weight: 20, narration: "They overwhelm you and steal your supplies!", effects: { food: -10, pokeballs: -3 } }
-                    ]
+                    eventBattle: {
+                        pool: "rocket_grunt",
+                        difficulty: "medium",
+                        trainerName: "Rocket Grunt",
+                        winNarration: "You drive Team Rocket away! They scatter like cowards.",
+                        lossNarration: "The Rocket Grunt's Pokemon overpowers yours!",
+                        winEffects: { money: 500 },
+                        lossEffects: { food: -5 }
+                    }
                 },
                 {
                     text: "Hand over supplies",
@@ -48,11 +52,15 @@
             choices: [
                 {
                     text: "Raid the hideout",
-                    outcomes: [
-                        { weight: 40, narration: "You find a stash of supplies! Team Rocket will be furious.", effects: { money: 1000, pokeballs: 5, potions: 3 }, trackRocket: true },
-                        { weight: 35, narration: "You grab some items but trigger an alarm! Your Pokemon take hits escaping.", effects: { money: 500, pokeballs: 3, partyDamageAll: 1 }, trackRocket: true },
-                        { weight: 25, narration: "It was a trap! Team Rocket ambushes you!", effects: { partyDamage: 2, food: -10 } }
-                    ]
+                    eventBattle: {
+                        pool: "rocket_grunt",
+                        difficulty: "medium",
+                        trainerName: "Rocket Guard",
+                        winNarration: "You defeat the guard and raid their supply stash!",
+                        lossNarration: "The Rocket Guard catches you sneaking in!",
+                        winEffects: { money: 1000, pokeballs: 5, potions: 3 },
+                        lossEffects: { food: -10, money: -200 }
+                    }
                 },
                 {
                     text: "Sneak past",
@@ -75,11 +83,15 @@
             choices: [
                 {
                     text: "Face Giovanni!",
-                    outcomes: [
-                        { weight: 40, narration: "Your team fights with everything they have and defeats Giovanni! Team Rocket disbands!", effects: { money: 3000 }, trackRocket: true },
-                        { weight: 35, narration: "A close battle! You barely win but your team is battered.", effects: { money: 1500, partyDamage: 2 }, trackRocket: true },
-                        { weight: 25, narration: "Giovanni's Pokemon are too strong. He takes your money and leaves.", effects: { money: -1000, partyDamage: 2 } }
-                    ]
+                    eventBattle: {
+                        pool: "giovanni",
+                        difficulty: "hard",
+                        trainerName: "Giovanni",
+                        winNarration: "You defeat Giovanni! \"Impossible... I, the leader of Team Rocket, defeated by a child?!\" Team Rocket disbands!",
+                        lossNarration: "Giovanni's Pokemon is ruthless. \"You're 10 years too early to challenge me.\"",
+                        winEffects: { money: 3000 },
+                        lossEffects: { money: -1000 }
+                    }
                 },
                 {
                     text: "Flee",
@@ -143,12 +155,15 @@
             choices: [
                 {
                     text: "Accept his challenge!",
-                    outcomes: [
-                        { weight: 30, narration: "Your Pokemon outperform Gary's! The battle experience strengthens your team! \"Hmph! I'll beat you next time!\"", effects: { money: 500, trainPokemon: true } },
-                        { weight: 30, narration: "A close match! Gary barely wins. \"I knew I was better!\" Your Pokemon limps back, battered.", effects: { partyDamageAll: 1, money: -200 } },
-                        { weight: 25, narration: "Gary's team is surprisingly strong. He wipes the floor with you and takes your money.", effects: { partyDamage: 2, money: -300 } },
-                        { weight: 15, narration: "Gary absolutely destroys you. \"You're pathetic!\" One of your Pokemon doesn't get back up.", effects: { pokemonDeath: true, money: -500 } }
-                    ]
+                    eventBattle: {
+                        pool: "gary",
+                        difficulty: "medium",
+                        trainerName: "Rival Gary",
+                        winNarration: "\"Hmph! I'll beat you next time!\" Gary storms off. The battle experience strengthens your team!",
+                        lossNarration: "\"I knew I was better! Smell ya later, loser!\" Gary laughs as he walks away.",
+                        winEffects: { money: 500, trainPokemon: true },
+                        lossEffects: { money: -200 }
+                    }
                 },
                 {
                     text: "\"Not now, Gary.\"",
@@ -169,11 +184,15 @@
             choices: [
                 {
                     text: "Battle them",
-                    outcomes: [
-                        { weight: 60, narration: "\"Team Rocket's blasting off again!\" They fly into the sky.", effects: { money: 300 }, trackRocket: true },
-                        { weight: 30, narration: "Meowth scratches your Pokemon! But you still win.", effects: { partyDamageAll: 1, money: 200 }, trackRocket: true },
-                        { weight: 10, narration: "Their Weezing's Smokescreen lets them steal some Pokeballs!", effects: { pokeballs: -3 } }
-                    ]
+                    eventBattle: {
+                        pool: "jessie_james",
+                        difficulty: "easy",
+                        trainerName: "Jessie & James",
+                        winNarration: "\"Team Rocket's blasting off agaaaaain!\" ✨ They fly into the sky.",
+                        lossNarration: "\"We did it!\" Jessie and James high-five while Meowth raids your bag.",
+                        winEffects: { money: 300 },
+                        lossEffects: { pokeballs: -2, food: -3 }
+                    }
                 },
                 {
                     text: "Distract them with food",
@@ -1013,11 +1032,15 @@
             choices: [
                 {
                     text: "Fight back!",
-                    outcomes: [
-                        { weight: 35, narration: "Their Pokemon are brutal. One of yours falls and doesn't get back up...", effects: { pokemonDeath: true, partyDamageAll: 1 }, trackRocket: true },
-                        { weight: 35, narration: "A vicious battle! Your team barely survives.", effects: { partyDamage: 2, money: -500 } },
-                        { weight: 30, narration: "Your team fights with everything they have and drives them off!", effects: { partyDamageAll: 1, money: 1000 }, trackRocket: true }
-                    ]
+                    eventBattle: {
+                        pool: "rocket_grunt",
+                        difficulty: "hard",
+                        trainerName: "Rocket Elite",
+                        winNarration: "Your Pokemon fights with everything it has and drives the elite squad off! They scatter.",
+                        lossNarration: "The Rocket Elite's Pokemon is ruthless. Your Pokemon crumbles under the assault.",
+                        winEffects: { money: 1000 },
+                        lossEffects: { money: -500 }
+                    }
                 },
                 {
                     text: "Surrender your supplies",
@@ -1169,13 +1192,15 @@
             choices: [
                 {
                     text: "Accept the challenge!",
-                    outcomes: [
-                        { weight: 25, narration: "Your Pokemon outperforms theirs! The battle experience strengthens your team! The trainer pays up.", effects: { money: 800, trainPokemon: true } },
-                        { weight: 25, narration: "A close battle! You win and the trainer shares some tips and food.", effects: { money: 400, food: 5, trainPokemon: true } },
-                        { weight: 25, narration: "Their Pokemon is too strong! You lose the match and some cash.", effects: { partyDamageAll: 1, money: -300 } },
-                        { weight: 15, narration: "A brutal defeat! Their Pokemon lands a critical hit. Yours is badly hurt.", effects: { partyDamage: 2, money: -400 } },
-                        { weight: 10, narration: "A devastating loss. The trainer's Pokemon was far too powerful. Your Pokemon doesn't recover.", effects: { pokemonDeath: true, money: -500 } }
-                    ]
+                    eventBattle: {
+                        pool: "trainer",
+                        difficulty: "easy",
+                        trainerName: "Trainer",
+                        winNarration: "Your Pokemon wins! The trainer pays up and shares some tips.",
+                        lossNarration: "Their Pokemon was tougher than expected. \"Good fight though!\"",
+                        winEffects: { money: 500, trainPokemon: true },
+                        lossEffects: { money: -200 }
+                    }
                 },
                 {
                     text: "\"Not right now.\"",
@@ -3761,11 +3786,17 @@
             oneTime: false,
             minDay: 5,
             choices: [
-                { text: "\"You're Team Rocket!\"", outcomes: [
-                    { weight: 50, narration: "\"Blast off again!\" They flee, dropping some loot!", effects: { money: 300, pokeballs: 2 } },
-                    { weight: 30, narration: "They panic and battle you! A quick fight.", effects: { money: 500, partyDamageAll: 1 } },
-                    { weight: 20, narration: "\"How did you know?!\" They drop everything and run!", effects: { food: 5, potions: 2, money: 200 } }
-                ]},
+                { text: "\"You're Team Rocket!\"",
+                    eventBattle: {
+                        pool: "jessie_james",
+                        difficulty: "easy",
+                        trainerName: "Disguised Rocket",
+                        winNarration: "\"How did you know?!\" They drop everything and blast off!",
+                        lossNarration: "\"Ha! Even in disguise we're strong!\" They grab some supplies and flee.",
+                        winEffects: { money: 300, pokeballs: 2 },
+                        lossEffects: { food: -5 }
+                    }
+                },
                 { text: "Play along with their scheme", outcomes: [
                     { weight: 40, narration: "They sell you overpriced junk. Classic Rocket.", effects: { money: -300 } },
                     { weight: 60, narration: "Their products are actually decent! Maybe crime does pay.", effects: { money: -200, potions: 2, pokeballs: 3 } }
@@ -3805,12 +3836,17 @@
                     { weight: 30, narration: "They share some supplies too!", effects: { pokeballs: 2, food: 3 } },
                     { weight: 20, narration: "They teach your Pokemon a new technique! Everyone's energized!", effects: { healAll: true } }
                 ]},
-                { text: "Challenge them instead", outcomes: [
-                    { weight: 30, narration: "You win! The intense battle strengthens your Pokemon! They hand over prize money.", effects: { money: 400, trainPokemon: true } },
-                    { weight: 30, narration: "A narrow win! Your Pokemon takes a beating but learns from the experience.", effects: { money: 200, partyDamageAll: 1, trainPokemon: true } },
-                    { weight: 25, narration: "They're tougher than they look! Your Pokemon is badly hurt.", effects: { partyDamage: 2 } },
-                    { weight: 15, narration: "They completely outclass you. Your Pokemon takes a devastating hit and doesn't get back up.", effects: { pokemonDeath: true } }
-                ]}
+                { text: "Challenge them instead",
+                    eventBattle: {
+                        pool: "trainer",
+                        difficulty: "easy",
+                        trainerName: "Wandering Trainer",
+                        winNarration: "You win! The intense battle strengthens your Pokemon!",
+                        lossNarration: "They're tougher than they look. \"Keep training, kid!\"",
+                        winEffects: { money: 400, trainPokemon: true },
+                        lossEffects: { money: -100 }
+                    }
+                }
             ]
         },
         {
@@ -3919,13 +3955,17 @@
             oneTime: false,
             minDay: 4,
             choices: [
-                { text: "Battle your rival!", outcomes: [
-                    { weight: 25, narration: "You beat your rival! The fierce battle makes your team stronger! \"Smell ya later!\"", effects: { money: 800, trainPokemon: true } },
-                    { weight: 25, narration: "Crushing victory! Your rival is speechless! Your Pokemon grows from the experience!", effects: { money: 1000, trainPokemon: true } },
-                    { weight: 25, narration: "A close match but your rival wins this time. Your Pokemon is battered.", effects: { partyDamageAll: 1, money: -200 } },
-                    { weight: 15, narration: "Your rival's team has gotten much stronger. They thrash you badly.", effects: { partyDamage: 2, money: -400 } },
-                    { weight: 10, narration: "\"Is that the best you've got?!\" Your rival's Pokemon delivers a fatal blow. One of yours doesn't survive.", effects: { pokemonDeath: true, money: -500 } }
-                ]},
+                { text: "Battle your rival!",
+                    eventBattle: {
+                        pool: "gary",
+                        difficulty: "medium",
+                        trainerName: "Rival",
+                        winNarration: "\"Smell ya later!\" Your rival storms off. The fierce battle makes your team stronger!",
+                        lossNarration: "\"Is that the best you've got?!\" Your rival laughs and walks away.",
+                        winEffects: { money: 800, trainPokemon: true },
+                        lossEffects: { money: -300 }
+                    }
+                },
                 { text: "Ignore them", outcomes: [
                     { weight: 60, narration: "Your rival runs off, annoyed you didn't engage.", effects: {} },
                     { weight: 40, narration: "\"Fine! Take this and get stronger!\" They toss you an item.", effects: { potions: 1 } }
@@ -3941,11 +3981,17 @@
             oneTime: false,
             minDay: 5,
             choices: [
-                { text: "\"Not you two again...\"", outcomes: [
-                    { weight: 50, narration: "Team Rocket blasts off again! They drop some items in the process.", effects: { pokeballs: 2, money: 200 } },
-                    { weight: 30, narration: "Their Meowth puts up a decent fight!", effects: { partyDamageAll: 1, money: 300 } },
-                    { weight: 20, narration: "They actually manage to steal some food!", effects: { food: -5 } }
-                ]},
+                { text: "\"Not you two again...\"",
+                    eventBattle: {
+                        pool: "jessie_james",
+                        difficulty: "easy",
+                        trainerName: "Jessie & James",
+                        winNarration: "\"We're blasting off agaaaaain!\" ✨ They drop some items as they fly away.",
+                        lossNarration: "\"We actually won?!\" Jessie and James are as surprised as you are. They grab some supplies and run.",
+                        winEffects: { pokeballs: 2, money: 200 },
+                        lossEffects: { food: -5, pokeballs: -2 }
+                    }
+                },
                 { text: "Listen to their motto", outcomes: [
                     { weight: 40, narration: "They're so flattered you listened that they forget to fight and leave.", effects: {} },
                     { weight: 60, narration: "The motto was a distraction! They grab some supplies!", effects: { pokeballs: -2, food: -3 } }
@@ -5020,11 +5066,15 @@
                 },
                 {
                     text: "Fight your way out!",
-                    outcomes: [
-                        { weight: 35, narration: "Your Pokemon explodes out of its ball and sends the grunts scrambling! You grab what you can from the chaos and run. A smaller haul, but you kept your team.", effects: { money: 400 } },
-                        { weight: 35, narration: "You fight hard and win, but your Pokemon takes serious hits. The grunts flee cursing. Victory, but it cost you.", effects: { partyDamage: 2, money: 200 } },
-                        { weight: 30, narration: "Three on one. Your Pokemon fights bravely but they overpower you. They take a Pokemon AND rough up the rest of your team.", effects: { pokemonDeath: true, partyDamageAll: 1 } }
-                    ]
+                    eventBattle: {
+                        pool: "rocket_grunt",
+                        difficulty: "medium",
+                        trainerName: "Rocket Grunt",
+                        winNarration: "Your Pokemon sends the grunts scrambling! You grab what you can from the chaos and run. You kept your team intact.",
+                        lossNarration: "Three on one was too much. The grunts overpower you and raid your supplies.",
+                        winEffects: { money: 400 },
+                        lossEffects: { money: -500, food: -10 }
+                    }
                 }
             ]
         },
@@ -5473,12 +5523,15 @@
             choices: [
                 {
                     text: "Battle Gary one last time!",
-                    outcomes: [
-                        { weight: 20, narration: "You DESTROY him. Every Pokemon, every move — perfection. Gary recalls his last Pokemon and laughs. \"I knew it. You're better than me. Always were.\" He hands you $2000, a Rare Candy, and evolves your lead Pokemon through sheer competitive fire. This is what rivalry is for.", effects: { money: 2000, rareCandy: 1, trainPokemon: true } },
-                        { weight: 30, narration: "A brutal, grinding fight. Both teams are wrecked by the end, but your last Pokemon stands. Gary nods. \"Close. But close only counts in horseshoes.\" He hands over $2000 and leaves. Your Pokemon grew from the fight — literally.", effects: { money: 2000, partyDamage: 2, trainPokemon: true } },
-                        { weight: 30, narration: "Gary pulls ahead mid-fight. You claw it back. In the end, it's a draw — both last Pokemon faint simultaneously. \"Call it even,\" Gary mutters. You split the stakes.", effects: { money: -500, partyDamage: 2 } },
-                        { weight: 20, narration: "Gary wins. Fair and square. He doesn't gloat — just pockets the money and nods. \"See you at the League.\" Your team is wrecked and your wallet is lighter. But the fire to win has never burned hotter.", effects: { money: -2000, partyDamage: 3, pokemonDeath: true } }
-                    ]
+                    eventBattle: {
+                        pool: "gary",
+                        difficulty: "hard",
+                        trainerName: "Rival Gary",
+                        winNarration: "\"I knew it. You're better than me. Always were.\" Gary hands over prize money and a Rare Candy. Your Pokemon grew from the rivalry.",
+                        lossNarration: "Gary wins. Fair and square. He doesn't gloat — just nods. \"See you at the League.\" The fire to win has never burned hotter.",
+                        winEffects: { money: 2000, rareCandy: 1, trainPokemon: true },
+                        lossEffects: { money: -1000 }
+                    }
                 },
                 {
                     text: "Shake hands and call a truce",
