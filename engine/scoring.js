@@ -104,5 +104,59 @@
         localStorage.removeItem('porygonTrail_leaderboard');
     }
 
-    PT.Engine.Scoring = { calculateScore, saveToLeaderboard, getLeaderboard, clearLeaderboard };
+    // ===== PERSISTENT POKÉDEX (cross-playthrough) =====
+    const POKEDEX_KEY = 'porygonTrail_pokedex';
+
+    function getGlobalPokedex() {
+        try {
+            const data = localStorage.getItem(POKEDEX_KEY);
+            return data ? JSON.parse(data) : { seen: [], caught: [], champions: [] };
+        } catch (e) {
+            return { seen: [], caught: [], champions: [] };
+        }
+    }
+
+    function saveGlobalPokedex(dex) {
+        try {
+            localStorage.setItem(POKEDEX_KEY, JSON.stringify(dex));
+        } catch (e) {
+            console.warn('Could not save pokedex:', e);
+        }
+    }
+
+    // Merge a completed run's data into the global Pokedex
+    function updateGlobalPokedex(state) {
+        const dex = getGlobalPokedex();
+
+        // Add all seen Pokemon
+        (state.pokedexSeen || []).forEach(id => {
+            if (!dex.seen.includes(id)) dex.seen.push(id);
+        });
+
+        // Add all caught Pokemon
+        (state.pokedexCaught || []).forEach(id => {
+            if (!dex.caught.includes(id)) dex.caught.push(id);
+        });
+
+        // If won, add surviving party as champions
+        if (state.hasWon) {
+            state.party.forEach(p => {
+                if (p.hp > 0 && p.status !== 'fainted' && !dex.champions.includes(p.id)) {
+                    dex.champions.push(p.id);
+                }
+            });
+        }
+
+        saveGlobalPokedex(dex);
+        return dex;
+    }
+
+    function clearGlobalPokedex() {
+        localStorage.removeItem(POKEDEX_KEY);
+    }
+
+    PT.Engine.Scoring = {
+        calculateScore, saveToLeaderboard, getLeaderboard, clearLeaderboard,
+        getGlobalPokedex, updateGlobalPokedex, clearGlobalPokedex
+    };
 })();

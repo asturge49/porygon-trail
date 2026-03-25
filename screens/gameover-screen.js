@@ -14,6 +14,9 @@
                 team_rocket: "Team Rocket overwhelmed you..."
             };
 
+            // Save Pokedex data across playthroughs
+            PT.Engine.Scoring.updateGlobalPokedex(state);
+
             // Save score
             PT.Engine.Scoring.saveToLeaderboard({
                 name: state.trainerName,

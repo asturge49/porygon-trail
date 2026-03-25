@@ -12,6 +12,9 @@
             const hofTeam = state.e4EntryParty || survivors;
             const aliveNames = state.party.map(p => p.name);
 
+            // Save Pokedex data across playthroughs
+            PT.Engine.Scoring.updateGlobalPokedex(state);
+
             // Save score
             PT.Engine.Scoring.saveToLeaderboard({
                 name: state.trainerName,

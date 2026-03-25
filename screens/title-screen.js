@@ -20,6 +20,7 @@
                 <div class="title-subtitle text-sm" style="margin-top: -12px; opacity: 0.7;">- Gen I Survival Adventure -</div>
                 <div class="title-menu">
                     <button class="btn btn-wide" id="btn-new-game">NEW GAME</button>
+                    <button class="btn btn-wide" id="btn-pokedex">POKÉDEX</button>
                     <button class="btn btn-wide" id="btn-leaderboard">LEADERBOARD</button>
                     <button class="btn btn-wide btn-small" id="btn-sound">SOUND: ${PT.Engine.Audio && PT.Engine.Audio.isEnabled() ? 'ON' : 'OFF'}</button>
                 </div>
@@ -29,6 +30,9 @@
 
             document.getElementById('btn-new-game').addEventListener('click', () => {
                 PT.App.goto('STARTER');
+            });
+            document.getElementById('btn-pokedex').addEventListener('click', () => {
+                PT.App.goto('POKEDEX');
             });
             document.getElementById('btn-leaderboard').addEventListener('click', () => {
                 PT.App.goto('LEADERBOARD');
