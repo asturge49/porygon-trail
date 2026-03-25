@@ -356,33 +356,42 @@
                     return;
                 }
 
-                // Gym departure warning — only when pace would move you (not explore)
+                // Gym departure warning — only trigger when this CONTINUE would cause departure
                 const gymLeaderData = route.hasGym ? PT.Data.GymLeaders[route.gymLeader] : null;
                 const hasUnbeatenGym = gymLeaderData && !state.badges.includes(gymLeaderData.badge);
                 const wouldProgress = state.pace !== 'explore';
 
                 if (hasUnbeatenGym && wouldProgress && state._gymWarningShown !== route.id) {
-                    state._gymWarningShown = route.id;
-                    const logDiv = document.getElementById('travel-log');
-                    if (logDiv) {
-                        logDiv.innerHTML = `
-                            <div style="text-align: center; padding: 8px;">
-                                <div style="font-weight: bold; margin-bottom: 6px;">⚠️ There's a GYM here you haven't beaten!</div>
-                                <div style="font-size: 7px; margin-bottom: 8px;">${gymLeaderData.name} awaits at the ${gymLeaderData.badge} gym. Are you sure you want to leave?</div>
-                                <div style="display: flex; gap: 8px; justify-content: center;">
-                                    <button class="btn btn-small" id="btn-gym-warn-stay">FIGHT GYM</button>
-                                    <button class="btn btn-small" id="btn-gym-warn-leave">LEAVE ANYWAY</button>
+                    // Estimate if this step would cause arrival
+                    const paceConfig = PT.Engine.TravelEngine.PACE_CONFIG[state.pace] || PT.Engine.TravelEngine.PACE_CONFIG.steady;
+                    const remaining = route.distanceToNext - state.distanceTraveled;
+                    // Use max possible travel (pace + variance + fly bonus + surf bonus) to predict
+                    const maxPossibleTravel = paceConfig.distance + 3 + 3 + (route.terrain === 'water' ? 5 : 0);
+
+                    if (remaining <= maxPossibleTravel) {
+                        // This continue could be the last — show gym warning
+                        state._gymWarningShown = route.id;
+                        const logDiv = document.getElementById('travel-log');
+                        if (logDiv) {
+                            logDiv.innerHTML = `
+                                <div style="text-align: center; padding: 8px;">
+                                    <div style="font-weight: bold; margin-bottom: 6px;">⚠️ There's a GYM here you haven't beaten!</div>
+                                    <div style="font-size: 7px; margin-bottom: 8px;">${gymLeaderData.name} awaits at the ${gymLeaderData.badge} gym. You're about to leave — are you sure?</div>
+                                    <div style="display: flex; gap: 8px; justify-content: center;">
+                                        <button class="btn btn-small" id="btn-gym-warn-stay">FIGHT GYM</button>
+                                        <button class="btn btn-small" id="btn-gym-warn-leave">LEAVE ANYWAY</button>
+                                    </div>
                                 </div>
-                            </div>
-                        `;
-                        document.getElementById('btn-gym-warn-stay').addEventListener('click', () => {
-                            PT.App.goto('GYM', { gymLeader: route.gymLeader });
-                        });
-                        document.getElementById('btn-gym-warn-leave').addEventListener('click', () => {
-                            proceedWithDay();
-                        });
+                            `;
+                            document.getElementById('btn-gym-warn-stay').addEventListener('click', () => {
+                                PT.App.goto('GYM', { gymLeader: route.gymLeader });
+                            });
+                            document.getElementById('btn-gym-warn-leave').addEventListener('click', () => {
+                                proceedWithDay();
+                            });
+                        }
+                        return;
                     }
-                    return;
                 }
 
                 proceedWithDay();
