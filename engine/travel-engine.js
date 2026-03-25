@@ -56,7 +56,14 @@
         // Fire ability reduces food consumption
         if (PT.Engine.GameState.hasAbility(state, 'fire') && foodConsumed > 1) {
             state.resources.food = Math.min(state.resources.food + 1, 999);
-            results.messages.push("Fire-type Pokemon cooked efficiently! (+1 food saved)");
+            results.messages.push("🔥 FIRE ABILITY: Your Fire-type cooked efficiently! (+1 food saved)");
+        }
+
+        // Cut ability forages for extra food
+        if (PT.Engine.GameState.hasAbility(state, 'cut') && state.rng.chance(25)) {
+            const foraged = state.rng.randInt(1, 3);
+            state.resources.food += foraged;
+            results.messages.push(`🌿 CUT ABILITY: Your Pokemon cut through brush and foraged +${foraged} food!`);
         }
 
         // --- Starvation check ---
@@ -99,16 +106,32 @@
             if (injured.length > 0 && state.rng.chance(40)) {
                 const healed = state.rng.pick(injured);
                 healed.hp = Math.min(healed.hp + 1, healed.maxHp);
-                results.messages.push(`${healed.name} was healed by your healer Pokemon!`);
+                results.messages.push(`💗 HEAL ABILITY: ${healed.name} was healed by your healer Pokemon!`);
             }
         }
 
+        // --- Guard ability: block grueling pace injuries ---
+        // (Handled below in injury section)
+
         // --- Grueling pace injury ---
-        if (pace.injuryChance && state.rng.chance(pace.injuryChance)) {
-            const victim = state.rng.pick(PT.Engine.GameState.getAliveParty(state));
-            if (victim) {
-                PT.Engine.GameState.damagePokemon(victim, 1, state);
-                results.messages.push(`The grueling pace injured ${victim.name}!`);
+        if (pace.injuryChance) {
+            let effectiveInjuryChance = pace.injuryChance;
+            // Strength ability halves injury chance
+            if (PT.Engine.GameState.hasAbility(state, 'strength')) {
+                effectiveInjuryChance = Math.floor(effectiveInjuryChance / 2);
+                results.messages.push("💪 STRENGTH ABILITY: Your strong Pokemon carries the weaker ones, reducing injury risk!");
+            }
+            if (state.rng.chance(effectiveInjuryChance)) {
+                // Guard ability can block the injury entirely
+                if (PT.Engine.GameState.hasAbility(state, 'guard') && state.rng.chance(30)) {
+                    results.messages.push("🛡️ GUARD ABILITY: Your defensive Pokemon shielded the party from injury!");
+                } else {
+                    const victim = state.rng.pick(PT.Engine.GameState.getAliveParty(state));
+                    if (victim) {
+                        PT.Engine.GameState.damagePokemon(victim, 1, state);
+                        results.messages.push(`The grueling pace injured ${victim.name}!`);
+                    }
+                }
             }
         }
 
@@ -132,14 +155,61 @@
             return results;
         }
 
+        // --- Fly ability: bonus travel distance ---
+        if (PT.Engine.GameState.hasAbility(state, 'fly') && pace.distance > 0 && nextRoute && !results.arrivedAtLocation) {
+            const flyBonus = 3;
+            state.distanceTraveled += flyBonus;
+            results.messages.push(`🦅 FLY ABILITY: Your Flying-type scouts shortcuts! (+${flyBonus} miles)`);
+            // Re-check arrival after fly bonus
+            if (state.distanceTraveled >= route.distanceToNext) {
+                state.currentLocationIndex++;
+                state.distanceTraveled = 0;
+                results.arrivedAtLocation = true;
+                const newRoute = PT.Engine.GameState.getCurrentRoute(state);
+                results.messages.push(`Arrived at ${newRoute.name}!`);
+                PT.Engine.GameState.addToLog(state, `Arrived at ${newRoute.name}!`);
+            }
+        }
+
+        // --- Surf ability: faster on water routes ---
+        if (PT.Engine.GameState.hasAbility(state, 'surf') && pace.distance > 0 && nextRoute && !results.arrivedAtLocation) {
+            if (route.terrain === 'water') {
+                const surfBonus = 5;
+                state.distanceTraveled += surfBonus;
+                results.messages.push(`🌊 SURF ABILITY: Your Water-type surfs ahead! (+${surfBonus} miles on water)`);
+                if (state.distanceTraveled >= route.distanceToNext) {
+                    state.currentLocationIndex++;
+                    state.distanceTraveled = 0;
+                    results.arrivedAtLocation = true;
+                    const newRoute = PT.Engine.GameState.getCurrentRoute(state);
+                    results.messages.push(`Arrived at ${newRoute.name}!`);
+                    PT.Engine.GameState.addToLog(state, `Arrived at ${newRoute.name}!`);
+                }
+            }
+        }
+
+        // --- Flash ability: find hidden items/money ---
+        if (PT.Engine.GameState.hasAbility(state, 'flash') && state.rng.chance(20)) {
+            const flashRoll = state.rng.randInt(1, 100);
+            if (flashRoll <= 40) {
+                const moneyFound = state.rng.randInt(50, 200);
+                state.resources.money += moneyFound;
+                results.messages.push(`⚡ FLASH ABILITY: Your Electric-type illuminated a hidden stash! Found $${moneyFound}!`);
+            } else if (flashRoll <= 70) {
+                state.resources.potions++;
+                results.messages.push("⚡ FLASH ABILITY: Your Electric-type lit up a hidden Potion!");
+            } else {
+                state.resources.pokeballs += 2;
+                results.messages.push("⚡ FLASH ABILITY: Your Electric-type found 2 hidden Poke Balls!");
+            }
+        }
+
         // --- Encounter roll ---
         if (!results.arrivedAtLocation || pace.distance === 0) {
             const encounterChance = 30 + (pace.encounterMod || 0);
             if (state.repelSteps > 0) {
                 state.repelSteps--;
                 results.messages.push(`Repel active (${state.repelSteps} left).`);
-            } else if (PT.Engine.GameState.hasAbility(state, 'poison') && state.rng.chance(15)) {
-                results.messages.push("Poison-type Pokemon repels wild encounters!");
             } else if (state.rng.chance(encounterChance)) {
                 results.encounter = PT.Engine.EncounterEngine.rollEncounter(state);
                 if (results.encounter) {
@@ -162,12 +232,49 @@
         // --- Psychic ability: preview ---
         if (PT.Engine.GameState.hasAbility(state, 'psychic') && (results.encounter || results.event)) {
             results.psychicWarning = true;
-            results.messages.push("Your Psychic-type senses something ahead...");
+            results.messages.push("🔮 PSYCHIC ABILITY: Your Psychic-type senses something ahead...");
         }
 
-        // --- Fly ability: scout ---
-        if (PT.Engine.GameState.hasAbility(state, 'fly') && !results.encounter && !results.event && state.rng.chance(20)) {
-            results.messages.push("Your Flying-type scouts ahead and reports the path is clear.");
+        // --- Intimidate ability: chance to scare off encounters ---
+        if (PT.Engine.GameState.hasAbility(state, 'intimidate') && results.encounter && state.rng.chance(25)) {
+            results.messages.push(`😤 INTIMIDATE ABILITY: Your Pokemon's fierce presence scared off wild ${results.encounter.name}!`);
+            results.encounter = null;
+        }
+
+        // --- Glitch ability: MissingNo chaos ---
+        if (PT.Engine.GameState.hasAbility(state, 'glitch') && state.rng.chance(15)) {
+            const glitchRoll = state.rng.randInt(1, 100);
+            if (glitchRoll <= 30) {
+                // Duplicate a random item
+                const dupeTargets = ['pokeballs', 'greatballs', 'potions', 'superPotions'];
+                const dupeKey = state.rng.pick(dupeTargets);
+                if (state.resources[dupeKey] > 0) {
+                    const duped = Math.min(state.resources[dupeKey], state.rng.randInt(1, 3));
+                    state.resources[dupeKey] += duped;
+                    const itemName = PT.Data.Items[dupeKey] ? PT.Data.Items[dupeKey].name : dupeKey;
+                    results.messages.push(`👾 GLITCH ABILITY: MissingNo. corrupted your bag! +${duped} ${itemName} duplicated!`);
+                }
+            } else if (glitchRoll <= 50) {
+                // Random money glitch
+                const glitchMoney = state.rng.randInt(100, 500);
+                state.resources.money += glitchMoney;
+                results.messages.push(`👾 GLITCH ABILITY: Memory overflow! +$${glitchMoney} appeared in your wallet!`);
+            } else if (glitchRoll <= 70) {
+                // Heal a random party member to full
+                const injured = PT.Engine.GameState.getAliveParty(state).filter(p => p.hp < p.maxHp);
+                if (injured.length > 0) {
+                    const target = state.rng.pick(injured);
+                    target.hp = target.maxHp;
+                    results.messages.push(`👾 GLITCH ABILITY: Data corruption healed ${target.name} to full HP!`);
+                }
+            } else {
+                // Random damage to a party member (chaotic!)
+                const victim = state.rng.pick(PT.Engine.GameState.getAliveParty(state));
+                if (victim) {
+                    PT.Engine.GameState.damagePokemon(victim, 1, state);
+                    results.messages.push(`👾 GLITCH ABILITY: Buffer overflow! ${victim.name} took 1 glitch damage!`);
+                }
+            }
         }
 
         return results;

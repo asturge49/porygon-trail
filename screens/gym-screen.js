@@ -129,6 +129,7 @@
 
         // Calculate success chance
         let chance = 45;
+        let battleBonuses = [];
 
         // Type advantage based on opponent Pokemon's types
         const hasAdvantage = pokemon.types.some(t => typeChart.weakTo.includes(t));
@@ -142,6 +143,18 @@
         // Party size bonus
         const aliveCount = PT.Engine.GameState.getAliveParty(state).length;
         chance += aliveCount * 2;
+
+        // Poison ability: +5% win chance
+        if (PT.Engine.GameState.hasAbility(state, 'poison')) {
+            chance += 5;
+            battleBonuses.push('☠️ POISON +5%');
+        }
+
+        // Intimidate ability: +5% win chance
+        if (PT.Engine.GameState.hasAbility(state, 'intimidate')) {
+            chance += 5;
+            battleBonuses.push('😤 INTIMIDATE +5%');
+        }
 
         // Clamp
         chance = Math.max(10, Math.min(80, chance));
@@ -183,7 +196,7 @@
                     <div style="font-size: 8px; margin-top: 8px;">
                         ${pokemon.name} defeated ${leader.name}'s ${opponent.name}!
                         <br>Earned: <span class="badge-earned">${leader.badge}</span> + $${leader.reward.money}${evoLine}
-                        <br><span style="font-size: 6px;">Win chance was ${chance}%</span>
+                        <br><span style="font-size: 6px;">Win chance was ${chance}%${battleBonuses.length > 0 ? ' (' + battleBonuses.join(', ') + ')' : ''}</span>
                     </div>
                 </div>
                 <button class="btn btn-wide" id="btn-continue">CONTINUE</button>
@@ -233,7 +246,7 @@
                             ? `💀 ${pokemon.name} was killed by ${opponent.name}!`
                             : `${pokemon.name} takes ${damage} damage from ${opponent.name}!`}
                         ${isAce ? '<br><span style="font-size: 6px;">Ace Pokemon are more dangerous!</span>' : ''}
-                        <br><span style="font-size: 6px;">Win chance was ${chance}%</span>
+                        <br><span style="font-size: 6px;">Win chance was ${chance}%${battleBonuses.length > 0 ? ' (' + battleBonuses.join(', ') + ')' : ''}</span>
                         ${died ? '' : '<br>You can try again next time you visit.'}
                     </div>
                 </div>

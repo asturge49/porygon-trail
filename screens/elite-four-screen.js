@@ -186,6 +186,7 @@
 
         // Calculate success chance — BRUTAL Elite Four
         let chance = 30; // Base 30% (was 35%, gym is 45%)
+        let battleBonuses = [];
 
         // Type advantage (smaller bonus than gyms)
         const hasAdvantage = pokemon.types.some(t => typeChart.weakTo.includes(t));
@@ -199,6 +200,18 @@
         // Party size bonus (reduced — being outnumbered barely helps here)
         const aliveCount = PT.Engine.GameState.getAliveParty(state).length;
         chance += aliveCount * 1;
+
+        // Poison ability: +5% win chance
+        if (PT.Engine.GameState.hasAbility(state, 'poison')) {
+            chance += 5;
+            battleBonuses.push('☠️ POISON +5%');
+        }
+
+        // Intimidate ability: +5% win chance
+        if (PT.Engine.GameState.hasAbility(state, 'intimidate')) {
+            chance += 5;
+            battleBonuses.push('😤 INTIMIDATE +5%');
+        }
 
         // Hard ceiling — even perfect conditions can't guarantee victory
         chance = Math.max(8, Math.min(55, chance));
@@ -238,7 +251,7 @@
                     <div class="gym-challenge-text" style="font-size: 7px;">${trainer.defeatText}</div>
                     <div style="font-size: 8px; margin-top: 8px;">
                         ${pokemon.name} defeated ${trainer.name}'s ${opponent.name}!${evoLine}
-                        <br><span style="font-size: 6px;">Win chance was ${chance}%</span>
+                        <br><span style="font-size: 6px;">Win chance was ${chance}%${battleBonuses.length > 0 ? ' (' + battleBonuses.join(', ') + ')' : ''}</span>
                         ${isLastBattle
                             ? '<br><strong>You\'ve defeated all five! You are the CHAMPION!</strong>'
                             : `<br>Next up: ${PT.Data.EliteFour[e4Index + 1].name}...`}
@@ -312,7 +325,7 @@
                     <div class="gym-leader-name">${trainer.name} wins</div>
                     <div style="font-size: 8px; margin-top: 8px;">
                         ${statusMsg}
-                        <br><span style="font-size: 6px;">Win chance was ${chance}%</span>
+                        <br><span style="font-size: 6px;">Win chance was ${chance}%${battleBonuses.length > 0 ? ' (' + battleBonuses.join(', ') + ')' : ''}</span>
                         ${partyWiped
                             ? '<br><strong>All your Pokemon have fallen...</strong>'
                             : `<br>You must defeat ${trainer.name}'s ${opponent.name} to advance.`}

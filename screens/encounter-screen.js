@@ -355,6 +355,7 @@
 
         // Calculate win chance — wild battles are easier than gyms
         let chance = 55;
+        let battleBonuses = [];
 
         // Type advantage
         const hasAdvantage = chosen.types.some(t => typeChart.weakTo.includes(t));
@@ -368,6 +369,18 @@
 
         // Badge bonus
         chance += state.badges.length * 2;
+
+        // Poison ability: +5% win chance (toxic weakening)
+        if (PT.Engine.GameState.hasAbility(state, 'poison')) {
+            chance += 5;
+            battleBonuses.push('☠️ POISON +5%');
+        }
+
+        // Intimidate ability: +5% win chance (enemy flinches)
+        if (PT.Engine.GameState.hasAbility(state, 'intimidate')) {
+            chance += 5;
+            battleBonuses.push('😤 INTIMIDATE +5%');
+        }
 
         // Clamp
         chance = Math.max(15, Math.min(85, chance));
@@ -396,7 +409,7 @@
                 <div style="text-align: center;">
                     <strong>${chosen.name} defeated wild ${pokemon.name}!</strong>
                     <br>Won $${moneyReward}!${evoLine}
-                    <br><span style="font-size: 6px;">Win chance was ${chance}%</span>
+                    <br><span style="font-size: 6px;">Win chance was ${chance}%${battleBonuses.length > 0 ? ' (' + battleBonuses.join(', ') + ')' : ''}</span>
                 </div>
             `;
             actionsDiv.innerHTML = '<button class="btn btn-wide" id="btn-continue">CONTINUE</button>';
@@ -428,7 +441,7 @@
                     <br>${died
                         ? `💀 ${chosen.name} was killed!`
                         : `💥 ${chosen.name} took ${lossDamage} damage! (${chosen.hp}/${chosen.maxHp} HP)`}
-                    <br><span style="font-size: 6px;">Win chance was ${chance}% | Wild ${pokemon.name} HP: ${wildHp}</span>
+                    <br><span style="font-size: 6px;">Win chance was ${chance}%${battleBonuses.length > 0 ? ' (' + battleBonuses.join(', ') + ')' : ''} | Wild ${pokemon.name} HP: ${wildHp}</span>
                 </div>
             `;
             actionsDiv.innerHTML = '<button class="btn btn-wide" id="btn-continue">CONTINUE</button>';
