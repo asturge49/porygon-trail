@@ -215,15 +215,18 @@
             const weather = getWeather(state, route);
             const timeElements = route.terrain !== 'cave' ? getTimeElements(timeOfDay) : '';
 
+            // Trainer sprite leads the party
+            const trainerSprite = `<div class="trail-trainer-sprite" title="${state.trainerName}"></div>`;
+
             // Party Pokemon sprites — all alive members walk in a line, sized by actual Pokemon size
             const aliveParty = state.party.filter(p => p.status !== 'fainted' && p.hp > 0);
             const partySprites = aliveParty.map((p, i) => {
                 const spriteUrl = PT.Engine.GameState.getSpriteUrl(p.id);
-                const delay = i * 0.15; // stagger the bounce
+                const delay = (i + 1) * 0.15; // stagger the bounce, +1 to offset from trainer
                 const sizeClass = getPokemonSizeClass(p.id);
                 return `<img class="trail-pokemon-sprite ${sizeClass}" src="${spriteUrl}" alt="${p.name}" style="animation-delay:${delay}s;" onerror="this.style.display='none'">`;
             }).join('');
-            const trainerHtml = partySprites || '&#9658;';
+            const trainerHtml = trainerSprite + partySprites;
 
             // Position party group along the path based on travel progress
             const trainerLeft = Math.max(3, Math.min(75, progress * 0.75 + 3));

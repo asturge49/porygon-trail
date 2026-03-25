@@ -567,6 +567,49 @@ body {
     top: -8px;
 }
 
+/* Trainer (Red) pixel sprite — CSS pixel art */
+.trail-trainer-sprite {
+    width: 16px;
+    height: 22px;
+    position: relative;
+    flex-shrink: 0;
+    z-index: 4;
+    image-rendering: pixelated;
+    animation: trailBounce 1.2s ease-in-out infinite;
+    /* Pixel art Red using box-shadow on a 1px element */
+    background: transparent;
+    margin-right: 2px;
+}
+
+.trail-trainer-sprite::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 2px;
+    height: 2px;
+    /* Red trainer pixel art (16x22 scaled to 2px blocks = 8x11 grid)
+       Hat: dark red, Hair: dark, Face: light, Shirt: dark, Legs: dark */
+    box-shadow:
+        /* Hat (row 0-1) */
+        4px 0 var(--gb-darkest), 6px 0 var(--gb-darkest), 8px 0 var(--gb-darkest), 10px 0 var(--gb-darkest),
+        2px 2px var(--gb-darkest), 4px 2px var(--gb-darkest), 6px 2px var(--gb-darkest), 8px 2px var(--gb-darkest), 10px 2px var(--gb-darkest), 12px 2px var(--gb-darkest),
+        /* Hair/face (row 2-3) */
+        2px 4px var(--gb-darkest), 4px 4px var(--gb-darkest), 6px 4px var(--gb-light), 8px 4px var(--gb-light), 10px 4px var(--gb-darkest),
+        4px 6px var(--gb-light), 6px 6px var(--gb-darkest), 8px 6px var(--gb-light), 10px 6px var(--gb-light),
+        /* Body (row 4-6) */
+        2px 8px var(--gb-dark), 4px 8px var(--gb-dark), 6px 8px var(--gb-darkest), 8px 8px var(--gb-dark), 10px 8px var(--gb-dark),
+        2px 10px var(--gb-dark), 4px 10px var(--gb-darkest), 6px 10px var(--gb-dark), 8px 10px var(--gb-darkest), 10px 10px var(--gb-dark),
+        4px 12px var(--gb-dark), 6px 12px var(--gb-dark), 8px 12px var(--gb-dark),
+        /* Arms */
+        0px 10px var(--gb-light), 12px 10px var(--gb-light),
+        /* Legs (row 7-8) */
+        4px 14px var(--gb-darkest), 6px 14px var(--gb-darkest), 8px 14px var(--gb-darkest),
+        4px 16px var(--gb-darkest), 8px 16px var(--gb-darkest),
+        /* Feet */
+        2px 18px var(--gb-darkest), 4px 18px var(--gb-darkest), 8px 18px var(--gb-darkest), 10px 18px var(--gb-darkest);
+}
+
 /* Party parade — base sprite styles */
 .trail-pokemon-sprite {
     image-rendering: pixelated;
