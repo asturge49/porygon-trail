@@ -230,6 +230,56 @@
         return foodValues[rarity] || 5;
     }
 
+    // ===== SAVE / LOAD =====
+    const SAVE_KEY = 'porygonTrail_save';
+
+    function saveGame(state) {
+        if (!state || state.isGameOver || state.hasWon) return false;
+        try {
+            const saveData = Object.assign({}, state);
+            // Serialize RNG state (functions can't be stored in JSON)
+            saveData._rngSeed = state.rng.getSeed();
+            saveData._rngState = state.rng.getState();
+            delete saveData.rng;
+            // Remove any transient UI fields
+            delete saveData._gymWarningShown;
+            localStorage.setItem(SAVE_KEY, JSON.stringify(saveData));
+            return true;
+        } catch (e) {
+            console.warn('Could not save game:', e);
+            return false;
+        }
+    }
+
+    function loadGame() {
+        try {
+            const raw = localStorage.getItem(SAVE_KEY);
+            if (!raw) return null;
+            const data = JSON.parse(raw);
+            // Reconstruct RNG from saved seed + state
+            data.rng = PT.Engine.RNG.createRNG(data._rngSeed);
+            data.rng.setState(data._rngState);
+            delete data._rngSeed;
+            delete data._rngState;
+            // Rebuild sprite URLs (they aren't stored but party refs need them)
+            data.party.forEach(p => {
+                p.spriteUrl = getSpriteUrl(p.id);
+            });
+            return data;
+        } catch (e) {
+            console.warn('Could not load save:', e);
+            return null;
+        }
+    }
+
+    function hasSaveGame() {
+        return localStorage.getItem(SAVE_KEY) !== null;
+    }
+
+    function deleteSave() {
+        localStorage.removeItem(SAVE_KEY);
+    }
+
     PT.Engine.GameState = {
         createNewGame,
         createPartyPokemon,
@@ -245,6 +295,10 @@
         getNextRoute,
         evolvePokemon,
         killPokemon,
-        pokemonToFood
+        pokemonToFood,
+        saveGame,
+        loadGame,
+        hasSaveGame,
+        deleteSave
     };
 })();

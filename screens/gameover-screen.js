@@ -14,6 +14,9 @@
                 team_rocket: "Team Rocket overwhelmed you..."
             };
 
+            // Clear save file — this run is over
+            PT.Engine.GameState.deleteSave();
+
             // Save Pokedex data across playthroughs
             PT.Engine.Scoring.updateGlobalPokedex(state);
 

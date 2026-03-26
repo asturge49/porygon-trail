@@ -12,6 +12,9 @@
             const hofTeam = state.e4EntryParty || survivors;
             const aliveNames = state.party.map(p => p.name);
 
+            // Clear save file — this run is over
+            PT.Engine.GameState.deleteSave();
+
             // Save Pokedex data across playthroughs
             PT.Engine.Scoring.updateGlobalPokedex(state);
 

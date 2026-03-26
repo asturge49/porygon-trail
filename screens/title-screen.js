@@ -5,6 +5,8 @@
 
     PT.Screens.TITLE = {
         render(container) {
+            const hasSave = PT.Engine.GameState.hasSaveGame();
+
             const div = document.createElement('div');
             div.className = 'screen title-screen';
             div.innerHTML = `
@@ -19,6 +21,7 @@
                 <div class="title-subtitle">KANTO EXPEDITION</div>
                 <div class="title-subtitle text-sm" style="margin-top: -12px; opacity: 0.7;">- Gen I Survival Adventure -</div>
                 <div class="title-menu">
+                    ${hasSave ? '<button class="btn btn-wide" id="btn-continue-game">CONTINUE</button>' : ''}
                     <button class="btn btn-wide" id="btn-new-game">NEW GAME</button>
                     <button class="btn btn-wide" id="btn-pokedex">POKÉDEX</button>
                     <button class="btn btn-wide" id="btn-leaderboard">LEADERBOARD</button>
@@ -28,7 +31,27 @@
             `;
             container.appendChild(div);
 
+            // Continue saved game
+            if (hasSave) {
+                document.getElementById('btn-continue-game').addEventListener('click', () => {
+                    const loaded = PT.Engine.GameState.loadGame();
+                    if (loaded) {
+                        PT.State = loaded;
+                        PT.App.goto('TRAVEL');
+                    } else {
+                        alert('Save data corrupted. Starting new game.');
+                        PT.Engine.GameState.deleteSave();
+                        PT.App.goto('STARTER');
+                    }
+                });
+            }
+
             document.getElementById('btn-new-game').addEventListener('click', () => {
+                if (hasSave) {
+                    // Confirm overwrite
+                    if (!confirm('This will overwrite your saved game. Continue?')) return;
+                    PT.Engine.GameState.deleteSave();
+                }
                 PT.App.goto('STARTER');
             });
             document.getElementById('btn-pokedex').addEventListener('click', () => {

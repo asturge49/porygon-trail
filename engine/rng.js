@@ -57,9 +57,10 @@
                 return arr;
             },
 
-            // Get/set seed
+            // Get/set seed & internal state (for save/load)
             getSeed() { return seed; },
-            getState() { return s; }
+            getState() { return s; },
+            setState(val) { s = val | 0; }
         };
     }
 

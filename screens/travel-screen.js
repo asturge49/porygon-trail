@@ -303,6 +303,7 @@
                             ? `<button class="btn btn-small" id="btn-gym">GYM</button>`
                             : '<button class="btn btn-small" disabled>NO GYM</button>'}
                     <button class="btn btn-small" id="btn-use-repel" ${state.resources.repels <= 0 || state.repelSteps > 0 ? 'disabled' : ''}>REPEL${state.repelSteps > 0 ? ` (${state.repelSteps})` : ''}</button>
+                    <button class="btn btn-small" id="btn-save">SAVE</button>
                 </div>
 
                 <div class="travel-log" id="travel-log">
@@ -433,6 +434,18 @@
                     state.repelSteps = 3;
                     PT.Engine.GameState.addToLog(state, "Used Repel! Next 3 encounters avoided.");
                     PT.App.goto('TRAVEL');
+                }
+            });
+
+            // Save button
+            document.getElementById('btn-save').addEventListener('click', () => {
+                const saved = PT.Engine.GameState.saveGame(state);
+                const logDiv = document.getElementById('travel-log');
+                if (logDiv) {
+                    const msg = saved
+                        ? '<div class="log-entry" style="font-weight:bold;">💾 Game saved!</div>'
+                        : '<div class="log-entry" style="font-weight:bold;">⚠️ Could not save game.</div>';
+                    logDiv.innerHTML = msg + logDiv.innerHTML;
                 }
             });
         }
