@@ -345,6 +345,7 @@ body {
 .travel-screen {
     gap: 4px;
     padding: 8px;
+    position: relative;
 }
 
 .travel-header {
@@ -1079,18 +1080,157 @@ body {
     gap: 6px;
 }
 
-.travel-log {
+/* ---- Travel Party HP Panel ---- */
+.travel-party-hp {
     border: 2px solid var(--gb-darkest);
     background: var(--gb-white);
-    padding: 6px 8px;
-    font-size: 7px;
-    line-height: 1.8;
-    flex: 1;
+    padding: 4px 6px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2px 6px;
+    min-height: 40px;
+    max-height: 90px;
     overflow-y: auto;
-    min-height: 80px;
-    max-height: 100px;
 }
 
+.travel-party-member {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    width: calc(50% - 3px);
+    padding: 2px 0;
+}
+
+.travel-party-member.critical {
+    animation: critical-pulse 1.2s ease-in-out infinite;
+}
+
+@keyframes critical-pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+}
+
+.travel-party-sprite {
+    width: 24px;
+    height: 24px;
+    image-rendering: pixelated;
+    filter: grayscale(30%) sepia(40%) hue-rotate(50deg) saturate(0.6);
+    flex-shrink: 0;
+}
+
+.travel-party-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.travel-party-name {
+    font-size: 6px;
+    font-weight: bold;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.travel-hp-bar {
+    width: 100%;
+    height: 4px;
+    background: var(--gb-dark);
+    border: 1px solid var(--gb-darkest);
+    margin: 1px 0;
+}
+
+.travel-hp-fill {
+    height: 100%;
+    background: var(--gb-light);
+    transition: width 0.3s ease;
+}
+
+.travel-hp-fill.mid {
+    background: var(--gb-bg);
+}
+
+.travel-hp-fill.low {
+    background: var(--gb-darkest);
+}
+
+.travel-hp-text {
+    font-size: 5px;
+    color: var(--gb-dark);
+}
+
+/* ---- Day Recap Popup ---- */
+.day-recap-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(15, 56, 15, 0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+    animation: recap-fadein 0.15s ease-out;
+}
+
+@keyframes recap-fadein {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.day-recap-popup {
+    background: var(--gb-white);
+    border: 3px solid var(--gb-darkest);
+    padding: 10px 14px;
+    max-width: 85%;
+    max-height: 70%;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    box-shadow: 4px 4px 0 var(--gb-shadow);
+}
+
+.day-recap-title {
+    font-size: 9px;
+    font-weight: bold;
+    text-align: center;
+    padding-bottom: 4px;
+    border-bottom: 2px solid var(--gb-dark);
+}
+
+.day-recap-body {
+    font-size: 7px;
+    line-height: 1.8;
+    max-height: 120px;
+    overflow-y: auto;
+}
+
+.recap-line {
+    padding: 2px 0;
+    border-bottom: 1px solid var(--gb-light);
+}
+
+.recap-line:last-child {
+    border-bottom: none;
+}
+
+.recap-next {
+    margin-top: 6px;
+    padding: 4px;
+    font-weight: bold;
+    font-size: 7px;
+    text-align: center;
+    background: var(--gb-light);
+    border: 1px solid var(--gb-dark);
+}
+
+.day-recap-btn {
+    align-self: center;
+    margin-top: 4px;
+}
+
+/* Legacy log entry (used by other screens) */
 .log-entry {
     padding: 2px 0;
     border-bottom: 1px solid var(--gb-light);

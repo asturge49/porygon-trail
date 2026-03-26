@@ -306,11 +306,20 @@
                     <button class="btn btn-small" id="btn-save">SAVE</button>
                 </div>
 
-                <div class="travel-log" id="travel-log">
-                    ${state.log.slice(0, 8).map(entry => `
-                        <div class="log-entry">Day ${entry.day}: ${entry.text}</div>
+                <div class="travel-party-hp" id="travel-party-hp">
+                    ${state.party.map(p => `
+                        <div class="travel-party-member ${p.hp <= 1 ? 'critical' : ''}">
+                            <img class="travel-party-sprite" src="${p.spriteUrl}" alt="${p.name}" onerror="this.style.display='none'">
+                            <div class="travel-party-info">
+                                <div class="travel-party-name">${p.name}</div>
+                                <div class="travel-hp-bar">
+                                    <div class="travel-hp-fill ${p.hp <= 1 ? 'low' : p.hp <= Math.ceil(p.maxHp / 2) ? 'mid' : ''}" style="width:${(p.hp / p.maxHp) * 100}%"></div>
+                                </div>
+                                <div class="travel-hp-text">${p.hp}/${p.maxHp}${p.status !== 'healthy' ? ' ' + p.status.toUpperCase() : ''}</div>
+                            </div>
+                        </div>
                     `).join('')}
-                    ${state.log.length === 0 ? '<div class="log-entry">Your journey begins!</div>' : ''}
+                    ${state.party.length === 0 ? '<div style="text-align:center;font-size:7px;">No Pokemon!</div>' : ''}
                 </div>
             `;
             container.appendChild(div);
@@ -334,24 +343,78 @@
                     return;
                 }
 
+                // Determine what happens next after the popup
+                let nextAction;
                 if (results.encounter) {
-                    PT.App.goto('ENCOUNTER', { pokemon: results.encounter });
-                    return;
+                    nextAction = () => PT.App.goto('ENCOUNTER', { pokemon: results.encounter });
+                } else if (results.event) {
+                    nextAction = () => PT.App.goto('EVENT', { event: results.event });
+                } else if (results.arrivedAtLocation) {
+                    nextAction = () => {
+                        state._gymWarningShown = null;
+                        handleArrival(state);
+                    };
+                } else {
+                    nextAction = () => PT.App.goto('TRAVEL');
                 }
 
-                if (results.event) {
-                    PT.App.goto('EVENT', { event: results.event });
-                    return;
+                // Show day recap popup
+                showDayRecap(results.messages, nextAction, results.encounter, results.event, results.arrivedAtLocation ? PT.Engine.GameState.getNextRoute(state) : null);
+            }
+
+            function showDayRecap(messages, nextAction, encounter, event, arrivedRoute) {
+                // Build recap lines
+                const lines = messages.length > 0
+                    ? messages.map(m => `<div class="recap-line">${m}</div>`).join('')
+                    : '<div class="recap-line">Nothing eventful happened.</div>';
+
+                // Hint about what's coming next
+                let nextHint = '';
+                if (encounter) {
+                    const pokeName = encounter.name || 'a wild Pokemon';
+                    nextHint = `<div class="recap-next">⚡ A wild ${pokeName} appeared!</div>`;
+                } else if (event) {
+                    nextHint = `<div class="recap-next">❗ Something is happening ahead...</div>`;
+                } else if (arrivedRoute) {
+                    nextHint = `<div class="recap-next">📍 Arrived at ${arrivedRoute.name}!</div>`;
                 }
 
-                if (results.arrivedAtLocation) {
-                    state._gymWarningShown = null; // Reset gym warning for new location
-                    handleArrival(state);
-                    return;
+                // Create overlay
+                const overlay = document.createElement('div');
+                overlay.className = 'day-recap-overlay';
+                overlay.innerHTML = `
+                    <div class="day-recap-popup">
+                        <div class="day-recap-title">Day ${state.daysElapsed} Report</div>
+                        <div class="day-recap-body">
+                            ${lines}
+                            ${nextHint}
+                        </div>
+                        <button class="btn btn-small day-recap-btn" id="btn-recap-ok">OK</button>
+                    </div>
+                `;
+                document.querySelector('.travel-screen').appendChild(overlay);
+
+                // Update party HP display in real-time behind the popup
+                const hpPanel = document.getElementById('travel-party-hp');
+                if (hpPanel) {
+                    hpPanel.innerHTML = state.party.map(p => `
+                        <div class="travel-party-member ${p.hp <= 1 ? 'critical' : ''}">
+                            <img class="travel-party-sprite" src="${p.spriteUrl}" alt="${p.name}" onerror="this.style.display='none'">
+                            <div class="travel-party-info">
+                                <div class="travel-party-name">${p.name}</div>
+                                <div class="travel-hp-bar">
+                                    <div class="travel-hp-fill ${p.hp <= 1 ? 'low' : p.hp <= Math.ceil(p.maxHp / 2) ? 'mid' : ''}" style="width:${(p.hp / p.maxHp) * 100}%"></div>
+                                </div>
+                                <div class="travel-hp-text">${p.hp}/${p.maxHp}${p.status !== 'healthy' ? ' ' + p.status.toUpperCase() : ''}</div>
+                            </div>
+                        </div>
+                    `).join('');
                 }
 
-                // Re-render travel screen
-                PT.App.goto('TRAVEL');
+                document.getElementById('btn-recap-ok').addEventListener('click', () => {
+                    overlay.remove();
+                    nextAction();
+                });
             }
 
             document.getElementById('btn-continue').addEventListener('click', () => {
@@ -375,25 +438,31 @@
                     if (remaining <= maxPossibleTravel) {
                         // This continue could be the last — show gym warning
                         state._gymWarningShown = route.id;
-                        const logDiv = document.getElementById('travel-log');
-                        if (logDiv) {
-                            logDiv.innerHTML = `
-                                <div style="text-align: center; padding: 8px;">
-                                    <div style="font-weight: bold; margin-bottom: 6px;">⚠️ There's a GYM here you haven't beaten!</div>
-                                    <div style="font-size: 7px; margin-bottom: 8px;">${gymLeaderData.name} awaits at the ${gymLeaderData.badge} gym. You're about to leave — are you sure?</div>
-                                    <div style="display: flex; gap: 8px; justify-content: center;">
-                                        <button class="btn btn-small" id="btn-gym-warn-stay">FIGHT GYM</button>
-                                        <button class="btn btn-small" id="btn-gym-warn-leave">LEAVE ANYWAY</button>
-                                    </div>
+                        // Show gym warning as overlay popup
+                        const gymOverlay = document.createElement('div');
+                        gymOverlay.className = 'day-recap-overlay';
+                        gymOverlay.innerHTML = `
+                            <div class="day-recap-popup">
+                                <div class="day-recap-title">⚠️ GYM ALERT</div>
+                                <div class="day-recap-body">
+                                    <div class="recap-line">${gymLeaderData.name} awaits at the ${gymLeaderData.badge} gym.</div>
+                                    <div class="recap-line">You're about to leave — are you sure?</div>
                                 </div>
-                            `;
-                            document.getElementById('btn-gym-warn-stay').addEventListener('click', () => {
-                                PT.App.goto('GYM', { gymLeader: route.gymLeader });
-                            });
-                            document.getElementById('btn-gym-warn-leave').addEventListener('click', () => {
-                                proceedWithDay();
-                            });
-                        }
+                                <div style="display: flex; gap: 8px; justify-content: center;">
+                                    <button class="btn btn-small" id="btn-gym-warn-stay">FIGHT GYM</button>
+                                    <button class="btn btn-small" id="btn-gym-warn-leave">LEAVE ANYWAY</button>
+                                </div>
+                            </div>
+                        `;
+                        document.querySelector('.travel-screen').appendChild(gymOverlay);
+                        document.getElementById('btn-gym-warn-stay').addEventListener('click', () => {
+                            gymOverlay.remove();
+                            PT.App.goto('GYM', { gymLeader: route.gymLeader });
+                        });
+                        document.getElementById('btn-gym-warn-leave').addEventListener('click', () => {
+                            gymOverlay.remove();
+                            proceedWithDay();
+                        });
                         return;
                     }
                 }
@@ -440,13 +509,19 @@
             // Save button
             document.getElementById('btn-save').addEventListener('click', () => {
                 const saved = PT.Engine.GameState.saveGame(state);
-                const logDiv = document.getElementById('travel-log');
-                if (logDiv) {
-                    const msg = saved
-                        ? '<div class="log-entry" style="font-weight:bold;">💾 Game saved!</div>'
-                        : '<div class="log-entry" style="font-weight:bold;">⚠️ Could not save game.</div>';
-                    logDiv.innerHTML = msg + logDiv.innerHTML;
-                }
+                const saveOverlay = document.createElement('div');
+                saveOverlay.className = 'day-recap-overlay';
+                saveOverlay.innerHTML = `
+                    <div class="day-recap-popup">
+                        <div class="day-recap-title">${saved ? '💾 SAVED' : '⚠️ ERROR'}</div>
+                        <div class="day-recap-body">
+                            <div class="recap-line">${saved ? 'Game saved successfully!' : 'Could not save game.'}</div>
+                        </div>
+                        <button class="btn btn-small day-recap-btn" id="btn-save-ok">OK</button>
+                    </div>
+                `;
+                document.querySelector('.travel-screen').appendChild(saveOverlay);
+                document.getElementById('btn-save-ok').addEventListener('click', () => saveOverlay.remove());
             });
         }
     };
