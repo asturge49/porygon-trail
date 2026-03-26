@@ -78,30 +78,17 @@
         return { score, breakdown };
     }
 
+    // Leaderboard save/get/clear now delegated to LeaderboardAPI
     function saveToLeaderboard(entry) {
-        const leaderboard = getLeaderboard();
-        leaderboard.push(entry);
-        leaderboard.sort((a, b) => b.score - a.score);
-        const top10 = leaderboard.slice(0, 10);
-        try {
-            localStorage.setItem('porygonTrail_leaderboard', JSON.stringify(top10));
-        } catch (e) {
-            console.warn('Could not save to localStorage:', e);
-        }
-        return top10;
+        return PT.Engine.LeaderboardAPI.saveToLeaderboard(entry);
     }
 
     function getLeaderboard() {
-        try {
-            const data = localStorage.getItem('porygonTrail_leaderboard');
-            return data ? JSON.parse(data) : [];
-        } catch (e) {
-            return [];
-        }
+        return PT.Engine.LeaderboardAPI.getLocalLeaderboard();
     }
 
     function clearLeaderboard() {
-        localStorage.removeItem('porygonTrail_leaderboard');
+        PT.Engine.LeaderboardAPI.clearLocal();
     }
 
     // ===== PERSISTENT POKÉDEX (cross-playthrough) =====

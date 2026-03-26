@@ -1661,6 +1661,38 @@ body {
 
 .rank-1 { color: var(--gb-darkest); font-weight: bold; }
 
+.leaderboard-tabs {
+    display: flex;
+    gap: 0;
+    border: 3px solid var(--gb-darkest);
+}
+
+.leaderboard-tab {
+    flex: 1;
+    padding: 6px 4px;
+    font-family: 'Press Start 2P', monospace;
+    font-size: 7px;
+    background: var(--gb-white);
+    color: var(--gb-dark);
+    border: none;
+    cursor: pointer;
+    transition: background 0.15s;
+}
+
+.leaderboard-tab:first-child {
+    border-right: 2px solid var(--gb-darkest);
+}
+
+.leaderboard-tab.active {
+    background: var(--gb-light);
+    color: var(--gb-darkest);
+    font-weight: bold;
+}
+
+.leaderboard-tab:hover:not(.active) {
+    background: var(--gb-bg);
+}
+
 /* ============================================
    UTILITY CLASSES
    ============================================ */
