@@ -134,6 +134,14 @@
                 pokemon._clutched = true; // transient flag for UI
                 return false; // survived!
             }
+            // Safeguard ability — Chansey saves a Pokemon from death once
+            if (state && !pokemon._safeguarded && hasAbility(state, 'safeguard')) {
+                pokemon.hp = 1;
+                pokemon.status = 'healthy';
+                pokemon._safeguarded = true; // permanent flag — can't save this mon again
+                pokemon._safeguardSaved = true; // transient flag for UI
+                return false; // saved by Chansey!
+            }
             pokemon.hp = 0;
             pokemon.status = 'fainted';
             // Remove fainted Pokemon from party permanently
@@ -160,6 +168,14 @@
 
     function hasAbility(state, ability) {
         return getAliveParty(state).some(p => p.travelAbility === ability);
+    }
+
+    // Pay Day ability — 50% bonus money
+    function applyPayDay(state, amount) {
+        if (hasAbility(state, 'payday')) {
+            return Math.floor(amount * 1.5);
+        }
+        return amount;
     }
 
     function hasType(state, type) {
@@ -231,6 +247,12 @@
         if (starBonus.deathAvoidChance > 0 && state.rng.chance(starBonus.deathAvoidChance)) {
             victim.hp = 1;
             return { killed: false, name: victim.name, clutched: true };
+        }
+        // Safeguard ability — Chansey saves from death once per Pokemon
+        if (!victim._safeguarded && hasAbility(state, 'safeguard')) {
+            victim.hp = 1;
+            victim._safeguarded = true;
+            return { killed: false, name: victim.name, safeguarded: true };
         }
         const idx = state.party.indexOf(victim);
         if (idx === -1) return null;
@@ -380,6 +402,7 @@
         getStarBonus,
         isFinalEvolution,
         pokemonToFood,
+        applyPayDay,
         saveGame,
         loadGame,
         hasSaveGame,

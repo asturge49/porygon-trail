@@ -291,7 +291,8 @@
                     if (!state.badges.includes('champion')) {
                         state.badges.push('champion');
                     }
-                    state.resources.money += 5000;
+                    const e4MoneyReward = PT.Engine.GameState.applyPayDay(state, 5000);
+                    state.resources.money += e4MoneyReward;
                     PT.Engine.GameState.addToLog(state, 'Became the Pokemon Champion!');
                     PT.App.goto('VICTORY');
                 } else {

@@ -280,7 +280,12 @@
         const resourceKeys = ['food', 'pokeballs', 'greatballs', 'ultraballs', 'potions', 'superPotions', 'repels', 'rareCandy', 'escapeRope', 'money'];
         resourceKeys.forEach(key => {
             if (effects[key] !== undefined) {
-                state.resources[key] = Math.max(0, state.resources[key] + effects[key]);
+                let amount = effects[key];
+                // Pay Day: 50% bonus on positive money gains
+                if (key === 'money' && amount > 0) {
+                    amount = PT.Engine.GameState.applyPayDay(state, amount);
+                }
+                state.resources[key] = Math.max(0, state.resources[key] + amount);
             }
         });
 

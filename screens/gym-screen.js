@@ -182,7 +182,8 @@
         if (won) {
             state.badges.push(leader.badge);
             state.gymBattlesWon++;
-            state.resources.money += leader.reward.money;
+            const gymMoneyReward = PT.Engine.GameState.applyPayDay(state, leader.reward.money);
+            state.resources.money += gymMoneyReward;
 
             // Award battle star
             const starResult = PT.Engine.GameState.addBattleWin(pokemon, state);
@@ -217,7 +218,7 @@
                     <div class="gym-challenge-text">${leader.victoryText}</div>
                     <div style="font-size: 8px; margin-top: 8px;">
                         ${pokemon.name} defeated ${leader.name}'s ${opponent.name}!
-                        <br>Earned: <span class="badge-earned">${leader.badge}</span> + $${leader.reward.money}${evoLine}${starLine}
+                        <br>Earned: <span class="badge-earned">${leader.badge}</span> + $${gymMoneyReward}${gymMoneyReward > leader.reward.money ? ' 💰 PAY DAY!' : ''}${evoLine}${starLine}
                         <br><span style="font-size: 6px;">Win chance was ${chance}%${battleBonuses.length > 0 ? ' (' + battleBonuses.join(', ') + ')' : ''}</span>
                     </div>
                 </div>

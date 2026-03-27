@@ -192,9 +192,10 @@
         if (PT.Engine.GameState.hasAbility(state, 'flash') && state.rng.chance(20)) {
             const flashRoll = state.rng.randInt(1, 100);
             if (flashRoll <= 40) {
-                const moneyFound = state.rng.randInt(50, 200);
+                const baseMoneyFound = state.rng.randInt(50, 200);
+                const moneyFound = PT.Engine.GameState.applyPayDay(state, baseMoneyFound);
                 state.resources.money += moneyFound;
-                results.messages.push(`⚡ FLASH ABILITY: Your Electric-type illuminated a hidden stash! Found $${moneyFound}!`);
+                results.messages.push(`⚡ FLASH ABILITY: Your Electric-type illuminated a hidden stash! Found $${moneyFound}!${moneyFound > baseMoneyFound ? ' 💰 PAY DAY!' : ''}`);
             } else if (flashRoll <= 70) {
                 state.resources.potions++;
                 results.messages.push("⚡ FLASH ABILITY: Your Electric-type lit up a hidden Potion!");
@@ -278,9 +279,10 @@
                 }
             } else if (glitchRoll <= 50) {
                 // Random money glitch
-                const glitchMoney = state.rng.randInt(100, 500);
+                const baseGlitchMoney = state.rng.randInt(100, 500);
+                const glitchMoney = PT.Engine.GameState.applyPayDay(state, baseGlitchMoney);
                 state.resources.money += glitchMoney;
-                results.messages.push(`👾 GLITCH ABILITY: Memory overflow! +$${glitchMoney} appeared in your wallet!`);
+                results.messages.push(`👾 GLITCH ABILITY: Memory overflow! +$${glitchMoney} appeared in your wallet!${glitchMoney > baseGlitchMoney ? ' 💰 PAY DAY!' : ''}`);
             } else if (glitchRoll <= 70) {
                 // Heal a random party member to full
                 const injured = PT.Engine.GameState.getAliveParty(state).filter(p => p.hp < p.maxHp);

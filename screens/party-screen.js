@@ -108,9 +108,9 @@
             const desc = {
                 cut: 'Clears obstacles', surf: 'Water travel', fly: 'Scouts ahead',
                 strength: 'Carry more', flash: 'Cave navigation', dig: 'Escape events',
-                fire: 'Efficient cooking', heal: 'Passive healing', psychic: 'Predict events',
+                fire: 'Efficient cooking', heal: 'Passive healing', psychic: 'Foresight: pick encounters/events',
                 poison: 'Repel encounters', guard: 'Defensive bonus', intimidate: '+15% catch rate',
-                psychic: 'Foresight: pick encounters/events'
+                payday: '+50% money from all rewards', safeguard: 'Save a Pokemon from death once'
             };
             return `${ability}: ${desc[ability] || '???'} (x${count})`;
         });

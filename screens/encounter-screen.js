@@ -420,13 +420,14 @@
             }
 
             // Reward: small money bounty
-            const moneyReward = pokemon.rarity === 'legendary' ? 500 : pokemon.rarity === 'rare' ? 200 : pokemon.rarity === 'uncommon' ? 100 : 50;
+            const baseMoneyReward = pokemon.rarity === 'legendary' ? 500 : pokemon.rarity === 'rare' ? 200 : pokemon.rarity === 'uncommon' ? 100 : 50;
+            const moneyReward = PT.Engine.GameState.applyPayDay(state, baseMoneyReward);
             state.resources.money += moneyReward;
 
             msgEl.innerHTML = `
                 <div style="text-align: center;">
                     <strong>${chosen.name} defeated wild ${pokemon.name}!</strong>
-                    <br>Won $${moneyReward}!${evoLine}${starLine}
+                    <br>Won $${moneyReward}!${moneyReward > baseMoneyReward ? ' 💰 PAY DAY!' : ''}${evoLine}${starLine}
                     <br><span style="font-size: 6px;">Win chance was ${chance}%${battleBonuses.length > 0 ? ' (' + battleBonuses.join(', ') + ')' : ''}</span>
                 </div>
             `;
