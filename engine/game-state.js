@@ -178,6 +178,27 @@
         return amount;
     }
 
+    // Evolution stage: 1 = base, 2 = mid, 3 = final/single-stage
+    function getEvoStage(pokemonId) {
+        const data = PT.Data.Pokemon.find(p => p.id === pokemonId);
+        if (!data) return 3;
+        const hasEvo = !!data.evolvesTo;
+        const evolvesFrom = PT.Data.Pokemon.some(p => {
+            if (!p.evolvesTo) return false;
+            if (Array.isArray(p.evolvesTo)) return p.evolvesTo.includes(pokemonId);
+            return p.evolvesTo === pokemonId;
+        });
+        if (!hasEvo && !evolvesFrom) return 3; // single-stage (Snorlax, Kangaskhan)
+        if (hasEvo && !evolvesFrom) return 1;  // base form (Charmander)
+        if (hasEvo && evolvesFrom) return 2;   // mid evo (Charmeleon)
+        return 3;                              // final evo (Charizard)
+    }
+
+    // Food consumption per Pokemon based on evo stage
+    function getFoodCost(pokemon) {
+        return getEvoStage(pokemon.id); // 1, 2, or 3
+    }
+
     function hasType(state, type) {
         return getAliveParty(state).some(p => p.types.includes(type));
     }
@@ -403,6 +424,8 @@
         isFinalEvolution,
         pokemonToFood,
         applyPayDay,
+        getEvoStage,
+        getFoodCost,
         saveGame,
         loadGame,
         hasSaveGame,

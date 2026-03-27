@@ -47,9 +47,12 @@
             }
         }
 
-        // --- Food consumption ---
-        const aliveCount = Math.max(1, PT.Engine.GameState.getAliveParty(state).length);
-        const foodConsumed = Math.ceil(aliveCount * pace.foodMult);
+        // --- Food consumption (weighted by evo stage) ---
+        const aliveParty = PT.Engine.GameState.getAliveParty(state);
+        const baseFood = aliveParty.length > 0
+            ? aliveParty.reduce((sum, p) => sum + PT.Engine.GameState.getFoodCost(p), 0)
+            : 1;
+        const foodConsumed = Math.ceil(baseFood * pace.foodMult);
         state.resources.food = Math.max(0, state.resources.food - foodConsumed);
         results.messages.push(`Party consumed ${foodConsumed} food.`);
 
