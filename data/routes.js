@@ -573,7 +573,7 @@
             id: "indigo_plateau",
             name: "Indigo Plateau",
             description: "Victory Road — the final stretch before the Pokemon League.",
-            distanceToNext: 30,
+            distanceToNext: 50,
             terrain: "mountain",
             hasShop: true,
             hasCenter: true,

@@ -193,13 +193,13 @@
         render(container, state) {
             const route = PT.Engine.GameState.getCurrentRoute(state);
 
-            // Pokemon League — never show travel screen, go straight to E4
+            // Pokemon League — show mandatory Pokemon Center heal, then E4
             if (route.id === 'pokemon_league') {
                 if (state.hasWon) {
                     PT.App.goto('VICTORY');
-                } else {
-                    PT.App.goto('ELITEFOUR');
+                    return;
                 }
+                showE4PokemonCenter(container, state);
                 return;
             }
 
@@ -636,6 +636,43 @@
         }
     };
 
+    function showE4PokemonCenter(container, state) {
+        // Full heal all alive party members
+        PT.Engine.GameState.getAliveParty(state).forEach(p => {
+            p.hp = p.maxHp;
+            p.status = 'healthy';
+        });
+
+        const partyHtml = state.party.map(p => {
+            return `<div style="display:flex; align-items:center; gap:6px; margin:4px 0;">
+                <img src="${p.spriteUrl}" style="width:28px;height:28px;image-rendering:pixelated;" onerror="this.style.display='none'">
+                <span style="font-size:9px;">${p.name}</span>
+                <span style="font-size:8px;color:var(--gb-dark);">HP ${p.hp}/${p.maxHp} ✔️</span>
+            </div>`;
+        }).join('');
+
+        container.innerHTML = `
+            <div class="screen travel-screen" style="text-align:center;">
+                <div class="event-title" style="font-size:12px;">🏥 POKEMON CENTER</div>
+                <div style="font-size:9px;margin:6px 0;">Welcome to the Indigo Plateau Pokemon Center!</div>
+                <div style="font-size:8px;margin:4px 0;color:var(--gb-dark);">
+                    Nurse Joy: "Your Pokemon are fighting fit! Good luck against the Elite Four!"
+                </div>
+                <div style="border:1px solid var(--gb-dark);padding:8px;margin:8px auto;max-width:220px;text-align:left;">
+                    <div style="font-size:8px;font-weight:bold;margin-bottom:4px;">All Pokemon fully healed!</div>
+                    ${partyHtml}
+                </div>
+                <div style="font-size:7px;color:var(--gb-dark);margin:8px 0;">
+                    ⚠️ There is no turning back. The Elite Four gauntlet begins now.
+                </div>
+                <button class="btn btn-wide" id="btn-e4-begin">ENTER THE ELITE FOUR</button>
+            </div>
+        `;
+        document.getElementById('btn-e4-begin').addEventListener('click', () => {
+            PT.App.goto('ELITEFOUR');
+        });
+    }
+
     function bindPartyClicks(state) {
         document.querySelectorAll('.travel-party-member[data-party-idx]').forEach(el => {
             el.addEventListener('click', () => {
@@ -786,13 +823,8 @@
     function handleArrival(state) {
         const route = PT.Engine.GameState.getCurrentRoute(state);
 
-        // Pokemon League — skip everything, go straight to E4 gauntlet
+        // Pokemon League — handled by render via showE4PokemonCenter
         if (route.id === 'pokemon_league') {
-            if (state.hasWon) {
-                PT.App.goto('VICTORY');
-                return;
-            }
-            PT.App.goto('ELITEFOUR');
             return;
         }
 
