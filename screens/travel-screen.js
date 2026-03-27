@@ -237,6 +237,7 @@
                 <div class="travel-header">
                     <span>Day ${state.daysElapsed} | ${state.trainerName}</span>
                     <span>${state.badges.filter(b => b !== 'champion').length} Badges | ${state.pokedexCaught.length} Caught</span>
+                    <button class="btn-map" id="btn-map" title="Map">🗺️</button>
                 </div>
 
                 <div class="travel-scene" data-time="${timeOfDay}" style="background: ${scene.sky}">
@@ -631,10 +632,72 @@
                 document.getElementById('btn-save-ok').addEventListener('click', () => saveOverlay.remove());
             });
 
+            // Map button
+            document.getElementById('btn-map').addEventListener('click', () => {
+                showMapOverlay(state);
+            });
+
             // Party member click → profile popup
             bindPartyClicks(state);
         }
     };
+
+    function showMapOverlay(state) {
+        const routes = PT.Data.Routes;
+        const currentIdx = state.currentLocationIndex;
+
+        const rows = routes.map((r, i) => {
+            const isCurrent = i === currentIdx;
+            const isVisited = i < currentIdx;
+            const isFuture = i > currentIdx;
+
+            // Icons for amenities
+            const icons = [];
+            if (r.hasCenter) icons.push('🏥');
+            if (r.hasShop) icons.push('🛒');
+            if (r.hasGym) icons.push('⚔️');
+
+            // Distance label
+            const dist = r.distanceToNext > 0 ? `${r.distanceToNext} mi` : '—';
+
+            // Progress on current location
+            let progressText = '';
+            if (isCurrent && r.distanceToNext > 0) {
+                const pct = Math.floor((state.distanceTraveled / r.distanceToNext) * 100);
+                progressText = ` <span style="color:var(--gb-darkest);font-weight:bold;">(${pct}%)</span>`;
+            }
+
+            const style = isCurrent
+                ? 'background:var(--gb-light);font-weight:bold;'
+                : isVisited
+                    ? 'opacity:0.5;'
+                    : '';
+
+            return `<div style="display:flex;align-items:center;gap:4px;padding:3px 6px;font-size:8px;border-bottom:1px solid var(--gb-light);${style}">
+                <span style="width:12px;text-align:center;">${isCurrent ? '▶' : isVisited ? '✓' : '·'}</span>
+                <span style="flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${r.name}</span>
+                <span style="font-size:7px;min-width:36px;text-align:right;">${icons.join('')}</span>
+                <span style="font-size:7px;min-width:32px;text-align:right;">${dist}${progressText}</span>
+            </div>`;
+        }).join('');
+
+        const overlay = document.createElement('div');
+        overlay.className = 'day-recap-overlay';
+        overlay.innerHTML = `
+            <div class="day-recap-popup" style="max-height:80vh;overflow-y:auto;min-width:260px;">
+                <div class="day-recap-title">🗺️ KANTO MAP</div>
+                <div style="font-size:7px;text-align:center;margin-bottom:4px;color:var(--gb-dark);">
+                    🏥 Center &nbsp; 🛒 Mart &nbsp; ⚔️ Gym
+                </div>
+                <div style="border:1px solid var(--gb-dark);border-radius:2px;overflow:hidden;">
+                    ${rows}
+                </div>
+                <button class="btn btn-small day-recap-btn" id="btn-map-close" style="margin-top:8px;">CLOSE</button>
+            </div>
+        `;
+        document.querySelector('.travel-screen').appendChild(overlay);
+        document.getElementById('btn-map-close').addEventListener('click', () => overlay.remove());
+    }
 
     function showE4PokemonCenter(container, state) {
         // Full heal all alive party members

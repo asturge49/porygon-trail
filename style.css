@@ -358,6 +358,16 @@ body {
     background: var(--gb-light);
 }
 
+.btn-map {
+    background: none;
+    border: 1px solid var(--gb-darkest);
+    cursor: pointer;
+    font-size: 10px;
+    padding: 1px 4px;
+    line-height: 1;
+    border-radius: 2px;
+}
+
 .travel-scene {
     height: 140px;
     border: 3px solid var(--gb-darkest);
