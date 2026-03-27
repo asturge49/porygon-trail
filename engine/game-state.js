@@ -77,11 +77,15 @@
         142: 5,                  // Aerodactyl
         143: 5,                  // Snorlax
         149: 5,                  // Dragonite
+        130: 5,                  // Gyarados
         // Tough uncommons → 4 HP
         12: 4, 15: 4,            // Butterfree, Beedrill
         18: 4,                   // Pidgeot
+        95: 4,                   // Onix
         114: 4,                  // Tangela
-        148: 4                   // Dragonair
+        148: 4,                  // Dragonair
+        // Weak → 1 HP
+        129: 1                   // Magikarp
     };
 
     function createPartyPokemon(data, state) {
@@ -286,8 +290,13 @@
         partyMon.rarity = evoData.rarity;
         partyMon.travelAbility = evoData.travelAbility;
         partyMon.spriteUrl = getSpriteUrl(evoData.id);
-        // +1 maxHp on evolution, capped at 6
-        if (partyMon.maxHp < 6) partyMon.maxHp += 1;
+        // Set new maxHp — use override if exists, otherwise +1 capped at 6
+        const evoMaxHp = getMaxHpForPokemon(evoData);
+        if (evoMaxHp > partyMon.maxHp) {
+            partyMon.maxHp = evoMaxHp;
+        } else if (partyMon.maxHp < 6) {
+            partyMon.maxHp += 1;
+        }
         // Heal 1 HP on evolution
         partyMon.hp = Math.min(partyMon.hp + 1, partyMon.maxHp);
         // Track evolution location
