@@ -75,22 +75,16 @@
         // --- Starvation check ---
         if (state.resources.food <= 0) {
             state.starvingDays++;
-            results.messages.push(`No food! Starving for ${state.starvingDays} day(s)!`);
-            if (state.starvingDays >= 3) {
-                state.isGameOver = true;
-                state.gameOverReason = "starvation";
-                results.gameOver = true;
-                results.messages.push("Your team has starved...");
-                return results;
-            }
-            // Starvation damage — hits every party member
+            results.messages.push(`⚠️ No food! Your Pokemon are starving!`);
+            // Starvation damage — hits every alive party member for 1 HP
             const starving = PT.Engine.GameState.getAliveParty(state);
             starving.forEach(p => {
                 PT.Engine.GameState.damagePokemon(p, 1, state);
             });
             if (starving.length > 0) {
-                results.messages.push(`All Pokemon are weakened from hunger! (-1 HP each)`);
+                results.messages.push(`All Pokemon take 1 damage from hunger!`);
             }
+            // Game over happens naturally when all Pokemon faint from damagePokemon
         } else {
             state.starvingDays = 0;
         }

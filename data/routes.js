@@ -28,7 +28,7 @@
             id: "route_1",
             name: "Route 1",
             description: "A short path through tall grass to Viridian City.",
-            distanceToNext: 15,
+            distanceToNext: 28,
             terrain: "route",
             hasShop: false,
             hasCenter: false,
@@ -70,7 +70,7 @@
             id: "viridian_forest",
             name: "Viridian Forest",
             description: "A dense forest crawling with Bug-types.",
-            distanceToNext: 20,
+            distanceToNext: 38,
             terrain: "route",
             hasShop: false,
             hasCenter: false,
@@ -115,7 +115,7 @@
             id: "mt_moon",
             name: "Mt. Moon",
             description: "A treacherous cave filled with Zubat and mystery.",
-            distanceToNext: 25,
+            distanceToNext: 45,
             terrain: "cave",
             hasShop: false,
             hasCenter: false,
@@ -160,10 +160,10 @@
             flavor: "The sound of flowing water fills the air. Nugget Bridge stretches north."
         },
         {
-            id: "route_5_6",
-            name: "Routes 5 & 6",
-            description: "The road south through the underground passage to Vermilion.",
-            distanceToNext: 20,
+            id: "route_5",
+            name: "Route 5",
+            description: "The road south from Cerulean toward the underground passage.",
+            distanceToNext: 30,
             terrain: "route",
             hasShop: false,
             hasCenter: false,
@@ -173,15 +173,38 @@
             encounterTable: [
                 { pokemonId: 16, weight: 15 },  // Pidgey
                 { pokemonId: 52, weight: 15 },  // Meowth
-                { pokemonId: 43, weight: 15 },  // Oddish
-                { pokemonId: 69, weight: 15 },  // Bellsprout
-                { pokemonId: 56, weight: 10 },  // Mankey
-                { pokemonId: 39, weight: 10 },  // Jigglypuff
+                { pokemonId: 43, weight: 18 },  // Oddish
+                { pokemonId: 69, weight: 18 },  // Bellsprout
+                { pokemonId: 39, weight: 12 },  // Jigglypuff
                 { pokemonId: 63, weight: 8 },   // Abra
-                { pokemonId: 96, weight: 12 }   // Drowzee
+                { pokemonId: 96, weight: 14 }   // Drowzee
             ],
             eventPool: ["daycare_dilemma", "mysterious_package"],
-            flavor: "The underground path is dark and damp. Trainers patrol the routes above."
+            flavor: "The Daycare sits along the road. Trainers patrol the grass."
+        },
+        {
+            id: "route_6",
+            name: "Route 6",
+            description: "The underground passage leads out to Vermilion City.",
+            distanceToNext: 30,
+            terrain: "route",
+            hasShop: false,
+            hasCenter: false,
+            hasGym: false,
+            gymLeader: null,
+            encounterRate: 40,
+            encounterTable: [
+                { pokemonId: 16, weight: 12 },  // Pidgey
+                { pokemonId: 52, weight: 15 },  // Meowth
+                { pokemonId: 56, weight: 15 },  // Mankey
+                { pokemonId: 69, weight: 12 },  // Bellsprout
+                { pokemonId: 43, weight: 12 },  // Oddish
+                { pokemonId: 39, weight: 10 },  // Jigglypuff
+                { pokemonId: 96, weight: 14 },  // Drowzee
+                { pokemonId: 100, weight: 10 }  // Voltorb
+            ],
+            eventPool: ["mysterious_package", "team_rocket_ambush"],
+            flavor: "The underground path is dark and damp. Vermilion's port looms ahead."
         },
         {
             id: "vermilion_city",
@@ -214,7 +237,7 @@
             id: "route_8_rock_tunnel",
             name: "Route 8 / Rock Tunnel",
             description: "A dark tunnel with no natural light. Flash is essential.",
-            distanceToNext: 20,
+            distanceToNext: 38,
             terrain: "cave",
             hasShop: false,
             hasCenter: false,
@@ -260,7 +283,7 @@
             id: "route_8_celadon",
             name: "Route 7",
             description: "A short route connecting Lavender Town to Celadon City.",
-            distanceToNext: 15,
+            distanceToNext: 28,
             terrain: "route",
             hasShop: false,
             hasCenter: false,
@@ -339,7 +362,7 @@
             id: "cycling_road",
             name: "Cycling Road",
             description: "A steep downhill road popular with bikers.",
-            distanceToNext: 25,
+            distanceToNext: 45,
             terrain: "route",
             hasShop: false,
             hasCenter: false,
@@ -394,7 +417,7 @@
             id: "sea_route",
             name: "Sea Route 19-20",
             description: "Open ocean south of Fuchsia. Strong currents.",
-            distanceToNext: 20,
+            distanceToNext: 38,
             terrain: "water",
             hasShop: false,
             hasCenter: false,
@@ -417,7 +440,7 @@
             id: "seafoam_islands",
             name: "Seafoam Islands",
             description: "Frozen caves surrounded by treacherous seas.",
-            distanceToNext: 20,
+            distanceToNext: 38,
             terrain: "water",
             hasShop: false,
             hasCenter: false,
@@ -472,7 +495,7 @@
             id: "route_21",
             name: "Route 21",
             description: "A long ocean route back to the mainland.",
-            distanceToNext: 25,
+            distanceToNext: 45,
             terrain: "water",
             hasShop: false,
             hasCenter: false,
@@ -524,7 +547,7 @@
             id: "route_22_23",
             name: "Route 22-23",
             description: "The winding path to Victory Road. Badge check gates ahead.",
-            distanceToNext: 20,
+            distanceToNext: 38,
             terrain: "route",
             hasShop: false,
             hasCenter: false,
@@ -550,7 +573,7 @@
             id: "indigo_plateau",
             name: "Indigo Plateau",
             description: "Victory Road — the final stretch before the Pokemon League.",
-            distanceToNext: 15,
+            distanceToNext: 30,
             terrain: "mountain",
             hasShop: true,
             hasCenter: true,
