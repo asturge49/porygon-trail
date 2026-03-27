@@ -80,11 +80,13 @@
                 results.messages.push("Your team has starved...");
                 return results;
             }
-            // Starvation damage
-            const victim = state.rng.pick(PT.Engine.GameState.getAliveParty(state));
-            if (victim) {
-                PT.Engine.GameState.damagePokemon(victim, 1, state);
-                results.messages.push(`${victim.name} is weakened from hunger!`);
+            // Starvation damage — hits every party member
+            const starving = PT.Engine.GameState.getAliveParty(state);
+            starving.forEach(p => {
+                PT.Engine.GameState.damagePokemon(p, 1, state);
+            });
+            if (starving.length > 0) {
+                results.messages.push(`All Pokemon are weakened from hunger! (-1 HP each)`);
             }
         } else {
             state.starvingDays = 0;
