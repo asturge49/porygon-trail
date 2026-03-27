@@ -1154,7 +1154,8 @@ body {
 }
 
 .travel-hp-text {
-    font-size: 5px;
+    font-size: 7px;
+    font-weight: bold;
     color: var(--gb-dark);
 }
 
