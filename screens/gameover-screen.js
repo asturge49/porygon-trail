@@ -31,10 +31,16 @@
                 won: false
             });
 
-            // Build memorial Pokemon grid from pokedex
+            // Build memorial Pokemon grid — only show highest evo form caught
+            const caughtSet = new Set(state.pokedexCaught);
             const caughtPokemon = state.pokedexCaught.map(id => {
                 const data = PT.Data.Pokemon.find(p => p.id === id);
                 if (!data) return null;
+                // Skip if this Pokemon evolves into something we also caught
+                if (data.evolvesTo) {
+                    const evos = Array.isArray(data.evolvesTo) ? data.evolvesTo : [data.evolvesTo];
+                    if (evos.some(evoId => caughtSet.has(evoId))) return null;
+                }
                 return {
                     name: data.name,
                     spriteUrl: PT.Engine.GameState.getSpriteUrl(id)
@@ -54,7 +60,7 @@
                 </div>
 
                 <div class="memorial-section">
-                    <div class="memorial-label">~ Pokemon Encountered ~</div>
+                    <div class="memorial-label">~ Pokemon Caught ~</div>
                     <div class="memorial-pokemon-grid">
                         ${caughtPokemon.map(p => `
                             <div class="memorial-pokemon">
@@ -91,7 +97,7 @@
                 </div>
 
                 <div class="btn-row" style="width: 100%; max-width: 500px;">
-                    <button class="btn flex-1" id="btn-retry">TRY AGAIN</button>
+                    <button class="btn flex-1" id="btn-retry">MAIN MENU</button>
                     <button class="btn flex-1" id="btn-leaderboard">LEADERBOARD</button>
                 </div>
             `;
