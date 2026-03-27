@@ -6296,6 +6296,145 @@
                     ]
                 }
             ]
+        },
+
+        // ===== BATTLE STAR EVENTS =====
+        {
+            id: "dojo_master",
+            type: "dilemma",
+            name: "The Wandering Dojo Master!",
+            description: "A weathered martial artist stands in a clearing, surrounded by defeated wild Pokemon. \"I travel Kanto seeking worthy trainers. Show me your strongest — if they impress me, I'll teach them the way of the warrior.\"",
+            weight: 6,
+            oneTime: false,
+            minDay: 8,
+            choices: [
+                {
+                    text: "Accept his challenge",
+                    eventBattle: {
+                        pool: "fighting_wild",
+                        difficulty: "hard",
+                        trainerName: "Dojo Master",
+                        winNarration: "The master bows deeply. \"Excellent form. Your Pokemon has true fighting spirit.\" He spends hours honing their battle instincts.",
+                        lossNarration: "\"Not yet ready,\" the master says. \"But defeat is a teacher too.\"",
+                        winEffects: { grantStar: true },
+                        lossEffects: { partyDamage: 1 }
+                    }
+                },
+                {
+                    text: "\"We'll pass, thanks.\"",
+                    outcomes: [
+                        { weight: 100, narration: "The master nods. \"The wise trainer knows when to fight and when to walk away.\" He returns to his meditation.", effects: {} }
+                    ]
+                }
+            ]
+        },
+        {
+            id: "victory_road_trial",
+            type: "story",
+            name: "The Victory Road Trial!",
+            description: "Deep in a mountain cave, you find an ancient stone altar covered in claw marks from generations of powerful Pokemon. An inscription reads: \"Those who survive the trial of endurance emerge stronger.\" The cave rumbles ominously.",
+            weight: 5,
+            oneTime: true,
+            minDay: 15,
+            choices: [
+                {
+                    text: "Take the trial",
+                    outcomes: [
+                        { weight: 50, narration: "The cave collapses around you! Your team fights through falling rocks and wild Onix. They emerge battered but battle-hardened — true veterans.", effects: { partyDamage: 2, grantStar: true } },
+                        { weight: 30, narration: "Wild Pokemon attack from all sides! Your team barely makes it through, but the experience forges them into seasoned fighters.", effects: { partyDamage: 1, grantStar: true } },
+                        { weight: 20, narration: "The trial is brutal. Rocks fall and wild Pokemon swarm. Your team suffers heavy injuries pushing through.", effects: { partyDamage: 3 } }
+                    ]
+                },
+                {
+                    text: "Leave it alone",
+                    outcomes: [
+                        { weight: 100, narration: "You back away from the altar. Some things are better left undisturbed.", effects: {} }
+                    ]
+                }
+            ]
+        },
+        {
+            id: "retired_ace_trainer",
+            type: "story",
+            name: "The Retired Ace Trainer!",
+            description: "A former Ace Trainer sits by a campfire, polishing old badges. \"I used to be #3 in all of Kanto. My training days are over, but I can still teach a thing or two. It won't be easy though — real training never is.\"",
+            weight: 6,
+            oneTime: false,
+            minDay: 10,
+            choices: [
+                {
+                    text: "\"Train my team!\" (Costs $500)",
+                    requiresMoney: 500,
+                    outcomes: [
+                        { weight: 60, narration: "The Ace Trainer runs brutal drills until sundown. Your Pokemon are exhausted, but one of them breaks through to a new level of strength.", effects: { money: -500, grantStar: true } },
+                        { weight: 40, narration: "The training is intense. Your team improves overall, but nobody quite reaches that breakthrough moment. \"Come back when they're ready,\" she says.", effects: { money: -500, food: 5 } }
+                    ]
+                },
+                {
+                    text: "\"Any tips for free?\"",
+                    outcomes: [
+                        { weight: 60, narration: "She laughs. \"Free advice? Fine — stock up on potions before Victory Road. That one's free.\" She tosses you a spare.", effects: { potions: 2 } },
+                        { weight: 40, narration: "\"Nothing in life is free, kid.\" She turns back to her badges.", effects: {} }
+                    ]
+                }
+            ]
+        },
+        {
+            id: "wild_tournament",
+            type: "combat",
+            name: "The Underground Pokemon Tournament!",
+            description: "You stumble upon a secret underground tournament. Trainers from all over Kanto have gathered. \"Entry fee is $300,\" says the organizer. \"Winner takes glory and their Pokemon gets recognized as a true champion fighter.\"",
+            weight: 5,
+            oneTime: false,
+            minDay: 12,
+            choices: [
+                {
+                    text: "Enter the tournament ($300)",
+                    requiresMoney: 300,
+                    eventBattle: {
+                        pool: "trainer_battle",
+                        difficulty: "hard",
+                        trainerName: "Tournament Fighter",
+                        winNarration: "Your Pokemon dominates the bracket! The crowd erupts. Your fighter is recognized as a tournament champion — a true battle-tested warrior.",
+                        lossNarration: "A tough loss in the semi-finals. The crowd groans. \"Better luck next time, kid.\"",
+                        winEffects: { money: 400, grantStar: true },
+                        lossEffects: { money: -300, partyDamage: 1 }
+                    }
+                },
+                {
+                    text: "Watch from the crowd",
+                    outcomes: [
+                        { weight: 70, narration: "You watch some incredible battles. Studying the techniques gives you ideas for your own team.", effects: { money: -50 } },
+                        { weight: 30, narration: "You spot a trainer drop some cash in the chaos. Finders keepers.", effects: { money: 100 } }
+                    ]
+                }
+            ]
+        },
+        {
+            id: "legendary_shrine",
+            type: "story",
+            name: "The Shrine of Trials!",
+            description: "Hidden behind a waterfall, an ancient shrine glows with mysterious energy. Stone carvings depict Pokemon growing stronger through sacrifice. An offering bowl sits before the shrine — it seems to want food.",
+            weight: 4,
+            oneTime: true,
+            minDay: 10,
+            choices: [
+                {
+                    text: "Offer 20 food to the shrine",
+                    requiresItem: "food",
+                    outcomes: [
+                        { weight: 70, narration: "The shrine erupts with light! Ancient energy flows through your team. One of your Pokemon absorbs it fully — their battle instincts sharpen to a razor's edge.", effects: { food: -20, grantStar: true } },
+                        { weight: 30, narration: "The shrine glows briefly, then fades. The energy heals your team and blesses your journey, but the ancient power wasn't quite enough for a breakthrough.", effects: { food: -20, healAll: true, money: 200 } }
+                    ]
+                },
+                {
+                    text: "Pray without offering",
+                    outcomes: [
+                        { weight: 50, narration: "A warm light washes over your team. You feel refreshed.", effects: { healOne: true } },
+                        { weight: 50, narration: "Nothing happens. The shrine seems to be waiting for something more.", effects: {} }
+                    ]
+                }
+            ]
         }
     ];
 })();

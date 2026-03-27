@@ -277,6 +277,9 @@
         if (effects.reducePokemonMaxHp && effects._reduceResult) {
             lines.push(`⬇ ${effects._reduceResult.name} max HP: ${effects._reduceResult.oldMax} → ${effects._reduceResult.newMax}!`);
         }
+        if (effects.grantStar && effects._starResult) {
+            lines.push(`⭐ ${effects._starResult.name} earned a Battle Star! [${'★'.repeat(effects._starResult.stars)}] (${effects._starResult.stars}/3)`);
+        }
         if (effects.champion) lines.push('YOU BECAME CHAMPION!');
         if (effects.pokemonDeath && effects._deathResult && effects._deathResult.killed) {
             lines.push(`💀 ${effects._deathResult.name} was lost forever!`);

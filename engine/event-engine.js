@@ -389,6 +389,22 @@
             }
         }
 
+        // Grant Battle Star to a random eligible party member
+        if (effects.grantStar) {
+            const alive = PT.Engine.GameState.getAliveParty(state);
+            const eligible = alive.filter(p => {
+                if (!PT.Engine.GameState.isFinalEvolution(p)) return false;
+                return (p.battleStars || 0) < 3;
+            });
+            if (eligible.length > 0) {
+                const target = state.rng.pick(eligible);
+                target.battleStars = (target.battleStars || 0) + 1;
+                effects._starResult = { name: target.name, stars: target.battleStars };
+            } else {
+                effects._starResult = null; // no eligible mon
+            }
+        }
+
         // Reduce a random Pokemon's max HP permanently
         if (effects.reducePokemonMaxHp) {
             const alive = PT.Engine.GameState.getAliveParty(state);
