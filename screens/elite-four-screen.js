@@ -222,12 +222,9 @@
             battleBonuses.push(`${'★'.repeat(pokemon.battleStars || 0)} +${starBonus.winChanceBonus}%`);
         }
 
-        // E4 scaling — Elite Four adapts to experienced teams (harsher than gyms)
-        const avgStars = aliveCount > 0
-            ? PT.Engine.GameState.getAliveParty(state).reduce((s, p) => s + (p.battleStars || 0), 0) / aliveCount
-            : 0;
-        const e4Scaling = Math.floor(avgStars * 2);
-        if (e4Scaling > 0) chance -= e4Scaling;
+        // E4 flat scaling — expects you to have a 3-star Pokemon (+9% offset)
+        const e4Scaling = 9;
+        chance -= e4Scaling;
 
         // Hard ceiling — even perfect conditions can't guarantee victory
         chance = Math.max(8, Math.min(55, chance));

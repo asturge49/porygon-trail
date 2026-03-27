@@ -164,11 +164,10 @@
             battleBonuses.push(`${'★'.repeat(pokemon.battleStars || 0)} +${starBonus.winChanceBonus}%`);
         }
 
-        // Gym scaling — leaders are tougher against experienced teams
-        const avgStars = aliveCount > 0
-            ? PT.Engine.GameState.getAliveParty(state).reduce((s, p) => s + (p.battleStars || 0), 0) / aliveCount
-            : 0;
-        const gymScaling = Math.floor(avgStars * 1.5);
+        // Gym progressive scaling — later gyms expect battle-hardened Pokemon
+        // Scales from 0 (1st gym) to -9% (8th gym, Giovanni), matching max 3-star bonus
+        const badgeCount = state.badges.filter(b => b !== 'champion').length;
+        const gymScaling = Math.floor((badgeCount / 7) * 9); // 0,1,2,3,5,6,7,9
         if (gymScaling > 0) chance -= gymScaling;
 
         // Clamp
