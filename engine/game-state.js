@@ -334,8 +334,9 @@
     }
 
     // ===== BATTLE STARS =====
-    // 3-star cap. Thresholds: 1 win, 3 wins, 6 wins
-    const STAR_THRESHOLDS = [1, 3, 6];
+    // 1 star per win, cap at 3. Only final evolutions earn stars.
+    // The win that triggers evolution does NOT count.
+    // Only one star per location.
 
     // Check if a Pokemon is at its final evolution (no evolvesTo)
     function isFinalEvolution(pokemon) {
@@ -343,9 +344,9 @@
         return data && !data.evolvesTo;
     }
 
-    // Award a battle win. Returns { earned: bool, reason: string|null }
-    // Only final evolutions can earn stars, and only once per location.
-    function addBattleWin(pokemon, state) {
+    // Award a battle win. Returns { earned: bool, reason: string|null, evolved: bool }
+    // Call AFTER evolution check — if the mon just evolved this fight, skip the star.
+    function addBattleWin(pokemon, state, justEvolved) {
         pokemon.battleWins = (pokemon.battleWins || 0) + 1;
 
         // Must be final evolution to earn stars
@@ -353,7 +354,12 @@
             return { earned: false, reason: 'not_final_evo' };
         }
 
-        // Already max stars
+        // The win that caused evolution doesn't count toward stars
+        if (justEvolved) {
+            return { earned: false, reason: 'evolution_win' };
+        }
+
+        // Already max stars (3)
         if ((pokemon.battleStars || 0) >= 3) {
             return { earned: false, reason: 'max_stars' };
         }
@@ -364,20 +370,10 @@
             return { earned: false, reason: 'location_limit' };
         }
 
-        // Check if wins cross the NEXT threshold (only award +1 star at a time)
-        const oldStars = pokemon.battleStars || 0;
-        const nextThreshold = STAR_THRESHOLDS[oldStars]; // threshold for next star
-        if (nextThreshold === undefined || pokemon.battleWins < nextThreshold) {
-            return { earned: false, reason: 'no_threshold' };
-        }
-        const newStars = oldStars + 1;
-        pokemon.battleStars = newStars;
-
-        if (newStars > oldStars) {
-            pokemon.lastStarLocation = currentLoc;
-            return { earned: true, reason: null };
-        }
-        return { earned: false, reason: 'no_threshold' };
+        // Award +1 star
+        pokemon.battleStars = (pokemon.battleStars || 0) + 1;
+        pokemon.lastStarLocation = currentLoc;
+        return { earned: true, reason: null };
     }
 
     function getStarBonus(pokemon) {

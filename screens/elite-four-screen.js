@@ -239,21 +239,21 @@
             // Victory against this E4 member
             if (PT.Engine.Audio) PT.Engine.Audio.gymVictory();
 
-            // Award battle star
-            const starResult = PT.Engine.GameState.addBattleWin(pokemon, state);
-            let starLine = '';
-            if (starResult.earned) {
-                starLine = `<br>⭐ ${pokemon.name} earned a Battle Star! [${'★'.repeat(pokemon.battleStars)}] (${pokemon.battleStars}/3)`;
-            }
-
             PT.Engine.GameState.addToLog(state, `Defeated ${trainer.name}'s ${opponent.name} in the Elite Four!`);
 
-            // Try evolution
+            // Try evolution FIRST
             const evoResult = PT.Engine.GameState.evolvePokemon(pokemon, state);
             let evoLine = '';
             if (evoResult.evolved) {
                 evoLine = `<br>${evoResult.oldName} evolved into ${evoResult.newName}!`;
                 PT.Engine.GameState.addToLog(state, `${evoResult.oldName} evolved into ${evoResult.newName}!`);
+            }
+
+            // Award battle star (evolution win doesn't count)
+            const starResult = PT.Engine.GameState.addBattleWin(pokemon, state, evoResult.evolved);
+            let starLine = '';
+            if (starResult.earned) {
+                starLine = `<br>⭐ ${pokemon.name} earned a Battle Star! [${'★'.repeat(pokemon.battleStars)}] (${pokemon.battleStars}/3)`;
             }
 
             const isLastBattle = e4Index >= PT.Data.EliteFour.length - 1;

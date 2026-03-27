@@ -402,21 +402,21 @@
         if (won) {
             if (PT.Engine.Audio) PT.Engine.Audio.gymVictory();
 
-            // Award battle star
-            const starResult = PT.Engine.GameState.addBattleWin(chosen, state);
-            let starLine = '';
-            if (starResult.earned) {
-                starLine = `<br>⭐ ${chosen.name} earned a Battle Star! [${'★'.repeat(chosen.battleStars)}] (${chosen.battleStars}/3)`;
-            }
-
             PT.Engine.GameState.addToLog(state, `${chosen.name} defeated wild ${pokemon.name}!`);
 
-            // Try to evolve the battler
+            // Try to evolve the battler FIRST
             const evoResult = PT.Engine.GameState.evolvePokemon(chosen, state);
             let evoLine = '';
             if (evoResult.evolved) {
                 evoLine = `<br>${evoResult.oldName} evolved into ${evoResult.newName}!`;
                 PT.Engine.GameState.addToLog(state, `${evoResult.oldName} evolved into ${evoResult.newName}!`);
+            }
+
+            // Award battle star (evolution win doesn't count)
+            const starResult = PT.Engine.GameState.addBattleWin(chosen, state, evoResult.evolved);
+            let starLine = '';
+            if (starResult.earned) {
+                starLine = `<br>⭐ ${chosen.name} earned a Battle Star! [${'★'.repeat(chosen.battleStars)}] (${chosen.battleStars}/3)`;
             }
 
             // Reward: small money bounty

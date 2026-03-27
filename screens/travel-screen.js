@@ -642,7 +642,7 @@
         // Stars display
         const stars = pokemon.battleStars || 0;
         const starsDisplay = stars > 0 ? '★'.repeat(stars) + '☆'.repeat(3 - stars) : '☆☆☆';
-        const nextThreshold = [1, 3, 6].find(t => t > (pokemon.battleWins || 0));
+        const canEarnMore = isFinal && stars < 3;
 
         // Food cost
         const foodCost = PT.Engine.GameState.getFoodCost ? PT.Engine.GameState.getFoodCost(pokemon) : '?';
@@ -691,7 +691,7 @@
 
                 <div class="profile-section">
                     <div class="profile-row"><span class="profile-label">Battle Record:</span> ${pokemon.battleWins || 0} win${(pokemon.battleWins || 0) !== 1 ? 's' : ''}</div>
-                    <div class="profile-row"><span class="profile-label">Stars:</span> <span class="battle-stars profile-stars">${starsDisplay}</span> (${stars}/3)${!isFinal ? ' <span class="profile-hint">needs final evo</span>' : nextThreshold ? ` <span class="profile-hint">next at ${nextThreshold} wins</span>` : ''}</div>
+                    <div class="profile-row"><span class="profile-label">Stars:</span> <span class="battle-stars profile-stars">${starsDisplay}</span> (${stars}/3)${!isFinal ? ' <span class="profile-hint">needs final evo</span>' : canEarnMore ? ' <span class="profile-hint">next win = next star</span>' : stars >= 3 ? ' <span class="profile-hint">MAX</span>' : ''}</div>
                     ${pokemon._safeguarded ? '<div class="profile-row"><span class="profile-label">Safeguard:</span> <span class="profile-hint">Already saved once — no more protection</span></div>' : ''}
                 </div>
 

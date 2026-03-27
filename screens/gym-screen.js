@@ -185,22 +185,22 @@
             const gymMoneyReward = PT.Engine.GameState.applyPayDay(state, leader.reward.money);
             state.resources.money += gymMoneyReward;
 
-            // Award battle star
-            const starResult = PT.Engine.GameState.addBattleWin(pokemon, state);
-            let starLine = '';
-            if (starResult.earned) {
-                starLine = `<br>⭐ ${pokemon.name} earned a Battle Star! [${'★'.repeat(pokemon.battleStars)}] (${pokemon.battleStars}/3)`;
-            }
-
             PT.Engine.GameState.addToLog(state, `Defeated ${leader.name}'s ${opponent.name}! Got ${leader.badge}!`);
             if (PT.Engine.Audio) PT.Engine.Audio.gymVictory();
 
-            // Try to evolve the chosen Pokemon after gym victory
+            // Try to evolve FIRST
             const evoResult = PT.Engine.GameState.evolvePokemon(pokemon, state);
             let evoLine = '';
             if (evoResult.evolved) {
                 evoLine = `<br>${evoResult.oldName} evolved into ${evoResult.newName}!`;
                 PT.Engine.GameState.addToLog(state, `${evoResult.oldName} evolved into ${evoResult.newName}!`);
+            }
+
+            // Award battle star (evolution win doesn't count)
+            const starResult = PT.Engine.GameState.addBattleWin(pokemon, state, evoResult.evolved);
+            let starLine = '';
+            if (starResult.earned) {
+                starLine = `<br>⭐ ${pokemon.name} earned a Battle Star! [${'★'.repeat(pokemon.battleStars)}] (${pokemon.battleStars}/3)`;
             }
 
             div.innerHTML = `
