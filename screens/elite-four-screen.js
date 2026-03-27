@@ -187,7 +187,7 @@
         const typeChart = getTypeWeaknesses(opponentTypes);
 
         // Calculate success chance — BRUTAL Elite Four
-        let chance = 30; // Base 30% (was 35%, gym is 45%)
+        let chance = 25; // Base 25% — the E4 is meant to be punishing
         let battleBonuses = [];
 
         // Type advantage (smaller bonus than gyms)
@@ -223,7 +223,7 @@
         }
 
         // E4 flat scaling — expects you to have a 3-star Pokemon (+9% offset)
-        const e4Scaling = 9;
+        const e4Scaling = 12;
         chance -= e4Scaling;
 
         // Hard ceiling — even perfect conditions can't guarantee victory
