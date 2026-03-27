@@ -224,7 +224,7 @@
                 btn.addEventListener('click', () => {
                     const idx = parseInt(btn.dataset.idx);
                     const replaced = state.party[idx];
-                    const newMember = PT.Engine.GameState.createPartyPokemon(pokemonData);
+                    const newMember = PT.Engine.GameState.createPartyPokemon(pokemonData, state);
                     state.party[idx] = newMember;
                     PT.Engine.GameState.addToLog(state, `Swapped ${replaced.name} for ${pokemon.name}!`);
                     if (PT.Engine.Audio) PT.Engine.Audio.buy();

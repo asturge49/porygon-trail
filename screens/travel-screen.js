@@ -306,8 +306,8 @@
                 </div>
 
                 <div class="travel-party-hp" id="travel-party-hp">
-                    ${state.party.map(p => `
-                        <div class="travel-party-member ${p.hp <= 1 ? 'critical' : ''}">
+                    ${state.party.map((p, idx) => `
+                        <div class="travel-party-member ${p.hp <= 1 ? 'critical' : ''}" data-party-idx="${idx}" style="cursor:pointer;">
                             <img class="travel-party-sprite" src="${p.spriteUrl}" alt="${p.name}" onerror="this.style.display='none'">
                             <div class="travel-party-info">
                                 <div class="travel-party-name">${p.name}</div>
@@ -409,8 +409,8 @@
                 // Update party HP display in real-time behind the popup
                 const hpPanel = document.getElementById('travel-party-hp');
                 if (hpPanel) {
-                    hpPanel.innerHTML = state.party.map(p => `
-                        <div class="travel-party-member ${p.hp <= 1 ? 'critical' : ''}">
+                    hpPanel.innerHTML = state.party.map((p, idx) => `
+                        <div class="travel-party-member ${p.hp <= 1 ? 'critical' : ''}" data-party-idx="${idx}" style="cursor:pointer;">
                             <img class="travel-party-sprite" src="${p.spriteUrl}" alt="${p.name}" onerror="this.style.display='none'">
                             <div class="travel-party-info">
                                 <div class="travel-party-name">${p.name}</div>
@@ -421,6 +421,7 @@
                             </div>
                         </div>
                     `).join('');
+                    bindPartyClicks(state);
                 }
 
                 document.getElementById('btn-recap-ok').addEventListener('click', () => {
@@ -604,8 +605,158 @@
                 document.querySelector('.travel-screen').appendChild(saveOverlay);
                 document.getElementById('btn-save-ok').addEventListener('click', () => saveOverlay.remove());
             });
+
+            // Party member click → profile popup
+            bindPartyClicks(state);
         }
     };
+
+    function bindPartyClicks(state) {
+        document.querySelectorAll('.travel-party-member[data-party-idx]').forEach(el => {
+            el.addEventListener('click', () => {
+                const idx = parseInt(el.dataset.partyIdx);
+                const pokemon = state.party[idx];
+                if (pokemon) showPokemonProfile(pokemon, idx, state);
+            });
+        });
+    }
+
+    function showPokemonProfile(pokemon, partyIndex, state) {
+        const abilityDesc = {
+            cut: 'Clears obstacles', surf: 'Water travel', fly: 'Scouts ahead',
+            strength: 'Carry more', flash: 'Cave navigation', dig: 'Escape events',
+            fire: 'Efficient cooking', heal: 'Passive healing', psychic: 'Foresight: pick encounters/events',
+            poison: 'Repel encounters', guard: 'Defensive bonus', intimidate: '+15% catch rate',
+            payday: '+50% money rewards', safeguard: 'Save a Pokemon from death once',
+            system_restore: 'Revive one lost Pokemon (once per game)', glitch: 'Unpredictable effects'
+        };
+
+        // Evolution chain
+        const evoChain = PT.Engine.GameState.getEvoChain(pokemon.id);
+        const evoStage = evoChain.findIndex(e => e.id === pokemon.id) + 1;
+        const evoChainDisplay = evoChain.map(e =>
+            e.id === pokemon.id ? `<strong>[${e.name}]</strong>` : e.name
+        ).join(' → ');
+        const isFinal = PT.Engine.GameState.isFinalEvolution(pokemon);
+
+        // Stars display
+        const stars = pokemon.battleStars || 0;
+        const starsDisplay = stars > 0 ? '★'.repeat(stars) + '☆'.repeat(3 - stars) : '☆☆☆';
+        const nextThreshold = [1, 3, 6].find(t => t > (pokemon.battleWins || 0));
+
+        // Food cost
+        const foodCost = PT.Engine.GameState.getFoodCost ? PT.Engine.GameState.getFoodCost(pokemon) : '?';
+
+        // Potion info
+        const hasPotion = state.resources.potions > 0 || state.resources.superPotions > 0;
+        const isSuper = state.resources.superPotions > 0;
+        const potionLabel = isSuper ? 'SUPER POTION (+2)' : 'POTION (+1)';
+        const potionCount = isSuper ? state.resources.superPotions : state.resources.potions;
+        const needsHeal = pokemon.hp < pokemon.maxHp;
+
+        // Rare candy
+        const hasCandy = state.resources.rareCandy > 0;
+        const data = PT.Data.Pokemon.find(p => p.id === pokemon.id);
+        const canEvolve = data && data.evolvesTo;
+
+        // Food amount from butcher
+        const foodAmount = PT.Engine.GameState.pokemonToFood(pokemon.rarity);
+
+        const overlay = document.createElement('div');
+        overlay.className = 'day-recap-overlay';
+        overlay.innerHTML = `
+            <div class="pokemon-profile-popup">
+                <div class="profile-header">
+                    <img class="profile-sprite" src="${pokemon.spriteUrl}" alt="${pokemon.name}"
+                         onerror="this.style.display='none'">
+                    <div class="profile-header-info">
+                        <div class="profile-name">${pokemon.name}</div>
+                        <div class="profile-types">${pokemon.types.join(' / ')} | ${pokemon.rarity.toUpperCase()}</div>
+                        <div class="profile-hp-row">
+                            <div class="profile-hp-bar">
+                                <div class="profile-hp-fill ${pokemon.hp <= 1 ? 'low' : pokemon.hp <= Math.ceil(pokemon.maxHp / 2) ? 'mid' : ''}" style="width:${(pokemon.hp / pokemon.maxHp) * 100}%"></div>
+                            </div>
+                            <span class="profile-hp-text">HP ${pokemon.hp}/${pokemon.maxHp}</span>
+                        </div>
+                        ${pokemon.status !== 'healthy' ? `<div class="profile-status">${pokemon.status.toUpperCase()}</div>` : ''}
+                    </div>
+                </div>
+
+                <div class="profile-section">
+                    <div class="profile-row"><span class="profile-label">Ability:</span> <span>${pokemon.travelAbility || 'none'}</span> <span class="profile-desc">${abilityDesc[pokemon.travelAbility] || ''}</span></div>
+                    <div class="profile-row"><span class="profile-label">Caught:</span> ${pokemon.caughtAt || 'Unknown'} (Day ${pokemon.caughtDay || 0})</div>
+                    <div class="profile-row"><span class="profile-label">Evolution:</span> ${evoChainDisplay} ${isFinal ? '✓ Final' : `(${evoStage}/${evoChain.length})`}</div>
+                    <div class="profile-row"><span class="profile-label">Food/day:</span> ${foodCost} ration${foodCost !== 1 ? 's' : ''}</div>
+                </div>
+
+                <div class="profile-section">
+                    <div class="profile-row"><span class="profile-label">Battle Record:</span> ${pokemon.battleWins || 0} win${(pokemon.battleWins || 0) !== 1 ? 's' : ''}</div>
+                    <div class="profile-row"><span class="profile-label">Stars:</span> <span class="battle-stars profile-stars">${starsDisplay}</span> (${stars}/3)${!isFinal ? ' <span class="profile-hint">needs final evo</span>' : nextThreshold ? ` <span class="profile-hint">next at ${nextThreshold} wins</span>` : ''}</div>
+                    ${pokemon._safeguarded ? '<div class="profile-row"><span class="profile-label">Safeguard:</span> <span class="profile-hint">Already saved once — no more protection</span></div>' : ''}
+                </div>
+
+                <div class="profile-actions">
+                    <button class="btn btn-small profile-action-btn" id="profile-potion" ${!hasPotion || !needsHeal ? 'disabled' : ''}>${potionLabel} (${potionCount})</button>
+                    <button class="btn btn-small profile-action-btn" id="profile-candy" ${!hasCandy || !canEvolve ? 'disabled' : ''}>RARE CANDY (${state.resources.rareCandy})</button>
+                    <button class="btn btn-small profile-action-btn profile-danger-btn" id="profile-butcher" ${state.party.length <= 1 ? 'disabled' : ''}>BUTCHER (+${foodAmount} food)</button>
+                    <button class="btn btn-small profile-action-btn" id="profile-close">CLOSE</button>
+                </div>
+            </div>
+        `;
+        document.querySelector('.travel-screen').appendChild(overlay);
+
+        // Close
+        document.getElementById('profile-close').addEventListener('click', () => overlay.remove());
+
+        // Use Potion
+        document.getElementById('profile-potion').addEventListener('click', () => {
+            if (!hasPotion || !needsHeal) return;
+            const useSuper = state.resources.superPotions > 0;
+            const healAmt = useSuper ? 2 : 1;
+            if (useSuper) state.resources.superPotions--;
+            else state.resources.potions--;
+            const oldHp = pokemon.hp;
+            PT.Engine.GameState.healPokemon(pokemon, healAmt);
+            if (PT.Engine.Audio) PT.Engine.Audio.buy();
+            PT.Engine.GameState.addToLog(state, `Used ${useSuper ? 'Super Potion' : 'Potion'} on ${pokemon.name}. HP: ${oldHp} → ${pokemon.hp}`);
+            overlay.remove();
+            PT.App._render();
+        });
+
+        // Use Rare Candy
+        document.getElementById('profile-candy').addEventListener('click', () => {
+            if (state.resources.rareCandy <= 0 || !canEvolve) return;
+            state.resources.rareCandy--;
+            const evoResult = PT.Engine.GameState.evolvePokemon(pokemon, state);
+            if (PT.Engine.Audio) PT.Engine.Audio.buy();
+            if (evoResult.evolved) {
+                PT.Engine.GameState.addToLog(state, `${evoResult.oldName} evolved into ${evoResult.newName}!`);
+            } else {
+                state.resources.rareCandy++; // refund
+            }
+            overlay.remove();
+            PT.App._render();
+        });
+
+        // Butcher
+        const butcherBtn = document.getElementById('profile-butcher');
+        butcherBtn.addEventListener('click', () => {
+            if (state.party.length <= 1) return;
+            if (butcherBtn.dataset.confirm === 'true') {
+                state.party.splice(partyIndex, 1);
+                state.resources.food += foodAmount;
+                PT.Engine.GameState.addToLog(state, `Butchered ${pokemon.name} for ${foodAmount} food.`);
+                if (PT.Engine.Audio) PT.Engine.Audio.buy();
+                overlay.remove();
+                PT.App._render();
+            } else {
+                butcherBtn.textContent = `CONFIRM BUTCHER ${pokemon.name}?`;
+                butcherBtn.dataset.confirm = 'true';
+                butcherBtn.style.background = 'var(--gb-darkest)';
+                butcherBtn.style.color = 'var(--gb-lightest)';
+            }
+        });
+    }
 
     function handleArrival(state) {
         const route = PT.Engine.GameState.getCurrentRoute(state);

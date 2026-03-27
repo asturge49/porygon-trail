@@ -84,10 +84,11 @@
         148: 4                   // Dragonair
     };
 
-    function createPartyPokemon(data) {
+    function createPartyPokemon(data, state) {
         const baseHp = data.rarity === 'legendary' ? 6 :
                        data.rarity === 'rare' ? 4 : 3;
         const maxHp = HP_OVERRIDES[data.id] !== undefined ? HP_OVERRIDES[data.id] : baseHp;
+        const route = state ? getCurrentRoute(state) : null;
         return {
             id: data.id,
             name: data.name,
@@ -101,7 +102,9 @@
             battleWins: 0,
             battleStars: 0,
             lastStarLocation: -1,  // location index where last star was earned
-            lastEvoLocation: -1    // location index where last evolution happened
+            lastEvoLocation: -1,   // location index where last evolution happened
+            caughtAt: route ? route.name : 'Pallet Town',
+            caughtDay: state ? state.daysElapsed : 0
         };
     }
 
@@ -176,6 +179,35 @@
 
     function hasAbility(state, ability) {
         return getAliveParty(state).some(p => p.travelAbility === ability);
+    }
+
+    // Get the full evolution chain for a pokemon
+    function getEvoChain(pokemonId) {
+        const allPokemon = PT.Data.Pokemon;
+        // Walk backwards to find base form
+        let baseId = pokemonId;
+        let safety = 10;
+        while (safety-- > 0) {
+            const prev = allPokemon.find(p => {
+                if (!p.evolvesTo) return false;
+                if (Array.isArray(p.evolvesTo)) return p.evolvesTo.includes(baseId);
+                return p.evolvesTo === baseId;
+            });
+            if (prev) baseId = prev.id;
+            else break;
+        }
+        // Walk forwards to build chain
+        const chain = [];
+        let currentId = baseId;
+        safety = 10;
+        while (currentId && safety-- > 0) {
+            const data = allPokemon.find(p => p.id === currentId);
+            if (!data) break;
+            chain.push(data);
+            if (!data.evolvesTo) break;
+            currentId = Array.isArray(data.evolvesTo) ? data.evolvesTo[0] : data.evolvesTo;
+        }
+        return chain;
     }
 
     // Pay Day ability — 50% bonus money
@@ -438,6 +470,7 @@
         isFinalEvolution,
         pokemonToFood,
         applyPayDay,
+        getEvoChain,
         getEvoStage,
         getFoodCost,
         saveGame,

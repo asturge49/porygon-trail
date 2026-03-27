@@ -101,7 +101,7 @@
         // Add to party if space
         if (state.party.length < 6) {
             const pokemonData = PT.Data.Pokemon.find(p => p.id === pokemon.id);
-            const partyMember = PT.Engine.GameState.createPartyPokemon(pokemonData);
+            const partyMember = PT.Engine.GameState.createPartyPokemon(pokemonData, state);
             state.party.push(partyMember);
             return { added: true, message: `${pokemon.name} joined your team!` };
         } else {

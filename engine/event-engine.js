@@ -471,7 +471,7 @@
         const data = PT.Data.Pokemon.find(p => p.id === pokemonId);
         if (!data) return;
         if (state.party.length < 6) {
-            state.party.push(PT.Engine.GameState.createPartyPokemon(data));
+            state.party.push(PT.Engine.GameState.createPartyPokemon(data, state));
         } else if (effects) {
             // Party full — flag for swap UI in event screen
             if (!effects._pendingCatch) effects._pendingCatch = [];

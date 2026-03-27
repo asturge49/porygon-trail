@@ -1174,6 +1174,133 @@ body {
     letter-spacing: -0.5px;
 }
 
+/* ---- Pokemon Profile Popup ---- */
+.pokemon-profile-popup {
+    background: var(--gb-white);
+    border: 3px solid var(--gb-darkest);
+    padding: 10px;
+    width: 90%;
+    max-width: 280px;
+    font-size: 8px;
+}
+
+.profile-header {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    margin-bottom: 8px;
+    padding-bottom: 6px;
+    border-bottom: 2px solid var(--gb-dark);
+}
+
+.profile-sprite {
+    width: 48px;
+    height: 48px;
+    image-rendering: pixelated;
+    flex-shrink: 0;
+}
+
+.profile-header-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.profile-name {
+    font-size: 11px;
+    font-weight: bold;
+    color: var(--gb-darkest);
+}
+
+.profile-types {
+    font-size: 7px;
+    color: var(--gb-dark);
+    margin-bottom: 3px;
+}
+
+.profile-hp-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.profile-hp-bar {
+    flex: 1;
+    height: 6px;
+    background: var(--gb-dark);
+    border: 1px solid var(--gb-darkest);
+}
+
+.profile-hp-fill {
+    height: 100%;
+    background: var(--gb-light);
+    transition: width 0.3s ease;
+}
+.profile-hp-fill.mid { background: var(--gb-bg); }
+.profile-hp-fill.low { background: var(--gb-darkest); }
+
+.profile-hp-text {
+    font-size: 8px;
+    font-weight: bold;
+    white-space: nowrap;
+}
+
+.profile-status {
+    font-size: 7px;
+    color: var(--gb-darkest);
+    font-weight: bold;
+}
+
+.profile-section {
+    margin-bottom: 6px;
+    padding-bottom: 4px;
+    border-bottom: 1px solid var(--gb-light);
+}
+
+.profile-row {
+    margin: 2px 0;
+    font-size: 7px;
+    line-height: 1.4;
+}
+
+.profile-label {
+    font-weight: bold;
+    color: var(--gb-darkest);
+}
+
+.profile-desc {
+    color: var(--gb-dark);
+    font-style: italic;
+}
+
+.profile-hint {
+    color: var(--gb-dark);
+    font-size: 6px;
+    font-style: italic;
+}
+
+.profile-stars {
+    font-size: 9px;
+    letter-spacing: 0;
+}
+
+.profile-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4px;
+    margin-top: 8px;
+}
+
+.profile-action-btn {
+    font-size: 6px !important;
+    padding: 4px 2px !important;
+    text-align: center;
+}
+
+.profile-danger-btn {
+    color: var(--gb-darkest) !important;
+    border: 2px solid var(--gb-darkest) !important;
+}
+
 /* ---- Day Recap Popup ---- */
 .day-recap-overlay {
     position: absolute;

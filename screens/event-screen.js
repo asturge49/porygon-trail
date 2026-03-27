@@ -306,7 +306,7 @@
     }
 
     function showTradeUI(state, incomingData, choicesDiv, narrative) {
-        const newPokemon = PT.Engine.GameState.createPartyPokemon(incomingData);
+        const newPokemon = PT.Engine.GameState.createPartyPokemon(incomingData, state);
         const spriteUrl = PT.Engine.GameState.getSpriteUrl(incomingData.id);
         const aliveParty = PT.Engine.GameState.getAliveParty(state);
 
@@ -410,7 +410,7 @@
                 btn.addEventListener('click', () => {
                     const idx = parseInt(btn.dataset.idx);
                     const replaced = state.party[idx];
-                    const newMember = PT.Engine.GameState.createPartyPokemon(pokemonData);
+                    const newMember = PT.Engine.GameState.createPartyPokemon(pokemonData, state);
                     state.party[idx] = newMember;
                     PT.Engine.GameState.addToLog(state, `Swapped ${replaced.name} for ${pokemonData.name}!`);
                     if (PT.Engine.Audio) PT.Engine.Audio.buy();
