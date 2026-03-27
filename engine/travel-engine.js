@@ -229,10 +229,38 @@
             }
         }
 
-        // --- Psychic ability: preview ---
-        if (PT.Engine.GameState.hasAbility(state, 'psychic') && (results.encounter || results.event)) {
-            results.psychicWarning = true;
-            results.messages.push("🔮 PSYCHIC ABILITY: Your Psychic-type senses something ahead...");
+        // --- Psychic ability: foresight (pick between two outcomes) ---
+        if (PT.Engine.GameState.hasAbility(state, 'psychic') && state.rng.chance(40)) {
+            if (results.encounter) {
+                // Roll a second encounter as an alternative
+                const alt = PT.Engine.EncounterEngine.rollEncounter(state);
+                if (alt && alt.id !== results.encounter.id) {
+                    results.psychicChoice = 'encounter';
+                    results.psychicAlt = alt;
+                    results.messages.push("🔮 PSYCHIC ABILITY: Your Psychic-type foresees two possible encounters!");
+                }
+            } else if (results.event) {
+                // Roll a second event as an alternative
+                const alt = PT.Engine.EventEngine.rollEvent(state);
+                if (alt && alt.id !== results.event.id) {
+                    results.psychicChoice = 'event';
+                    results.psychicAlt = alt;
+                    results.messages.push("🔮 PSYCHIC ABILITY: Your Psychic-type foresees two possible futures!");
+                }
+            } else {
+                // No encounter or event — psychic forces an encounter choice
+                const enc1 = PT.Engine.EncounterEngine.rollEncounter(state);
+                const enc2 = PT.Engine.EncounterEngine.rollEncounter(state);
+                if (enc1 && enc2 && enc1.id !== enc2.id) {
+                    results.encounter = enc1;
+                    results.psychicChoice = 'encounter';
+                    results.psychicAlt = enc2;
+                    results.messages.push("🔮 PSYCHIC ABILITY: Your Psychic-type senses wild Pokemon nearby — choose which to face!");
+                } else if (enc1) {
+                    results.encounter = enc1;
+                    results.messages.push("🔮 PSYCHIC ABILITY: Your Psychic-type detected a wild Pokemon!");
+                }
+            }
         }
 
         // --- Glitch ability: MissingNo chaos ---

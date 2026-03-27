@@ -342,6 +342,19 @@
                     return;
                 }
 
+                // Psychic choice — show picker instead of going straight to encounter/event
+                if (results.psychicChoice && results.psychicAlt) {
+                    const nextAfterPick = () => {
+                        if (results.psychicChoice === 'encounter') {
+                            showPsychicPicker(results, state);
+                        } else {
+                            showPsychicEventPicker(results, state);
+                        }
+                    };
+                    showDayRecap(results.messages, nextAfterPick, null, null, null);
+                    return;
+                }
+
                 // Determine what happens next after the popup
                 let nextAction;
                 if (results.encounter) {
@@ -413,6 +426,80 @@
                 document.getElementById('btn-recap-ok').addEventListener('click', () => {
                     overlay.remove();
                     nextAction();
+                });
+            }
+
+            // Psychic encounter picker — choose between two wild Pokemon
+            function showPsychicPicker(results, state) {
+                const enc1 = results.encounter;
+                const enc2 = results.psychicAlt;
+                const overlay = document.createElement('div');
+                overlay.className = 'day-recap-overlay';
+                overlay.innerHTML = `
+                    <div class="day-recap-popup" style="max-width: 90%;">
+                        <div class="day-recap-title">🔮 PSYCHIC FORESIGHT</div>
+                        <div class="day-recap-body" style="font-size: 7px; text-align: center;">
+                            Your Psychic-type senses two wild Pokemon nearby. Choose which to face!
+                        </div>
+                        <div style="display: flex; gap: 8px; justify-content: center; margin: 8px 0;">
+                            <button class="btn btn-small psychic-pick" data-pick="1" style="flex: 1; padding: 8px 4px;">
+                                <img src="${enc1.spriteUrl}" style="width: 40px; height: 40px; image-rendering: pixelated; display: block; margin: 0 auto 4px;" onerror="this.style.display='none'">
+                                <div style="font-size: 7px;">${enc1.name}</div>
+                                <div style="font-size: 6px;">${enc1.types.join('/')} | ${enc1.rarity}</div>
+                            </button>
+                            <button class="btn btn-small psychic-pick" data-pick="2" style="flex: 1; padding: 8px 4px;">
+                                <img src="${enc2.spriteUrl}" style="width: 40px; height: 40px; image-rendering: pixelated; display: block; margin: 0 auto 4px;" onerror="this.style.display='none'">
+                                <div style="font-size: 7px;">${enc2.name}</div>
+                                <div style="font-size: 6px;">${enc2.types.join('/')} | ${enc2.rarity}</div>
+                            </button>
+                        </div>
+                    </div>
+                `;
+                document.querySelector('.travel-screen').appendChild(overlay);
+
+                overlay.querySelectorAll('.psychic-pick').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        const pick = btn.dataset.pick;
+                        const chosen = pick === '1' ? enc1 : enc2;
+                        overlay.remove();
+                        PT.App.goto('ENCOUNTER', { pokemon: chosen });
+                    });
+                });
+            }
+
+            // Psychic event picker — choose between two events
+            function showPsychicEventPicker(results, state) {
+                const evt1 = results.event;
+                const evt2 = results.psychicAlt;
+                const overlay = document.createElement('div');
+                overlay.className = 'day-recap-overlay';
+                overlay.innerHTML = `
+                    <div class="day-recap-popup" style="max-width: 90%;">
+                        <div class="day-recap-title">🔮 PSYCHIC FORESIGHT</div>
+                        <div class="day-recap-body" style="font-size: 7px; text-align: center;">
+                            Your Psychic-type foresees two possible futures. Choose your path!
+                        </div>
+                        <div style="display: flex; flex-direction: column; gap: 6px; margin: 8px 0;">
+                            <button class="btn btn-small psychic-evt-pick" data-pick="1" style="padding: 8px; text-align: left;">
+                                <div style="font-size: 8px; font-weight: bold;">🔮 ${evt1.name}</div>
+                                <div style="font-size: 6px; margin-top: 2px;">${evt1.description.substring(0, 80)}...</div>
+                            </button>
+                            <button class="btn btn-small psychic-evt-pick" data-pick="2" style="padding: 8px; text-align: left;">
+                                <div style="font-size: 8px; font-weight: bold;">🔮 ${evt2.name}</div>
+                                <div style="font-size: 6px; margin-top: 2px;">${evt2.description.substring(0, 80)}...</div>
+                            </button>
+                        </div>
+                    </div>
+                `;
+                document.querySelector('.travel-screen').appendChild(overlay);
+
+                overlay.querySelectorAll('.psychic-evt-pick').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        const pick = btn.dataset.pick;
+                        const chosen = pick === '1' ? evt1 : evt2;
+                        overlay.remove();
+                        PT.App.goto('EVENT', { event: chosen });
+                    });
                 });
             }
 
