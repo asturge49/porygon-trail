@@ -56,17 +56,20 @@
         state.resources.food = Math.max(0, state.resources.food - foodConsumed);
         results.messages.push(`Party consumed ${foodConsumed} food.`);
 
-        // Fire ability reduces food consumption
+        // Fire ability reduces food consumption (starter = 3x bonus)
         if (PT.Engine.GameState.hasAbility(state, 'fire') && foodConsumed > 1) {
-            state.resources.food = Math.min(state.resources.food + 1, 999);
-            results.messages.push("🔥 FIRE ABILITY: Your Fire-type cooked efficiently! (+1 food saved)");
+            const fireMult = PT.Engine.GameState.starterAbilityMult(state, 'fire');
+            const fireSaved = 1 * fireMult;
+            state.resources.food = Math.min(state.resources.food + fireSaved, 999);
+            results.messages.push(`🔥 FIRE ABILITY: Your Fire-type cooked efficiently! (+${fireSaved} food saved)${fireMult > 1 ? ' ⭐ Starter bonus!' : ''}`);
         }
 
-        // Cut ability forages for extra food
+        // Cut ability forages for extra food (starter = 3x bonus)
         if (PT.Engine.GameState.hasAbility(state, 'cut') && state.rng.chance(25)) {
-            const foraged = state.rng.randInt(1, 3);
+            const cutMult = PT.Engine.GameState.starterAbilityMult(state, 'cut');
+            const foraged = state.rng.randInt(1, 3) * cutMult;
             state.resources.food += foraged;
-            results.messages.push(`🌿 CUT ABILITY: Your Pokemon cut through brush and foraged +${foraged} food!`);
+            results.messages.push(`🌿 CUT ABILITY: Your Pokemon cut through brush and foraged +${foraged} food!${cutMult > 1 ? ' ⭐ Starter bonus!' : ''}`);
         }
 
         // --- Starvation check ---
@@ -179,9 +182,10 @@
         // --- Surf ability: faster on water routes ---
         if (PT.Engine.GameState.hasAbility(state, 'surf') && pace.distance > 0 && nextRoute && !results.arrivedAtLocation) {
             if (route.terrain === 'water') {
-                const surfBonus = 5;
+                const surfMult = PT.Engine.GameState.starterAbilityMult(state, 'surf');
+                const surfBonus = 5 * surfMult;
                 state.distanceTraveled += surfBonus;
-                results.messages.push(`🌊 SURF ABILITY: Your Water-type surfs ahead! (+${surfBonus} miles on water)`);
+                results.messages.push(`🌊 SURF ABILITY: Your Water-type surfs ahead! (+${surfBonus} miles on water)${surfMult > 1 ? ' ⭐ Starter bonus!' : ''}`);
                 if (state.distanceTraveled >= route.distanceToNext) {
                     state.currentLocationIndex++;
                     state.distanceTraveled = 0;

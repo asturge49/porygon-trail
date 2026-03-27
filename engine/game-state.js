@@ -181,6 +181,14 @@
         return getAliveParty(state).some(p => p.travelAbility === ability);
     }
 
+    // Starter Pokemon (Bulbasaur/Charmander/Squirtle lines) get 3x ability effectiveness
+    const STARTER_IDS = [1,2,3, 4,5,6, 7,8,9];
+    function starterAbilityMult(state, ability) {
+        const alive = getAliveParty(state);
+        const hasStarter = alive.some(p => p.travelAbility === ability && STARTER_IDS.includes(p.id));
+        return hasStarter ? 3 : 1;
+    }
+
     // Get the full evolution chain for a pokemon
     function getEvoChain(pokemonId) {
         const allPokemon = PT.Data.Pokemon;
@@ -456,6 +464,7 @@
         damagePokemon,
         getAliveParty,
         hasAbility,
+        starterAbilityMult,
         hasType,
         getCurrentRoute,
         getNextRoute,

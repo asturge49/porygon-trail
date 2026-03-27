@@ -708,7 +708,7 @@
                 </div>
 
                 <div class="profile-section">
-                    <div class="profile-row"><span class="profile-label">Ability:</span> <span>${pokemon.travelAbility || 'none'}</span> <span class="profile-desc">${abilityDesc[pokemon.travelAbility] || ''}</span></div>
+                    <div class="profile-row"><span class="profile-label">Ability:</span> <span>${pokemon.travelAbility || 'none'}</span> <span class="profile-desc">${abilityDesc[pokemon.travelAbility] || ''}</span>${[1,2,3,4,5,6,7,8,9].includes(pokemon.id) ? ' <span class="profile-hint" style="color:var(--gb-darkest);font-weight:bold;">⭐ 3x Starter</span>' : ''}</div>
                     <div class="profile-row"><span class="profile-label">Caught:</span> ${pokemon.caughtAt || 'Unknown'} (Day ${pokemon.caughtDay || 0})</div>
                     <div class="profile-row"><span class="profile-label">Evolution:</span> ${evoChainDisplay} ${isFinal ? '✓ Final' : `(${evoStage}/${evoChain.length})`}</div>
                     <div class="profile-row"><span class="profile-label">Food/day:</span> ${foodCost} ration${foodCost !== 1 ? 's' : ''}</div>
