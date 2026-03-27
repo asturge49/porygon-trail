@@ -18,7 +18,7 @@
                                 <div class="party-pokemon-name">${p.name}</div>
                                 <div>${p.types.join('/')}</div>
                                 <div>Ability: ${p.travelAbility}</div>
-                                <div>Stars: ${'★'.repeat(p.battleStars || 0)}${'☆'.repeat(5 - (p.battleStars || 0))} <span style="font-size:5px;">(${p.battleWins || 0} wins)</span></div>
+                                <div>Stars: ${'★'.repeat(p.battleStars || 0)}${'☆'.repeat(3 - (p.battleStars || 0))} <span style="font-size:5px;">(${p.battleWins || 0} wins)${PT.Engine.GameState.isFinalEvolution ? (PT.Engine.GameState.isFinalEvolution(p) ? '' : ' [needs final evo]') : ''}</span></div>
                                 <div>Status: ${p.status.toUpperCase()}</div>
                                 <div class="hp-bar">
                                     <div class="hp-bar-fill ${p.hp <= 1 && p.hp > 0 ? 'low' : ''}" style="width: ${(p.hp / p.maxHp) * 100}%"></div>

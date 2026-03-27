@@ -186,10 +186,10 @@
             state.resources.money += leader.reward.money;
 
             // Award battle star
-            const earnedStar = PT.Engine.GameState.addBattleWin(pokemon);
+            const starResult = PT.Engine.GameState.addBattleWin(pokemon, state);
             let starLine = '';
-            if (earnedStar) {
-                starLine = `<br>⭐ ${pokemon.name} earned a Battle Star! [${'★'.repeat(pokemon.battleStars)}] (${pokemon.battleStars}/5)`;
+            if (starResult.earned) {
+                starLine = `<br>⭐ ${pokemon.name} earned a Battle Star! [${'★'.repeat(pokemon.battleStars)}] (${pokemon.battleStars}/3)`;
             }
 
             PT.Engine.GameState.addToLog(state, `Defeated ${leader.name}'s ${opponent.name}! Got ${leader.badge}!`);
@@ -233,29 +233,20 @@
 
             let gymKilled = false;
             let gymFainted = false;
-            let gymClutched = false;
             if (state.rng.chance(deathChance)) {
-                // Battle Stars death avoidance on direct kill
-                const deathStarBonus = PT.Engine.GameState.getStarBonus(pokemon);
-                if (deathStarBonus.deathAvoidChance > 0 && state.rng.chance(deathStarBonus.deathAvoidChance)) {
-                    pokemon.hp = 1;
-                    gymClutched = true;
-                } else {
-                    const idx = state.party.indexOf(pokemon);
-                    if (idx !== -1) {
-                        state.party.splice(idx, 1);
-                        state.pokemonLost++;
-                        gymKilled = true;
-                    }
+                // Ace Pokemon kills bypass Battle Star death avoidance
+                const idx = state.party.indexOf(pokemon);
+                if (idx !== -1) {
+                    state.party.splice(idx, 1);
+                    state.pokemonLost++;
+                    gymKilled = true;
                 }
             } else {
                 gymFainted = PT.Engine.GameState.damagePokemon(pokemon, damage, state);
             }
 
             const died = gymKilled || gymFainted;
-            if (gymClutched) {
-                PT.Engine.GameState.addToLog(state, `Lost to ${leader.name}'s ${opponent.name}. ⭐ ${pokemon.name} held on with sheer willpower! (1 HP)`);
-            } else if (died) {
+            if (died) {
                 PT.Engine.GameState.addToLog(state, `Lost to ${leader.name}'s ${opponent.name}. ${pokemon.name} was killed! 💀`);
             } else {
                 PT.Engine.GameState.addToLog(state, `Lost to ${leader.name}'s ${opponent.name}. ${pokemon.name} was badly hurt.`);
@@ -275,12 +266,10 @@
                     <div class="gym-leader-name">${leader.name} wins</div>
                     <div class="gym-challenge-text">${leader.defeatText}</div>
                     <div style="font-size: 8px; margin-top: 8px;">
-                        ${gymClutched
-                            ? `⭐ ${pokemon.name} held on with sheer willpower! (1 HP)`
-                            : died
+                        ${died
                             ? `💀 ${pokemon.name} was killed by ${opponent.name}!`
                             : `${pokemon.name} takes ${damage} damage from ${opponent.name}!`}
-                        ${isAce ? '<br><span style="font-size: 6px;">Ace Pokemon are more dangerous!</span>' : ''}
+                        ${isAce ? '<br><span style="font-size: 6px;">⚠️ Ace Pokemon ignore Battle Star protection!</span>' : ''}
                         <br><span style="font-size: 6px;">Win chance was ${chance}%${battleBonuses.length > 0 ? ' (' + battleBonuses.join(', ') + ')' : ''}</span>
                         ${died ? '' : '<br>You can try again next time you visit.'}
                     </div>

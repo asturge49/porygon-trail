@@ -151,10 +151,10 @@
             if (PT.Engine.Audio) PT.Engine.Audio.gymVictory();
 
             // Award battle star
-            const earnedStar = PT.Engine.GameState.addBattleWin(chosen);
+            const starResult = PT.Engine.GameState.addBattleWin(chosen, state);
             let starLine = '';
-            if (earnedStar) {
-                starLine = `<br>⭐ ${chosen.name} earned a Battle Star! [${'★'.repeat(chosen.battleStars)}] (${chosen.battleStars}/5)`;
+            if (starResult.earned) {
+                starLine = `<br>⭐ ${chosen.name} earned a Battle Star! [${'★'.repeat(chosen.battleStars)}] (${chosen.battleStars}/3)`;
             }
 
             const winEffects = battle.winEffects || {};

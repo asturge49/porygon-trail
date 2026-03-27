@@ -99,7 +99,9 @@
             travelAbility: data.travelAbility,
             spriteUrl: getSpriteUrl(data.id),
             battleWins: 0,
-            battleStars: 0
+            battleStars: 0,
+            lastStarLocation: -1,  // location index where last star was earned
+            lastEvoLocation: -1    // location index where last evolution happened
         };
     }
 
@@ -174,10 +176,16 @@
         return PT.Data.Routes[next];
     }
 
-    // Evolution System
+    // Evolution System — limited to once per location
     function evolvePokemon(partyMon, state) {
         const data = PT.Data.Pokemon.find(p => p.id === partyMon.id);
         if (!data || !data.evolvesTo) return { evolved: false };
+
+        // Location-based evolution limit
+        const currentLoc = state ? state.currentLocationIndex : -1;
+        if (currentLoc >= 0 && (partyMon.lastEvoLocation || -1) === currentLoc) {
+            return { evolved: false }; // already evolved here
+        }
         // Support branching evolution (e.g. Eevee -> [Vaporeon, Jolteon, Flareon])
         let evoId = data.evolvesTo;
         if (Array.isArray(evoId)) {
@@ -197,6 +205,8 @@
         if (partyMon.maxHp < 6) partyMon.maxHp += 1;
         // Heal 1 HP on evolution
         partyMon.hp = Math.min(partyMon.hp + 1, partyMon.maxHp);
+        // Track evolution location
+        partyMon.lastEvoLocation = currentLoc;
 
         // Register evolution in Pokedex
         if (state) {
@@ -235,24 +245,57 @@
     }
 
     // ===== BATTLE STARS =====
-    const STAR_THRESHOLDS = [1, 3, 6, 10, 15];
+    // 3-star cap. Thresholds: 1 win, 3 wins, 6 wins
+    const STAR_THRESHOLDS = [1, 3, 6];
 
-    function addBattleWin(pokemon) {
+    // Check if a Pokemon is at its final evolution (no evolvesTo)
+    function isFinalEvolution(pokemon) {
+        const data = PT.Data.Pokemon.find(p => p.id === pokemon.id);
+        return data && !data.evolvesTo;
+    }
+
+    // Award a battle win. Returns { earned: bool, reason: string|null }
+    // Only final evolutions can earn stars, and only once per location.
+    function addBattleWin(pokemon, state) {
         pokemon.battleWins = (pokemon.battleWins || 0) + 1;
+
+        // Must be final evolution to earn stars
+        if (!isFinalEvolution(pokemon)) {
+            return { earned: false, reason: 'not_final_evo' };
+        }
+
+        // Already max stars
+        if ((pokemon.battleStars || 0) >= 3) {
+            return { earned: false, reason: 'max_stars' };
+        }
+
+        // Can only earn one star per location
+        const currentLoc = state ? state.currentLocationIndex : -1;
+        if (pokemon.lastStarLocation === currentLoc && currentLoc >= 0) {
+            return { earned: false, reason: 'location_limit' };
+        }
+
+        // Check if wins cross a threshold
         let newStars = 0;
         for (let i = 0; i < STAR_THRESHOLDS.length; i++) {
             if (pokemon.battleWins >= STAR_THRESHOLDS[i]) newStars = i + 1;
         }
+        newStars = Math.min(3, newStars);
         const oldStars = pokemon.battleStars || 0;
         pokemon.battleStars = newStars;
-        return newStars > oldStars; // true if a new star was earned
+
+        if (newStars > oldStars) {
+            pokemon.lastStarLocation = currentLoc;
+            return { earned: true, reason: null };
+        }
+        return { earned: false, reason: 'no_threshold' };
     }
 
     function getStarBonus(pokemon) {
         const stars = pokemon.battleStars || 0;
         return {
-            winChanceBonus: stars * 2,       // +2% per star, max +10%
-            deathAvoidChance: stars * 4      // +4% per star, max +20%
+            winChanceBonus: stars * 3,       // +3% per star, max +9%
+            deathAvoidChance: stars * 5      // +5% per star, max +15%
         };
     }
 
@@ -335,6 +378,7 @@
         killPokemon,
         addBattleWin,
         getStarBonus,
+        isFinalEvolution,
         pokemonToFood,
         saveGame,
         loadGame,

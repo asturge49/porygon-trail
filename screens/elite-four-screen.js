@@ -148,6 +148,7 @@
             <div class="text-box" style="font-size: 7px;">
                 ${trainer.name} sends out ${opponent.name}! (${opponentTypes.join('/')}-type)
                 <br>Weak to: ${typeChart.weakTo.join(', ') || 'none'} | Resists: ${typeChart.strongTo.join(', ') || 'none'}
+                <br><span style="font-size: 6px;">⚠️ Battle Stars do NOT protect against E4 kills!</span>
             </div>
             <div class="event-choices" id="e4-choices">
                 ${alive.map((p, i) => {
@@ -242,10 +243,10 @@
             if (PT.Engine.Audio) PT.Engine.Audio.gymVictory();
 
             // Award battle star
-            const earnedStar = PT.Engine.GameState.addBattleWin(pokemon);
+            const starResult = PT.Engine.GameState.addBattleWin(pokemon, state);
             let starLine = '';
-            if (earnedStar) {
-                starLine = `<br>⭐ ${pokemon.name} earned a Battle Star! [${'★'.repeat(pokemon.battleStars)}] (${pokemon.battleStars}/5)`;
+            if (starResult.earned) {
+                starLine = `<br>⭐ ${pokemon.name} earned a Battle Star! [${'★'.repeat(pokemon.battleStars)}] (${pokemon.battleStars}/3)`;
             }
 
             PT.Engine.GameState.addToLog(state, `Defeated ${trainer.name}'s ${opponent.name} in the Elite Four!`);
@@ -309,31 +310,21 @@
             // Loss — the fighting Pokemon takes 4 HP damage
             if (PT.Engine.Audio) PT.Engine.Audio.gymDefeat();
 
+            // E4 damage bypasses Battle Star death avoidance
             const E4_LOSS_DAMAGE = 4;
             const oldHp = pokemon.hp;
             pokemon.hp = Math.max(0, pokemon.hp - E4_LOSS_DAMAGE);
-            let killed = pokemon.hp <= 0;
-            let e4Clutched = false;
+            const killed = pokemon.hp <= 0;
 
             if (killed) {
-                // Battle Stars death avoidance
-                const deathStarBonus = PT.Engine.GameState.getStarBonus(pokemon);
-                if (deathStarBonus.deathAvoidChance > 0 && state.rng.chance(deathStarBonus.deathAvoidChance)) {
-                    pokemon.hp = 1;
-                    killed = false;
-                    e4Clutched = true;
-                } else {
-                    const idx = state.party.indexOf(pokemon);
-                    if (idx !== -1) {
-                        state.party.splice(idx, 1);
-                        state.pokemonLost++;
-                    }
+                const idx = state.party.indexOf(pokemon);
+                if (idx !== -1) {
+                    state.party.splice(idx, 1);
+                    state.pokemonLost++;
                 }
             }
 
-            const dmgMsg = e4Clutched
-                ? `⭐ ${pokemon.name} held on with sheer willpower! (1 HP)`
-                : killed
+            const dmgMsg = killed
                 ? `${pokemon.name} was killed by ${trainer.name}'s ${opponent.name}! 💀`
                 : `${pokemon.name} took ${E4_LOSS_DAMAGE} damage from ${trainer.name}'s ${opponent.name}! (${pokemon.hp}/${pokemon.maxHp} HP)`;
             PT.Engine.GameState.addToLog(state, dmgMsg);
@@ -341,9 +332,7 @@
             const aliveAfter = PT.Engine.GameState.getAliveParty(state);
             const partyWiped = aliveAfter.length === 0;
 
-            const statusMsg = e4Clutched
-                ? `⭐ ${pokemon.name} held on with sheer willpower! (1 HP)`
-                : killed
+            const statusMsg = killed
                 ? `💀 ${pokemon.name} was killed by ${opponent.name}!`
                 : `💥 ${pokemon.name} took ${E4_LOSS_DAMAGE} damage! (${pokemon.hp}/${pokemon.maxHp} HP remaining)`;
 
@@ -362,6 +351,7 @@
                     <div style="font-size: 8px; margin-top: 8px;">
                         ${statusMsg}
                         <br><span style="font-size: 6px;">Win chance was ${chance}%${battleBonuses.length > 0 ? ' (' + battleBonuses.join(', ') + ')' : ''}</span>
+                        <br><span style="font-size: 6px;">⚠️ Elite Four ignores Battle Star protection!</span>
                         ${partyWiped
                             ? '<br><strong>All your Pokemon have fallen...</strong>'
                             : `<br>You must defeat ${trainer.name}'s ${opponent.name} to advance.`}
