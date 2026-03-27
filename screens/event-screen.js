@@ -80,7 +80,9 @@
         if (result.bonusUsed) {
             narrative.innerHTML += '<br><br><strong>Your Pokemon\'s ability made the difference!</strong>';
         }
-        if (result.effects && result.effects._pendingCatch && result.effects._pendingCatch.length > 0) {
+        if (result.effects && result.effects._tradeIncoming) {
+            showTradeUI(state, result.effects._tradeIncoming, choicesDiv, narrative);
+        } else if (result.effects && result.effects._pendingCatch && result.effects._pendingCatch.length > 0) {
             showEventSwapQueue(state, result.effects._pendingCatch.slice(), choicesDiv, narrative);
         } else {
             showEventContinue(state, choicesDiv);
@@ -283,6 +285,54 @@
         if (lines.length === 0) return '';
         return '<br><br><div style="border-top: 2px solid #0f380f; padding-top: 8px; font-size: 7px;">' +
             lines.join('<br>') + '</div>';
+    }
+
+    function showTradeUI(state, incomingData, choicesDiv, narrative) {
+        const newPokemon = PT.Engine.GameState.createPartyPokemon(incomingData);
+        const spriteUrl = PT.Engine.GameState.getSpriteUrl(incomingData.id);
+        const aliveParty = PT.Engine.GameState.getAliveParty(state);
+
+        choicesDiv.innerHTML = `
+            <div style="text-align: center; margin-bottom: 4px;">
+                <strong>Trade for ${incomingData.name}?</strong>
+                <br><img src="${spriteUrl}" style="width: 48px; height: 48px; image-rendering: pixelated; margin: 4px 0;" onerror="this.style.display='none'">
+                <br><span style="font-size: 7px;">${incomingData.types.join('/')} | ${incomingData.rarity} | HP: ${newPokemon.maxHp} | Ability: ${incomingData.travelAbility}</span>
+            </div>
+            <div style="font-size: 7px; margin-bottom: 4px; font-weight: bold;">Choose a Pokemon to trade away:</div>
+            ${aliveParty.map((p, i) => `
+                <button class="btn btn-wide trade-pick-btn" data-tidx="${i}">${p.name} (${p.types.join('/')} | HP:${p.hp}/${p.maxHp}${(p.battleStars || 0) > 0 ? ' ' + '★'.repeat(p.battleStars) : ''} | ${p.travelAbility})</button>
+            `).join('')}
+            <button class="btn btn-wide" id="btn-trade-cancel">CANCEL TRADE</button>
+        `;
+
+        document.querySelectorAll('.trade-pick-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const idx = parseInt(btn.dataset.tidx);
+                const alive = PT.Engine.GameState.getAliveParty(state);
+                const traded = alive[idx];
+                const tradedName = traded.name;
+
+                // Remove the traded Pokemon
+                const partyIdx = state.party.indexOf(traded);
+                if (partyIdx !== -1) state.party.splice(partyIdx, 1);
+
+                // Add the new Pokemon
+                state.party.push(newPokemon);
+
+                // Register in pokedex
+                if (!state.pokedexCaught.includes(incomingData.id)) state.pokedexCaught.push(incomingData.id);
+
+                PT.Engine.GameState.addToLog(state, `Traded ${tradedName} for ${incomingData.name}!`);
+                narrative.innerHTML += `<br><strong>Traded ${tradedName} for ${incomingData.name}!</strong>`;
+
+                showEventContinue(state, choicesDiv);
+            });
+        });
+
+        document.getElementById('btn-trade-cancel').addEventListener('click', () => {
+            narrative.innerHTML += '<br><em>You decided not to trade.</em>';
+            showEventContinue(state, choicesDiv);
+        });
     }
 
     function showEventContinue(state, choicesDiv) {

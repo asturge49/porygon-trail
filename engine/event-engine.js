@@ -410,6 +410,16 @@
             effects._deathResult3 = deathResult3;
         }
 
+        // Pokemon Trade — flag for trade UI in event screen
+        if (effects.pokemonTrade) {
+            const tradeId = effects.pokemonTrade;
+            if (!state.pokedexSeen.includes(tradeId)) state.pokedexSeen.push(tradeId);
+            const data = PT.Data.Pokemon.find(p => p.id === tradeId);
+            if (data) {
+                effects._tradeIncoming = data;
+            }
+        }
+
         // Days lost
         if (effects.daysLost) {
             state.daysElapsed += effects.daysLost;

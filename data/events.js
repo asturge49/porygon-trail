@@ -5908,6 +5908,395 @@
                 }
             ]
         }
+        // ===== DILEMMA EVENTS =====
+        ,{
+            id: "daycare_dilemma",
+            type: "story",
+            name: "The Daycare Couple!",
+            description: "The Daycare couple blocks the road. \"We're overworked and our Pokemon are restless! We'll train one of yours to full evolution — but it'll take 3 days. OR, we can give your whole team a quick boost right now, but no evolution.\"",
+            weight: 6,
+            oneTime: true,
+            locationIds: ["cerulean_city"],
+            requiresPartySize: 2,
+            choices: [
+                {
+                    text: "Leave one to evolve (lose 3 days)",
+                    outcomes: [
+                        { weight: 70, narration: "Three days later, you return. Your Pokemon has evolved! The Daycare couple wave goodbye with tired smiles.", effects: { daysLost: 3, trainPokemon: true } },
+                        { weight: 30, narration: "Three days later, your Pokemon evolved — but it also picked up some bad habits at the Daycare. It seems roughed up.", effects: { daysLost: 3, trainPokemon: true, partyDamage: 1 } }
+                    ]
+                },
+                {
+                    text: "Quick boost for everyone",
+                    outcomes: [
+                        { weight: 60, narration: "The couple feeds your team rare vitamins. Everyone feels stronger!", effects: { boostPokemonMaxHp: 1, healAll: true } },
+                        { weight: 40, narration: "The couple's care revitalizes your team. Full health and some extra food for the road!", effects: { healAll: true, food: 10 } }
+                    ]
+                }
+            ]
+        },
+        {
+            id: "stranded_swimmer",
+            type: "story",
+            name: "Stranded Swimmer!",
+            description: "A swimmer clings to a rock in the freezing current, blue-lipped and shaking. \"Help me! I'll give you everything I have!\" But the current is brutal — rescuing them will hurt your team. You could also just take the long way around.",
+            weight: 7,
+            oneTime: true,
+            locationIds: ["seafoam_islands"],
+            choices: [
+                {
+                    text: "Rescue the swimmer",
+                    bonusAbility: "surf",
+                    outcomes: [
+                        { weight: 40, narration: "Your team braves the current and pulls the swimmer to safety. He's a diver — he gives you a rare Staryu and his emergency supplies. Your team is battered but alive.", effects: { partyDamageAll: 1, catchPokemon: 120, potions: 3 } },
+                        { weight: 35, narration: "You save the swimmer, but the current smashes your team against the rocks. He thanks you profusely and gives you everything he has.", effects: { partyDamage: 3, money: 1500, food: 15 } },
+                        { weight: 25, narration: "The rescue goes badly. A Pokemon is swept away and doesn't come back. The swimmer weeps. \"I'm so sorry...\"", effects: { pokemonDeath: true, money: 2000, superPotions: 3 } }
+                    ],
+                    bonusOutcome: { weight: 100, narration: "Your Water-type ferries the swimmer to safety with ease! He's a professional diver and gives you his prized Staryu and supplies.", effects: { catchPokemon: 120, potions: 3, money: 800 } }
+                },
+                {
+                    text: "Throw an Escape Rope",
+                    requiresItem: "escapeRope",
+                    outcomes: [
+                        { weight: 100, narration: "You throw the Escape Rope to the swimmer. He grabs it and you haul him in. \"Thank you! Here, take this.\"", effects: { escapeRope: -1, money: 800, potions: 2 } }
+                    ]
+                },
+                {
+                    text: "Keep moving (leave him)",
+                    outcomes: [
+                        { weight: 70, narration: "You look away and keep walking. His cries echo behind you. You try not to think about it.", effects: {} },
+                        { weight: 30, narration: "You walk past. Guilt gnaws at your team. Morale drops.", effects: { partyDamage: 1 } }
+                    ]
+                }
+            ]
+        },
+        {
+            id: "power_plant_meltdown",
+            type: "hazard",
+            name: "Power Plant Meltdown!",
+            description: "The Vermilion Power Plant alarms are blaring! An engineer screams: \"The Voltorb containment failed! If they self-destruct, the whole plant goes! We need someone to absorb the blast — or we evacuate and lose the plant's supplies!\"",
+            weight: 6,
+            oneTime: true,
+            locationIds: ["vermilion_city"],
+            requiresPartySize: 2,
+            choices: [
+                {
+                    text: "Send your team to contain it",
+                    bonusAbility: "flash",
+                    outcomes: [
+                        { weight: 35, narration: "Your team absorbs the Voltorb explosions! The plant is saved. The engineer rewards you handsomely, but your team is in rough shape.", effects: { partyDamageAll: 2, money: 2000, superPotions: 3, catchPokemon: 100 } },
+                        { weight: 35, narration: "The explosions are devastating. Your team barely holds. One Pokemon takes the worst of it. But the plant survives.", effects: { partyDamage: 3, money: 2500, potions: 5 } },
+                        { weight: 30, narration: "Too many Voltorb. The chain reaction can't be stopped. One of your Pokemon shields the others and doesn't make it. The engineer weeps.", effects: { pokemonDeath: true, money: 3000, superPotions: 5 } }
+                    ],
+                    bonusOutcome: { weight: 100, narration: "Your Electric-type speaks the Voltorb's language! It calms them down one by one. Crisis averted — no damage to anyone.", effects: { money: 2000, superPotions: 3, rareCandy: 1 } }
+                },
+                {
+                    text: "Evacuate (grab supplies and run)",
+                    outcomes: [
+                        { weight: 60, narration: "You grab what you can and run. The plant explodes behind you. Supplies scatter everywhere — you snatch some mid-sprint.", effects: { pokeballs: 5, potions: 3, food: 10 } },
+                        { weight: 40, narration: "Evacuation is chaos. You grab some supplies but the blast wave hits your team.", effects: { partyDamageAll: 1, pokeballs: 3, food: 5 } }
+                    ]
+                }
+            ]
+        },
+        {
+            id: "pokeflute_busker",
+            type: "story",
+            name: "The Pokeflute Player!",
+            description: "A gaunt musician plays a Pokeflute on the steps of Pokemon Tower. \"This melody can wake any sleeping Pokemon... or put one to sleep forever. I'll sell it for $1000, or I'll play a healing song for your team right now — for free. But the Flute leaves with me.\"",
+            weight: 7,
+            oneTime: true,
+            locationIds: ["lavender_town"],
+            choices: [
+                {
+                    text: "Buy the Pokeflute ($1000)",
+                    requiresMoney: 1000,
+                    outcomes: [
+                        { weight: 100, narration: "The musician hands over the Pokeflute with a sad smile. \"Take care of it. It belonged to someone who loved Pokemon more than life.\" You now have the Poke Flute.", effects: { money: -1000, keyItem: "Poke Flute" } }
+                    ]
+                },
+                {
+                    text: "Take the free healing song",
+                    outcomes: [
+                        { weight: 70, narration: "The melody washes over your team. Every wound closes, every ailment fades. Your Pokemon look renewed.", effects: { healAll: true, boostPokemonMaxHp: 1 } },
+                        { weight: 30, narration: "The song heals your team completely. As the musician leaves, one of your Pokemon cries after him.", effects: { healAll: true } }
+                    ]
+                },
+                {
+                    text: "\"I don't need either.\"",
+                    outcomes: [
+                        { weight: 100, narration: "The musician shrugs and keeps playing. The tower's ghosts seem to sway to the tune.", effects: {} }
+                    ]
+                }
+            ]
+        },
+        {
+            id: "cinnabar_gene_splice",
+            type: "special",
+            name: "Dr. Fuji's Experiment!",
+            description: "In the ruins of the Pokemon Mansion, you find Dr. Fuji's old gene-splicing lab still powered on. A recording plays: \"This machine can permanently enhance a Pokemon's vitality — but the process is painful. I abandoned this research for good reason.\"",
+            weight: 5,
+            oneTime: true,
+            locationIds: ["cinnabar_island"],
+            requiresPartySize: 2,
+            choices: [
+                {
+                    text: "Use the machine on a Pokemon",
+                    outcomes: [
+                        { weight: 40, narration: "The machine hums and your Pokemon screams — then emerges stronger than ever. Its cells have been permanently enhanced.", effects: { boostPokemonMaxHp: 2 } },
+                        { weight: 35, narration: "Something goes wrong. The enhancement works, but the process damages another Pokemon who was too close.", effects: { boostPokemonMaxHp: 2, partyDamage: 2 } },
+                        { weight: 25, narration: "Catastrophic failure. The machine sparks and explodes. One Pokemon's cellular structure degrades permanently. Dr. Fuji abandoned this for a reason.", effects: { reducePokemonMaxHp: 2, partyDamageAll: 1 } }
+                    ]
+                },
+                {
+                    text: "Scavenge the lab for supplies",
+                    outcomes: [
+                        { weight: 50, narration: "You find old potions, Rare Candy, and research notes worth selling.", effects: { superPotions: 3, rareCandy: 1, money: 500 } },
+                        { weight: 50, narration: "Old lab supplies — mostly expired, but some are still good.", effects: { potions: 4, money: 300 } }
+                    ]
+                },
+                {
+                    text: "Destroy the machine",
+                    outcomes: [
+                        { weight: 100, narration: "You smash the controls. Sparks fly, then silence. Some things are better left buried. You feel a weight lift.", effects: { healAll: true } }
+                    ]
+                }
+            ]
+        },
+        {
+            id: "fighting_dojo_choice",
+            type: "special",
+            name: "The Fighting Dojo!",
+            description: "The Karate Master bows. \"You've proven yourself, trainer. Choose your reward: Hitmonlee, the kicking fiend — or Hitmonchan, the punching demon. I can only part with one.\"",
+            weight: 8,
+            oneTime: true,
+            locationIds: ["saffron_city"],
+            minBadges: 3,
+            choices: [
+                {
+                    text: "Choose Hitmonlee (Fighting, Strength)",
+                    outcomes: [
+                        { weight: 100, narration: "\"Hitmonlee's legs can stretch to kick from any distance. Train it well.\" Hitmonlee joins your team!", effects: { catchPokemon: 106 } }
+                    ]
+                },
+                {
+                    text: "Choose Hitmonchan (Fighting, Guard)",
+                    outcomes: [
+                        { weight: 100, narration: "\"Hitmonchan's fists move faster than the eye can follow. A true boxer's Pokemon.\" Hitmonchan joins your team!", effects: { catchPokemon: 107 } }
+                    ]
+                },
+                {
+                    text: "\"I'm not worthy yet.\"",
+                    outcomes: [
+                        { weight: 100, narration: "The Karate Master smiles. \"Humility is strength. Take these instead.\"", effects: { superPotions: 2, food: 10 } }
+                    ]
+                }
+            ]
+        },
+
+        // ===== TRADE EVENTS =====
+        {
+            id: "trade_pewter_collector",
+            type: "trade",
+            name: "Rock Collector's Offer!",
+            description: "A grizzled collector outside the Pewter Museum eyes your team. \"I've got an Onix that's outgrown my house. Literally. I'll trade it for any Pokemon you've got — I just need a new companion. Onix is tough, knows these caves inside out.\"",
+            weight: 6,
+            oneTime: true,
+            locationIds: ["pewter_city"],
+            requiresPartySize: 2,
+            choices: [
+                {
+                    text: "Trade a Pokemon for Onix",
+                    outcomes: [
+                        { weight: 100, narration: "The collector examines your Pokemon gently, then hands you Onix's Poke Ball. \"Take good care of the big fella. He likes to be scratched under the chin... all 28 feet of it.\"", effects: { pokemonTrade: 95 } }
+                    ]
+                },
+                {
+                    text: "\"No thanks, I'm attached to my team.\"",
+                    outcomes: [
+                        { weight: 100, narration: "\"I understand. A trainer's bond is sacred.\" He tips his hat and returns to polishing rocks.", effects: {} }
+                    ]
+                }
+            ]
+        },
+        {
+            id: "trade_vermilion_sailor",
+            type: "trade",
+            name: "Sailor's Farfetch'd!",
+            description: "A sailor on the docks holds a Farfetch'd that keeps whacking him with its leek. \"OW! I can't take this bird anymore! It won't listen to me! I'll trade it for ANY Pokemon. Please. I'm desperate.\"",
+            weight: 6,
+            oneTime: true,
+            locationIds: ["vermilion_city"],
+            requiresPartySize: 2,
+            choices: [
+                {
+                    text: "Trade a Pokemon for Farfetch'd",
+                    outcomes: [
+                        { weight: 70, narration: "The sailor practically throws the Poke Ball at you. Farfetch'd eyes you suspiciously, then taps you with its leek — gently. A test. You passed.", effects: { pokemonTrade: 83 } },
+                        { weight: 30, narration: "The trade is done. The sailor sprints away before you can change your mind. Farfetch'd stares at you, leek raised. Temperamental, but loyal to those who earn it.", effects: { pokemonTrade: 83 } }
+                    ]
+                },
+                {
+                    text: "\"That bird looks like trouble.\"",
+                    outcomes: [
+                        { weight: 100, narration: "\"You're smarter than you look, kid.\" The sailor winces as Farfetch'd whacks him again. \"OW!\"", effects: {} }
+                    ]
+                }
+            ]
+        },
+        {
+            id: "trade_celadon_breeder",
+            type: "trade",
+            name: "Pokemon Breeder's Offer!",
+            description: "A Pokemon Breeder in the Celadon gardens cradles a Growlithe puppy. \"I breed these beauties, but I've got too many. This one's special — strong stock, loyal temperament. I'd trade her for one of yours. I like variety in my kennel.\"",
+            weight: 6,
+            oneTime: true,
+            locationIds: ["celadon_city"],
+            requiresPartySize: 2,
+            choices: [
+                {
+                    text: "Trade a Pokemon for Growlithe",
+                    outcomes: [
+                        { weight: 100, narration: "The breeder inspects your offered Pokemon carefully, then nods. \"Good stock.\" The Growlithe puppy wags its tail and immediately nuzzles against you. It can evolve into Arcanine — one of the strongest Fire-types in Kanto.", effects: { pokemonTrade: 58 } }
+                    ]
+                },
+                {
+                    text: "\"She's cute, but I can't part with anyone.\"",
+                    outcomes: [
+                        { weight: 80, narration: "The breeder nods understandingly. \"Bond with your team. That's what matters.\"", effects: {} },
+                        { weight: 20, narration: "\"Well, take some food for the road at least.\" The breeder hands you some Pokemon treats.", effects: { food: 5 } }
+                    ]
+                }
+            ]
+        },
+        {
+            id: "trade_fuchsia_warden",
+            type: "trade",
+            name: "Warden's Rhyhorn!",
+            description: "The Safari Zone Warden finds you outside the gates. \"My Rhyhorn pen is overcrowded! These beasts eat more than a Snorlax. Trade me one of your Pokemon — I need something that fits in my office — and you can have a Rhyhorn. They're tough as nails.\"",
+            weight: 6,
+            oneTime: true,
+            locationIds: ["fuchsia_city"],
+            requiresPartySize: 2,
+            choices: [
+                {
+                    text: "Trade a Pokemon for Rhyhorn",
+                    outcomes: [
+                        { weight: 100, narration: "The Warden examines your Pokemon, then bellows a laugh. \"Perfect! Much more manageable!\" He leads a Rhyhorn over — it snorts and stamps impatiently. \"She's feisty. Evolves into Rhydon if you treat her right.\"", effects: { pokemonTrade: 111 } }
+                    ]
+                },
+                {
+                    text: "\"I'll pass for now.\"",
+                    outcomes: [
+                        { weight: 100, narration: "The Warden sighs and trudges back to the pen, where several Rhyhorn are headbutting the fence.", effects: {} }
+                    ]
+                }
+            ]
+        },
+        {
+            id: "trade_saffron_psychic",
+            type: "trade",
+            name: "Psychic's Abra!",
+            description: "A young psychic outside Sabrina's gym holds an Abra that keeps teleporting out of her hands. \"I've raised six of these and I'm going insane! This one has incredible potential — evolves into Alakazam. But I need a Pokemon that actually STAYS in one place. Trade me?\"",
+            weight: 6,
+            oneTime: true,
+            locationIds: ["saffron_city"],
+            requiresPartySize: 2,
+            choices: [
+                {
+                    text: "Trade a Pokemon for Abra",
+                    outcomes: [
+                        { weight: 70, narration: "The Abra teleports into your arms mid-trade. The psychic sighs with relief. \"It already likes you more than me. It'll evolve into something extraordinary if you can keep it alive.\"", effects: { pokemonTrade: 63 } },
+                        { weight: 30, narration: "The trade completes. Abra immediately teleports to your shoulder and falls asleep. The psychic mutters, \"Good riddance.\" Abra's evolution line is one of the strongest in Kanto.", effects: { pokemonTrade: 63 } }
+                    ]
+                },
+                {
+                    text: "\"I've got enough to manage.\"",
+                    outcomes: [
+                        { weight: 100, narration: "\"Smart. These things are a nightmare.\" The Abra teleports onto the psychic's head. She screams.", effects: {} }
+                    ]
+                }
+            ]
+        },
+
+        // ===== STORY EVENTS =====
+        {
+            id: "bill_teleporter",
+            type: "story",
+            name: "Bill's Experiment!",
+            description: "The famous Pokemon researcher Bill is fused with a Clefairy after a teleporter accident! \"Please! Hit the button on the other machine to separate us! I'll reward you — but the machine has been acting strange. There's a small chance it could... affect your team.\"",
+            weight: 7,
+            oneTime: true,
+            locationIds: ["cerulean_city"],
+            choices: [
+                {
+                    text: "Help Bill (use the machine)",
+                    outcomes: [
+                        { weight: 50, narration: "The machine whirs, flashes — and Bill stumbles out, human again. \"Thank you! Here, take this S.S. Anne ticket, and I insist you take a Clefairy. The heal ability can save your life on the road.\"", effects: { catchPokemon: 35, money: 500 } },
+                        { weight: 30, narration: "Success! Bill is separated. He's so grateful he gives you rare supplies and tips about Kanto's secrets.", effects: { rareCandy: 1, money: 1000, food: 10 } },
+                        { weight: 20, narration: "The machine malfunctions mid-separation! Bill is fine, but the energy surge hits your team. Bill is mortified. \"I'm so sorry! Here, take everything I have.\"", effects: { partyDamageAll: 1, rareCandy: 2, money: 1500 } }
+                    ]
+                },
+                {
+                    text: "\"I'm not touching that machine.\"",
+                    outcomes: [
+                        { weight: 100, narration: "Bill's Clefairy ears droop. \"I understand... I'll figure it out myself.\" You hear an explosion as you leave. Probably fine.", effects: {} }
+                    ]
+                }
+            ]
+        },
+        {
+            id: "ghost_trainer_lament",
+            type: "story",
+            name: "The Forgotten Trainer!",
+            description: "In Pokemon Tower, you find a journal beside a faded trainer card. The last entry reads: \"Day 47. Out of food. Team is gone. If anyone finds this — my last Pokemon is still loyal. She waits at the top of the tower. Please take care of her.\"",
+            weight: 5,
+            oneTime: true,
+            locationIds: ["lavender_town"],
+            choices: [
+                {
+                    text: "Climb to find the Cubone",
+                    outcomes: [
+                        { weight: 50, narration: "You find the Cubone at the top, still guarding its trainer's bag. It looks up at you with hollow eyes, then slowly approaches. It joins your team. The bag contains the trainer's last supplies.", effects: { catchPokemon: 104, food: 8, potions: 2 } },
+                        { weight: 30, narration: "The Cubone is hostile at first — it attacks! But after a brief struggle, it follows you, clutching its bone. The trainer's bag has a few items.", effects: { partyDamage: 1, catchPokemon: 104, potions: 1 } },
+                        { weight: 20, narration: "You reach the top. The Cubone is there, but so are ghosts — furious at the intrusion. You grab the Cubone and run.", effects: { catchPokemon: 104, partyDamageAll: 1 } }
+                    ]
+                },
+                {
+                    text: "Leave the journal as a memorial",
+                    outcomes: [
+                        { weight: 60, narration: "You place the trainer card back respectfully. The tower grows quieter, as if the spirits acknowledge your respect. You feel at peace.", effects: { healAll: true } },
+                        { weight: 40, narration: "As you set the journal down, a chill passes through you. A ghostly voice whispers, \"Thank you.\" A Rare Candy materializes where the journal lay.", effects: { rareCandy: 1 } }
+                    ]
+                }
+            ]
+        },
+        {
+            id: "old_man_last_lesson",
+            type: "story",
+            name: "The Old Man's Last Lesson!",
+            description: "The old man who taught you how to catch Pokemon sits by the road, looking frail. \"I used to be a champion, long time ago. My last Pokemon passed last winter.\" He coughs. \"I can train your team — but it'll take 2 days. Or I can just tell you stories. The stories of a champion are worth something too.\"",
+            weight: 5,
+            oneTime: true,
+            locationIds: ["viridian_city"],
+            choices: [
+                {
+                    text: "\"Teach my team.\" (Lose 2 days)",
+                    outcomes: [
+                        { weight: 50, narration: "The old man spends two days drilling your team mercilessly. He may be frail, but his battle knowledge is legendary. Your team evolves under his guidance.", effects: { daysLost: 2, trainPokemon: true, boostPokemonMaxHp: 1 } },
+                        { weight: 50, narration: "Two days of grueling training. The old man pushes your team to its limits. They're exhausted but fundamentally stronger.", effects: { daysLost: 2, trainPokemon: true } }
+                    ]
+                },
+                {
+                    text: "\"Tell me your stories.\"",
+                    outcomes: [
+                        { weight: 40, narration: "He talks for hours about the old days — strategies, hidden paths, the secret of the Elite Four. His words are worth more than any item.", effects: { food: 10, money: 500 } },
+                        { weight: 30, narration: "\"The trick to Victory Road,\" he says, leaning close, \"is that it's not about strength. It's about not dying.\" He gives you his emergency supplies.", effects: { superPotions: 3, escapeRope: 2 } },
+                        { weight: 30, narration: "He tells you about a secret: a rare candy hidden in every major city if you know where to look. Then he falls asleep mid-sentence.", effects: { rareCandy: 1 } }
+                    ]
+                }
+            ]
+        }
     ];
 })();
 
