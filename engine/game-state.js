@@ -142,6 +142,14 @@
                 pokemon._safeguardSaved = true; // transient flag for UI
                 return false; // saved by Chansey!
             }
+            // System Restore — Porygon revives from backup (once per game)
+            if (state && !state._systemRestoreUsed && hasAbility(state, 'system_restore')) {
+                pokemon.hp = 1;
+                pokemon.status = 'healthy';
+                state._systemRestoreUsed = true;
+                pokemon._systemRestored = true; // transient flag for UI
+                return false; // restored by Porygon!
+            }
             pokemon.hp = 0;
             pokemon.status = 'fainted';
             // Remove fainted Pokemon from party permanently
@@ -274,6 +282,12 @@
             victim.hp = 1;
             victim._safeguarded = true;
             return { killed: false, name: victim.name, safeguarded: true };
+        }
+        // System Restore — Porygon revives from backup (once per game)
+        if (!state._systemRestoreUsed && hasAbility(state, 'system_restore')) {
+            victim.hp = 1;
+            state._systemRestoreUsed = true;
+            return { killed: false, name: victim.name, systemRestored: true };
         }
         const idx = state.party.indexOf(victim);
         if (idx === -1) return null;

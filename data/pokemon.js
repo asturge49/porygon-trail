@@ -140,7 +140,7 @@
         { id: 134, name: "Vaporeon", types: ["water"], rarity: "rare", baseLevel: 35, travelAbility: "surf" },
         { id: 135, name: "Jolteon", types: ["electric"], rarity: "rare", baseLevel: 35, travelAbility: "flash" },
         { id: 136, name: "Flareon", types: ["fire"], rarity: "rare", baseLevel: 35, travelAbility: "fire" },
-        { id: 137, name: "Porygon", types: ["normal"], rarity: "rare", baseLevel: 26, travelAbility: "psychic" },
+        { id: 137, name: "Porygon", types: ["normal"], rarity: "rare", baseLevel: 26, travelAbility: "system_restore" },
         { id: 138, name: "Omanyte", types: ["rock","water"], rarity: "rare", baseLevel: 30, travelAbility: "surf", evolvesTo: 139 },
         { id: 139, name: "Omastar", types: ["rock","water"], rarity: "rare", baseLevel: 40, travelAbility: "guard" },
         { id: 140, name: "Kabuto", types: ["rock","water"], rarity: "rare", baseLevel: 30, travelAbility: "guard", evolvesTo: 141 },

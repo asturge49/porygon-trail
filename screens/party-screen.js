@@ -110,7 +110,8 @@
                 strength: 'Carry more', flash: 'Cave navigation', dig: 'Escape events',
                 fire: 'Efficient cooking', heal: 'Passive healing', psychic: 'Foresight: pick encounters/events',
                 poison: 'Repel encounters', guard: 'Defensive bonus', intimidate: '+15% catch rate',
-                payday: '+50% money from all rewards', safeguard: 'Save a Pokemon from death once'
+                payday: '+50% money from all rewards', safeguard: 'Save a Pokemon from death once',
+                system_restore: 'Revive one lost Pokemon (once per game)'
             };
             return `${ability}: ${desc[ability] || '???'} (x${count})`;
         });
