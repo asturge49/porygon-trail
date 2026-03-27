@@ -81,7 +81,7 @@
             narrative.innerHTML += '<br><br><strong>Your Pokemon\'s ability made the difference!</strong>';
         }
         if (result.effects && result.effects._tradeIncoming) {
-            showTradeUI(state, result.effects._tradeIncoming, choicesDiv, narrative);
+            showTradeUI(state, result.effects._tradeIncoming, result.effects._tradeTarget || null, choicesDiv, narrative);
         } else if (result.effects && result.effects._pendingCatch && result.effects._pendingCatch.length > 0) {
             showEventSwapQueue(state, result.effects._pendingCatch.slice(), choicesDiv, narrative);
         } else {
@@ -305,46 +305,113 @@
         return html;
     }
 
-    function showTradeUI(state, incomingData, choicesDiv, narrative) {
+    function showTradeUI(state, incomingData, target, choicesDiv, narrative) {
         const newPokemon = PT.Engine.GameState.createPartyPokemon(incomingData, state);
-        const spriteUrl = PT.Engine.GameState.getSpriteUrl(incomingData.id);
-        const aliveParty = PT.Engine.GameState.getAliveParty(state);
+        const inSprite = PT.Engine.GameState.getSpriteUrl(incomingData.id);
 
-        choicesDiv.innerHTML = `
-            <div style="text-align: center; margin-bottom: 4px;">
-                <strong>Trade for ${incomingData.name}?</strong>
-                <br><img src="${spriteUrl}" style="width: 48px; height: 48px; image-rendering: pixelated; margin: 4px 0;" onerror="this.style.display='none'">
-                <br><span style="font-size: 7px;">${incomingData.types.join('/')} | ${incomingData.rarity} | HP: ${newPokemon.maxHp} | Ability: ${incomingData.travelAbility}</span>
-            </div>
-            <div style="font-size: 7px; margin-bottom: 4px; font-weight: bold;">Choose a Pokemon to trade away:</div>
-            ${aliveParty.map((p, i) => `
-                <button class="btn btn-wide trade-pick-btn" data-tidx="${i}">${p.name} (${p.types.join('/')} | HP:${p.hp}/${p.maxHp}${(p.battleStars || 0) > 0 ? ' ' + '★'.repeat(p.battleStars) : ''} | ${p.travelAbility})</button>
-            `).join('')}
-            <button class="btn btn-wide" id="btn-trade-cancel">CANCEL TRADE</button>
-        `;
+        // If we have a specific target, show the direct trade proposal
+        if (target) {
+            const targetSprite = PT.Engine.GameState.getSpriteUrl(target.id);
+            choicesDiv.innerHTML = `
+                <div style="text-align:center;margin-bottom:6px;">
+                    <div style="font-size:9px;font-weight:bold;margin-bottom:6px;">TRADE PROPOSAL</div>
+                    <div style="display:flex;align-items:center;justify-content:center;gap:8px;">
+                        <div style="text-align:center;">
+                            <div style="font-size:7px;color:var(--gb-dark);margin-bottom:2px;">THEY WANT</div>
+                            <img src="${targetSprite}" style="width:40px;height:40px;image-rendering:pixelated;" onerror="this.style.display='none'">
+                            <div style="font-size:8px;font-weight:bold;">${target.name}</div>
+                            <div style="font-size:6px;">${target.types.join('/')} | HP:${target.hp}/${target.maxHp}</div>
+                            <div style="font-size:6px;">${target.travelAbility}${(target.battleStars || 0) > 0 ? ' ' + '★'.repeat(target.battleStars) : ''}</div>
+                        </div>
+                        <div style="font-size:14px;">⇄</div>
+                        <div style="text-align:center;">
+                            <div style="font-size:7px;color:var(--gb-dark);margin-bottom:2px;">YOU GET</div>
+                            <img src="${inSprite}" style="width:40px;height:40px;image-rendering:pixelated;" onerror="this.style.display='none'">
+                            <div style="font-size:8px;font-weight:bold;">${incomingData.name}</div>
+                            <div style="font-size:6px;">${incomingData.types.join('/')} | HP:${newPokemon.maxHp}/${newPokemon.maxHp}</div>
+                            <div style="font-size:6px;">${incomingData.travelAbility} | ${incomingData.rarity}</div>
+                        </div>
+                    </div>
+                </div>
+                <button class="btn btn-wide" id="btn-trade-accept">ACCEPT TRADE</button>
+                <button class="btn btn-wide" id="btn-trade-party">VIEW PARTY</button>
+                <button class="btn btn-wide" id="btn-trade-cancel">DECLINE</button>
+            `;
 
-        document.querySelectorAll('.trade-pick-btn').forEach(btn => {
-            btn.addEventListener('click', () => {
-                const idx = parseInt(btn.dataset.tidx);
-                const alive = PT.Engine.GameState.getAliveParty(state);
-                const traded = alive[idx];
-                const tradedName = traded.name;
-
-                // Remove the traded Pokemon
-                const partyIdx = state.party.indexOf(traded);
+            document.getElementById('btn-trade-accept').addEventListener('click', () => {
+                const tradedName = target.name;
+                const partyIdx = state.party.indexOf(target);
                 if (partyIdx !== -1) state.party.splice(partyIdx, 1);
-
-                // Add the new Pokemon
                 state.party.push(newPokemon);
-
-                // Register in pokedex
                 if (!state.pokedexCaught.includes(incomingData.id)) state.pokedexCaught.push(incomingData.id);
-
                 PT.Engine.GameState.addToLog(state, `Traded ${tradedName} for ${incomingData.name}!`);
                 narrative.innerHTML += `<br><strong>Traded ${tradedName} for ${incomingData.name}!</strong>`;
-
                 showEventContinue(state, choicesDiv);
             });
+
+            document.getElementById('btn-trade-party').addEventListener('click', () => {
+                showTradePartyView(state, incomingData, newPokemon, target, choicesDiv, narrative);
+            });
+        } else {
+            // Fallback — no target picked (shouldn't happen, but safe)
+            choicesDiv.innerHTML = `
+                <div style="text-align:center;margin-bottom:4px;">
+                    <strong>Trade for ${incomingData.name}?</strong>
+                    <br><img src="${inSprite}" style="width:48px;height:48px;image-rendering:pixelated;margin:4px 0;" onerror="this.style.display='none'">
+                    <br><span style="font-size:7px;">${incomingData.types.join('/')} | ${incomingData.rarity} | HP:${newPokemon.maxHp} | ${incomingData.travelAbility}</span>
+                </div>
+                <button class="btn btn-wide" id="btn-trade-cancel">DECLINE</button>
+            `;
+        }
+
+        document.getElementById('btn-trade-cancel').addEventListener('click', () => {
+            narrative.innerHTML += '<br><em>You decided not to trade.</em>';
+            showEventContinue(state, choicesDiv);
+        });
+    }
+
+    function showTradePartyView(state, incomingData, newPokemon, target, choicesDiv, narrative) {
+        const inSprite = PT.Engine.GameState.getSpriteUrl(incomingData.id);
+        const targetSprite = PT.Engine.GameState.getSpriteUrl(target.id);
+
+        const partyRows = state.party.map(p => {
+            const sprite = PT.Engine.GameState.getSpriteUrl(p.id);
+            const isTarget = p === target;
+            return `<div style="display:flex;align-items:center;gap:6px;padding:3px 4px;font-size:8px;${isTarget ? 'background:var(--gb-light);border:1px solid var(--gb-darkest);' : 'border-bottom:1px solid var(--gb-light);'}">
+                <img src="${sprite}" style="width:24px;height:24px;image-rendering:pixelated;" onerror="this.style.display='none'">
+                <div style="flex:1;">
+                    <div style="font-weight:bold;">${p.name}${isTarget ? ' ← WANTED' : ''}</div>
+                    <div style="font-size:6px;">${p.types.join('/')} | HP:${p.hp}/${p.maxHp} | ${p.travelAbility}${(p.battleStars || 0) > 0 ? ' ' + '★'.repeat(p.battleStars) : ''}</div>
+                </div>
+            </div>`;
+        }).join('');
+
+        choicesDiv.innerHTML = `
+            <div style="font-size:8px;font-weight:bold;text-align:center;margin-bottom:4px;">YOUR PARTY</div>
+            <div style="border:1px solid var(--gb-dark);border-radius:2px;margin-bottom:6px;max-height:140px;overflow-y:auto;">
+                ${partyRows}
+            </div>
+            <div style="text-align:center;font-size:7px;margin-bottom:4px;">
+                Trade <strong>${target.name}</strong> → Get <strong>${incomingData.name}</strong> (${incomingData.types.join('/')} | HP:${newPokemon.maxHp} | ${incomingData.travelAbility})
+            </div>
+            <button class="btn btn-wide" id="btn-trade-accept">ACCEPT TRADE</button>
+            <button class="btn btn-wide" id="btn-trade-back">BACK</button>
+            <button class="btn btn-wide" id="btn-trade-cancel">DECLINE</button>
+        `;
+
+        document.getElementById('btn-trade-accept').addEventListener('click', () => {
+            const tradedName = target.name;
+            const partyIdx = state.party.indexOf(target);
+            if (partyIdx !== -1) state.party.splice(partyIdx, 1);
+            state.party.push(newPokemon);
+            if (!state.pokedexCaught.includes(incomingData.id)) state.pokedexCaught.push(incomingData.id);
+            PT.Engine.GameState.addToLog(state, `Traded ${tradedName} for ${incomingData.name}!`);
+            narrative.innerHTML += `<br><strong>Traded ${tradedName} for ${incomingData.name}!</strong>`;
+            showEventContinue(state, choicesDiv);
+        });
+
+        document.getElementById('btn-trade-back').addEventListener('click', () => {
+            showTradeUI(state, incomingData, target, choicesDiv, narrative);
         });
 
         document.getElementById('btn-trade-cancel').addEventListener('click', () => {

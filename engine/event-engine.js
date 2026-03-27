@@ -432,12 +432,28 @@
         }
 
         // Pokemon Trade — flag for trade UI in event screen
+        // Picks a specific party member the trader wants (prefers weaker/common mons)
         if (effects.pokemonTrade) {
             const tradeId = effects.pokemonTrade;
             if (!state.pokedexSeen.includes(tradeId)) state.pokedexSeen.push(tradeId);
             const data = PT.Data.Pokemon.find(p => p.id === tradeId);
             if (data) {
                 effects._tradeIncoming = data;
+                // Pick a target from alive party
+                const alive = PT.Engine.GameState.getAliveParty(state);
+                if (alive.length > 1) {
+                    const candidates = alive.map(p => {
+                        let w = 10;
+                        if (p.rarity === 'common') w = 40;
+                        else if (p.rarity === 'uncommon') w = 25;
+                        else if (p.rarity === 'rare') w = 10;
+                        else if (p.rarity === 'legendary') w = 2;
+                        if ((p.battleStars || 0) >= 2) w = Math.max(1, Math.floor(w / 3));
+                        return { weight: w, pokemon: p };
+                    });
+                    const pick = state.rng.weightedChoice(candidates);
+                    if (pick) effects._tradeTarget = pick.pokemon;
+                }
             }
         }
 
