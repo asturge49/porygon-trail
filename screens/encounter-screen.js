@@ -26,7 +26,7 @@
                         <img class="encounter-sprite" src="${pokemon.spriteUrl}" alt="${pokemon.name}"
                              onerror="this.style.display='none'; this.parentElement.innerHTML='<div style=\\'font-size:48px; padding:20px;\\'>?</div>'">
                         <div style="font-size: 8px; margin-top: 8px;">
-                            ${pokemon.types.join('/')} | ${pokemon.rarity.toUpperCase()}
+                            ${pokemon.types.join('/')} | ${pokemon.rarity.toUpperCase()} | HP ${PT.Engine.GameState.getMaxHpForPokemon(pokemon.id)}/${PT.Engine.GameState.getMaxHpForPokemon(pokemon.id)}
                         </div>
                     </div>
                 </div>
