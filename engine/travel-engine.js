@@ -212,7 +212,8 @@
 
         // --- Encounter roll ---
         if (!results.arrivedAtLocation || pace.distance === 0) {
-            const encounterChance = 30 + (pace.encounterMod || 0);
+            const baseEncounterRate = route.encounterRate !== undefined ? route.encounterRate : 30;
+            const encounterChance = baseEncounterRate + (pace.encounterMod || 0);
             if (state.repelSteps > 0) {
                 state.repelSteps--;
                 results.messages.push(`Repel active (${state.repelSteps} left).`);

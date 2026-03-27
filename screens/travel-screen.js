@@ -297,11 +297,11 @@
                 <div class="travel-actions">
                     <button class="btn btn-small" id="btn-continue">${isAtDestination ? 'FINAL STOP' : 'CONTINUE'}</button>
                     <button class="btn btn-small" id="btn-inventory">ITEMS</button>
-                    ${route.hasShop ? '<button class="btn btn-small" id="btn-shop">SHOP</button>' : '<button class="btn btn-small" disabled>NO SHOP</button>'}
+                    ${route.hasShop ? '<button class="btn btn-small" id="btn-shop">MART</button>' : '<button class="btn btn-small" disabled>NO MART</button>'}
                     ${route.hasGym && !state.badges.includes(PT.Data.GymLeaders[route.gymLeader]?.badge)
                             ? `<button class="btn btn-small" id="btn-gym">GYM</button>`
                             : '<button class="btn btn-small" disabled>NO GYM</button>'}
-                    <button class="btn btn-small" id="btn-use-repel" ${state.resources.repels <= 0 || state.repelSteps > 0 ? 'disabled' : ''}>REPEL${state.repelSteps > 0 ? ` (${state.repelSteps})` : ''}</button>
+                    ${route.hasCenter ? '<button class="btn btn-small" id="btn-center">CENTER</button>' : '<button class="btn btn-small" disabled>NO CENTER</button>'}
                     <button class="btn btn-small" id="btn-save">SAVE</button>
                 </div>
 
@@ -578,15 +578,40 @@
                 });
             }
 
-            // Repel button
-            document.getElementById('btn-use-repel').addEventListener('click', () => {
-                if (state.resources.repels > 0 && state.repelSteps <= 0) {
-                    state.resources.repels--;
-                    state.repelSteps = 3;
-                    PT.Engine.GameState.addToLog(state, "Used Repel! Next 3 encounters avoided.");
-                    PT.App.goto('TRAVEL');
-                }
-            });
+            // Pokemon Center button
+            const centerBtn = document.getElementById('btn-center');
+            if (centerBtn) {
+                centerBtn.addEventListener('click', () => {
+                    // Full heal all party Pokemon
+                    const alive = PT.Engine.GameState.getAliveParty(state);
+                    let healed = 0;
+                    alive.forEach(p => {
+                        if (p.hp < p.maxHp || p.status !== 'healthy') {
+                            p.hp = p.maxHp;
+                            p.status = 'healthy';
+                            healed++;
+                        }
+                    });
+                    if (PT.Engine.Audio) PT.Engine.Audio.buy();
+
+                    const centerOverlay = document.createElement('div');
+                    centerOverlay.className = 'day-recap-overlay';
+                    centerOverlay.innerHTML = `
+                        <div class="day-recap-popup">
+                            <div class="day-recap-title">🏥 POKEMON CENTER</div>
+                            <div class="day-recap-body">
+                                <div class="recap-line">${healed > 0 ? `Your Pokemon have been fully healed! (${healed} restored)` : 'Your Pokemon are already healthy!'}</div>
+                            </div>
+                            <button class="btn btn-small day-recap-btn" id="btn-center-ok">OK</button>
+                        </div>
+                    `;
+                    document.querySelector('.travel-screen').appendChild(centerOverlay);
+                    document.getElementById('btn-center-ok').addEventListener('click', () => {
+                        centerOverlay.remove();
+                        PT.App._render();
+                    });
+                });
+            }
 
             // Save button
             document.getElementById('btn-save').addEventListener('click', () => {
