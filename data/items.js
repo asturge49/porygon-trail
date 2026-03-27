@@ -4,7 +4,7 @@
     PT.Data = PT.Data || {};
 
     PT.Data.Items = {
-        food: { name: "Food Rations", price: 400, desc: "Keeps your team fed. Consume per day based on party size.", icon: "F" },
+        food: { name: "Food Rations", price: 200, desc: "Keeps your team fed. Consume per day based on party size.", icon: "F" },
         pokeballs: { name: "Poke Ball", price: 200, desc: "Basic ball. Catch rate: 40%", icon: "o" },
         greatballs: { name: "Great Ball", price: 600, desc: "Better ball. Catch rate: 60%", icon: "O" },
         ultraballs: { name: "Ultra Ball", price: 1200, desc: "Best ball. Catch rate: 80%", icon: "@" },
