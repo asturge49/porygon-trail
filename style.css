@@ -1096,9 +1096,9 @@ body {
 .travel-party-member {
     display: flex;
     align-items: center;
-    gap: 4px;
-    width: calc(50% - 3px);
-    padding: 2px 0;
+    gap: 3px;
+    width: calc(33.33% - 4px);
+    padding: 1px 0;
 }
 
 .travel-party-member.critical {
@@ -1111,8 +1111,8 @@ body {
 }
 
 .travel-party-sprite {
-    width: 24px;
-    height: 24px;
+    width: 18px;
+    height: 18px;
     image-rendering: pixelated;
     filter: grayscale(30%) sepia(40%) hue-rotate(50deg) saturate(0.6);
     flex-shrink: 0;
@@ -1133,7 +1133,7 @@ body {
 
 .travel-hp-bar {
     width: 100%;
-    height: 4px;
+    height: 3px;
     background: var(--gb-dark);
     border: 1px solid var(--gb-darkest);
     margin: 1px 0;

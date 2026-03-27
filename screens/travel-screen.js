@@ -296,7 +296,6 @@
 
                 <div class="travel-actions">
                     <button class="btn btn-small" id="btn-continue">${isAtDestination ? 'FINAL STOP' : 'CONTINUE'}</button>
-                    <button class="btn btn-small" id="btn-party">PARTY (${state.party.length})</button>
                     <button class="btn btn-small" id="btn-inventory">ITEMS</button>
                     ${route.hasShop ? '<button class="btn btn-small" id="btn-shop">SHOP</button>' : '<button class="btn btn-small" disabled>NO SHOP</button>'}
                     ${route.hasGym && !state.badges.includes(PT.Data.GymLeaders[route.gymLeader]?.badge)
@@ -468,11 +467,6 @@
                 }
 
                 proceedWithDay();
-            });
-
-            // Party button
-            document.getElementById('btn-party').addEventListener('click', () => {
-                PT.App.push('PARTY');
             });
 
             // Inventory button
