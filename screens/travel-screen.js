@@ -371,7 +371,7 @@
                 }
 
                 // Show day recap popup
-                showDayRecap(results.messages, nextAction, results.encounter, results.event, results.arrivedAtLocation ? PT.Engine.GameState.getNextRoute(state) : null);
+                showDayRecap(results.messages, nextAction, results.encounter, results.event, results.arrivedAtLocation ? PT.Engine.GameState.getCurrentRoute(state) : null);
             }
 
             function showDayRecap(messages, nextAction, encounter, event, arrivedRoute) {
