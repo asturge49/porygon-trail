@@ -116,6 +116,7 @@
                         const hasAdvantage = p.types.some(t => typeChart.weakTo.includes(t));
                         const hasDisadvantage = p.types.some(t => typeChart.strongTo.includes(t));
                         let label = `${p.name} (${p.types.join('/')} | HP:${p.hp}/${p.maxHp})`;
+                        if (p.battleStars > 0) label += ` ${'★'.repeat(p.battleStars)}`;
                         if (hasAdvantage) label += ' [SE!]';
                         if (hasDisadvantage) label += ' [NVE]';
                         return `<button class="btn btn-wide battle-pick-btn" data-battle-idx="${i}">${label}</button>`;
@@ -384,6 +385,13 @@
             battleBonuses.push('😤 INTIMIDATE +5%');
         }
 
+        // Battle Stars bonus
+        const starBonus = PT.Engine.GameState.getStarBonus(chosen);
+        if (starBonus.winChanceBonus > 0) {
+            chance += starBonus.winChanceBonus;
+            battleBonuses.push(`${'★'.repeat(chosen.battleStars || 0)} +${starBonus.winChanceBonus}%`);
+        }
+
         // Clamp
         chance = Math.max(15, Math.min(85, chance));
 
@@ -393,6 +401,14 @@
 
         if (won) {
             if (PT.Engine.Audio) PT.Engine.Audio.gymVictory();
+
+            // Award battle star
+            const earnedStar = PT.Engine.GameState.addBattleWin(chosen);
+            let starLine = '';
+            if (earnedStar) {
+                starLine = `<br>⭐ ${chosen.name} earned a Battle Star! [${'★'.repeat(chosen.battleStars)}] (${chosen.battleStars}/5)`;
+            }
+
             PT.Engine.GameState.addToLog(state, `${chosen.name} defeated wild ${pokemon.name}!`);
 
             // Try to evolve the battler
@@ -410,7 +426,7 @@
             msgEl.innerHTML = `
                 <div style="text-align: center;">
                     <strong>${chosen.name} defeated wild ${pokemon.name}!</strong>
-                    <br>Won $${moneyReward}!${evoLine}
+                    <br>Won $${moneyReward}!${evoLine}${starLine}
                     <br><span style="font-size: 6px;">Win chance was ${chance}%${battleBonuses.length > 0 ? ' (' + battleBonuses.join(', ') + ')' : ''}</span>
                 </div>
             `;

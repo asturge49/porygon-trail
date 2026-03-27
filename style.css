@@ -1158,6 +1158,12 @@ body {
     color: var(--gb-dark);
 }
 
+.battle-stars {
+    color: var(--gb-darkest);
+    font-size: 5px;
+    letter-spacing: -1px;
+}
+
 /* ---- Day Recap Popup ---- */
 .day-recap-overlay {
     position: absolute;

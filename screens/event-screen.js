@@ -126,6 +126,7 @@
             ${aliveParty.map((p, i) => {
                 const hasAdv = p.types.some(t => weakTo.has(t));
                 let label = `${p.name} (${p.types.join('/')} | HP:${p.hp}/${p.maxHp})`;
+                if (p.battleStars > 0) label += ` ${'★'.repeat(p.battleStars)}`;
                 if (hasAdv) label += ' [SE!]';
                 return `<button class="btn btn-wide evt-battle-pick" data-eidx="${i}">${label}</button>`;
             }).join('')}
@@ -148,6 +149,14 @@
         if (result.won) {
             // Victory — apply win effects
             if (PT.Engine.Audio) PT.Engine.Audio.gymVictory();
+
+            // Award battle star
+            const earnedStar = PT.Engine.GameState.addBattleWin(chosen);
+            let starLine = '';
+            if (earnedStar) {
+                starLine = `<br>⭐ ${chosen.name} earned a Battle Star! [${'★'.repeat(chosen.battleStars)}] (${chosen.battleStars}/5)`;
+            }
+
             const winEffects = battle.winEffects || {};
             PT.Engine.EventEngine.applyEffects(winEffects, state);
             PT.Engine.GameState.addToLog(state, `${chosen.name} defeated ${battle.trainerName || 'trainer'}'s ${opponent.name}!`);
@@ -169,7 +178,7 @@
             const winNarration = battle.winNarration || `${chosen.name} won the battle!`;
             narrative.innerHTML = `
                 <div style="text-align: center;">
-                    <strong>${winNarration}</strong>${evoLine}
+                    <strong>${winNarration}</strong>${evoLine}${starLine}
                     <br><span style="font-size: 6px;">Win chance: ${result.chance}%${result.battleBonuses.length > 0 ? ' (' + result.battleBonuses.join(', ') + ')' : ''}</span>
                 </div>
             ` + buildEffectsSummary(winEffects);

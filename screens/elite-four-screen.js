@@ -154,6 +154,7 @@
                     const hasAdvantage = p.types.some(t => typeChart.weakTo.includes(t));
                     const hasDisadvantage = p.types.some(t => typeChart.strongTo.includes(t));
                     let label = `${p.name} (${p.types.join('/')}) HP:${p.hp}/${p.maxHp}`;
+                    if (p.battleStars > 0) label += ` ${'★'.repeat(p.battleStars)}`;
                     if (hasAdvantage) label += ' [SE!]';
                     if (hasDisadvantage) label += ' [NVE]';
                     return `<button class="btn btn-wide" data-index="${i}">${label}</button>`;
@@ -213,6 +214,20 @@
             battleBonuses.push('😤 INTIMIDATE +5%');
         }
 
+        // Battle Stars bonus
+        const starBonus = PT.Engine.GameState.getStarBonus(pokemon);
+        if (starBonus.winChanceBonus > 0) {
+            chance += starBonus.winChanceBonus;
+            battleBonuses.push(`${'★'.repeat(pokemon.battleStars || 0)} +${starBonus.winChanceBonus}%`);
+        }
+
+        // E4 scaling — Elite Four adapts to experienced teams (harsher than gyms)
+        const avgStars = aliveCount > 0
+            ? PT.Engine.GameState.getAliveParty(state).reduce((s, p) => s + (p.battleStars || 0), 0) / aliveCount
+            : 0;
+        const e4Scaling = Math.floor(avgStars * 2);
+        if (e4Scaling > 0) chance -= e4Scaling;
+
         // Hard ceiling — even perfect conditions can't guarantee victory
         chance = Math.max(8, Math.min(55, chance));
 
@@ -225,6 +240,14 @@
         if (won) {
             // Victory against this E4 member
             if (PT.Engine.Audio) PT.Engine.Audio.gymVictory();
+
+            // Award battle star
+            const earnedStar = PT.Engine.GameState.addBattleWin(pokemon);
+            let starLine = '';
+            if (earnedStar) {
+                starLine = `<br>⭐ ${pokemon.name} earned a Battle Star! [${'★'.repeat(pokemon.battleStars)}] (${pokemon.battleStars}/5)`;
+            }
+
             PT.Engine.GameState.addToLog(state, `Defeated ${trainer.name}'s ${opponent.name} in the Elite Four!`);
 
             // Try evolution
@@ -250,7 +273,7 @@
                     </div>
                     <div class="gym-challenge-text" style="font-size: 7px;">${trainer.defeatText}</div>
                     <div style="font-size: 8px; margin-top: 8px;">
-                        ${pokemon.name} defeated ${trainer.name}'s ${opponent.name}!${evoLine}
+                        ${pokemon.name} defeated ${trainer.name}'s ${opponent.name}!${evoLine}${starLine}
                         <br><span style="font-size: 6px;">Win chance was ${chance}%${battleBonuses.length > 0 ? ' (' + battleBonuses.join(', ') + ')' : ''}</span>
                         ${isLastBattle
                             ? '<br><strong>You\'ve defeated all five! You are the CHAMPION!</strong>'
@@ -289,17 +312,28 @@
             const E4_LOSS_DAMAGE = 4;
             const oldHp = pokemon.hp;
             pokemon.hp = Math.max(0, pokemon.hp - E4_LOSS_DAMAGE);
-            const killed = pokemon.hp <= 0;
+            let killed = pokemon.hp <= 0;
+            let e4Clutched = false;
 
             if (killed) {
-                const idx = state.party.indexOf(pokemon);
-                if (idx !== -1) {
-                    state.party.splice(idx, 1);
-                    state.pokemonLost++;
+                // Battle Stars death avoidance
+                const deathStarBonus = PT.Engine.GameState.getStarBonus(pokemon);
+                if (deathStarBonus.deathAvoidChance > 0 && state.rng.chance(deathStarBonus.deathAvoidChance)) {
+                    pokemon.hp = 1;
+                    killed = false;
+                    e4Clutched = true;
+                } else {
+                    const idx = state.party.indexOf(pokemon);
+                    if (idx !== -1) {
+                        state.party.splice(idx, 1);
+                        state.pokemonLost++;
+                    }
                 }
             }
 
-            const dmgMsg = killed
+            const dmgMsg = e4Clutched
+                ? `⭐ ${pokemon.name} held on with sheer willpower! (1 HP)`
+                : killed
                 ? `${pokemon.name} was killed by ${trainer.name}'s ${opponent.name}! 💀`
                 : `${pokemon.name} took ${E4_LOSS_DAMAGE} damage from ${trainer.name}'s ${opponent.name}! (${pokemon.hp}/${pokemon.maxHp} HP)`;
             PT.Engine.GameState.addToLog(state, dmgMsg);
@@ -307,7 +341,9 @@
             const aliveAfter = PT.Engine.GameState.getAliveParty(state);
             const partyWiped = aliveAfter.length === 0;
 
-            const statusMsg = killed
+            const statusMsg = e4Clutched
+                ? `⭐ ${pokemon.name} held on with sheer willpower! (1 HP)`
+                : killed
                 ? `💀 ${pokemon.name} was killed by ${opponent.name}!`
                 : `💥 ${pokemon.name} took ${E4_LOSS_DAMAGE} damage! (${pokemon.hp}/${pokemon.maxHp} HP remaining)`;
 

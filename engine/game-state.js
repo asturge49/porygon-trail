@@ -97,7 +97,9 @@
             maxHp: maxHp,
             status: 'healthy',
             travelAbility: data.travelAbility,
-            spriteUrl: getSpriteUrl(data.id)
+            spriteUrl: getSpriteUrl(data.id),
+            battleWins: 0,
+            battleStars: 0
         };
     }
 
@@ -122,6 +124,14 @@
     function damagePokemon(pokemon, amount, state) {
         pokemon.hp = Math.max(0, pokemon.hp - amount);
         if (pokemon.hp <= 0) {
+            // Battle Stars death avoidance — veteran Pokemon can clutch survive
+            const starBonus = getStarBonus(pokemon);
+            if (starBonus.deathAvoidChance > 0 && state && state.rng && state.rng.chance(starBonus.deathAvoidChance)) {
+                pokemon.hp = 1;
+                pokemon.status = 'healthy';
+                pokemon._clutched = true; // transient flag for UI
+                return false; // survived!
+            }
             pokemon.hp = 0;
             pokemon.status = 'fainted';
             // Remove fainted Pokemon from party permanently
@@ -206,6 +216,12 @@
         const alive = getAliveParty(state);
         if (alive.length === 0) return null;
         const victim = state.rng.pick(alive);
+        // Battle Stars death avoidance
+        const starBonus = getStarBonus(victim);
+        if (starBonus.deathAvoidChance > 0 && state.rng.chance(starBonus.deathAvoidChance)) {
+            victim.hp = 1;
+            return { killed: false, name: victim.name, clutched: true };
+        }
         const idx = state.party.indexOf(victim);
         if (idx === -1) return null;
         state.party.splice(idx, 1);
@@ -216,6 +232,28 @@
             state.gameOverReason = 'party_wiped';
         }
         return { killed: true, name: victim.name };
+    }
+
+    // ===== BATTLE STARS =====
+    const STAR_THRESHOLDS = [1, 3, 6, 10, 15];
+
+    function addBattleWin(pokemon) {
+        pokemon.battleWins = (pokemon.battleWins || 0) + 1;
+        let newStars = 0;
+        for (let i = 0; i < STAR_THRESHOLDS.length; i++) {
+            if (pokemon.battleWins >= STAR_THRESHOLDS[i]) newStars = i + 1;
+        }
+        const oldStars = pokemon.battleStars || 0;
+        pokemon.battleStars = newStars;
+        return newStars > oldStars; // true if a new star was earned
+    }
+
+    function getStarBonus(pokemon) {
+        const stars = pokemon.battleStars || 0;
+        return {
+            winChanceBonus: stars * 2,       // +2% per star, max +10%
+            deathAvoidChance: stars * 4      // +4% per star, max +20%
+        };
     }
 
     // Get max HP for a Pokemon data entry (respects overrides)
@@ -295,6 +333,8 @@
         getNextRoute,
         evolvePokemon,
         killPokemon,
+        addBattleWin,
+        getStarBonus,
         pokemonToFood,
         saveGame,
         loadGame,

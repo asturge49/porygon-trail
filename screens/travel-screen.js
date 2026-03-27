@@ -310,7 +310,7 @@
                         <div class="travel-party-member ${p.hp <= 1 ? 'critical' : ''}">
                             <img class="travel-party-sprite" src="${p.spriteUrl}" alt="${p.name}" onerror="this.style.display='none'">
                             <div class="travel-party-info">
-                                <div class="travel-party-name">${p.name}</div>
+                                <div class="travel-party-name">${p.name}${(p.battleStars || 0) > 0 ? ' <span class="battle-stars">' + '★'.repeat(p.battleStars) + '</span>' : ''}</div>
                                 <div class="travel-hp-bar">
                                     <div class="travel-hp-fill ${p.hp <= 1 ? 'low' : p.hp <= Math.ceil(p.maxHp / 2) ? 'mid' : ''}" style="width:${(p.hp / p.maxHp) * 100}%"></div>
                                 </div>
@@ -400,7 +400,7 @@
                         <div class="travel-party-member ${p.hp <= 1 ? 'critical' : ''}">
                             <img class="travel-party-sprite" src="${p.spriteUrl}" alt="${p.name}" onerror="this.style.display='none'">
                             <div class="travel-party-info">
-                                <div class="travel-party-name">${p.name}</div>
+                                <div class="travel-party-name">${p.name}${(p.battleStars || 0) > 0 ? ' <span class="battle-stars">' + '★'.repeat(p.battleStars) + '</span>' : ''}</div>
                                 <div class="travel-hp-bar">
                                     <div class="travel-hp-fill ${p.hp <= 1 ? 'low' : p.hp <= Math.ceil(p.maxHp / 2) ? 'mid' : ''}" style="width:${(p.hp / p.maxHp) * 100}%"></div>
                                 </div>

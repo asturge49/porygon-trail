@@ -191,6 +191,13 @@
             battleBonuses.push('😤 INTIMIDATE +5%');
         }
 
+        // Battle Stars bonus
+        const starBonus = PT.Engine.GameState.getStarBonus(chosen);
+        if (starBonus.winChanceBonus > 0) {
+            chance += starBonus.winChanceBonus;
+            battleBonuses.push(`${'★'.repeat(chosen.battleStars || 0)} +${starBonus.winChanceBonus}%`);
+        }
+
         chance = Math.max(15, Math.min(85, chance));
 
         const won = state.rng.chance(chance);
