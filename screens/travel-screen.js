@@ -296,7 +296,7 @@
 
                 <div class="travel-actions">
                     <button class="btn btn-small" id="btn-continue">${isAtDestination ? 'FINAL STOP' : 'CONTINUE'}</button>
-                    <button class="btn btn-small" id="btn-inventory">ITEMS</button>
+                    <button class="btn btn-small" id="btn-inventory">BAG</button>
                     ${route.hasShop ? '<button class="btn btn-small" id="btn-shop">MART</button>' : '<button class="btn btn-small" disabled>NO MART</button>'}
                     ${route.hasGym && !state.badges.includes(PT.Data.GymLeaders[route.gymLeader]?.badge)
                             ? `<button class="btn btn-small" id="btn-gym">GYM</button>`

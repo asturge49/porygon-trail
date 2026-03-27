@@ -9,7 +9,7 @@
             const div = document.createElement('div');
             div.className = 'screen inventory-screen';
             div.innerHTML = `
-                <div class="panel-header text-center">INVENTORY</div>
+                <div class="panel-header text-center">BAG</div>
                 <div class="inventory-grid">
                     ${Object.entries(items).map(([key, item]) => `
                         <div class="inventory-item">
@@ -34,6 +34,7 @@
                 <div class="btn-row" style="margin-top: 4px;">
                     <button class="btn btn-small flex-1" id="btn-use-potion" ${state.resources.potions <= 0 && state.resources.superPotions <= 0 ? 'disabled' : ''}>USE POTION</button>
                     <button class="btn btn-small flex-1" id="btn-use-candy" ${state.resources.rareCandy <= 0 ? 'disabled' : ''}>USE RARE CANDY</button>
+                    <button class="btn btn-small flex-1" id="btn-use-repel" ${state.resources.repels <= 0 || state.repelSteps > 0 ? 'disabled' : ''}>USE REPEL${state.repelSteps > 0 ? ' (' + state.repelSteps + ')' : ''}</button>
                     <button class="btn btn-small flex-1" id="btn-back">BACK</button>
                 </div>
                 <div class="text-box" id="inv-message" style="min-height: 30px; font-size: 7px;"></div>
@@ -204,6 +205,17 @@
                 document.getElementById('btn-candy-cancel').addEventListener('click', () => {
                     msg.textContent = '';
                 });
+            });
+
+            // --- USE REPEL ---
+            document.getElementById('btn-use-repel').addEventListener('click', () => {
+                if (state.resources.repels <= 0 || state.repelSteps > 0) return;
+                state.resources.repels--;
+                state.repelSteps = 3;
+                PT.Engine.GameState.addToLog(state, "Used Repel! Next 3 encounters avoided.");
+                if (PT.Engine.Audio) PT.Engine.Audio.buy();
+                msg.textContent = "Repel activated! Next 3 encounters will be avoided.";
+                PT.App._render();
             });
 
             document.getElementById('btn-back').addEventListener('click', () => {
