@@ -364,13 +364,13 @@
             return { earned: false, reason: 'location_limit' };
         }
 
-        // Check if wins cross a threshold
-        let newStars = 0;
-        for (let i = 0; i < STAR_THRESHOLDS.length; i++) {
-            if (pokemon.battleWins >= STAR_THRESHOLDS[i]) newStars = i + 1;
-        }
-        newStars = Math.min(3, newStars);
+        // Check if wins cross the NEXT threshold (only award +1 star at a time)
         const oldStars = pokemon.battleStars || 0;
+        const nextThreshold = STAR_THRESHOLDS[oldStars]; // threshold for next star
+        if (nextThreshold === undefined || pokemon.battleWins < nextThreshold) {
+            return { earned: false, reason: 'no_threshold' };
+        }
+        const newStars = oldStars + 1;
         pokemon.battleStars = newStars;
 
         if (newStars > oldStars) {
