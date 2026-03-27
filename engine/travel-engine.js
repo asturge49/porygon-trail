@@ -235,12 +235,6 @@
             results.messages.push("🔮 PSYCHIC ABILITY: Your Psychic-type senses something ahead...");
         }
 
-        // --- Intimidate ability: chance to scare off encounters ---
-        if (PT.Engine.GameState.hasAbility(state, 'intimidate') && results.encounter && state.rng.chance(25)) {
-            results.messages.push(`😤 INTIMIDATE ABILITY: Your Pokemon's fierce presence scared off wild ${results.encounter.name}!`);
-            results.encounter = null;
-        }
-
         // --- Glitch ability: MissingNo chaos ---
         if (PT.Engine.GameState.hasAbility(state, 'glitch') && state.rng.chance(15)) {
             const glitchRoll = state.rng.randInt(1, 100);

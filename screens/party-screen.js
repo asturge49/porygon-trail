@@ -108,7 +108,7 @@
                 cut: 'Clears obstacles', surf: 'Water travel', fly: 'Scouts ahead',
                 strength: 'Carry more', flash: 'Cave navigation', dig: 'Escape events',
                 fire: 'Efficient cooking', heal: 'Passive healing', psychic: 'Predict events',
-                poison: 'Repel encounters', guard: 'Defensive bonus', intimidate: 'Scare threats'
+                poison: 'Repel encounters', guard: 'Defensive bonus', intimidate: '+15% catch rate'
             };
             return `${ability}: ${desc[ability] || '???'} (x${count})`;
         });

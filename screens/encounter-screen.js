@@ -283,6 +283,7 @@
                 clearInterval(shakeInterval);
                 if (result.success) {
                     const addResult = PT.Engine.EncounterEngine.addPokemonToParty(state, pokemon);
+                    const intLabel = result.intimidateBonus ? ' 😤 INTIMIDATE +15%' : '';
                     PT.Engine.GameState.addToLog(state, `Caught ${pokemon.name}! (${result.catchChance}% chance)`);
                     if (A) A.catchSuccess();
                     if (sprite) sprite.classList.add('catch-sparkle');
@@ -291,12 +292,13 @@
                         // Party full — show swap/food/release options
                         showPartyFullOptions(state, pokemon, addResult, msgEl, actionsDiv);
                     } else {
-                        showResult(`${'shake... '.repeat(result.shakes)}CLICK!\n\nGotcha! ${pokemon.name} was caught! ${addResult.message}`);
+                        showResult(`${'shake... '.repeat(result.shakes)}CLICK!\n\nGotcha! ${pokemon.name} was caught!${intLabel} ${addResult.message}`);
                     }
                 } else {
                     if (A) A.catchFail();
                     if (sprite) sprite.classList.add('damage-flash');
-                    msgEl.textContent = `${'shake... '.repeat(result.shakes)}Oh no! ${pokemon.name} broke free! (${result.catchChance}% chance)`;
+                    const intLabel = result.intimidateBonus ? ' 😤 INTIMIDATE +15%' : '';
+                    msgEl.textContent = `${'shake... '.repeat(result.shakes)}Oh no! ${pokemon.name} broke free! (${result.catchChance}% chance)${intLabel}`;
 
                     // Re-enable actions
                     actionsDiv.querySelectorAll('button').forEach(b => b.disabled = false);

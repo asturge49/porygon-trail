@@ -37,6 +37,12 @@
         // Badge bonus: +2% per badge
         catchChance += (state.badges.length * 2);
 
+        // Intimidate ability: +15% catch rate
+        const hasIntimidate = PT.Engine.GameState.hasAbility(state, 'intimidate');
+        if (hasIntimidate) {
+            catchChance += 15;
+        }
+
         // Clamp
         catchChance = Math.max(5, Math.min(95, catchChance));
 
@@ -52,7 +58,8 @@
         return {
             success,
             catchChance: Math.round(catchChance),
-            shakes: success ? 3 : state.rng.randInt(0, 2)
+            shakes: success ? 3 : state.rng.randInt(0, 2),
+            intimidateBonus: hasIntimidate
         };
     }
 
