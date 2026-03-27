@@ -281,13 +281,28 @@
             lines.push(`⭐ ${effects._starResult.name} earned a Battle Star! [${'★'.repeat(effects._starResult.stars)}] (${effects._starResult.stars}/3)`);
         }
         if (effects.champion) lines.push('YOU BECAME CHAMPION!');
+        // Death lines — collected separately for emphasis
+        const deathLines = [];
         if (effects.pokemonDeath && effects._deathResult && effects._deathResult.killed) {
-            lines.push(`💀 ${effects._deathResult.name} was lost forever!`);
+            deathLines.push(`💀 ${effects._deathResult.name} was lost forever!`);
+        }
+        if (effects.pokemonDeath2 && effects._deathResult2 && effects._deathResult2.killed) {
+            deathLines.push(`💀 ${effects._deathResult2.name} was lost forever!`);
+        }
+        if (effects.pokemonDeath3 && effects._deathResult3 && effects._deathResult3.killed) {
+            deathLines.push(`💀 ${effects._deathResult3.name} was lost forever!`);
         }
 
-        if (lines.length === 0) return '';
-        return '<br><br><div style="border-top: 2px solid #0f380f; padding-top: 8px; font-size: 7px;">' +
-            lines.join('<br>') + '</div>';
+        if (lines.length === 0 && deathLines.length === 0) return '';
+        let html = '<br><br><div style="border-top: 2px solid #0f380f; padding-top: 8px; font-size: 9px;">';
+        if (lines.length > 0) html += lines.join('<br>');
+        if (deathLines.length > 0) {
+            html += (lines.length > 0 ? '<br>' : '') +
+                '<div style="font-size: 11px; font-weight: bold; color: #0f380f; margin-top: 4px;">' +
+                deathLines.join('<br>') + '</div>';
+        }
+        html += '</div>';
+        return html;
     }
 
     function showTradeUI(state, incomingData, choicesDiv, narrative) {

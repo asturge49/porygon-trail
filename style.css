@@ -1347,7 +1347,7 @@ body {
     border: 3px solid var(--gb-darkest);
     background: var(--gb-white);
     padding: 16px;
-    font-size: var(--font-size-sm);
+    font-size: 9px;
     line-height: 2.2;
     overflow-y: auto;
 }
