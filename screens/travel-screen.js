@@ -237,7 +237,7 @@
                 <div class="travel-header">
                     <span>Day ${state.daysElapsed} | ${state.trainerName}</span>
                     <span>${state.badges.filter(b => b !== 'champion').length} Badges | ${state.pokedexCaught.length} Caught</span>
-                    <button class="btn-map" id="btn-map" title="Map">🗺️</button>
+                    <button class="btn-map" id="btn-map" title="Map">MAP</button>
                 </div>
 
                 <div class="travel-scene" data-time="${timeOfDay}" style="background: ${scene.sky}">
