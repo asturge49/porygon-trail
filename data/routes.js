@@ -234,10 +234,34 @@
             flavor: "The S.S. Anne docks at the harbor. Lt. Surge's gym crackles with electricity."
         },
         {
-            id: "route_8_rock_tunnel",
-            name: "Route 8 / Rock Tunnel",
-            description: "A dark tunnel with no natural light. Flash is essential.",
-            distanceToNext: 38,
+            id: "route_8",
+            name: "Route 8",
+            description: "A well-traveled road east of Saffron City.",
+            distanceToNext: 25,
+            terrain: "route",
+            hasShop: false,
+            hasCenter: false,
+            hasGym: false,
+            gymLeader: null,
+            encounterRate: 40,
+            encounterTable: [
+                { pokemonId: 23, weight: 15 },  // Ekans
+                { pokemonId: 37, weight: 12 },  // Vulpix
+                { pokemonId: 58, weight: 12 },  // Growlithe
+                { pokemonId: 52, weight: 15 },  // Meowth
+                { pokemonId: 96, weight: 15 },  // Drowzee
+                { pokemonId: 100, weight: 10 }, // Voltorb
+                { pokemonId: 81, weight: 10 },  // Magnemite
+                { pokemonId: 104, weight: 11 }  // Cubone
+            ],
+            eventPool: ["team_rocket_ambush", "mysterious_package"],
+            flavor: "Trainers line the route. The entrance to Rock Tunnel is up ahead."
+        },
+        {
+            id: "rock_tunnel",
+            name: "Rock Tunnel",
+            description: "A pitch-black cave. Flash is essential.",
+            distanceToNext: 35,
             terrain: "cave",
             hasShop: false,
             hasCenter: false,
@@ -249,10 +273,10 @@
                 { pokemonId: 74, weight: 20 },  // Geodude
                 { pokemonId: 95, weight: 8 },   // Onix
                 { pokemonId: 66, weight: 12 },  // Machop
-                { pokemonId: 104, weight: 10 }, // Cubone
-                { pokemonId: 23, weight: 10 },  // Ekans
-                { pokemonId: 100, weight: 8 },  // Voltorb
-                { pokemonId: 81, weight: 7 }    // Magnemite
+                { pokemonId: 104, weight: 12 }, // Cubone
+                { pokemonId: 46, weight: 10 },  // Paras
+                { pokemonId: 81, weight: 8 },   // Magnemite
+                { pokemonId: 35, weight: 5 }    // Clefairy
             ],
             eventPool: ["cave_collapse", "team_rocket_ambush"],
             flavor: "Total darkness. Every step echoes through the rock."
@@ -414,10 +438,10 @@
             flavor: "The Safari Zone gates stand open. Koga's gym is full of invisible walls."
         },
         {
-            id: "sea_route",
-            name: "Sea Route 19-20",
-            description: "Open ocean south of Fuchsia. Strong currents.",
-            distanceToNext: 38,
+            id: "sea_route_19",
+            name: "Sea Route 19",
+            description: "The first stretch of open ocean south of Fuchsia.",
+            distanceToNext: 30,
             terrain: "water",
             hasShop: false,
             hasCenter: false,
@@ -426,15 +450,39 @@
             encounterRate: 45,
             encounterTable: [
                 { pokemonId: 72, weight: 30 },  // Tentacool
-                { pokemonId: 73, weight: 8 },   // Tentacruel
+                { pokemonId: 129, weight: 25 }, // Magikarp
                 { pokemonId: 116, weight: 15 }, // Horsea
-                { pokemonId: 129, weight: 20 }, // Magikarp
                 { pokemonId: 120, weight: 10 }, // Staryu
-                { pokemonId: 98, weight: 10 },  // Krabby
-                { pokemonId: 86, weight: 7 }    // Seel
+                { pokemonId: 98, weight: 12 },  // Krabby
+                { pokemonId: 86, weight: 8 }    // Seel
             ],
             eventPool: ["stranded_swimmer", "strong_current"],
-            flavor: "Waves crash against you. The open sea stretches endlessly."
+            flavor: "Waves crash against you. The open sea stretches south."
+        },
+        {
+            id: "sea_route_20",
+            name: "Sea Route 20",
+            description: "Deep ocean waters approaching the Seafoam Islands.",
+            distanceToNext: 30,
+            terrain: "water",
+            hasShop: false,
+            hasCenter: false,
+            hasGym: false,
+            gymLeader: null,
+            encounterRate: 45,
+            encounterTable: [
+                { pokemonId: 72, weight: 25 },  // Tentacool
+                { pokemonId: 73, weight: 10 },  // Tentacruel
+                { pokemonId: 116, weight: 15 }, // Horsea
+                { pokemonId: 117, weight: 5 },  // Seadra
+                { pokemonId: 129, weight: 15 }, // Magikarp
+                { pokemonId: 120, weight: 10 }, // Staryu
+                { pokemonId: 86, weight: 10 },  // Seel
+                { pokemonId: 131, weight: 3 },  // Lapras
+                { pokemonId: 90, weight: 7 }    // Shellder
+            ],
+            eventPool: ["stranded_swimmer", "strong_current"],
+            flavor: "The currents grow stronger. Seafoam Islands shimmer in the distance."
         },
         {
             id: "seafoam_islands",
@@ -544,10 +592,10 @@
             flavor: "You've come full circle. The gym that was once locked now opens its doors."
         },
         {
-            id: "route_22_23",
-            name: "Route 22-23",
-            description: "The winding path to Victory Road. Badge check gates ahead.",
-            distanceToNext: 38,
+            id: "route_22",
+            name: "Route 22",
+            description: "The western road from Viridian toward the Pokemon League.",
+            distanceToNext: 30,
             terrain: "route",
             hasShop: false,
             hasCenter: false,
@@ -567,22 +615,49 @@
                 { pokemonId: 47, weight: 7 }    // Parasect
             ],
             eventPool: ["gary_final_rival", "gary_last_stand"],
-            flavor: "Badge check gates loom ahead. Only the worthy may pass."
+            flavor: "The road west of Viridian. Your rival's presence lingers."
         },
         {
-            id: "indigo_plateau",
-            name: "Indigo Plateau",
-            description: "Victory Road — the final stretch before the Pokemon League.",
-            distanceToNext: 50,
-            terrain: "mountain",
-            hasShop: true,
-            hasCenter: true,
+            id: "route_23",
+            name: "Route 23",
+            description: "Badge check gates line the path to Victory Road.",
+            distanceToNext: 30,
+            terrain: "route",
+            hasShop: false,
+            hasCenter: false,
             hasGym: false,
             gymLeader: null,
             encounterRate: 45,
             encounterTable: [
-                { pokemonId: 66, weight: 10 },  // Machop
-                { pokemonId: 67, weight: 10 },  // Machoke
+                { pokemonId: 22, weight: 12 },  // Fearow
+                { pokemonId: 20, weight: 12 },  // Raticate
+                { pokemonId: 57, weight: 10 },  // Primeape
+                { pokemonId: 51, weight: 10 },  // Dugtrio
+                { pokemonId: 28, weight: 10 },  // Sandslash
+                { pokemonId: 42, weight: 10 },  // Golbat
+                { pokemonId: 30, weight: 8 },   // Nidorina
+                { pokemonId: 33, weight: 8 },   // Nidorino
+                { pokemonId: 85, weight: 8 },   // Dodrio
+                { pokemonId: 75, weight: 7 },   // Graveler
+                { pokemonId: 105, weight: 5 }   // Marowak
+            ],
+            eventPool: ["gary_final_rival"],
+            flavor: "Badge check gates loom ahead. Only the worthy may pass."
+        },
+        {
+            id: "victory_road",
+            name: "Victory Road",
+            description: "The most treacherous cave in Kanto. The ultimate test.",
+            distanceToNext: 65,
+            terrain: "cave",
+            hasShop: false,
+            hasCenter: false,
+            hasGym: false,
+            gymLeader: null,
+            encounterRate: 50,
+            encounterTable: [
+                { pokemonId: 66, weight: 8 },   // Machop
+                { pokemonId: 67, weight: 12 },  // Machoke
                 { pokemonId: 95, weight: 10 },  // Onix
                 { pokemonId: 75, weight: 15 },  // Graveler
                 { pokemonId: 42, weight: 15 },  // Golbat
@@ -596,7 +671,22 @@
                 { pokemonId: 18, weight: 5 }    // Pidgeot
             ],
             eventPool: ["victory_road_cave", "champion_battle", "mewtwo_cave", "victory_road_guardian", "champion_ghost"],
-            flavor: "Victory Road stretches before you. Only the strongest trainers make it this far."
+            flavor: "The longest, darkest cave in Kanto. Many trainers never emerge."
+        },
+        {
+            id: "indigo_plateau",
+            name: "Indigo Plateau",
+            description: "The Pokemon League headquarters. Your final stop.",
+            distanceToNext: 8,
+            terrain: "city",
+            hasShop: true,
+            hasCenter: true,
+            hasGym: false,
+            gymLeader: null,
+            encounterRate: 0,
+            encounterTable: [],
+            eventPool: [],
+            flavor: "You've made it. The Pokemon League stands before you."
         },
         {
             id: "pokemon_league",

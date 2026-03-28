@@ -265,8 +265,8 @@
                         <div class="progress-bar-fill" style="width: ${progress}%"></div>
                     </div>
                     <div class="progress-labels">
-                        <span>Pace: ${state.pace.toUpperCase()}</span>
-                        <span>${nextRoute ? Math.floor(progress) + '%' : 'ARRIVED'}</span>
+                        <span>${state.distanceTraveled} / ${route.distanceToNext} mi</span>
+                        <span>${nextRoute ? (route.distanceToNext - state.distanceTraveled) + ' mi left' : 'ARRIVED'}</span>
                     </div>
                 </div>
 
@@ -290,8 +290,14 @@
                 </div>
 
                 <div class="pace-selector" style="justify-content: center; margin: 4px 0;">
-                    ${['explore', 'steady', 'push'].map(p => `
-                        <button class="pace-btn ${state.pace === p ? 'active' : ''}" data-pace="${p}">${p.toUpperCase()}</button>
+                    ${[
+                        { key: 'explore', label: 'EXPLORE', dist: '0 mi', note: 'heal' },
+                        { key: 'steady', label: 'STEADY', dist: '~12 mi', note: '' },
+                        { key: 'push', label: 'PUSH', dist: '~20 mi', note: 'risky' }
+                    ].map(p => `
+                        <button class="pace-btn ${state.pace === p.key ? 'active' : ''}" data-pace="${p.key}">
+                            ${p.label}<span style="display:block;font-size:6px;opacity:0.8;">${p.dist}${p.note ? ' · ' + p.note : ''}</span>
+                        </button>
                     `).join('')}
                 </div>
 
