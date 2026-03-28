@@ -6435,6 +6435,254 @@
                     ]
                 }
             ]
+        },
+
+        // ===== VICTORY ROAD EVENTS =====
+        {
+            id: "vr_fallen_trainer",
+            type: "discovery",
+            name: "Fallen Trainer's Camp",
+            description: "You stumble across an abandoned campsite. A trainer's bag lies open — they clearly left in a hurry. Scratch marks line the walls. Whatever happened here, they didn't make it to the end.",
+            weight: 10,
+            oneTime: false,
+            locationIds: ["victory_road"],
+            choices: [
+                {
+                    text: "Search the camp for supplies",
+                    outcomes: [
+                        { weight: 40, narration: "You find a stash of food and some potions tucked behind a rock. This trainer was well-prepared... just not prepared enough.", effects: { food: 12, potions: 2 } },
+                        { weight: 30, narration: "The bag has some food left and a few Poke Balls. Better than nothing.", effects: { food: 8, pokeballs: 3 } },
+                        { weight: 20, narration: "Mostly empty. You find a bit of food and some spare change.", effects: { food: 5, money: 100 } },
+                        { weight: 10, narration: "As you reach into the bag, a wild Golbat screeches from the darkness! It attacks!", effects: { partyDamage: 1, food: 3 } }
+                    ]
+                },
+                {
+                    text: "Leave it. Bad luck to loot the fallen.",
+                    outcomes: [
+                        { weight: 100, narration: "You walk past the camp. Some things aren't worth the risk. Your Pokemon seem to respect the decision.", effects: {} }
+                    ]
+                }
+            ]
+        },
+        {
+            id: "vr_underground_stream",
+            type: "discovery",
+            name: "Underground Stream!",
+            description: "The sound of rushing water echoes through the cave. You discover a hidden underground stream — clean, cold water flows through the rock. Berries grow along the banks, nourished by the moisture.",
+            weight: 8,
+            oneTime: true,
+            locationIds: ["victory_road"],
+            choices: [
+                {
+                    text: "Rest and forage by the stream",
+                    outcomes: [
+                        { weight: 60, narration: "Your team rests by the water. The berries are surprisingly nutritious. A rare oasis in this brutal cave.", effects: { food: 15, healAll: true } },
+                        { weight: 40, narration: "The berries are plentiful and your Pokemon drink deeply. You gather as much as you can carry.", effects: { food: 20 } }
+                    ]
+                },
+                {
+                    text: "Fill up quickly and keep moving",
+                    outcomes: [
+                        { weight: 100, narration: "You grab what you can and press on. No time to waste — the exit has to be close.", effects: { food: 8 } }
+                    ]
+                }
+            ]
+        },
+        {
+            id: "vr_rival_campfire",
+            type: "story",
+            name: "Rival's Campfire",
+            description: "A small fire flickers ahead. It's your rival, sitting alone in the dark. For once, he doesn't look cocky. \"Brutal in here, isn't it? I've lost two Pokemon already.\" He looks at your team. \"...You want to share my fire for a bit? I've got food.\"",
+            weight: 8,
+            oneTime: true,
+            locationIds: ["victory_road"],
+            choices: [
+                {
+                    text: "Sit and share the fire",
+                    outcomes: [
+                        { weight: 70, narration: "You sit together in silence, sharing food. For the first time, your rival feels like a friend. \"See you at the top,\" he says as you leave. Your Pokemon seem calmer.", effects: { food: 10, healAll: true } },
+                        { weight: 30, narration: "You share a meal. \"Here, take some of my supplies. I packed too much anyway.\" A rare moment of generosity from your rival.", effects: { food: 15, potions: 1 } }
+                    ]
+                },
+                {
+                    text: "Challenge him to a battle",
+                    eventBattle: {
+                        pool: "ace_trainer",
+                        difficulty: "hard",
+                        trainerName: "Rival",
+                        winNarration: "Your rival grins despite losing. \"Still got it. Here — you earned this.\" He hands you supplies.",
+                        lossNarration: "\"I'll see you at the League... if you make it.\" He packs up and disappears into the dark.",
+                        winEffects: { money: 800, food: 8, grantStar: true },
+                        lossEffects: { food: -5 }
+                    }
+                }
+            ]
+        },
+        {
+            id: "vr_cave_in",
+            type: "combat",
+            name: "Cave-In!",
+            description: "The ground trembles violently. Rocks crash down from the ceiling! The path ahead is collapsing — you need to move NOW!",
+            weight: 10,
+            oneTime: false,
+            locationIds: ["victory_road"],
+            choices: [
+                {
+                    text: "Sprint through the falling rocks!",
+                    outcomes: [
+                        { weight: 40, narration: "You dash through the chaos! Rocks slam down around you but your team makes it through unscathed. Barely.", effects: {} },
+                        { weight: 35, narration: "A boulder clips one of your Pokemon as you run! You make it through, but not unharmed.", effects: { partyDamage: 1 } },
+                        { weight: 25, narration: "The collapse is massive. Your team is battered by debris, but you're alive.", effects: { partyDamage: 2 } }
+                    ]
+                },
+                {
+                    text: "Shield your Pokemon and wait it out",
+                    outcomes: [
+                        { weight: 50, narration: "You hunker down and protect your team. The collapse subsides. You lost some time but everyone's safe.", effects: { daysLost: 1 } },
+                        { weight: 30, narration: "The rocks keep falling longer than expected. Dust fills the air. A day lost, and some food buried under rubble.", effects: { daysLost: 1, food: -5 } },
+                        { weight: 20, narration: "You shield your team well. When the dust clears, you spot supplies from another trainer buried in the debris.", effects: { daysLost: 1, food: 6, potions: 1 } }
+                    ]
+                }
+            ]
+        },
+        {
+            id: "vr_veteran_trainer",
+            type: "combat",
+            name: "Victory Road Veteran!",
+            description: "A grizzled trainer blocks the narrow path. Battle scars mark his face. \"I've been waiting here for twenty years. Nobody passes without proving themselves. Show me what you've got, kid.\"",
+            weight: 8,
+            oneTime: true,
+            locationIds: ["victory_road"],
+            choices: [
+                {
+                    text: "Accept his challenge",
+                    eventBattle: {
+                        pool: "ace_trainer",
+                        difficulty: "hard",
+                        trainerName: "Veteran Drake",
+                        winNarration: "The veteran smiles for the first time in years. \"You remind me of the Champion when he first came through. Take these — you'll need them.\"",
+                        lossNarration: "\"Not ready. Come back when you are.\" He turns his back on you.",
+                        winEffects: { money: 1000, superPotions: 3, food: 10, grantStar: true },
+                        lossEffects: { partyDamage: 1 }
+                    }
+                },
+                {
+                    text: "\"I need to conserve my strength for the E4.\"",
+                    outcomes: [
+                        { weight: 60, narration: "The veteran nods slowly. \"Smart. Knowing when not to fight is a skill too.\" He steps aside.", effects: {} },
+                        { weight: 40, narration: "\"Wise choice. Take this for the road.\" He tosses you a ration pack.", effects: { food: 5 } }
+                    ]
+                }
+            ]
+        },
+        {
+            id: "vr_fossil_cache",
+            type: "discovery",
+            name: "Ancient Fossil Cache!",
+            description: "Deep in the cave, the walls glitter with embedded fossils and crystals. A section of the wall has crumbled, revealing what looks like an ancient offering site. Old Poke Balls and supplies sit untouched for centuries.",
+            weight: 6,
+            oneTime: true,
+            locationIds: ["victory_road"],
+            choices: [
+                {
+                    text: "Carefully excavate the cache",
+                    outcomes: [
+                        { weight: 50, narration: "You extract supplies carefully from the ancient site. Whoever left these here wanted future trainers to find them.", effects: { food: 10, superPotions: 2, greatballs: 3 } },
+                        { weight: 30, narration: "The fossils are worthless, but the supplies are still good. A generous haul!", effects: { food: 12, potions: 3, money: 500 } },
+                        { weight: 20, narration: "As you reach in, the wall shifts! Debris falls, but you grab what you can.", effects: { food: 6, partyDamage: 1 } }
+                    ]
+                },
+                {
+                    text: "Take only what you need",
+                    outcomes: [
+                        { weight: 100, narration: "You grab a few essentials and leave the rest for the next trainer who needs it.", effects: { food: 6, potions: 1 } }
+                    ]
+                }
+            ]
+        },
+        {
+            id: "vr_moltres_shadow",
+            type: "story",
+            name: "Shadow in the Flames!",
+            description: "A searing heat fills the cavern. Through a crack in the rock, you glimpse a massive winged silhouette wreathed in fire. Moltres. It hasn't noticed you — but its presence warms the entire chamber. Your Pokemon are drawn to the heat.",
+            weight: 5,
+            oneTime: true,
+            locationIds: ["victory_road"],
+            choices: [
+                {
+                    text: "Bask in the warmth silently",
+                    outcomes: [
+                        { weight: 70, narration: "The legendary fire washes over your team like a blessing. Your Pokemon feel invigorated, their wounds soothed by the sacred heat. Moltres takes flight, disappearing into the mountain.", effects: { healAll: true } },
+                        { weight: 30, narration: "Moltres's flame is rejuvenating. Your whole party feels renewed. A once-in-a-lifetime moment.", effects: { healAll: true, food: 5 } }
+                    ]
+                },
+                {
+                    text: "Try to get closer",
+                    outcomes: [
+                        { weight: 40, narration: "You inch forward. Moltres turns its piercing gaze on you — but doesn't attack. It lets out a cry that shakes the cave, then soars away. The heat lingers, healing your team.", effects: { healAll: true } },
+                        { weight: 60, narration: "Too close! Moltres shrieks and a blast of fire scorches the cavern before it vanishes. Your team takes the heat.", effects: { partyDamage: 2 } }
+                    ]
+                }
+            ]
+        },
+        {
+            id: "vr_darkness_maze",
+            type: "dilemma",
+            name: "The Darkness Splits!",
+            description: "The path forks into two tunnels. The left tunnel has fresh air flowing through it — a good sign. The right tunnel is warmer but you hear distant Pokemon cries echoing from within. Both could lead forward... or to a dead end.",
+            weight: 10,
+            oneTime: false,
+            locationIds: ["victory_road"],
+            choices: [
+                {
+                    text: "Take the left tunnel (fresh air)",
+                    outcomes: [
+                        { weight: 50, narration: "The fresh air leads to a wide chamber. You find an old supply cache left by previous challengers!", effects: { food: 8, potions: 1 } },
+                        { weight: 30, narration: "The tunnel opens to a safe passage. Nothing exciting, but nothing dangerous either.", effects: {} },
+                        { weight: 20, narration: "Dead end! You have to backtrack. Hours wasted.", effects: { daysLost: 1 } }
+                    ]
+                },
+                {
+                    text: "Take the right tunnel (warmth)",
+                    outcomes: [
+                        { weight: 35, narration: "The warmth comes from a geothermal vent. Your Pokemon relax in the heat and recover their strength.", effects: { healAll: true } },
+                        { weight: 35, narration: "The cries were wild Machoke training. They ignore you as you pass through safely.", effects: {} },
+                        { weight: 30, narration: "A territorial Onix blocks the path! It strikes before you can react!", effects: { partyDamage: 2 } }
+                    ]
+                }
+            ]
+        },
+        {
+            id: "vr_last_chance_merchant",
+            type: "story",
+            name: "The Black Market Merchant!",
+            description: "A shady figure crouches behind a boulder, a blanket of goods spread before him. \"Psst! Need supplies? I'm the last shop before the League, kid. Prices ain't pretty, but what choice do you have?\"",
+            weight: 7,
+            oneTime: true,
+            locationIds: ["victory_road"],
+            choices: [
+                {
+                    text: "Buy food ($300)",
+                    requiresMoney: 300,
+                    outcomes: [
+                        { weight: 100, narration: "Highway robbery, but you need it. The merchant grins as he hands over a bundle of rations. \"Pleasure doing business.\"", effects: { money: -300, food: 15 } }
+                    ]
+                },
+                {
+                    text: "Buy potions ($400)",
+                    requiresMoney: 400,
+                    outcomes: [
+                        { weight: 100, narration: "He hands over a bag of potions. \"Freshly... acquired. Don't ask questions.\"", effects: { money: -400, superPotions: 3, potions: 2 } }
+                    ]
+                },
+                {
+                    text: "\"Get lost, I don't deal with crooks.\"",
+                    outcomes: [
+                        { weight: 70, narration: "\"Your loss, kid.\" He packs up and vanishes into the shadows.", effects: {} },
+                        { weight: 30, narration: "\"Suit yourself. But take this — free sample.\" He flicks a potion at you before disappearing.", effects: { potions: 1 } }
+                    ]
+                }
+            ]
         }
     ];
 })();

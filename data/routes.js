@@ -670,7 +670,7 @@
                 { pokemonId: 148, weight: 7 },  // Dragonair
                 { pokemonId: 18, weight: 5 }    // Pidgeot
             ],
-            eventPool: ["victory_road_cave", "champion_battle", "mewtwo_cave", "victory_road_guardian", "champion_ghost"],
+            eventPool: ["victory_road_cave", "champion_battle", "mewtwo_cave", "victory_road_guardian", "champion_ghost", "vr_fallen_trainer", "vr_underground_stream", "vr_rival_campfire", "vr_cave_in", "vr_veteran_trainer", "vr_fossil_cache", "vr_moltres_shadow", "vr_darkness_maze", "vr_last_chance_merchant"],
             flavor: "The longest, darkest cave in Kanto. Many trainers never emerge."
         },
         {
