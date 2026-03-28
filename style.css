@@ -1404,12 +1404,13 @@ body {
 
 .pace-btn {
     font-family: 'Press Start 2P', monospace;
-    font-size: 6px;
-    padding: 4px 8px;
+    font-size: 7px;
+    padding: 8px 12px;
     border: 2px solid var(--gb-darkest);
     background: var(--gb-white);
     cursor: pointer;
     color: var(--gb-darkest);
+    flex: 1;
 }
 
 .pace-btn.active {
