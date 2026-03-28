@@ -460,9 +460,14 @@
     }
 
     // Get max HP for a Pokemon data entry (respects overrides)
+    // Stage 2 evolutions get minimum 4 HP, stage 3 / final evos get minimum 5 HP
     function getMaxHpForPokemon(data) {
         if (HP_OVERRIDES[data.id] !== undefined) return HP_OVERRIDES[data.id];
-        return data.rarity === 'legendary' ? 6 : data.rarity === 'rare' ? 4 : 3;
+        let hp = data.rarity === 'legendary' ? 6 : data.rarity === 'rare' ? 4 : 3;
+        const stage = getEvoStage(data.id);
+        if (stage === 2 && hp < 4) hp = 4;
+        if (stage === 3 && hp < 5) hp = 5;
+        return hp;
     }
 
     // Convert Pokemon to food (rarity = size = more food)
