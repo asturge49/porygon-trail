@@ -759,7 +759,8 @@
             fire: 'Efficient cooking', heal: 'Passive healing', psychic: 'Foresight: pick encounters/events',
             poison: 'Repel encounters', guard: 'Defensive bonus', intimidate: '+15% catch rate',
             payday: '+50% money rewards', safeguard: 'Save a Pokemon from death once',
-            system_restore: 'Revive one lost Pokemon (once per game)', glitch: 'Unpredictable effects'
+            system_restore: 'Revive one lost Pokemon (once per game)', glitch: 'Unpredictable effects',
+            mimic: 'Copies the strongest ability in your party'
         };
 
         // Evolution chain

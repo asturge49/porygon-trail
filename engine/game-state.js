@@ -209,7 +209,12 @@
     function getAbilityPower(state, ability) {
         const alive = getAliveParty(state);
         let total = 0;
+        const mimics = []; // Ditto-like Pokemon with mimic ability
         alive.forEach(p => {
+            if (p.travelAbility === 'mimic') {
+                mimics.push(p);
+                return;
+            }
             if (p.travelAbility !== ability) return;
             const stage = getEvoStage(p.id);
             let power = stage === 1 ? 1.0 : stage === 2 ? 1.5 : 2.0;
@@ -217,6 +222,15 @@
             if (STARTER_IDS.includes(p.id)) power *= 2;
             total += power;
         });
+        // Mimic: if someone else has this ability, Ditto copies it and adds its own power
+        if (total > 0 && mimics.length > 0) {
+            mimics.forEach(p => {
+                const stage = getEvoStage(p.id);
+                let power = stage === 1 ? 1.0 : stage === 2 ? 1.5 : 2.0;
+                power += (p.battleStars || 0) * 0.25;
+                total += power;
+            });
+        }
         return total;
     }
 

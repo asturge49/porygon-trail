@@ -111,7 +111,8 @@
                 fire: 'Save food', heal: 'Passive healing', psychic: 'Foresight: pick encounters/events',
                 poison: 'Battle win bonus', guard: 'Block injuries', intimidate: 'Catch rate bonus',
                 payday: 'Money bonus', safeguard: 'Save from death once',
-                system_restore: 'Revive one lost Pokemon (once per game)', glitch: 'Chaos effects'
+                system_restore: 'Revive one lost Pokemon (once per game)', glitch: 'Chaos effects',
+                mimic: 'Copies strongest party ability'
             };
             const power = PT.Engine.GameState.getAbilityPower(state, ability);
             return `${ability}: ${desc[ability] || '???'} (x${count} | pwr ${power.toFixed(1)})`;

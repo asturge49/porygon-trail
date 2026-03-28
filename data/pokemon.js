@@ -135,7 +135,7 @@
         { id: 129, name: "Magikarp", types: ["water"], rarity: "common", baseLevel: 5, travelAbility: "surf", evolvesTo: 130 },
         { id: 130, name: "Gyarados", types: ["water","flying"], rarity: "rare", baseLevel: 30, travelAbility: "intimidate" },
         { id: 131, name: "Lapras", types: ["water","ice"], rarity: "rare", baseLevel: 25, travelAbility: "surf" },
-        { id: 132, name: "Ditto", types: ["normal"], rarity: "uncommon", baseLevel: 25, travelAbility: "heal" },
+        { id: 132, name: "Ditto", types: ["normal"], rarity: "uncommon", baseLevel: 25, travelAbility: "mimic" },
         { id: 133, name: "Eevee", types: ["normal"], rarity: "rare", baseLevel: 25, travelAbility: "heal", evolvesTo: [134, 135, 136] },
         { id: 134, name: "Vaporeon", types: ["water"], rarity: "rare", baseLevel: 35, travelAbility: "surf" },
         { id: 135, name: "Jolteon", types: ["electric"], rarity: "rare", baseLevel: 35, travelAbility: "flash" },
