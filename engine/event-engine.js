@@ -222,6 +222,11 @@
         const availableEvents = PT.Data.Events.filter(event => {
             // One-time check
             if (event.oneTime && state.eventsTriggered.includes(event.id)) return false;
+            // Max triggers check (for events that can happen N times)
+            if (event.maxTriggers) {
+                const count = state.eventsTriggered.filter(id => id === event.id).length;
+                if (count >= event.maxTriggers) return false;
+            }
             // Min day check
             if (event.minDay && state.daysElapsed < event.minDay) return false;
             // Min badges check
@@ -248,10 +253,18 @@
 
         if (availableEvents.length === 0) return null;
 
+        // Guaranteed Pokemon buyer: if past day 15 and never had a buyer event, massively boost weight
+        const buyerCount = state._pokemonBuyerCount || 0;
+        if (buyerCount === 0 && state.daysElapsed >= 15) {
+            availableEvents.forEach(e => {
+                if (e.pokemonBuyerEvent) e.weight = (e.weight || 5) * 20; // massive boost
+            });
+        }
+
         const event = state.rng.weightedChoice(availableEvents);
         if (!event) return null;
 
-        if (event.oneTime) {
+        if (event.oneTime || event.maxTriggers) {
             state.eventsTriggered.push(event.id);
         }
 
@@ -465,6 +478,11 @@
                     if (pick) effects._tradeTarget = pick.pokemon;
                 }
             }
+        }
+
+        // Pokemon Buyer — flag for buyer UI in event screen
+        if (effects.pokemonBuyer) {
+            effects._pokemonBuyer = effects.pokemonBuyer; // multiplier (1, 2, or 3)
         }
 
         // Days lost

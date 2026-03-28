@@ -7600,6 +7600,108 @@
                     ]
                 }
             ]
+        },
+
+        // ===== POKEMON BUYER EVENTS =====
+        {
+            id: "pokemon_buyer_collector",
+            type: "story",
+            name: "Pokemon Collector",
+            description: "A well-dressed man approaches you on the road, polishing a gold-rimmed Poke Ball. \"I'm a collector of fine Pokemon. I pay handsomely — cash on the spot. Interested in selling one of yours?\"",
+            weight: 5,
+            maxTriggers: 2,
+            minDay: 5,
+            requiresPartySize: 2,
+            pokemonBuyerEvent: true,
+            choices: [
+                {
+                    text: "See what he's offering",
+                    outcomes: [
+                        { weight: 100, narration: "The collector examines your team with a jeweler's eye, calculating the value of each Pokemon based on their health and battle experience. \"Fair market price,\" he says, pulling out a thick wad of cash.", effects: { pokemonBuyer: 1 } }
+                    ]
+                },
+                {
+                    text: "\"My Pokemon aren't for sale.\"",
+                    outcomes: [
+                        { weight: 100, narration: "The collector shrugs elegantly. \"Everyone has a price. Perhaps next time.\" He disappears down the road.", effects: {} }
+                    ]
+                }
+            ]
+        },
+        {
+            id: "pokemon_buyer_daycare",
+            type: "story",
+            name: "Pokemon Day Care Couple",
+            description: "An elderly couple waves you down from their fenced-in yard full of happy Pokemon. \"We run the Day Care! We're always looking for new Pokemon to care for. We can't pay much, but we promise they'll be loved.\"",
+            weight: 4,
+            maxTriggers: 2,
+            minDay: 3,
+            requiresPartySize: 2,
+            pokemonBuyerEvent: true,
+            choices: [
+                {
+                    text: "Consider leaving one behind",
+                    outcomes: [
+                        { weight: 100, narration: "The couple shows you around the day care — it's paradise. Wide fields, warm shelter, other happy Pokemon playing together. They offer you a fair price for one of your team members. \"They'll have a good life here. We promise.\"", effects: { pokemonBuyer: 1 } }
+                    ]
+                },
+                {
+                    text: "\"I can't part with any of them.\"",
+                    outcomes: [
+                        { weight: 100, narration: "The old woman smiles warmly. \"That tells me you're a good trainer. Your Pokemon are lucky to have you.\" She hands you some food for the road.", effects: { food: 5 } }
+                    ]
+                }
+            ]
+        },
+        {
+            id: "pokemon_buyer_premium_breeder",
+            type: "story",
+            name: "Elite Pokemon Breeder",
+            description: "A woman in an expensive lab coat flags you down from her luxury van. Rare Pokemon visible through the windows. \"I'm a licensed breeder seeking high-quality specimens. I pay DOUBLE market rate for Pokemon with good genes. Interested?\"",
+            weight: 2,
+            oneTime: true,
+            minDay: 10,
+            requiresPartySize: 2,
+            pokemonBuyerEvent: true,
+            choices: [
+                {
+                    text: "Hear her premium offer",
+                    outcomes: [
+                        { weight: 100, narration: "She scans your team with an advanced device. \"Excellent genetic markers. I'll pay twice the standard market value — $200 per HP plus $500 per Battle Star, all doubled. This is a limited offer.\"", effects: { pokemonBuyer: 2 } }
+                    ]
+                },
+                {
+                    text: "\"Not interested.\"",
+                    outcomes: [
+                        { weight: 100, narration: "She raises an eyebrow. \"Your loss. Quality like that doesn't come cheap.\" She drives off in her luxury van.", effects: {} }
+                    ]
+                }
+            ]
+        },
+        {
+            id: "pokemon_buyer_silph_exec",
+            type: "story",
+            name: "Silph Co. Executive",
+            description: "A Silph Co. helicopter lands nearby. A sharp-suited executive steps out with bodyguards. \"We need Pokemon for our research division. We're authorized to pay TRIPLE market rate. This is a once-in-a-lifetime offer.\"",
+            weight: 1,
+            oneTime: true,
+            minDay: 15,
+            requiresPartySize: 2,
+            pokemonBuyerEvent: true,
+            choices: [
+                {
+                    text: "Consider the incredible offer",
+                    outcomes: [
+                        { weight: 100, narration: "The executive opens a briefcase full of cash. \"Triple value. $200 per HP, $500 per Star — all times three. Your Pokemon will be treated well in our state-of-the-art facility. Silph Co. guarantees it.\" The amount of money on the table is staggering.", effects: { pokemonBuyer: 3 } }
+                    ]
+                },
+                {
+                    text: "\"Tell Silph Co. to find their own Pokemon.\"",
+                    outcomes: [
+                        { weight: 100, narration: "The executive's smile doesn't waver. \"Admirable loyalty. Here — take this as a courtesy.\" He hands you a potion before boarding the helicopter.", effects: { potions: 1 } }
+                    ]
+                }
+            ]
         }
     ];
 })();

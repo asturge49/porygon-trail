@@ -82,6 +82,8 @@
         }
         if (result.effects && result.effects._tradeIncoming) {
             showTradeUI(state, result.effects._tradeIncoming, result.effects._tradeTarget || null, choicesDiv, narrative);
+        } else if (result.effects && result.effects._pokemonBuyer) {
+            showPokemonBuyerUI(state, result.effects._pokemonBuyer, choicesDiv, narrative);
         } else if (result.effects && result.effects._pendingCatch && result.effects._pendingCatch.length > 0) {
             showEventSwapQueue(state, result.effects._pendingCatch.slice(), choicesDiv, narrative);
         } else {
@@ -417,6 +419,110 @@
         document.getElementById('btn-trade-cancel').addEventListener('click', () => {
             narrative.innerHTML += '<br><em>You decided not to trade.</em>';
             showEventContinue(state, choicesDiv);
+        });
+    }
+
+    function getPokemonSalePrice(pokemon, multiplier) {
+        const basePrice = (pokemon.maxHp * 200) + ((pokemon.battleStars || 0) * 500);
+        return Math.floor(basePrice * (multiplier || 1));
+    }
+
+    function showPokemonBuyerUI(state, multiplier, choicesDiv, narrative) {
+        const alive = PT.Engine.GameState.getAliveParty(state);
+        const multLabel = multiplier > 1 ? ` (${multiplier}x PREMIUM!)` : '';
+
+        if (alive.length <= 1) {
+            narrative.innerHTML += '<br><br><em>You only have one Pokemon — you can\'t sell your last one!</em>';
+            showEventContinue(state, choicesDiv);
+            return;
+        }
+
+        choicesDiv.innerHTML = `
+            <div style="text-align:center; margin-bottom:6px; font-size:8px; font-weight:bold;">
+                SELECT A POKEMON TO SELL${multLabel}
+            </div>
+            <div style="display:flex; flex-direction:column; gap:4px;">
+                ${alive.map((p, i) => {
+                    const price = getPokemonSalePrice(p, multiplier);
+                    const stars = p.battleStars ? ' ' + '★'.repeat(p.battleStars) : '';
+                    return `
+                        <button class="btn sell-mon-btn" data-idx="${i}" style="display:flex; align-items:center; gap:6px; padding:4px 8px; font-size:7px;">
+                            <img src="${p.spriteUrl}" style="width:24px; height:24px; image-rendering:pixelated;">
+                            <span style="flex:1; text-align:left;">${p.name}${stars} (${p.hp}/${p.maxHp} HP)</span>
+                            <span style="color:#4a5; font-weight:bold;">$${price}</span>
+                        </button>
+                    `;
+                }).join('')}
+            </div>
+            <button class="btn btn-wide" id="btn-buyer-decline" style="margin-top:6px;">DECLINE — KEEP ALL</button>
+        `;
+
+        choicesDiv.querySelectorAll('.sell-mon-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const idx = parseInt(btn.dataset.idx);
+                const pokemon = alive[idx];
+                if (!pokemon) return;
+                const price = getPokemonSalePrice(pokemon, multiplier);
+                showPokemonBuyerConfirm(state, pokemon, price, multiplier, choicesDiv, narrative);
+            });
+        });
+
+        document.getElementById('btn-buyer-decline').addEventListener('click', () => {
+            narrative.innerHTML += '<br><br><em>You declined the offer.</em>';
+            showEventContinue(state, choicesDiv);
+        });
+    }
+
+    function showPokemonBuyerConfirm(state, pokemon, price, multiplier, choicesDiv, narrative) {
+        const stars = pokemon.battleStars ? ' ' + '★'.repeat(pokemon.battleStars) : '';
+        choicesDiv.innerHTML = `
+            <div style="text-align:center; padding:8px;">
+                <img src="${pokemon.spriteUrl}" style="width:40px; height:40px; image-rendering:pixelated;">
+                <div style="font-size:9px; font-weight:bold; margin:4px 0;">${pokemon.name}${stars}</div>
+                <div style="font-size:8px;">${pokemon.hp}/${pokemon.maxHp} HP</div>
+                <div style="font-size:10px; color:#4a5; font-weight:bold; margin:6px 0;">SELL FOR $${price}?</div>
+                <div style="font-size:7px; opacity:0.7;">This is permanent — ${pokemon.name} will be gone forever.</div>
+            </div>
+            <div style="display:flex; gap:4px;">
+                <button class="btn" id="btn-confirm-sell" style="flex:1; background:#c54;">SELL</button>
+                <button class="btn" id="btn-cancel-sell" style="flex:1;">BACK</button>
+            </div>
+        `;
+
+        document.getElementById('btn-confirm-sell').addEventListener('click', () => {
+            // Record in graveyard as "sold"
+            if (!state.graveyard) state.graveyard = [];
+            const route = PT.Engine.GameState.getCurrentRoute(state);
+            state.graveyard.push({
+                name: pokemon.name,
+                id: pokemon.id,
+                spriteUrl: pokemon.spriteUrl,
+                battleStars: pokemon.battleStars || 0,
+                location: route ? route.name : 'Unknown',
+                day: state.daysElapsed,
+                sold: true
+            });
+            // Remove from party
+            const idx = state.party.indexOf(pokemon);
+            if (idx !== -1) state.party.splice(idx, 1);
+            state.pokemonLost++;
+            // Award money
+            state.resources.money += price;
+            // Track buyer events used
+            state._pokemonBuyerCount = (state._pokemonBuyerCount || 0) + 1;
+
+            narrative.innerHTML += `<br><br><strong>You sold ${pokemon.name} for $${price}!</strong>`;
+            PT.Engine.GameState.addToLog(state, `Sold ${pokemon.name} for $${price}`);
+
+            if (state.party.length === 0) {
+                state.isGameOver = true;
+                state.gameOverReason = 'party_wiped';
+            }
+            showEventContinue(state, choicesDiv);
+        });
+
+        document.getElementById('btn-cancel-sell').addEventListener('click', () => {
+            showPokemonBuyerUI(state, multiplier, choicesDiv, narrative);
         });
     }
 
