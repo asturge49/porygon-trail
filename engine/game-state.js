@@ -82,10 +82,20 @@
         // Tough uncommons → 4 HP
         12: 4, 15: 4,            // Butterfree, Beedrill
         18: 4,                   // Pidgeot
+        24: 4,                   // Arbok
+        53: 4,                   // Persian
         95: 4,                   // Onix
         114: 4,                  // Tangela
         148: 4,                  // Dragonair
-        // Weak → 1 HP
+        // Weak finals → 3 HP (stay weak even as final evo)
+        20: 3,                   // Raticate
+        // Weak early-game base forms → 2 HP
+        10: 2,                   // Caterpie
+        13: 2,                   // Weedle
+        16: 2,                   // Pidgey
+        19: 2,                   // Rattata
+        21: 2,                   // Spearow
+        // Ultra weak → 1 HP
         129: 1                   // Magikarp
     };
 
@@ -460,13 +470,12 @@
     }
 
     // Get max HP for a Pokemon data entry (respects overrides)
-    // Stage 2 evolutions get minimum 4 HP, stage 3 / final evos get minimum 5 HP
+    // Stage 2+ evolutions get minimum 4 HP; 5 HP reserved for specific overrides & rare finals
     function getMaxHpForPokemon(data) {
         if (HP_OVERRIDES[data.id] !== undefined) return HP_OVERRIDES[data.id];
         let hp = data.rarity === 'legendary' ? 6 : data.rarity === 'rare' ? 4 : 3;
         const stage = getEvoStage(data.id);
-        if (stage === 2 && hp < 4) hp = 4;
-        if (stage === 3 && hp < 5) hp = 5;
+        if (stage >= 2 && hp < 4) hp = 4;
         return hp;
     }
 
