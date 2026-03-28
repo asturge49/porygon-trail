@@ -112,7 +112,10 @@
                 poison: 'Battle win bonus', guard: 'Block injuries', intimidate: 'Catch rate + battle bonus',
                 payday: 'Money bonus', safeguard: 'Save from death once',
                 system_restore: 'Revive one lost Pokemon (once)', glitch: 'Chaos effects',
-                mimic: 'Copies strongest party ability'
+                mimic: 'Copies strongest party ability',
+                aurora_veil: 'Damage -1 to all', thunderclap: '2x travel speed',
+                sacred_flame: 'No food needed', psychic_dominance: '+50% battle wins',
+                miracle: 'Daily random bonus'
             };
             const power = PT.Engine.GameState.getAbilityPower(state, ability);
             return `${ability}: ${desc[ability] || '???'} (x${count} | pwr ${power.toFixed(1)})`;

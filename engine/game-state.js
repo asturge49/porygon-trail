@@ -187,6 +187,14 @@
     }
 
     function damagePokemon(pokemon, amount, state) {
+        // Aurora Veil (Articuno) — reduce all incoming damage by 1 (min 0)
+        if (state && hasAbility(state, 'aurora_veil') && amount > 0) {
+            amount = Math.max(0, amount - 1);
+            if (amount === 0) {
+                pokemon._auroraBlocked = true; // transient flag for UI
+                return false; // damage fully absorbed
+            }
+        }
         pokemon.hp = Math.max(0, pokemon.hp - amount);
         if (pokemon.hp <= 0) {
             // Battle Stars death avoidance — veteran Pokemon can clutch survive

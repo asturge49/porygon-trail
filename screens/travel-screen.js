@@ -770,7 +770,12 @@
             safeguard: 'Saves a Pokemon from death once',
             system_restore: 'Revive one lost Pokemon (once per game)',
             glitch: 'Unpredictable chaos effects',
-            mimic: 'Copies the strongest ability in your party'
+            mimic: 'Copies the strongest ability in your party',
+            aurora_veil: 'All party damage reduced by 1',
+            thunderclap: 'Double travel distance on all paces',
+            sacred_flame: 'Zero food consumption',
+            psychic_dominance: '+50% win chance on all battles',
+            miracle: 'Random powerful bonus effect every day'
         };
 
         // Evolution chain

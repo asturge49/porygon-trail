@@ -147,14 +147,14 @@
         { id: 141, name: "Kabutops", types: ["rock","water"], rarity: "rare", baseLevel: 40, travelAbility: "cut" },
         { id: 142, name: "Aerodactyl", types: ["rock","flying"], rarity: "rare", baseLevel: 35, travelAbility: "fly" },
         { id: 143, name: "Snorlax", types: ["normal"], rarity: "rare", baseLevel: 30, travelAbility: "guard" },
-        { id: 144, name: "Articuno", types: ["ice","flying"], rarity: "legendary", baseLevel: 50, travelAbility: "fly" },
-        { id: 145, name: "Zapdos", types: ["electric","flying"], rarity: "legendary", baseLevel: 50, travelAbility: "flash" },
-        { id: 146, name: "Moltres", types: ["fire","flying"], rarity: "legendary", baseLevel: 50, travelAbility: "fire" },
+        { id: 144, name: "Articuno", types: ["ice","flying"], rarity: "legendary", baseLevel: 50, travelAbility: "aurora_veil" },
+        { id: 145, name: "Zapdos", types: ["electric","flying"], rarity: "legendary", baseLevel: 50, travelAbility: "thunderclap" },
+        { id: 146, name: "Moltres", types: ["fire","flying"], rarity: "legendary", baseLevel: 50, travelAbility: "sacred_flame" },
         { id: 147, name: "Dratini", types: ["dragon"], rarity: "rare", baseLevel: 15, travelAbility: "surf", evolvesTo: 148 },
         { id: 148, name: "Dragonair", types: ["dragon"], rarity: "rare", baseLevel: 30, travelAbility: "surf", evolvesTo: 149 },
         { id: 149, name: "Dragonite", types: ["dragon","flying"], rarity: "rare", baseLevel: 55, travelAbility: "fly" },
-        { id: 150, name: "Mewtwo", types: ["psychic"], rarity: "legendary", baseLevel: 70, travelAbility: "psychic" },
-        { id: 151, name: "Mew", types: ["psychic"], rarity: "legendary", baseLevel: 50, travelAbility: "psychic" },
+        { id: 150, name: "Mewtwo", types: ["psychic"], rarity: "legendary", baseLevel: 70, travelAbility: "psychic_dominance" },
+        { id: 151, name: "Mew", types: ["psychic"], rarity: "legendary", baseLevel: 50, travelAbility: "miracle" },
         { id: 0, name: "MissingNo.", types: ["normal","bird"], rarity: "legendary", baseLevel: 33, travelAbility: "glitch" }
     ];
 })();

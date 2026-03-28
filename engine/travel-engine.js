@@ -27,7 +27,14 @@
         // --- Distance ---
         if (pace.distance > 0 && nextRoute) {
             const variance = state.rng.randInt(-3, 3);
-            const dist = Math.max(0, pace.distance + variance);
+            let dist = Math.max(0, pace.distance + variance);
+
+            // Thunderclap (Zapdos) — double travel distance
+            if (PT.Engine.GameState.hasAbility(state, 'thunderclap')) {
+                dist *= 2;
+                results.messages.push(`⚡ THUNDERCLAP: Zapdos' lightning speed doubles your travel distance!`);
+            }
+
             state.distanceTraveled += dist;
             results.messages.push(`Traveled ${dist} miles.`);
 
@@ -49,12 +56,20 @@
 
         // --- Food consumption (weighted by evo stage) ---
         const aliveParty = PT.Engine.GameState.getAliveParty(state);
-        const baseFood = aliveParty.length > 0
-            ? aliveParty.reduce((sum, p) => sum + PT.Engine.GameState.getFoodCost(p), 0)
-            : 1;
-        const foodConsumed = Math.ceil(baseFood * pace.foodMult);
-        state.resources.food = Math.max(0, state.resources.food - foodConsumed);
-        results.messages.push(`Party consumed ${foodConsumed} food.`);
+
+        // Sacred Flame (Moltres) — zero food consumption
+        const hasSacredFlame = PT.Engine.GameState.hasAbility(state, 'sacred_flame');
+        let foodConsumed = 0;
+        if (hasSacredFlame) {
+            results.messages.push(`🔥 SACRED FLAME: Moltres' legendary fire sustains the party! No food consumed.`);
+        } else {
+            const baseFood = aliveParty.length > 0
+                ? aliveParty.reduce((sum, p) => sum + PT.Engine.GameState.getFoodCost(p), 0)
+                : 1;
+            foodConsumed = Math.ceil(baseFood * pace.foodMult);
+            state.resources.food = Math.max(0, state.resources.food - foodConsumed);
+            results.messages.push(`Party consumed ${foodConsumed} food.`);
+        }
 
         // Fire ability reduces food consumption (stacks + scales)
         const firePower = PT.Engine.GameState.getAbilityPower(state, 'fire');
@@ -316,6 +331,64 @@
                 if (victim) {
                     PT.Engine.GameState.damagePokemon(victim, 1, state);
                     results.messages.push(`👾 GLITCH ABILITY: Buffer overflow! ${victim.name} took 1 glitch damage!`);
+                }
+            }
+        }
+
+        // --- Miracle ability: Mew's daily random bonus (always triggers) ---
+        if (PT.Engine.GameState.hasAbility(state, 'miracle')) {
+            const miracleRoll = state.rng.randInt(1, 100);
+            if (miracleRoll <= 20) {
+                // Full party heal
+                PT.Engine.GameState.getAliveParty(state).forEach(p => {
+                    p.hp = p.maxHp;
+                    if (p.status === 'poisoned' || p.status === 'paralyzed') p.status = 'healthy';
+                });
+                results.messages.push(`✨ MIRACLE: Mew's radiant energy heals the entire party to full HP!`);
+            } else if (miracleRoll <= 40) {
+                // Free food
+                const foodGain = state.rng.randInt(15, 30);
+                state.resources.food += foodGain;
+                results.messages.push(`✨ MIRACLE: Mew conjures ${foodGain} food from thin air!`);
+            } else if (miracleRoll <= 55) {
+                // Bonus money
+                const moneyGain = PT.Engine.GameState.applyPayDay(state, state.rng.randInt(200, 500));
+                state.resources.money += moneyGain;
+                results.messages.push(`✨ MIRACLE: Mew manifests $${moneyGain} out of nothing!`);
+            } else if (miracleRoll <= 70) {
+                // Free items
+                const itemRoll = state.rng.randInt(1, 3);
+                if (itemRoll === 1) { state.resources.potions += 2; results.messages.push(`✨ MIRACLE: Mew creates 2 Potions!`); }
+                else if (itemRoll === 2) { state.resources.superPotions += 1; results.messages.push(`✨ MIRACLE: Mew creates a Super Potion!`); }
+                else { state.resources.greatballs += 2; results.messages.push(`✨ MIRACLE: Mew creates 2 Great Balls!`); }
+            } else if (miracleRoll <= 85) {
+                // Bonus miles
+                if (pace.distance > 0 && nextRoute && !results.arrivedAtLocation) {
+                    const bonusMiles = state.rng.randInt(5, 15);
+                    state.distanceTraveled += bonusMiles;
+                    results.messages.push(`✨ MIRACLE: Mew teleports the party forward ${bonusMiles} miles!`);
+                    if (state.distanceTraveled >= route.distanceToNext) {
+                        state.currentLocationIndex++;
+                        state.distanceTraveled = 0;
+                        results.arrivedAtLocation = true;
+                        const newRoute = PT.Engine.GameState.getCurrentRoute(state);
+                        results.messages.push(`Arrived at ${newRoute.name}!`);
+                        PT.Engine.GameState.addToLog(state, `Arrived at ${newRoute.name}!`);
+                    }
+                } else {
+                    state.resources.food += 10;
+                    results.messages.push(`✨ MIRACLE: Mew creates 10 food!`);
+                }
+            } else {
+                // Battle star on random party member
+                const starCandidates = PT.Engine.GameState.getAliveParty(state).filter(p => (p.battleStars || 0) < 3);
+                if (starCandidates.length > 0) {
+                    const lucky = state.rng.pick(starCandidates);
+                    lucky.battleStars = (lucky.battleStars || 0) + 1;
+                    results.messages.push(`✨ MIRACLE: Mew bestows a Battle Star on ${lucky.name}! ★`);
+                } else {
+                    state.resources.food += 10;
+                    results.messages.push(`✨ MIRACLE: Mew creates 10 food!`);
                 }
             }
         }
