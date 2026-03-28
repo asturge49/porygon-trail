@@ -319,6 +319,13 @@
             const killed = pokemon.hp <= 0;
 
             if (killed) {
+                if (!state.graveyard) state.graveyard = [];
+                const route = PT.Engine.GameState.getCurrentRoute(state);
+                state.graveyard.push({
+                    name: pokemon.name, id: pokemon.id, spriteUrl: pokemon.spriteUrl,
+                    battleStars: pokemon.battleStars || 0,
+                    location: route ? route.name : 'Unknown', day: state.daysElapsed
+                });
                 const idx = state.party.indexOf(pokemon);
                 if (idx !== -1) {
                     state.party.splice(idx, 1);

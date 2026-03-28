@@ -50,6 +50,7 @@
             teamRocketDefeated: 0,
             gymBattlesWon: 0,
             pokemonLost: 0,
+            graveyard: [],
             ballsWasted: 0,
 
             // Log
@@ -161,6 +162,17 @@
             pokemon.status = 'fainted';
             // Remove fainted Pokemon from party permanently
             if (state) {
+                // Record in graveyard
+                if (!state.graveyard) state.graveyard = [];
+                const route = getCurrentRoute(state);
+                state.graveyard.push({
+                    name: pokemon.name,
+                    id: pokemon.id,
+                    spriteUrl: pokemon.spriteUrl,
+                    battleStars: pokemon.battleStars || 0,
+                    location: route ? route.name : 'Unknown',
+                    day: state.daysElapsed
+                });
                 const idx = state.party.indexOf(pokemon);
                 if (idx !== -1) {
                     state.party.splice(idx, 1);
@@ -361,6 +373,17 @@
         }
         const idx = state.party.indexOf(victim);
         if (idx === -1) return null;
+        // Record in graveyard before removing
+        if (!state.graveyard) state.graveyard = [];
+        const route = getCurrentRoute(state);
+        state.graveyard.push({
+            name: victim.name,
+            id: victim.id,
+            spriteUrl: victim.spriteUrl,
+            battleStars: victim.battleStars || 0,
+            location: route ? route.name : 'Unknown',
+            day: state.daysElapsed
+        });
         state.party.splice(idx, 1);
         state.pokemonLost++;
         // If party is empty, game over

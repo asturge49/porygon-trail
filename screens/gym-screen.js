@@ -241,6 +241,13 @@
                 // Ace Pokemon kills bypass Battle Star death avoidance
                 const idx = state.party.indexOf(pokemon);
                 if (idx !== -1) {
+                    if (!state.graveyard) state.graveyard = [];
+                    const route = PT.Engine.GameState.getCurrentRoute(state);
+                    state.graveyard.push({
+                        name: pokemon.name, id: pokemon.id, spriteUrl: pokemon.spriteUrl,
+                        battleStars: pokemon.battleStars || 0,
+                        location: route ? route.name : 'Unknown', day: state.daysElapsed
+                    });
                     state.party.splice(idx, 1);
                     state.pokemonLost++;
                     gymKilled = true;
