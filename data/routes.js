@@ -41,7 +41,7 @@
                 { pokemonId: 10, weight: 10 },  // Caterpie
                 { pokemonId: 13, weight: 10 }   // Weedle
             ],
-            eventPool: ["prof_oak_advice", "mysterious_package"],
+            eventPool: ["prof_oak_advice", "mysterious_package", "joey_rattata", "route1_ledge_shortcut"],
             flavor: "Tall grass rustles in the breeze. Wild Pokemon are everywhere."
         },
         {
@@ -86,7 +86,7 @@
                 { pokemonId: 25, weight: 5 },   // Pikachu
                 { pokemonId: 46, weight: 10 }   // Paras
             ],
-            eventPool: ["team_rocket_ambush", "bug_catcher_gauntlet"],
+            eventPool: ["team_rocket_ambush", "bug_catcher_gauntlet", "forest_samurai"],
             flavor: "Trees block the sunlight. Bug catchers lurk behind every bush."
         },
         {
@@ -132,7 +132,7 @@
                 { pokemonId: 104, weight: 5 },  // Cubone
                 { pokemonId: 39, weight: 7 }    // Jigglypuff
             ],
-            eventPool: ["team_rocket_ambush", "fossil_discovery", "moon_stone_event", "cave_collapse"],
+            eventPool: ["team_rocket_ambush", "fossil_discovery", "moon_stone_event", "cave_collapse", "clefairy_moon_dance"],
             flavor: "Darkness surrounds you. Strange sounds echo through the cavern."
         },
         {
@@ -179,7 +179,7 @@
                 { pokemonId: 63, weight: 8 },   // Abra
                 { pokemonId: 96, weight: 14 }   // Drowzee
             ],
-            eventPool: ["daycare_dilemma", "mysterious_package"],
+            eventPool: ["daycare_dilemma", "mysterious_package", "underground_path_dealer", "pokemon_fan_club"],
             flavor: "The Daycare sits along the road. Trainers patrol the grass."
         },
         {
@@ -203,7 +203,7 @@
                 { pokemonId: 96, weight: 14 },  // Drowzee
                 { pokemonId: 100, weight: 10 }  // Voltorb
             ],
-            eventPool: ["mysterious_package", "team_rocket_ambush"],
+            eventPool: ["mysterious_package", "team_rocket_ambush", "digletts_cave_detour", "vermilion_dock_workers"],
             flavor: "The underground path is dark and damp. Vermilion's port looms ahead."
         },
         {
@@ -254,7 +254,7 @@
                 { pokemonId: 81, weight: 10 },  // Magnemite
                 { pokemonId: 104, weight: 11 }  // Cubone
             ],
-            eventPool: ["team_rocket_ambush", "mysterious_package"],
+            eventPool: ["team_rocket_ambush", "mysterious_package", "route8_gambler", "route8_ditto_encounter"],
             flavor: "Trainers line the route. The entrance to Rock Tunnel is up ahead."
         },
         {
@@ -278,7 +278,7 @@
                 { pokemonId: 81, weight: 8 },   // Magnemite
                 { pokemonId: 35, weight: 5 }    // Clefairy
             ],
-            eventPool: ["cave_collapse", "team_rocket_ambush"],
+            eventPool: ["cave_collapse", "team_rocket_ambush", "rock_tunnel_hiker", "rock_tunnel_fossil_wall"],
             flavor: "Total darkness. Every step echoes through the rock."
         },
         {
@@ -323,7 +323,7 @@
                 { pokemonId: 96, weight: 15 },  // Drowzee
                 { pokemonId: 132, weight: 10 }  // Ditto
             ],
-            eventPool: ["team_rocket_ambush", "mysterious_package"],
+            eventPool: ["team_rocket_ambush", "mysterious_package", "route7_snorlax_roadblock", "route8_ditto_encounter"],
             flavor: "The path winds between the hills. Celadon's lights glow on the horizon."
         },
         {
@@ -403,7 +403,7 @@
                 { pokemonId: 100, weight: 10 }, // Voltorb
                 { pokemonId: 56, weight: 9 }    // Mankey
             ],
-            eventPool: ["team_rocket_ambush", "biker_gang_standoff"],
+            eventPool: ["team_rocket_ambush", "biker_gang_standoff", "cycling_road_bikers", "cycling_road_downhill"],
             flavor: "The wind whips past as bikers race downhill. No brakes."
         },
         {
@@ -456,7 +456,7 @@
                 { pokemonId: 98, weight: 12 },  // Krabby
                 { pokemonId: 86, weight: 8 }    // Seel
             ],
-            eventPool: ["stranded_swimmer", "strong_current"],
+            eventPool: ["stranded_swimmer", "strong_current", "tentacool_swarm", "sea_route19_swimmers"],
             flavor: "Waves crash against you. The open sea stretches south."
         },
         {
@@ -481,7 +481,7 @@
                 { pokemonId: 131, weight: 3 },  // Lapras
                 { pokemonId: 90, weight: 7 }    // Shellder
             ],
-            eventPool: ["stranded_swimmer", "strong_current"],
+            eventPool: ["stranded_swimmer", "strong_current", "sea_route20_shipwreck", "sea_route20_lapras_pod"],
             flavor: "The currents grow stronger. Seafoam Islands shimmer in the distance."
         },
         {
@@ -536,7 +536,7 @@
                 { pokemonId: 142, weight: 3 },  // Aerodactyl
                 { pokemonId: 0, weight: 1 }     // MissingNo.
             ],
-            eventPool: ["pokemon_mansion", "mewtwo_journal", "fossil_revival", "blaine_quiz", "cinnabar_experiment"],
+            eventPool: ["pokemon_mansion", "mewtwo_journal", "fossil_revival", "blaine_quiz", "cinnabar_experiment", "cinnabar_missingno"],
             flavor: "Volcanic heat rises from the ground. The abandoned Pokemon Mansion hides secrets."
         },
         {
@@ -561,7 +561,7 @@
                 { pokemonId: 99, weight: 8 },   // Kingler
                 { pokemonId: 131, weight: 4 }   // Lapras
             ],
-            eventPool: ["stranded_swimmer", "strong_current"],
+            eventPool: ["stranded_swimmer", "strong_current", "route21_fisherman", "route21_homecoming"],
             flavor: "The mainland comes into view. Almost home."
         },
         {
@@ -614,7 +614,7 @@
                 { pokemonId: 85, weight: 5 },   // Dodrio
                 { pokemonId: 47, weight: 7 }    // Parasect
             ],
-            eventPool: ["gary_final_rival", "gary_last_stand"],
+            eventPool: ["gary_final_rival", "gary_last_stand", "route22_rival_ambush", "route22_nidoran_pair"],
             flavor: "The road west of Viridian. Your rival's presence lingers."
         },
         {
@@ -641,7 +641,7 @@
                 { pokemonId: 75, weight: 7 },   // Graveler
                 { pokemonId: 105, weight: 5 }   // Marowak
             ],
-            eventPool: ["gary_final_rival"],
+            eventPool: ["gary_final_rival", "route23_badge_gates", "route23_veteran_advice"],
             flavor: "Badge check gates loom ahead. Only the worthy may pass."
         },
         {
@@ -685,7 +685,7 @@
             gymLeader: null,
             encounterRate: 0,
             encounterTable: [],
-            eventPool: [],
+            eventPool: ["indigo_plateau_nurse_joy"],
             flavor: "You've made it. The Pokemon League stands before you."
         },
         {

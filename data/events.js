@@ -6683,6 +6683,790 @@
                     ]
                 }
             ]
+        },
+
+        // ===== ROUTE 1 EVENTS =====
+        {
+            id: "joey_rattata",
+            type: "story",
+            name: "Youngster Joey!",
+            description: "A kid in shorts sprints up to you, clutching a Poke Ball like it's the Holy Grail. \"HEY! My Rattata is in the TOP PERCENTAGE of Rattata! You GOTTA see this!\"",
+            weight: 8,
+            oneTime: true,
+            locationIds: ["route_1"],
+            choices: [
+                {
+                    text: "Battle Joey's Rattata",
+                    outcomes: [
+                        { weight: 40, narration: "Joey's Rattata is... actually really good? It lands a critical Hyper Fang! Your Pokemon wins, but barely. Joey's in tears. \"I'll train harder! Here — take my lunch money.\" He shoves cash at you and runs off.", effects: { partyDamageAll: 1, money: 200 } },
+                        { weight: 35, narration: "Your Pokemon wipes the floor with Joey's Rattata. He sniffles. \"It's still top percentage...\" He hands you a potion and shuffles away, defeated but not broken.", effects: { potions: 1, money: 100 } },
+                        { weight: 25, narration: "Joey's Rattata CRITS on the first turn! Your Pokemon goes down HARD. Joey is ecstatic. \"I TOLD YOU! TOP! PERCENTAGE!\" He's so happy he gives you his spare Rattata. It is, admittedly, pretty good.", effects: { partyDamageAll: 1, catchPokemon: 19 } }
+                    ]
+                },
+                {
+                    text: "\"That's great, Joey. I gotta go.\"",
+                    outcomes: [
+                        { weight: 70, narration: "\"Wait! At least take my number! I'll call you about my Rattata!\" You walk faster.", effects: {} },
+                        { weight: 30, narration: "Joey shoves a potion into your hands. \"For the road! And remember — TOP PERCENTAGE!\" He seems like a good kid.", effects: { potions: 1 } }
+                    ]
+                }
+            ]
+        },
+        {
+            id: "route1_ledge_shortcut",
+            type: "discovery",
+            name: "The Ledge",
+            description: "A series of rocky ledges lines the route — you can jump down them, but there's no climbing back up. Between the ledges, you spot something shiny in the tall grass below.",
+            weight: 7,
+            locationIds: ["route_1"],
+            choices: [
+                {
+                    text: "Jump the ledge to grab it",
+                    outcomes: [
+                        { weight: 35, narration: "You leap down! It's a stash of Poke Balls someone dropped. Nice find! The landing is rough though.", effects: { pokeballs: 5, partyDamageAll: 1 } },
+                        { weight: 35, narration: "A pile of coins scattered in the grass! Someone's wallet must have fallen. Finders keepers.", effects: { money: 300 } },
+                        { weight: 30, narration: "It's just a bottle cap. But a wild Pidgey startles from the grass — and it looks strong!", effects: { catchPokemon: 16 } }
+                    ]
+                },
+                {
+                    text: "Stay on the main path",
+                    outcomes: [
+                        { weight: 100, narration: "You stick to the safe route. No point risking a twisted ankle this early.", effects: {} }
+                    ]
+                }
+            ]
+        },
+
+        // ===== VIRIDIAN FOREST EVENTS =====
+        {
+            id: "forest_samurai",
+            type: "combat",
+            name: "Samurai Boy!",
+            description: "A kid in samurai armor leaps from behind a tree! \"HALT! I am the Samurai of Viridian Forest! I challenge all trainers who pass through! None have bested my Pinsir!\" He's dead serious.",
+            weight: 6,
+            oneTime: true,
+            locationIds: ["viridian_forest"],
+            choices: [
+                {
+                    text: "Accept the Samurai's challenge!",
+                    outcomes: [
+                        { weight: 30, narration: "Your Pokemon outmaneuvers the Pinsir! The Samurai bows deeply. \"You are a TRUE warrior. Take my Pinsir — it will serve you well on your journey.\" An incredible gift from a worthy rival.", effects: { catchPokemon: 127, partyDamageAll: 1, trainPokemon: true } },
+                        { weight: 40, narration: "A brutal fight! Your Pokemon wins but is battered. The Samurai nods respectfully. \"You have earned safe passage. And this.\" He hands you a Rare Candy he's been saving.", effects: { partyDamageAll: 1, rareCandy: 1 } },
+                        { weight: 30, narration: "Pinsir's Vice Grip is devastating. Your Pokemon fights hard but loses. The Samurai lets you pass anyway. \"Train harder. Return when you are worthy.\" Your team is roughed up.", effects: { partyDamageAll: 2 } }
+                    ]
+                },
+                {
+                    text: "\"I don't have time for this.\"",
+                    outcomes: [
+                        { weight: 60, narration: "The Samurai scoffs. \"A coward! Viridian Forest remembers the unworthy!\" He vanishes into the trees.", effects: {} },
+                        { weight: 40, narration: "\"Then pay the toll!\" The Samurai blocks your path. You toss him some cash to pass. Highway robbery, honestly.", effects: { money: -200 } }
+                    ]
+                }
+            ]
+        },
+
+        // ===== ROUTE 5 EVENTS =====
+        {
+            id: "underground_path_dealer",
+            type: "story",
+            name: "Underground Path Merchant",
+            description: "In the dim underground passage connecting Cerulean to Vermilion, a figure sits against the wall with a trench coat full of goods. \"Psst. You look like a trainer who appreciates... OFF-MENU items. I got what the Poke Marts won't sell.\"",
+            weight: 7,
+            oneTime: true,
+            locationIds: ["route_5"],
+            choices: [
+                {
+                    text: "Buy Great Balls ($600 for 5)",
+                    requiresMoney: 600,
+                    outcomes: [
+                        { weight: 75, narration: "\"Pleasure doing business.\" He slides you five Great Balls. They look legit. Better than anything the Marts carry at this point.", effects: { money: -600, greatballs: 5 } },
+                        { weight: 25, narration: "\"And because I like your face — a bonus.\" He throws in an extra one. Six Great Balls total. Not bad.", effects: { money: -600, greatballs: 6 } }
+                    ]
+                },
+                {
+                    text: "Buy a Rare Candy ($1500)",
+                    requiresMoney: 1500,
+                    outcomes: [
+                        { weight: 100, narration: "He pulls a glowing candy from his coat like a jeweler showing a diamond. \"Pure. Uncut. The real deal.\" It IS a real Rare Candy. Expensive, but legit.", effects: { money: -1500, rareCandy: 1 } }
+                    ]
+                },
+                {
+                    text: "\"Not interested.\"",
+                    outcomes: [
+                        { weight: 100, narration: "\"Your loss, kid. I'll be here... probably.\" He tips his hat as you walk past.", effects: {} }
+                    ]
+                }
+            ]
+        },
+        {
+            id: "pokemon_fan_club",
+            type: "story",
+            name: "Pokemon Fan Club Chairman!",
+            description: "An elderly man in a suit practically tackles you on the road. \"Oh! A trainer! Please, PLEASE let me tell you about my precious Rapidash! She's the most beautiful Pokemon in the WORLD! Her mane! Her speed! Her ELEGANCE!\"",
+            weight: 6,
+            oneTime: true,
+            locationIds: ["route_5"],
+            choices: [
+                {
+                    text: "Listen to him ramble (patiently)",
+                    outcomes: [
+                        { weight: 100, narration: "He talks for FORTY FIVE MINUTES about his Rapidash. You learn more about horse Pokemon than any human should know. Finally, he notices your glazed eyes. \"Oh! You listened to the whole thing! You're wonderful! Here — take this!\" He hands you a Bike Voucher worth $2000. Patience pays.", effects: { money: 2000 } }
+                    ]
+                },
+                {
+                    text: "\"Sorry, I'm in a hurry!\"",
+                    outcomes: [
+                        { weight: 60, narration: "\"Oh... nobody ever wants to hear about Rapidash...\" He looks so sad. You feel terrible but you've got a journey to finish.", effects: {} },
+                        { weight: 40, narration: "\"Wait! At least take this! For the road!\" He presses some food into your hands before you can escape. Bless his heart.", effects: { food: 5 } }
+                    ]
+                }
+            ]
+        },
+
+        // ===== ROUTE 6 EVENTS =====
+        {
+            id: "digletts_cave_detour",
+            type: "discovery",
+            name: "Diglett's Cave!",
+            description: "A hole in the ground leads to Diglett's Cave! Dozens of Diglett pop up and down like a living minefield. One particularly large Dugtrio blocks the main path and seems to be guarding something.",
+            weight: 7,
+            oneTime: true,
+            locationIds: ["route_6"],
+            choices: [
+                {
+                    text: "Dig through with your team",
+                    bonusAbility: "dig",
+                    bonusOutcome: { narration: "Your Dig Pokemon burrows right past the Dugtrio! Underground, you find a hidden cache — someone's buried stash from years ago. Jackpot!", effects: { money: 500, superPotions: 2, pokeballs: 5 } },
+                    outcomes: [
+                        { weight: 40, narration: "Your team digs carefully past the Dugtrio and finds a cache of supplies buried by a previous trainer!", effects: { food: 10, potions: 2 } },
+                        { weight: 35, narration: "The Dugtrio doesn't appreciate trespassers! It Earthquakes your team before you grab some supplies and flee.", effects: { partyDamageAll: 1, food: 8 } },
+                        { weight: 25, narration: "The tunnel collapses behind you! You escape with your life and a wild Diglett that seems oddly attached to you.", effects: { partyDamageAll: 1, catchPokemon: 50 } }
+                    ]
+                },
+                {
+                    text: "Leave the cave alone",
+                    outcomes: [
+                        { weight: 100, narration: "You leave the Diglett in peace. The main road is safer anyway.", effects: {} }
+                    ]
+                }
+            ]
+        },
+        {
+            id: "vermilion_dock_workers",
+            type: "story",
+            name: "Dock Workers' Request",
+            description: "A group of dock workers are struggling to load heavy crates onto a ship. \"Hey kid! Your Pokemon look strong! Help us load these crates and we'll make it worth your while. Captain's paying double today.\"",
+            weight: 7,
+            locationIds: ["route_6"],
+            choices: [
+                {
+                    text: "Help load the crates",
+                    bonusAbility: "strength",
+                    bonusOutcome: { narration: "Your Strength Pokemon lifts crates like they're pillows! The workers are stunned. \"That Pokemon's worth ten men!\" They pay you double AND throw in some ship rations.", effects: { money: 600, food: 15 } },
+                    outcomes: [
+                        { weight: 50, narration: "Hard work, but your team gets it done. The foreman pays you fairly and shares some of the ship's food supplies.", effects: { money: 300, food: 10 } },
+                        { weight: 30, narration: "A crate slips and crashes! Your Pokemon catches it but gets hurt. The foreman pays you extra for saving the cargo.", effects: { money: 500, partyDamageAll: 1 } },
+                        { weight: 20, narration: "The work takes all day but the pay is good. Your team is exhausted.", effects: { money: 400, food: 8, daysLost: 1 } }
+                    ]
+                },
+                {
+                    text: "\"I've got my own journey to worry about.\"",
+                    outcomes: [
+                        { weight: 100, narration: "\"Fair enough, kid. Good luck out there.\" The workers wave you off.", effects: {} }
+                    ]
+                }
+            ]
+        },
+
+        // ===== ROUTE 8 EVENTS =====
+        {
+            id: "route8_gambler",
+            type: "story",
+            name: "The Gambler!",
+            description: "A man in a fedora leans against a signpost, flipping a coin. \"Hey kid! I'm feeling lucky today. Bet me $500 on a coin flip — heads you double it, tails you lose it. Or if you're REALLY brave... $1000. What do you say?\"",
+            weight: 7,
+            locationIds: ["route_8"],
+            choices: [
+                {
+                    text: "Bet $500",
+                    requiresMoney: 500,
+                    outcomes: [
+                        { weight: 50, narration: "HEADS! \"Well well! Lucky kid!\" He grudgingly counts out your winnings. $500 profit, just like that.", effects: { money: 500 } },
+                        { weight: 50, narration: "TAILS! \"Haha! Better luck next time, kid!\" He pockets your money with a grin. You feel sick.", effects: { money: -500 } }
+                    ]
+                },
+                {
+                    text: "Bet $1000 (high roller)",
+                    requiresMoney: 1000,
+                    outcomes: [
+                        { weight: 45, narration: "HEADS! The Gambler's smile drops. \"...Double or nothing?\" You grab your $2000 and walk. What a rush.", effects: { money: 1000 } },
+                        { weight: 55, narration: "TAILS! \"THE HOUSE ALWAYS WINS, BABY!\" He snatches your money and vanishes before you can change your mind. $1000 gone in a coin flip.", effects: { money: -1000 } }
+                    ]
+                },
+                {
+                    text: "\"Gambling's a fool's game.\"",
+                    outcomes: [
+                        { weight: 70, narration: "\"Smart kid. Smarter than me, anyway.\" He goes back to flipping his coin.", effects: {} },
+                        { weight: 30, narration: "\"Here — for being the FIRST person to say no today.\" He flips you a coin. It's gold! Worth something.", effects: { money: 100 } }
+                    ]
+                }
+            ]
+        },
+        {
+            id: "route8_ditto_encounter",
+            type: "special",
+            name: "The Ditto Mimic!",
+            description: "Your lead Pokemon spots what looks like ANOTHER one of itself up ahead. Same species, same posture, same everything. Then it wobbles. Its face goes blank for a split second. That's no copy — that's a Ditto!",
+            weight: 5,
+            locationIds: ["route_8", "route_8_celadon"],
+            choices: [
+                {
+                    text: "Try to catch the Ditto!",
+                    outcomes: [
+                        { weight: 40, narration: "The Ditto transforms into a Geodude and tries to roll away, but your Poke Ball connects! A Ditto is incredibly useful — it can become anything!", effects: { catchPokemon: 132, pokeballs: -1 } },
+                        { weight: 35, narration: "Ditto transforms into a Fearow and FLIES away! Your Poke Ball misses entirely. That sneaky blob.", effects: { pokeballs: -2 } },
+                        { weight: 25, narration: "Ditto transforms into your lead Pokemon and FIGHTS you! It's an even match — your Pokemon wins but barely. The Ditto oozes away.", effects: { partyDamageAll: 1 } }
+                    ]
+                },
+                {
+                    text: "Let it be",
+                    outcomes: [
+                        { weight: 100, narration: "The Ditto wobbles, transforms into a rock, and sits there. You pretend not to notice. It pretends to be a rock. Everyone's happy.", effects: {} }
+                    ]
+                }
+            ]
+        },
+
+        // ===== ROCK TUNNEL EVENTS =====
+        {
+            id: "rock_tunnel_hiker",
+            type: "story",
+            name: "The Lost Hiker",
+            description: "A Hiker sits against the cave wall, his flashlight flickering. \"I've been lost in here for THREE DAYS. My food's gone. My Geodude fainted. I can barely see. Please... can you help me find the exit?\"",
+            weight: 7,
+            oneTime: true,
+            locationIds: ["rock_tunnel"],
+            choices: [
+                {
+                    text: "Guide him to the exit",
+                    bonusAbility: "flash",
+                    bonusOutcome: { narration: "Your Flash Pokemon lights up the entire tunnel! The Hiker follows you out in minutes. \"You saved my life! Take everything I have!\" He hands you his entire pack — food, potions, cash. His Geodude even seems to want to come with you.", effects: { food: 15, potions: 3, money: 500, catchPokemon: 74 } },
+                    outcomes: [
+                        { weight: 50, narration: "It takes hours, but you guide him through the maze of tunnels. At the exit, he weeps with gratitude. \"Take these — I won't need them now that I'm never coming back to this hellhole.\" He gives you his supplies.", effects: { food: 10, potions: 2, money: 300, daysLost: 1 } },
+                        { weight: 30, narration: "You find the way out, but the detour costs you. Wild Zubats attack in the dark. The Hiker gives you what he can.", effects: { partyDamageAll: 1, food: 8, money: 200 } },
+                        { weight: 20, narration: "You get lost together. An entire day wasted before you find the exit. At least the Hiker shares his last rations.", effects: { daysLost: 1, food: 5, partyDamageAll: 1 } }
+                    ]
+                },
+                {
+                    text: "Share some food and move on",
+                    outcomes: [
+                        { weight: 100, narration: "You can't spare the time, but you leave him some food and point him in the right direction. \"Bless you, kid!\" Hopefully he makes it.", effects: { food: -5 } }
+                    ]
+                }
+            ]
+        },
+        {
+            id: "rock_tunnel_fossil_wall",
+            type: "discovery",
+            name: "Fossil Imprints!",
+            description: "Your Pokemon brushes against the cave wall and loose rock crumbles away, revealing ancient fossil imprints! Prehistoric Pokemon were embedded here millions of years ago. Some of the fossils look intact enough to extract...",
+            weight: 5,
+            oneTime: true,
+            locationIds: ["rock_tunnel"],
+            choices: [
+                {
+                    text: "Carefully extract a fossil",
+                    bonusAbility: "strength",
+                    bonusOutcome: { narration: "Your Strength Pokemon delicately — yes, delicately — chips away the rock. A perfect Helix Fossil emerges! Somewhere, a scientist is going to lose their mind.", effects: { rareCandy: 1, money: 1000 } },
+                    outcomes: [
+                        { weight: 40, narration: "You pry out a partial fossil. It's not complete enough to revive, but a collector would pay good money for it.", effects: { money: 600 } },
+                        { weight: 30, narration: "The extraction goes wrong — the wall collapses! But in the rubble, you find some rare minerals and a Super Potion wedged in the rock.", effects: { partyDamageAll: 1, superPotions: 1, money: 300 } },
+                        { weight: 30, narration: "You extract a beautiful fossil! A passing scientist identifies it and gives you a Rare Candy in exchange for letting him study it.", effects: { rareCandy: 1 } }
+                    ]
+                },
+                {
+                    text: "Leave them for science",
+                    outcomes: [
+                        { weight: 100, narration: "Some things are better left to professionals. You take a mental note of the location — maybe someday a research team will thank you.", effects: {} }
+                    ]
+                }
+            ]
+        },
+
+        // ===== ROUTE 7 (route_8_celadon) EVENTS =====
+        {
+            id: "route7_snorlax_roadblock",
+            type: "special",
+            name: "Snorlax Roadblock!",
+            description: "A MASSIVE Snorlax is sleeping in the middle of the road. It's blocking the entire path. Trainers are lined up behind it, frustrated. One guy's been waiting since yesterday. There's no way around it.",
+            weight: 5,
+            oneTime: true,
+            locationIds: ["route_8_celadon"],
+            choices: [
+                {
+                    text: "Use a Poke Flute (if you have one)",
+                    requiresKeyItem: "Poke Flute",
+                    outcomes: [
+                        { weight: 40, narration: "The Poke Flute's melody fills the air. Snorlax yawns, stretches, and looks at you. It seems grateful to be woken! It follows you, ready to eat everything in sight.", effects: { catchPokemon: 143 } },
+                        { weight: 60, narration: "Snorlax wakes up, yawns, and wanders off the road. The line of trainers CHEERS. One tips you some cash. \"THANK YOU!\"", effects: { money: 400, food: 5 } }
+                    ]
+                },
+                {
+                    text: "Try to wake it up the hard way",
+                    outcomes: [
+                        { weight: 30, narration: "Your Pokemon attacks! Snorlax wakes up ANGRY, swats your entire team, then rolls over and goes back to sleep. At least it rolled off the road.", effects: { partyDamageAll: 2 } },
+                        { weight: 40, narration: "You blast it with everything. Snorlax slowly stands up, stretches, and ambles away like nothing happened. It left behind some berries it was sleeping on.", effects: { food: 8, partyDamageAll: 1 } },
+                        { weight: 30, narration: "After an hour of prodding, Snorlax rolls to the side. A grateful trainer behind you shares supplies for your effort.", effects: { potions: 2, food: 5, daysLost: 1 } }
+                    ]
+                },
+                {
+                    text: "Wait it out",
+                    outcomes: [
+                        { weight: 50, narration: "A full day later, Snorlax finally wakes and wanders off. You've wasted a day, but at least you're not hurt.", effects: { daysLost: 1 } },
+                        { weight: 50, narration: "While waiting, you trade stories with other trainers. One shares food and healing items. Silver lining.", effects: { daysLost: 1, food: 8, potions: 2 } }
+                    ]
+                }
+            ]
+        },
+
+        // ===== MT. MOON EVENT =====
+        {
+            id: "clefairy_moon_dance",
+            type: "special",
+            name: "Clefairy Moon Dance!",
+            description: "Deep in Mt. Moon, you find an open cavern lit by a crack in the ceiling. Moonlight streams down onto a Moon Stone. And there — a ring of Clefairy, dancing in a circle around it. It's magical. They haven't noticed you yet.",
+            weight: 5,
+            oneTime: true,
+            locationIds: ["mt_moon"],
+            choices: [
+                {
+                    text: "Watch quietly from the shadows",
+                    outcomes: [
+                        { weight: 50, narration: "The dance reaches its crescendo. The Moon Stone GLOWS and splits into fragments! A Clefairy notices you and shyly offers a piece. Your whole team feels energized by the moonlight. A once-in-a-lifetime moment.", effects: { healAll: true, rareCandy: 1 } },
+                        { weight: 50, narration: "The Clefairy dance until dawn. As they disperse, one walks up to you. It wants to come along! It touches the Moon Stone one last time, then joins your party.", effects: { catchPokemon: 35, healAll: true } }
+                    ]
+                },
+                {
+                    text: "Sneak up and grab the Moon Stone",
+                    outcomes: [
+                        { weight: 30, narration: "You grab the Moon Stone! The Clefairy SHRIEK! They attack in unison — tiny fists, Metronome chaos, Moonblasts everywhere! You escape with the stone but your team is WRECKED.", effects: { rareCandy: 1, partyDamageAll: 2 } },
+                        { weight: 70, narration: "A Clefairy spots you and they scatter! In the panic, the Moon Stone cracks. You salvage a fragment — it sells well, but you feel like a monster.", effects: { money: 800 } }
+                    ]
+                },
+                {
+                    text: "Try to catch a Clefairy",
+                    outcomes: [
+                        { weight: 40, narration: "You toss a ball at the closest one. CLICK! The others flee, and the dance is over forever. But you've got a Clefairy. Was it worth it?", effects: { catchPokemon: 35, pokeballs: -1 } },
+                        { weight: 60, narration: "The Clefairy see the ball coming and scatter in every direction! They use Metronome — and by sheer luck, it's Teleport. Every last one vanishes. Dance over.", effects: { pokeballs: -1 } }
+                    ]
+                }
+            ]
+        },
+
+        // ===== CYCLING ROAD EVENTS =====
+        {
+            id: "cycling_road_bikers",
+            type: "combat",
+            name: "Biker Gang Showdown!",
+            description: "A gang of bikers blocks the entire Cycling Road. Their leader — a huge guy with a Weezing on his shoulder — revs his engine. \"Nobody rides OUR road without paying the toll! $500, or we take it outta your Pokemon!\" The anime taught you this might happen.",
+            weight: 6,
+            oneTime: true,
+            locationIds: ["cycling_road"],
+            choices: [
+                {
+                    text: "Fight the whole gang!",
+                    outcomes: [
+                        { weight: 25, narration: "Your Pokemon DESTROYS them. One by one, their Koffings and Grimers fall. The leader's Weezing puts up a fight but goes down too. \"You're... you're INSANE!\" They scatter, dropping cash and items. You're a legend on Cycling Road now.", effects: { money: 800, potions: 3, food: 10, trainPokemon: true } },
+                        { weight: 35, narration: "You beat most of them, but the leader's Weezing uses Self-Destruct! Your whole team takes the blast! The bikers flee in the chaos. Pyrrhic victory.", effects: { partyDamageAll: 2, money: 500 } },
+                        { weight: 25, narration: "Too many of them. Your Pokemon fights bravely but gets overwhelmed. They take your money AND rough up your team. Cycling Road is harsh.", effects: { partyDamageAll: 2, money: -300 } },
+                        { weight: 15, narration: "Your Pokemon takes down the leader's Weezing in one shot! The gang is stunned. \"Boss got ONE-SHOT?!\" They hand you their stash out of pure shock. A Koffing follows you, apparently switching allegiance.", effects: { money: 600, catchPokemon: 109 } }
+                    ]
+                },
+                {
+                    text: "Pay the $500 toll",
+                    requiresMoney: 500,
+                    outcomes: [
+                        { weight: 70, narration: "\"Smart choice, kid.\" They pocket your money and part like the Red Sea. Extortion at its finest.", effects: { money: -500 } },
+                        { weight: 30, narration: "\"Smart choice. And since you're cool about it — here.\" The leader tosses you some Super Potions. \"Road gets rough ahead. You'll need those.\"", effects: { money: -500, superPotions: 2 } }
+                    ]
+                },
+                {
+                    text: "Try to speed past them!",
+                    bonusAbility: "fly",
+                    bonusOutcome: { narration: "Your Fly Pokemon LAUNCHES you over the entire gang! They stare up in disbelief as you soar over their blockade. \"WHAT THE—\" Beautiful.", effects: {} },
+                    outcomes: [
+                        { weight: 40, narration: "You gun it downhill! The bikers can't keep up — you're too fast! Wind in your hair, freedom in your heart.", effects: {} },
+                        { weight: 35, narration: "Almost made it! A Koffing Smokescreen blinds you and you crash. The bikers laugh and take some of your supplies.", effects: { partyDamageAll: 1, food: -5 } },
+                        { weight: 25, narration: "You slam right into a biker. Everyone goes down in a pile of bikes and Pokemon. The bikers are too busy untangling themselves to chase you.", effects: { partyDamageAll: 1 } }
+                    ]
+                }
+            ]
+        },
+        {
+            id: "cycling_road_downhill",
+            type: "hazard",
+            name: "Downhill Wipeout!",
+            description: "The slope of Cycling Road gets STEEP. You're picking up speed — way too much speed. Your Pokemon are struggling to keep up. A sharp curve is coming up fast. There are no brakes.",
+            weight: 7,
+            locationIds: ["cycling_road"],
+            choices: [
+                {
+                    text: "Lean into the turn!",
+                    outcomes: [
+                        { weight: 40, narration: "You carve the turn PERFECTLY! The speed boost launches you ahead — you cover extra ground today! What a rush!", effects: { food: -3 } },
+                        { weight: 35, narration: "You skid but hold it! Sparks fly off the guard rail. Your Pokemon flinch but nobody's hurt. Your food bag slipped off though.", effects: { food: -8 } },
+                        { weight: 25, narration: "WIPEOUT! You and your Pokemon tumble across the asphalt. Road rash for everyone. At least you stopped.", effects: { partyDamageAll: 1 } }
+                    ]
+                },
+                {
+                    text: "Bail off the road into the grass!",
+                    outcomes: [
+                        { weight: 50, narration: "You dive off the road and roll into soft grass. Bumps and bruises, but nothing broken. Your supplies scatter everywhere — you recover most of them.", effects: { food: -5 } },
+                        { weight: 30, narration: "You crash into a bush that turns out to be a wild Doduo's nest! It's furious! But at least you're off the road.", effects: { partyDamageAll: 1, catchPokemon: 84 } },
+                        { weight: 20, narration: "You bail and tumble into a ditch. Your team is roughed up but you find some items another cyclist lost here.", effects: { partyDamageAll: 1, potions: 2 } }
+                    ]
+                }
+            ]
+        },
+
+        // ===== SEA ROUTE 19 EVENTS =====
+        {
+            id: "tentacool_swarm",
+            type: "hazard",
+            name: "Tentacool Swarm!",
+            description: "The water around you turns PURPLE. Tentacool. Hundreds of them. They're migrating and you're right in their path. Stingers out, drifting closer. This is the Gen 1 experience — Tentacool as far as the eye can see.",
+            weight: 7,
+            locationIds: ["sea_route_19"],
+            choices: [
+                {
+                    text: "Swim through the swarm",
+                    bonusAbility: "surf",
+                    bonusOutcome: { narration: "Your Surf Pokemon creates a wake that parts the Tentacool like Moses at the Red Sea! You blast through untouched. A few Tentacool look impressed.", effects: {} },
+                    outcomes: [
+                        { weight: 30, narration: "Stingers everywhere! Your team gets peppered but you push through. Everyone's poisoned and hurting by the time you're clear.", effects: { partyDamageAll: 1, statusRandom: "poisoned" } },
+                        { weight: 40, narration: "Most of the Tentacool ignore you — they're too busy migrating. A few curious ones sting your team. Annoying but survivable.", effects: { partyDamageAll: 1 } },
+                        { weight: 30, narration: "The swarm engulfs you! Your team fights frantically. When it's over, one Tentacool is tangled in your gear. It decides to stick around.", effects: { partyDamageAll: 1, catchPokemon: 72 } }
+                    ]
+                },
+                {
+                    text: "Wait for the swarm to pass",
+                    outcomes: [
+                        { weight: 50, narration: "Hours pass. The swarm finally clears. You've lost a day but you're unscathed.", effects: { daysLost: 1 } },
+                        { weight: 50, narration: "The swarm takes half a day to pass. While waiting, you fish up some food. Not the worst delay.", effects: { daysLost: 1, food: 5 } }
+                    ]
+                }
+            ]
+        },
+        {
+            id: "sea_route19_swimmers",
+            type: "story",
+            name: "Swimmer's Challenge!",
+            description: "A group of competitive Swimmers treading water nearby. Their leader shouts: \"Hey! We do relay races against travelers! Beat us and win a prize! Lose and... well, hope your Pokemon can swim!\"",
+            weight: 6,
+            locationIds: ["sea_route_19"],
+            choices: [
+                {
+                    text: "Accept the relay race!",
+                    bonusAbility: "surf",
+                    bonusOutcome: { narration: "Your Surf Pokemon DOMINATES the relay! The Swimmers are humiliated. \"That's not fair! That thing's a torpedo!\" They pay up, embarrassed. One of them hands you an extra prize — they respect the speed.", effects: { money: 600, food: 10, superPotions: 2 } },
+                    outcomes: [
+                        { weight: 35, narration: "Your team barely wins! A photo finish! The Swimmers are good sports and hand over the prize money and some ocean-foraged food.", effects: { money: 400, food: 8 } },
+                        { weight: 35, narration: "Close race but you lose! The Swimmers dunk your team in celebration. Everyone's fine, just wet and embarrassed.", effects: { partyDamageAll: 1, food: 5 } },
+                        { weight: 30, narration: "You WIN! The lead Swimmer is so impressed she gives you a Staryu she trained. \"It's fast — use it well!\"", effects: { money: 300, catchPokemon: 120 } }
+                    ]
+                },
+                {
+                    text: "\"I'll pass. Got a League to win.\"",
+                    outcomes: [
+                        { weight: 100, narration: "\"Suit yourself, landlubber!\" They splash off, laughing. You save your energy.", effects: {} }
+                    ]
+                }
+            ]
+        },
+
+        // ===== SEA ROUTE 20 EVENTS =====
+        {
+            id: "sea_route20_shipwreck",
+            type: "discovery",
+            name: "The Sunken Ship!",
+            description: "Through the crystal-clear water, you spot it — a ship resting on the ocean floor. It's old, barnacle-covered, but the cargo hold looks intact. There could be treasure down there... or danger.",
+            weight: 5,
+            oneTime: true,
+            locationIds: ["sea_route_20"],
+            choices: [
+                {
+                    text: "Dive down to explore",
+                    bonusAbility: "surf",
+                    bonusOutcome: { narration: "Your Surf Pokemon guides you expertly through the wreck! In the captain's quarters, you find a locked chest. Inside: a stash of Poke Balls, gold coins, and a preserved Super Potion. The haul of a lifetime!", effects: { money: 1500, superPotions: 3, greatballs: 5 } },
+                    outcomes: [
+                        { weight: 35, narration: "You explore the cargo hold and find preserved supplies! The ship was a trade vessel — crates of food and Poke Balls still sealed.", effects: { food: 15, pokeballs: 5, money: 500 } },
+                        { weight: 35, narration: "You find some gold coins and supplies, but a wild Tentacruel guards the deeper rooms! You grab what you can and flee.", effects: { money: 800, partyDamageAll: 1 } },
+                        { weight: 30, narration: "The ship is more collapsed than it looked. A wall caves in and your team barely escapes! You grab a single chest on the way out.", effects: { partyDamageAll: 2, money: 600, potions: 2 } }
+                    ]
+                },
+                {
+                    text: "Too risky. Keep swimming.",
+                    outcomes: [
+                        { weight: 100, narration: "You swim past the wreck. Some treasures aren't worth drowning over.", effects: {} }
+                    ]
+                }
+            ]
+        },
+        {
+            id: "sea_route20_lapras_pod",
+            type: "special",
+            name: "Lapras Pod!",
+            description: "A haunting melody drifts across the water. Through the waves, you see them — a pod of Lapras, singing together as they migrate. One of them, smaller than the rest, is falling behind. It looks exhausted and scared.",
+            weight: 4,
+            oneTime: true,
+            locationIds: ["sea_route_20"],
+            choices: [
+                {
+                    text: "Help the little Lapras catch up",
+                    outcomes: [
+                        { weight: 40, narration: "Your team helps push the Lapras through the current toward its family. But the pod is moving too fast. The little Lapras watches them disappear over the horizon... then turns to you. It has nobody else now. It joins your team.", effects: { catchPokemon: 131, food: -5 } },
+                        { weight: 35, narration: "You guide the Lapras back to its pod! The mother Lapras sings a beautiful note — your entire team feels healed and refreshed. They disappear into the waves, a family reunited.", effects: { healAll: true } },
+                        { weight: 25, narration: "The Lapras is too weak. You feed it and nurse it back to health, but its family is gone. It nuzzles you gratefully and follows. A bittersweet rescue.", effects: { food: -10, catchPokemon: 131 } }
+                    ]
+                },
+                {
+                    text: "Try to catch the straggler",
+                    outcomes: [
+                        { weight: 35, narration: "The Lapras is too tired to resist. The ball clicks shut. But the pod's song turns mournful as they realize they've lost one of their own. You try not to think about it.", effects: { catchPokemon: 131, pokeballs: -1 } },
+                        { weight: 65, narration: "The mother Lapras sees you coming and BLASTS you with Ice Beam! The whole pod rallies to defend the straggler. Your team is frozen and battered as the Lapras escape with their young one.", effects: { partyDamageAll: 2 } }
+                    ]
+                },
+                {
+                    text: "Watch them pass",
+                    outcomes: [
+                        { weight: 100, narration: "You float in the waves and listen to their song. It's the most beautiful thing you've heard on this entire journey. The melody lingers long after they're gone.", effects: { healOne: true } }
+                    ]
+                }
+            ]
+        },
+
+        // ===== ROUTE 21 EVENTS =====
+        {
+            id: "route21_fisherman",
+            type: "story",
+            name: "The Fishing Guru!",
+            description: "An old fisherman sits on a raft in the middle of the ocean, six rods cast in every direction. \"Hey there! I'm the FISHING GURU! Been fishing these waters for 40 years. Want me to teach you the art of the rod? I'll even let you use my Super Rod — ONE cast!\"",
+            weight: 7,
+            oneTime: true,
+            locationIds: ["route_21"],
+            choices: [
+                {
+                    text: "Cast the Super Rod!",
+                    outcomes: [
+                        { weight: 10, narration: "The rod BENDS double! You fight it for twenty minutes! It's a GYARADOS! The Guru helps you reel it in. \"In 40 years, I've never seen someone catch THAT on their first cast!\" The Gyarados joins your team, exhausted but impressed.", effects: { catchPokemon: 130 } },
+                        { weight: 25, narration: "A strong bite! You pull up a Seadra! The Guru nods approvingly. \"Good catch! That's a rare one in these parts.\" He lets you keep it.", effects: { catchPokemon: 117 } },
+                        { weight: 30, narration: "You feel a tug and pull up... a Magikarp. The Guru pats your shoulder. \"Everyone starts with Magikarp. EVERYONE.\" He shares some food to ease your disappointment.", effects: { catchPokemon: 129, food: 5 } },
+                        { weight: 20, narration: "A Kingler! The Guru's eyes go wide. \"She's a big one!\" You and your team work together to land it.", effects: { catchPokemon: 99 } },
+                        { weight: 15, narration: "Nothing bites. The Guru laughs. \"Some days the ocean gives, some days it takes!\" He hands you some fish he caught earlier. Not Pokemon — just food.", effects: { food: 12 } }
+                    ]
+                },
+                {
+                    text: "\"Thanks, but I'm in a hurry.\"",
+                    outcomes: [
+                        { weight: 100, narration: "\"Suit yourself! The fish aren't going anywhere!\" The Guru goes back to his rods. All six of them.", effects: {} }
+                    ]
+                }
+            ]
+        },
+        {
+            id: "route21_homecoming",
+            type: "story",
+            name: "Homeward Bound",
+            description: "Through the ocean spray, you see it — Pallet Town on the horizon. The place where it all started. Your Pokemon perk up. They can smell the land. Memories flood back — Mom's cooking, Prof. Oak's lab, your first steps into the tall grass.",
+            weight: 6,
+            oneTime: true,
+            locationIds: ["route_21"],
+            choices: [
+                {
+                    text: "Take a moment to appreciate the journey",
+                    outcomes: [
+                        { weight: 50, narration: "You float there, looking at how far you've come. Badges, Pokemon, friends lost along the way. Your whole team surfaces to look at the distant shore together. Everyone heals a little, inside and out.", effects: { healAll: true } },
+                        { weight: 50, narration: "Your starter nuzzles up to you. It remembers Pallet Town too. The bond between you is stronger than ever. Your team feels renewed — the last stretch awaits, and you're going to CRUSH it.", effects: { healAll: true, grantStar: true } }
+                    ]
+                },
+                {
+                    text: "No time for nostalgia. Push onward.",
+                    outcomes: [
+                        { weight: 100, narration: "The League won't wait. You steel yourself and keep swimming. There's still work to do.", effects: {} }
+                    ]
+                }
+            ]
+        },
+
+        // ===== ROUTE 22 EVENTS =====
+        {
+            id: "route22_rival_ambush",
+            type: "combat",
+            name: "Gary's Ambush!",
+            description: "\"Well, well, well. Look who FINALLY made it to Route 22.\" Gary steps out from behind a tree, arms crossed, smirking. \"I've been waiting for you. This is where we fought the FIRST time, remember? Let's see how much you've grown.\" He throws a Poke Ball. This is personal.",
+            weight: 7,
+            oneTime: true,
+            minBadges: 7,
+            locationIds: ["route_22"],
+            choices: [
+                {
+                    text: "\"Let's end this, Gary.\"",
+                    outcomes: [
+                        { weight: 25, narration: "Your Pokemon DOMINATES Gary's ace. He can't believe it. \"How... you've gotten so strong.\" He tosses you a Rare Candy. \"Use that in the League. You're gonna need it.\" For the first time, he looks... proud of you.", effects: { rareCandy: 1, money: 1000, trainPokemon: true } },
+                        { weight: 35, narration: "A close fight! Your Pokemon edges out the victory. Gary recalls his Pokemon, seething. \"Fine. You win this round. But the League is a whole different story.\" He shoves some cash at you and storms off.", effects: { money: 800, partyDamageAll: 1, trainPokemon: true } },
+                        { weight: 25, narration: "Gary's Pokemon is STRONG. Your team takes a beating but holds on. It's a draw — neither of you willing to let your Pokemon faint. \"Tch. We'll finish this at the League.\" He throws a potion at you and walks away.", effects: { partyDamageAll: 2, potions: 3 } },
+                        { weight: 15, narration: "Gary's team is ruthless. Your Pokemon goes down hard. \"Still not good enough.\" He walks away, leaving you in the dust. Your team is demoralized.", effects: { partyDamageAll: 2, money: -500 } }
+                    ]
+                },
+                {
+                    text: "\"Not now. Save it for the League.\"",
+                    outcomes: [
+                        { weight: 50, narration: "Gary hesitates. Then laughs. \"Running? Typical. Fine — see you at the top. IF you make it.\" He walks off toward Victory Road.", effects: {} },
+                        { weight: 50, narration: "\"Scared?\" He blocks your path for a moment, then steps aside. \"Whatever. You'll have to face me eventually.\" He throws a Super Potion at your feet. Pity, or respect?", effects: { superPotions: 1 } }
+                    ]
+                }
+            ]
+        },
+        {
+            id: "route22_nidoran_pair",
+            type: "discovery",
+            name: "Nidoran Love Story",
+            description: "In a clearing off the route, you spot a Nidoran♂ and Nidoran♀ playing together. They're clearly bonded — bumping heads, chasing each other's tails. Catching one would mean separating them.",
+            weight: 5,
+            oneTime: true,
+            locationIds: ["route_22"],
+            choices: [
+                {
+                    text: "Catch both! (costs 3 Poke Balls)",
+                    requiresItem: "pokeballs",
+                    outcomes: [
+                        { weight: 50, narration: "You snag the ♂ first, then the ♀ follows into a ball willingly — she won't leave her partner! Two Nidoran, still together. Heart-warming AND practical.", effects: { pokeballs: -3, catchPokemon: 32, catchPokemon2: 29 } },
+                        { weight: 30, narration: "You catch the ♀ but the ♂ fights back fiercely! He eventually tires and joins to be with his partner. Love conquers all — even Poke Balls.", effects: { pokeballs: -3, catchPokemon: 29, catchPokemon2: 32, partyDamageAll: 1 } },
+                        { weight: 20, narration: "The ♂ breaks free and they both flee! Three balls wasted. They're faster than they look when they're motivated by love.", effects: { pokeballs: -3 } }
+                    ]
+                },
+                {
+                    text: "Catch just one",
+                    outcomes: [
+                        { weight: 50, narration: "You catch the Nidoran♂. The ♀ watches from the bushes, looking lost. You feel bad... but a Pokemon's a Pokemon.", effects: { catchPokemon: 32, pokeballs: -1 } },
+                        { weight: 50, narration: "You catch the Nidoran♀. The ♂ headbutts your leg angrily, then runs off alone. Tough choice.", effects: { catchPokemon: 29, pokeballs: -1 } }
+                    ]
+                },
+                {
+                    text: "Leave them together",
+                    outcomes: [
+                        { weight: 100, narration: "You watch them play for a minute, then move on. Some pairs shouldn't be broken. Your Pokemon seem to approve.", effects: { healOne: true } }
+                    ]
+                }
+            ]
+        },
+
+        // ===== ROUTE 23 EVENTS =====
+        {
+            id: "route23_badge_gates",
+            type: "story",
+            name: "Badge Check Gates!",
+            description: "A series of guard gates stretches across Route 23. Each guard demands to see a specific badge before letting you pass. The more badges you have, the more respect — and rewards — you earn from the gatekeepers.",
+            weight: 8,
+            oneTime: true,
+            locationIds: ["route_23"],
+            choices: [
+                {
+                    text: "Present your badges proudly",
+                    outcomes: [
+                        { weight: 40, narration: "The guards are impressed! \"Eight badges? We don't see that often!\" The head guard opens the VIP stash — supplies meant for League-bound trainers. Potions, food, and cash for the road ahead.", effects: { superPotions: 3, food: 15, money: 500 } },
+                        { weight: 35, narration: "\"A full badge case! You've earned every step of this path.\" The guards salute and open the gates. One slips you some supplies. \"For Victory Road. You'll need them.\"", effects: { potions: 4, food: 10, escapeRope: 2 } },
+                        { weight: 25, narration: "The guards check each badge carefully, then break into applause. \"Champion material right here!\" One guard's Machoke is so impressed it wants to join you!", effects: { food: 10, money: 300, catchPokemon: 66 } }
+                    ]
+                },
+                {
+                    text: "Rush through without stopping",
+                    outcomes: [
+                        { weight: 60, narration: "The guards shout after you but don't pursue. You're clearly strong enough. No time for ceremonies.", effects: {} },
+                        { weight: 40, narration: "\"Hey! HALT!\" A guard stops you briefly, but seeing your badges, waves you through. \"At least take a potion, hotshot.\"", effects: { potions: 1 } }
+                    ]
+                }
+            ]
+        },
+        {
+            id: "route23_veteran_advice",
+            type: "story",
+            name: "The Veteran's Warning",
+            description: "An old man sits at the entrance to Victory Road, watching trainers come and go. His jacket is covered in faded League patches. \"Sit down, kid. I was Champion once, thirty years ago. Let me tell you what Victory Road will do to you.\"",
+            weight: 6,
+            oneTime: true,
+            locationIds: ["route_23"],
+            choices: [
+                {
+                    text: "Listen to the old Champion",
+                    outcomes: [
+                        { weight: 50, narration: "He talks for an hour about the cave — the darkness, the wild Pokemon, the trainers who never came back. Then he hands you his old supply kit. \"I don't need it anymore. But you will.\" His eyes are sad but kind.", effects: { superPotions: 3, food: 12, escapeRope: 1 } },
+                        { weight: 30, narration: "\"The trick is: don't fight everything. Save your strength for the Elite Four. Here — take these.\" He gives you healing items and a Rare Candy he's been saving for the right trainer. \"Win it for me, kid.\"", effects: { superPotions: 2, rareCandy: 1 } },
+                        { weight: 20, narration: "\"You remind me of myself at your age. Same fire in the eyes.\" He's quiet for a long time. Then he reaches for his belt and unclips a Poke Ball. \"My old partner. He wants one more adventure.\" A battle-scarred Machamp emerges. Three battle stars on its ball.", effects: { catchPokemon: 68, food: 5 } }
+                    ]
+                },
+                {
+                    text: "\"Thanks, but I've got this.\"",
+                    outcomes: [
+                        { weight: 60, narration: "He smiles sadly. \"That's what they all say.\" He waves you off. Good luck, kid.", effects: {} },
+                        { weight: 40, narration: "\"Confident. Good.\" He presses something into your hand — a Super Potion. \"Just in case.\" He turns back to watching the road.", effects: { superPotions: 1 } }
+                    ]
+                }
+            ]
+        },
+
+        // ===== CINNABAR ISLAND EVENT =====
+        {
+            id: "cinnabar_missingno",
+            type: "special",
+            name: "M̸̡̛I̷̢S̵̨S̶̛I̵N̶G̷N̸O̵!",
+            description: "You surf along the east coast of Cinnabar when the water starts GLITCHING. Tiles flicker. The music skips. A shape rises from the water — a scrambled mess of pixels, a backwards 'L' of corrupted data. Your Pokedex screams static. It's... it's MISSINGNO.",
+            weight: 3,
+            oneTime: true,
+            locationIds: ["cinnabar_island"],
+            choices: [
+                {
+                    text: "Try to catch the glitch!",
+                    outcomes: [
+                        { weight: 20, narration: "Your Poke Ball hits the glitch and... ERROR. Your inventory MULTIPLIES. Balls, potions, everything in your sixth bag slot duplicates wildly! MissingNo vanishes into corrupted water. The old Cinnabar glitch lives.", effects: { pokeballs: 20, potions: 5, rareCandy: 2 } },
+                        { weight: 40, narration: "The ball passes RIGHT THROUGH it. MissingNo flickers, screeches static, and your team takes psychic damage from the corrupted data. Your Pokedex registers... something. Then it crashes.", effects: { partyDamageAll: 2, pokeballs: -1 } },
+                        { weight: 40, narration: "MissingNo ABSORBS the ball! Your inventory glitches — items duplicate, then some vanish! When reality stabilizes, you've got more of some things and less of others. The glitch giveth and the glitch taketh away.", effects: { pokeballs: 10, food: -10, money: 500 } }
+                    ]
+                },
+                {
+                    text: "RUN FROM THE GLITCH!",
+                    outcomes: [
+                        { weight: 60, narration: "You flee! The water returns to normal. Your Pokedex reboots. Everything seems fine. ...Right? You check your items. Some things seem... duplicated? The sixth item in your bag doubled. Classic.", effects: { potions: 3 } },
+                        { weight: 40, narration: "You swim away fast. MissingNo doesn't follow. The world stops glitching. Your heart rate doesn't.", effects: {} }
+                    ]
+                }
+            ]
+        },
+
+        // ===== INDIGO PLATEAU EVENT =====
+        {
+            id: "indigo_plateau_nurse_joy",
+            type: "story",
+            name: "Nurse Joy's Last Blessing",
+            description: "The Nurse Joy at Indigo Plateau looks different from the others. Older. Wiser. She's seen thousands of trainers come through — and most of them lose. \"You've come so far,\" she says, reading your face. \"Let me give your team the VIP treatment. On the house.\"",
+            weight: 8,
+            oneTime: true,
+            locationIds: ["indigo_plateau"],
+            choices: [
+                {
+                    text: "Accept the VIP treatment",
+                    outcomes: [
+                        { weight: 50, narration: "She takes each Pokemon one by one, healing them with care you've never seen at a Pokemon Center before. \"They're in peak condition now. Whatever happens in there — you gave them the best chance.\" Your whole team is restored and energized.", effects: { healAll: true, superPotions: 3 } },
+                        { weight: 50, narration: "\"Here — my personal stock. I save these for trainers I believe in.\" She hands you Super Potions and a Rare Candy. \"Win this for all the trainers who couldn't.\" Your team is healed and your heart is full.", effects: { healAll: true, rareCandy: 1, superPotions: 2 } }
+                    ]
+                },
+                {
+                    text: "\"Just a regular heal, thanks.\"",
+                    outcomes: [
+                        { weight: 100, narration: "She smiles warmly and heals your team. \"Good luck in there. I'll be watching.\" Standard heal, but her kindness gives you confidence.", effects: { healAll: true } }
+                    ]
+                }
+            ]
         }
     ];
 })();
