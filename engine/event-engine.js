@@ -369,6 +369,17 @@
             catchFromEffect(effects.catchPokemon2, state, effects);
         }
 
+        // Egg Hatch — picks a random Pokemon from the pool
+        if (effects.eggHatch && effects.eggHatch.length > 0) {
+            const hatchId = state.rng.pick(effects.eggHatch);
+            const hatchData = PT.Data.Pokemon.find(p => p.id === hatchId);
+            if (hatchData) {
+                effects._hatchedName = hatchData.name;
+                effects._hatchedId = hatchId;
+                catchFromEffect(hatchId, state, effects);
+            }
+        }
+
         // See Pokemon
         if (effects.seePokemon) {
             if (!state.pokedexSeen.includes(effects.seePokemon)) {

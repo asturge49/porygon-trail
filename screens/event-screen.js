@@ -279,6 +279,14 @@
         if (effects.reducePokemonMaxHp && effects._reduceResult) {
             lines.push(`⬇ ${effects._reduceResult.name} max HP: ${effects._reduceResult.oldMax} → ${effects._reduceResult.newMax}!`);
         }
+        if (effects._hatchedName) {
+            const hatchPending = effects._pendingCatch && effects._pendingCatch.find(d => d.id === effects._hatchedId);
+            if (hatchPending) {
+                lines.push(`🥚 The egg hatched into ${effects._hatchedName}! (Party full — swap?)`);
+            } else {
+                lines.push(`🥚 The egg hatched into ${effects._hatchedName}!`);
+            }
+        }
         if (effects.grantStar && effects._starResult) {
             lines.push(`⭐ ${effects._starResult.name} earned a Battle Star! [${'★'.repeat(effects._starResult.stars)}] (${effects._starResult.stars}/3)`);
         }
