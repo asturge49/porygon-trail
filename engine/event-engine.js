@@ -387,13 +387,13 @@
             }
         }
 
-        // Boost a random Pokemon's max HP
+        // Boost a random Pokemon's max HP (cap at 9 — legendary tier)
         if (effects.boostPokemonMaxHp) {
             const alive = PT.Engine.GameState.getAliveParty(state);
             if (alive.length > 0) {
                 const target = state.rng.pick(alive);
                 const oldMax = target.maxHp;
-                target.maxHp = Math.min(target.maxHp + effects.boostPokemonMaxHp, 6);
+                target.maxHp = Math.min(target.maxHp + effects.boostPokemonMaxHp, 9);
                 target.hp = Math.min(target.hp + effects.boostPokemonMaxHp, target.maxHp);
                 effects._boostResult = { name: target.name, oldMax: oldMax, newMax: target.maxHp };
             }

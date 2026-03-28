@@ -7467,6 +7467,139 @@
                     ]
                 }
             ]
+        },
+
+        // ===== RARE HP BOOST EVENTS =====
+        {
+            id: "hp_hot_spring",
+            type: "discovery",
+            name: "Hidden Hot Spring",
+            description: "Your team stumbles upon a natural hot spring hidden among the rocks. The water glows faintly — there's something special about this place. Ancient markings on the stones suggest trainers have come here for generations.",
+            weight: 2,
+            oneTime: true,
+            minDay: 5,
+            choices: [
+                {
+                    text: "Let your Pokemon soak in the spring",
+                    outcomes: [
+                        { weight: 60, narration: "Your Pokemon relax in the warm water. One of them stays in longer than the rest, absorbing the mineral-rich energy. When it finally emerges, it looks bigger — TOUGHER. The hot spring's ancient power has permanently strengthened it.", effects: { boostPokemonMaxHp: 1, healAll: true } },
+                        { weight: 40, narration: "The water heals every wound, soothes every ache. Your team emerges refreshed and revitalized — but the spring's deeper power doesn't quite take hold this time.", effects: { healAll: true } }
+                    ]
+                },
+                {
+                    text: "Bottle some water for later",
+                    outcomes: [
+                        { weight: 100, narration: "You fill your containers with the glowing water. It's not as potent away from the source, but it'll serve as excellent medicine on the road.", effects: { potions: 3, superPotions: 1 } }
+                    ]
+                }
+            ]
+        },
+        {
+            id: "hp_dojo_master",
+            type: "story",
+            name: "The Wandering Dojo Master",
+            description: "An elderly martial artist sits cross-legged on a boulder, meditating. His Hitmonchan stands guard. He opens one eye: \"I've been waiting for someone with fighting spirit. I'll train ONE of your Pokemon — but only if it can survive my test.\"",
+            weight: 2,
+            oneTime: true,
+            minDay: 8,
+            choices: [
+                {
+                    text: "Accept the dojo master's challenge",
+                    outcomes: [
+                        { weight: 50, narration: "The master's training is brutal — hours of dodging, blocking, enduring. Your Pokemon pushes past its limits, screaming, shaking, refusing to quit. When it's over, the master bows. \"You have iron will.\" Your Pokemon's body has been forged stronger. Permanently.", effects: { boostPokemonMaxHp: 1, partyDamage: 1 } },
+                        { weight: 30, narration: "The training is overwhelming. Your Pokemon collapses halfway through but the master catches it. \"Not ready. But brave.\" He heals your team as an apology and sends you on your way with respect.", effects: { healAll: true } },
+                        { weight: 20, narration: "Your Pokemon not only survives the training — it THRIVES. The master's eyes go wide. \"In 40 years, I've never seen such resolve.\" He teaches advanced techniques. Your Pokemon emerges a warrior.", effects: { boostPokemonMaxHp: 1, grantStar: true } }
+                    ]
+                },
+                {
+                    text: "Decline respectfully",
+                    outcomes: [
+                        { weight: 100, narration: "The master nods. \"Wisdom is knowing when to fight and when to walk away.\" He tosses you a potion. \"For the road.\"", effects: { potions: 1 } }
+                    ]
+                }
+            ]
+        },
+        {
+            id: "hp_rare_berry",
+            type: "discovery",
+            name: "Strange Glowing Berry",
+            description: "Deep in the underbrush, you spot a berry unlike anything you've ever seen. It pulses with a faint golden light, and the air around it hums with energy. Your Pokemon are drawn to it instinctively.",
+            weight: 2,
+            oneTime: false,
+            minDay: 3,
+            choices: [
+                {
+                    text: "Feed it to a Pokemon",
+                    outcomes: [
+                        { weight: 40, narration: "Your Pokemon devours the berry eagerly. Its body glows golden for a brief moment — then it fades. But something's different. It stands taller. Breathes deeper. The berry has permanently enhanced its constitution.", effects: { boostPokemonMaxHp: 1 } },
+                        { weight: 35, narration: "The berry tastes incredible but the power doesn't stick. Your Pokemon feels great temporarily — a full heal — but no lasting change.", effects: { healAll: true } },
+                        { weight: 25, narration: "The berry is rotten inside! Your Pokemon spits it out, retching. The golden glow was deceptive — it's actually toxic. Lesson learned.", effects: { partyDamage: 1 } }
+                    ]
+                },
+                {
+                    text: "Save it as food",
+                    outcomes: [
+                        { weight: 100, narration: "You carefully harvest the berry and pack it away. It doesn't glow anymore once picked, but it's still packed with nutrition.", effects: { food: 8 } }
+                    ]
+                }
+            ]
+        },
+        {
+            id: "hp_ancient_shrine",
+            type: "story",
+            name: "Ancient Pokemon Shrine",
+            description: "A crumbling stone shrine sits at the crossroads, covered in moss. Offerings of berries and feathers surround a carved Pokeball symbol. The air feels heavy with reverence. A plaque reads: \"Leave an offering. Receive a blessing.\"",
+            weight: 2,
+            oneTime: true,
+            minDay: 6,
+            choices: [
+                {
+                    text: "Offer $500 at the shrine",
+                    requiresMoney: 500,
+                    outcomes: [
+                        { weight: 55, narration: "You place the money at the shrine. The stones glow. A warm pulse radiates through your team. One Pokemon absorbs the blessing fully — its body shimmers and grows denser. The shrine has granted it permanent resilience.", effects: { money: -500, boostPokemonMaxHp: 1 } },
+                        { weight: 45, narration: "The shrine glows briefly, then fades. Your team feels refreshed and healed, though no permanent change takes hold. Perhaps the spirits are satisfied but not generous today.", effects: { money: -500, healAll: true, food: 10 } }
+                    ]
+                },
+                {
+                    text: "Offer food (15) at the shrine",
+                    outcomes: [
+                        { weight: 50, narration: "You arrange the food carefully among the other offerings. The moss on the shrine seems to shimmer. A gentle warmth envelops your team. One Pokemon emerges blessed — permanently toughened by ancient power.", effects: { food: -15, boostPokemonMaxHp: 1 } },
+                        { weight: 50, narration: "The offering is accepted. Your team feels warmth and peace. Full healing, but the deeper blessing doesn't manifest.", effects: { food: -15, healAll: true } }
+                    ]
+                },
+                {
+                    text: "Pay respects and move on",
+                    outcomes: [
+                        { weight: 100, narration: "You bow to the shrine and continue on your journey. Some things are best left undisturbed.", effects: {} }
+                    ]
+                }
+            ]
+        },
+        {
+            id: "hp_surge_training",
+            type: "story",
+            name: "Lt. Surge's Boot Camp",
+            description: "You hear shouting before you see him. Lt. Surge is running a makeshift outdoor training camp, drilling trainers' Pokemon with military precision. \"YOU! Your Pokemon look SOFT! Get in here — I'll toughen them up or they'll break trying!\"",
+            weight: 2,
+            oneTime: true,
+            minDay: 10,
+            choices: [
+                {
+                    text: "Enroll in Surge's boot camp",
+                    outcomes: [
+                        { weight: 45, narration: "Surge doesn't hold back. Electric obstacles, endurance runs, combat drills. Your Pokemon is pushed beyond its limits. At the end, Surge salutes. \"THAT'S a soldier.\" Your Pokemon is permanently battle-hardened.", effects: { boostPokemonMaxHp: 1, partyDamage: 1 } },
+                        { weight: 30, narration: "The training is intense but your Pokemon thrives under pressure. Surge even awards a battle commendation. \"Born fighter!\"", effects: { boostPokemonMaxHp: 1, grantStar: true } },
+                        { weight: 25, narration: "Too intense. Your Pokemon can't keep up with Surge's demands and collapses during the obstacle course. Surge carries it back. \"Not everyone's cut out for this. No shame.\"", effects: { partyDamage: 2 } }
+                    ]
+                },
+                {
+                    text: "\"We're good, thanks.\"",
+                    outcomes: [
+                        { weight: 100, narration: "Surge scoffs. \"Your funeral, kid.\" He goes back to drilling someone else's Pikachu into the dirt.", effects: {} }
+                    ]
+                }
+            ]
         }
     ];
 })();
