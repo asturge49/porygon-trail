@@ -30,6 +30,9 @@
                 won: true
             });
 
+            // Update records
+            PT.Engine.Records.updateRecords(state, score);
+
             // Star display helper
             function starStr(stars) {
                 if (!stars) return '';

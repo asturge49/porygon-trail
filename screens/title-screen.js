@@ -30,6 +30,7 @@
                     <button class="btn btn-wide" id="btn-new-game">NEW GAME</button>
                     <button class="btn btn-wide" id="btn-pokedex">POKÉDEX</button>
                     <button class="btn btn-wide" id="btn-leaderboard">LEADERBOARD</button>
+                    <button class="btn btn-wide" id="btn-records">RECORDS</button>
                     <button class="btn btn-wide btn-small" id="btn-sound">SOUND: ${PT.Engine.Audio && PT.Engine.Audio.isEnabled() ? 'ON' : 'OFF'}</button>
                 </div>
                 <div class="blink text-sm" style="margin-top: 8px;">PRESS START</div>
@@ -64,6 +65,9 @@
             });
             document.getElementById('btn-leaderboard').addEventListener('click', () => {
                 PT.App.goto('LEADERBOARD');
+            });
+            document.getElementById('btn-records').addEventListener('click', () => {
+                PT.App.goto('RECORDS');
             });
             document.getElementById('btn-sound').addEventListener('click', () => {
                 if (PT.Engine.Audio) {

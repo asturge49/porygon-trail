@@ -31,6 +31,9 @@
                 won: false
             });
 
+            // Update records
+            PT.Engine.Records.updateRecords(state, score);
+
             // Build memorial Pokemon grid — only show highest evo form caught
             const caughtSet = new Set(state.pokedexCaught);
             const caughtPokemon = state.pokedexCaught.map(id => {

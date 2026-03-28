@@ -1988,6 +1988,51 @@ body {
 }
 
 /* ============================================
+   RECORDS SCREEN
+   ============================================ */
+
+.records-screen {
+    padding: 8px;
+}
+
+.records-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+}
+
+.record-row {
+    background: var(--gb-light);
+    padding: 5px 6px;
+    border-bottom: 1px solid var(--gb-dark);
+}
+
+.record-row:nth-child(even) {
+    background: var(--gb-bg);
+}
+
+.record-label {
+    font-size: 6px;
+    color: var(--gb-dark);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.record-value {
+    font-size: 8px;
+    font-weight: bold;
+    color: var(--gb-darkest);
+    margin-top: 1px;
+}
+
+.record-sub {
+    font-size: 5px;
+    color: var(--gb-dark);
+    margin-top: 1px;
+    opacity: 0.8;
+}
+
+/* ============================================
    UTILITY CLASSES
    ============================================ */
 
