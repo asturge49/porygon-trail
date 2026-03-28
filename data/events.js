@@ -7708,17 +7708,16 @@
             id: "egg_breeder_roadside",
             type: "story",
             name: "Pokemon Breeder",
-            description: "A Pokemon Breeder is sitting by the road with a basket of eggs. \"I've got too many! Please, take one — they need good trainers. I can't tell what's inside, but they're all healthy!\"",
-            weight: 4,
-            maxTriggers: 2,
-            minDay: 3,
+            description: "A Pokemon Breeder is sitting by the road with a basket of eggs. \"These are from my best stock — I only breed quality Pokemon. Please, take one — they need good trainers.\"",
+            weight: 2,
+            oneTime: true,
+            minDay: 5,
             choices: [
                 {
                     text: "Take an egg",
                     outcomes: [
-                        { weight: 50, narration: "You carefully cradle the warm egg. It cracks almost immediately — a Pokemon bursts out, blinking at you with big eyes. The breeder laughs: \"A fast hatcher! Must like you already.\"", effects: { eggHatch: [10, 13, 16, 19, 21, 23, 27, 29, 32, 39, 41, 43, 46, 48, 50, 52, 54, 56, 60, 66, 69, 72, 74, 79, 81, 84, 88, 90, 92, 96, 98, 100, 104, 109, 116, 118, 120], daysLost: 1 } },
-                        { weight: 30, narration: "The egg glows faintly as you hold it. It takes a while, but eventually it hatches into something a little more uncommon. The breeder nods approvingly: \"Good genes in that one.\"", effects: { eggHatch: [25, 35, 37, 58, 63, 77, 86, 102, 111], daysLost: 1 } },
-                        { weight: 20, narration: "This egg feels different — heavier, warmer. When it hatches, even the breeder's eyes go wide. \"I... I didn't know THAT was in there! You got incredibly lucky.\"", effects: { eggHatch: [1, 4, 7, 133, 138, 140, 147], daysLost: 1 } }
+                        { weight: 65, narration: "The egg glows faintly as you hold it. It takes a while, but eventually it hatches into something with real potential. The breeder nods approvingly: \"Good genes in that one.\"", effects: { eggHatch: [25, 35, 37, 58, 63, 77, 86, 102, 111], daysLost: 1 } },
+                        { weight: 35, narration: "This egg feels different — heavier, warmer. When it hatches, even the breeder's eyes go wide. \"I... I didn't know THAT was in there! You got incredibly lucky.\"", effects: { eggHatch: [1, 4, 7, 133, 138, 140, 147], daysLost: 1 } }
                     ]
                 },
                 {
@@ -7733,17 +7732,16 @@
             id: "egg_daycare_surprise",
             type: "discovery",
             name: "Abandoned Egg",
-            description: "You find a Pokemon egg nestled in the tall grass, still warm. Someone must have left it recently — or maybe a wild Pokemon abandoned it. It rocks gently, ready to hatch.",
-            weight: 3,
-            maxTriggers: 2,
-            minDay: 5,
+            description: "You find a Pokemon egg nestled in the tall grass, still warm. It's larger than most eggs and pulses with faint energy. Whatever's inside, it's no ordinary Pokemon.",
+            weight: 2,
+            oneTime: true,
+            minDay: 7,
             choices: [
                 {
                     text: "Take the egg and keep it warm",
                     outcomes: [
-                        { weight: 60, narration: "You wrap the egg in your jacket and keep walking. By nightfall, it starts cracking. A tiny Pokemon emerges, imprinting on you immediately. It's small but full of fight.", effects: { eggHatch: [10, 13, 16, 19, 21, 23, 27, 29, 32, 39, 41, 43, 46, 48, 50, 52, 54, 56, 60, 66, 69, 72, 74, 79, 81, 84, 88, 90, 92, 96, 98, 100, 104, 109, 116, 118, 120] } },
-                        { weight: 25, narration: "The egg hatches into a Pokemon with an unusual shimmer. It's hardier than most hatchlings — must come from strong stock.", effects: { eggHatch: [25, 35, 37, 58, 63, 77, 86, 102, 111] } },
-                        { weight: 15, narration: "The egg cracks open to reveal something rare. This wasn't any ordinary abandoned egg — someone left it here on purpose, knowing a worthy trainer would find it.", effects: { eggHatch: [1, 4, 7, 133, 138, 140, 147] } }
+                        { weight: 60, narration: "You wrap the egg in your jacket and keep walking. By nightfall, it starts cracking. A Pokemon emerges — hardier than most hatchlings. Must come from strong stock.", effects: { eggHatch: [25, 35, 37, 58, 63, 77, 86, 102, 111] } },
+                        { weight: 40, narration: "The egg cracks open to reveal something rare. This wasn't any ordinary abandoned egg — someone left it here on purpose, knowing a worthy trainer would find it.", effects: { eggHatch: [1, 4, 7, 133, 138, 140, 147] } }
                     ]
                 },
                 {
@@ -7758,17 +7756,16 @@
             id: "egg_prof_elm",
             type: "story",
             name: "Professor Elm's Research",
-            description: "A frantic young professor nearly crashes into you, juggling three eggs and a stack of papers. \"Oh! A trainer! I'm Professor Elm — I study Pokemon eggs. I have more specimens than I can handle. Would you help my research by raising one? I'll even cover your food costs!\"",
-            weight: 3,
+            description: "A frantic young professor nearly crashes into you, juggling three eggs and a stack of papers. \"Oh! A trainer! I'm Professor Elm — I study Pokemon eggs. I have a specimen from my premium collection I can't care for. Would you help my research by raising it? I'll cover your costs!\"",
+            weight: 2,
             oneTime: true,
-            minDay: 4,
+            minDay: 6,
             choices: [
                 {
                     text: "\"Sure, I'll take an egg!\"",
                     outcomes: [
-                        { weight: 40, narration: "Elm hands you an egg from his collection. \"This one's from a common species — perfect for field study!\" It hatches quickly. He scribbles notes furiously and hands you food money.", effects: { eggHatch: [10, 13, 16, 19, 21, 23, 27, 29, 32, 39, 41, 43, 46, 48, 50, 52, 54, 56, 60, 66, 69, 72, 74, 79, 81, 84, 88, 90, 92, 96, 98, 100, 104, 109, 116, 118, 120], food: 15, money: 200 } },
-                        { weight: 35, narration: "\"Ooh, take THIS one — it's been showing unusual energy readings!\" The egg hatches into something with real potential. Elm is ecstatic, paying you handsomely for your time.", effects: { eggHatch: [25, 35, 37, 58, 63, 77, 86, 102, 111], food: 15, money: 300 } },
-                        { weight: 25, narration: "Elm accidentally drops an egg and you catch it. It cracks in your hands and out pops a rare Pokemon. Elm's jaw drops. \"That... that egg was supposed to be empty! This is UNPRECEDENTED!\" He practically throws money at you.", effects: { eggHatch: [1, 4, 7, 133, 138, 140, 147], food: 15, money: 500 } }
+                        { weight: 55, narration: "\"This one's been showing unusual energy readings!\" The egg hatches into something with real potential. Elm is ecstatic, paying you handsomely for your time.", effects: { eggHatch: [25, 35, 37, 58, 63, 77, 86, 102, 111], food: 15, money: 300 } },
+                        { weight: 45, narration: "Elm accidentally drops an egg and you catch it. It cracks in your hands and out pops a rare Pokemon. Elm's jaw drops. \"That... that egg was supposed to be empty! This is UNPRECEDENTED!\" He practically throws money at you.", effects: { eggHatch: [1, 4, 7, 133, 138, 140, 147], food: 15, money: 500 } }
                     ]
                 },
                 {
@@ -7783,19 +7780,18 @@
             id: "egg_mystery_man",
             type: "story",
             name: "The Egg Man",
-            description: "A mysterious figure in a long coat stands at the crossroads. He opens his coat to reveal rows of Pokemon eggs in hidden pockets. \"Psst. Hey kid. You want an egg? Special stock. Can't tell you where I got 'em. $300 — no questions asked.\"",
-            weight: 3,
-            maxTriggers: 2,
-            minDay: 6,
+            description: "A mysterious figure in a long coat stands at the crossroads. He opens his coat to reveal rows of Pokemon eggs in hidden pockets. \"Psst. Hey kid. You want an egg? Premium stock only. Can't tell you where I got 'em. $500 — no questions asked.\"",
+            weight: 2,
+            oneTime: true,
+            minDay: 8,
             choices: [
                 {
-                    text: "Buy the mystery egg ($300)",
-                    requiresMoney: 300,
+                    text: "Buy the mystery egg ($500)",
+                    requiresMoney: 500,
                     outcomes: [
-                        { weight: 35, narration: "You hand over the cash. The egg feels warm. It hatches into... a pretty normal Pokemon. The man is already gone. Classic.", effects: { money: -300, eggHatch: [10, 13, 16, 19, 21, 23, 27, 29, 32, 39, 41, 43, 46, 48, 50, 52, 54, 56, 60, 66, 69, 72, 74, 79, 81, 84, 88, 90, 92, 96, 98, 100, 104, 109, 116, 118, 120] } },
-                        { weight: 35, narration: "The egg hatches into something decent. Maybe the shady guy actually knew what he was doing. Or maybe you just got lucky.", effects: { money: -300, eggHatch: [25, 35, 37, 58, 63, 77, 86, 102, 111] } },
-                        { weight: 20, narration: "The egg glows golden as it hatches. A RARE Pokemon emerges. The man tips his hat from the shadows: \"Pleasure doing business.\" Best $300 you ever spent.", effects: { money: -300, eggHatch: [1, 4, 7, 133, 138, 140, 147] } },
-                        { weight: 10, narration: "The egg... doesn't hatch. It's a rock. A painted rock. You've been scammed. The man is nowhere to be seen.", effects: { money: -300 } }
+                        { weight: 45, narration: "The egg hatches into something solid. Maybe the shady guy actually knew what he was doing. Or maybe you just got lucky.", effects: { money: -500, eggHatch: [25, 35, 37, 58, 63, 77, 86, 102, 111] } },
+                        { weight: 35, narration: "The egg glows golden as it hatches. A RARE Pokemon emerges. The man tips his hat from the shadows: \"Pleasure doing business.\" Best $500 you ever spent.", effects: { money: -500, eggHatch: [1, 4, 7, 133, 138, 140, 147] } },
+                        { weight: 20, narration: "The egg... doesn't hatch. It's a rock. A painted rock. You've been scammed. The man is nowhere to be seen.", effects: { money: -500 } }
                     ]
                 },
                 {
