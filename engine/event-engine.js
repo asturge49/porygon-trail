@@ -183,7 +183,7 @@
         // Poison ability: scales with power
         const poisonPower = PT.Engine.GameState.getAbilityPower(state, 'poison');
         if (poisonPower > 0) {
-            const poisonBonus = Math.floor(3 * poisonPower);
+            const poisonBonus = Math.floor(1 * poisonPower);
             chance += poisonBonus;
             battleBonuses.push(`☠️ POISON +${poisonBonus}%`);
         }

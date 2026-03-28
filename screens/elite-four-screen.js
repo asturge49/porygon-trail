@@ -206,15 +206,17 @@
         // Poison ability: win chance scales with power
         const poisonPower = PT.Engine.GameState.getAbilityPower(state, 'poison');
         if (poisonPower > 0) {
-            const poisonBonus = Math.floor(3 * poisonPower);
+            const poisonBonus = Math.floor(1 * poisonPower);
             chance += poisonBonus;
             battleBonuses.push(`☠️ POISON +${poisonBonus}%`);
         }
 
-        // Intimidate ability: +5% win chance
-        if (PT.Engine.GameState.hasAbility(state, 'intimidate')) {
-            chance += 5;
-            battleBonuses.push('😤 INTIMIDATE +5%');
+        // Intimidate ability: scales with power
+        const intimidatePower = PT.Engine.GameState.getAbilityPower(state, 'intimidate');
+        if (intimidatePower > 0) {
+            const intimBonus = Math.floor(3 * intimidatePower);
+            chance += intimBonus;
+            battleBonuses.push(`😤 INTIMIDATE +${intimBonus}%`);
         }
 
         // Battle Stars bonus
