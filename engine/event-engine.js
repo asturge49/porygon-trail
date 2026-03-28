@@ -180,15 +180,19 @@
         // Badge bonus
         chance += state.badges.filter(b => b !== 'champion').length * 2;
 
-        // Poison ability
-        if (PT.Engine.GameState.hasAbility(state, 'poison')) {
-            chance += 5;
-            battleBonuses.push('☠️ POISON +5%');
+        // Poison ability: scales with power
+        const poisonPower = PT.Engine.GameState.getAbilityPower(state, 'poison');
+        if (poisonPower > 0) {
+            const poisonBonus = Math.floor(3 * poisonPower);
+            chance += poisonBonus;
+            battleBonuses.push(`☠️ POISON +${poisonBonus}%`);
         }
-        // Intimidate ability
-        if (PT.Engine.GameState.hasAbility(state, 'intimidate')) {
-            chance += 5;
-            battleBonuses.push('😤 INTIMIDATE +5%');
+        // Intimidate ability: scales with power
+        const intimidatePower = PT.Engine.GameState.getAbilityPower(state, 'intimidate');
+        if (intimidatePower > 0) {
+            const intimBonus = Math.floor(3 * intimidatePower);
+            chance += intimBonus;
+            battleBonuses.push(`😤 INTIMIDATE +${intimBonus}%`);
         }
 
         // Battle Stars bonus

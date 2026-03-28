@@ -106,14 +106,15 @@
         });
         const lines = Object.entries(abilities).map(([ability, count]) => {
             const desc = {
-                cut: 'Clears obstacles', surf: 'Water travel', fly: 'Scouts ahead',
-                strength: 'Carry more', flash: 'Cave navigation', dig: 'Escape events',
-                fire: 'Efficient cooking', heal: 'Passive healing', psychic: 'Foresight: pick encounters/events',
-                poison: 'Repel encounters', guard: 'Defensive bonus', intimidate: '+15% catch rate',
-                payday: '+50% money from all rewards', safeguard: 'Save a Pokemon from death once',
-                system_restore: 'Revive one lost Pokemon (once per game)'
+                cut: 'Forage food', surf: 'Water speed', fly: 'Scout shortcuts',
+                strength: 'Reduce injury', flash: 'Find items/money', dig: 'Escape encounters',
+                fire: 'Save food', heal: 'Passive healing', psychic: 'Foresight: pick encounters/events',
+                poison: 'Battle win bonus', guard: 'Block injuries', intimidate: 'Catch rate bonus',
+                payday: 'Money bonus', safeguard: 'Save from death once',
+                system_restore: 'Revive one lost Pokemon (once per game)', glitch: 'Chaos effects'
             };
-            return `${ability}: ${desc[ability] || '???'} (x${count})`;
+            const power = PT.Engine.GameState.getAbilityPower(state, ability);
+            return `${ability}: ${desc[ability] || '???'} (x${count} | pwr ${power.toFixed(1)})`;
         });
         return lines.length > 0 ? 'Team Abilities: ' + lines.join(' | ') : 'No abilities active.';
     }

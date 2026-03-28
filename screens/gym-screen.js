@@ -145,10 +145,12 @@
         const aliveCount = PT.Engine.GameState.getAliveParty(state).length;
         chance += aliveCount * 2;
 
-        // Poison ability: +5% win chance
-        if (PT.Engine.GameState.hasAbility(state, 'poison')) {
-            chance += 5;
-            battleBonuses.push('☠️ POISON +5%');
+        // Poison ability: win chance scales with power
+        const poisonPower = PT.Engine.GameState.getAbilityPower(state, 'poison');
+        if (poisonPower > 0) {
+            const poisonBonus = Math.floor(3 * poisonPower);
+            chance += poisonBonus;
+            battleBonuses.push(`☠️ POISON +${poisonBonus}%`);
         }
 
         // Intimidate ability: +5% win chance

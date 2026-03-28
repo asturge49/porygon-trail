@@ -185,12 +185,32 @@
         return getAliveParty(state).some(p => p.travelAbility === ability);
     }
 
-    // Starter Pokemon (Bulbasaur/Charmander/Squirtle lines) get 3x ability effectiveness
+    // Starter Pokemon (Bulbasaur/Charmander/Squirtle lines) get 2x ability effectiveness
     const STARTER_IDS = [1,2,3, 4,5,6, 7,8,9];
-    function starterAbilityMult(state, ability) {
+
+    // Ability Power — stacks across party, scales with evolution + stars
+    // Each Pokemon contributes: basePower × starMult × starterMult
+    //   basePower: stage 1 = 1.0, stage 2 = 1.5, stage 3/single = 2.0
+    //   starMult:  +0.25 per battle star
+    //   starterMult: ×2 for starter lines (IDs 1-9)
+    // Returns total power (0 = no one has it, higher = stronger effect)
+    function getAbilityPower(state, ability) {
         const alive = getAliveParty(state);
-        const hasStarter = alive.some(p => p.travelAbility === ability && STARTER_IDS.includes(p.id));
-        return hasStarter ? 3 : 1;
+        let total = 0;
+        alive.forEach(p => {
+            if (p.travelAbility !== ability) return;
+            const stage = getEvoStage(p.id);
+            let power = stage === 1 ? 1.0 : stage === 2 ? 1.5 : 2.0;
+            power += (p.battleStars || 0) * 0.25;
+            if (STARTER_IDS.includes(p.id)) power *= 2;
+            total += power;
+        });
+        return total;
+    }
+
+    // Kept for backward compat — some places just need boolean
+    function starterAbilityMult(state, ability) {
+        return getAbilityPower(state, ability) || 1;
     }
 
     // Get the full evolution chain for a pokemon
@@ -222,10 +242,11 @@
         return chain;
     }
 
-    // Pay Day ability — 50% bonus money
+    // Pay Day ability — scales with power (25% bonus per power point)
     function applyPayDay(state, amount) {
-        if (hasAbility(state, 'payday')) {
-            return Math.floor(amount * 1.5);
+        const power = getAbilityPower(state, 'payday');
+        if (power > 0) {
+            return Math.floor(amount * (1 + 0.25 * power));
         }
         return amount;
     }
@@ -473,6 +494,7 @@
         damagePokemon,
         getAliveParty,
         hasAbility,
+        getAbilityPower,
         starterAbilityMult,
         hasType,
         getCurrentRoute,

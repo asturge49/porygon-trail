@@ -56,20 +56,20 @@
         state.resources.food = Math.max(0, state.resources.food - foodConsumed);
         results.messages.push(`Party consumed ${foodConsumed} food.`);
 
-        // Fire ability reduces food consumption (starter = 3x bonus)
-        if (PT.Engine.GameState.hasAbility(state, 'fire') && foodConsumed > 1) {
-            const fireMult = PT.Engine.GameState.starterAbilityMult(state, 'fire');
-            const fireSaved = 1 * fireMult;
+        // Fire ability reduces food consumption (stacks + scales)
+        const firePower = PT.Engine.GameState.getAbilityPower(state, 'fire');
+        if (firePower > 0 && foodConsumed > 1) {
+            const fireSaved = Math.max(1, Math.floor(firePower));
             state.resources.food = Math.min(state.resources.food + fireSaved, 999);
-            results.messages.push(`🔥 FIRE ABILITY: Your Fire-type cooked efficiently! (+${fireSaved} food saved)${fireMult > 1 ? ' ⭐ Starter bonus!' : ''}`);
+            results.messages.push(`🔥 FIRE ABILITY: Your Fire-type cooked efficiently! (+${fireSaved} food saved)`);
         }
 
-        // Cut ability forages for extra food (starter = 3x bonus)
-        if (PT.Engine.GameState.hasAbility(state, 'cut') && state.rng.chance(25)) {
-            const cutMult = PT.Engine.GameState.starterAbilityMult(state, 'cut');
-            const foraged = state.rng.randInt(1, 3) * cutMult;
+        // Cut ability forages for extra food (stacks + scales)
+        const cutPower = PT.Engine.GameState.getAbilityPower(state, 'cut');
+        if (cutPower > 0 && state.rng.chance(25)) {
+            const foraged = Math.max(1, Math.floor(state.rng.randInt(1, 3) * cutPower));
             state.resources.food += foraged;
-            results.messages.push(`🌿 CUT ABILITY: Your Pokemon cut through brush and foraged +${foraged} food!${cutMult > 1 ? ' ⭐ Starter bonus!' : ''}`);
+            results.messages.push(`🌿 CUT ABILITY: Your Pokemon cut through brush and foraged +${foraged} food!`);
         }
 
         // --- Starvation check ---
@@ -102,13 +102,19 @@
             results.messages.push("Resting... Pokemon recover 1 HP.");
         }
 
-        // --- Heal ability passive ---
-        if (PT.Engine.GameState.hasAbility(state, 'heal') && !pace.healParty) {
+        // --- Heal ability passive (stacks: higher power = more heals) ---
+        const healPower = PT.Engine.GameState.getAbilityPower(state, 'heal');
+        if (healPower > 0 && !pace.healParty) {
             const injured = PT.Engine.GameState.getAliveParty(state).filter(p => p.hp < p.maxHp);
             if (injured.length > 0 && state.rng.chance(40)) {
-                const healed = state.rng.pick(injured);
-                healed.hp = Math.min(healed.hp + 1, healed.maxHp);
-                results.messages.push(`💗 HEAL ABILITY: ${healed.name} was healed by your healer Pokemon!`);
+                const healCount = Math.min(injured.length, Math.max(1, Math.floor(healPower)));
+                for (let h = 0; h < healCount; h++) {
+                    const toHeal = injured.filter(p => p.hp < p.maxHp);
+                    if (toHeal.length === 0) break;
+                    const healed = state.rng.pick(toHeal);
+                    healed.hp = Math.min(healed.hp + 1, healed.maxHp);
+                    results.messages.push(`💗 HEAL ABILITY: ${healed.name} was healed by your healer Pokemon!`);
+                }
             }
         }
 
@@ -118,14 +124,18 @@
         // --- Grueling pace injury ---
         if (pace.injuryChance) {
             let effectiveInjuryChance = pace.injuryChance;
-            // Strength ability halves injury chance
-            if (PT.Engine.GameState.hasAbility(state, 'strength')) {
-                effectiveInjuryChance = Math.floor(effectiveInjuryChance / 2);
+            // Strength ability reduces injury chance (scales with power)
+            const strengthPower = PT.Engine.GameState.getAbilityPower(state, 'strength');
+            if (strengthPower > 0) {
+                const reduction = Math.min(0.8, strengthPower * 0.15); // 15% reduction per power, max 80%
+                effectiveInjuryChance = Math.floor(effectiveInjuryChance * (1 - reduction));
                 results.messages.push("💪 STRENGTH ABILITY: Your strong Pokemon carries the weaker ones, reducing injury risk!");
             }
             if (state.rng.chance(effectiveInjuryChance)) {
-                // Guard ability can block the injury entirely
-                if (PT.Engine.GameState.hasAbility(state, 'guard') && state.rng.chance(30)) {
+                // Guard ability can block the injury entirely (scales with power)
+                const guardPower = PT.Engine.GameState.getAbilityPower(state, 'guard');
+                const guardChance = guardPower > 0 ? Math.min(70, Math.floor(15 * guardPower)) : 0;
+                if (guardPower > 0 && state.rng.chance(guardChance)) {
                     results.messages.push("🛡️ GUARD ABILITY: Your defensive Pokemon shielded the party from injury!");
                 } else {
                     const victim = state.rng.pick(PT.Engine.GameState.getAliveParty(state));
@@ -157,9 +167,10 @@
             return results;
         }
 
-        // --- Fly ability: bonus travel distance ---
-        if (PT.Engine.GameState.hasAbility(state, 'fly') && pace.distance > 0 && nextRoute && !results.arrivedAtLocation) {
-            const flyBonus = 3;
+        // --- Fly ability: bonus travel distance (stacks + scales) ---
+        const flyPower = PT.Engine.GameState.getAbilityPower(state, 'fly');
+        if (flyPower > 0 && pace.distance > 0 && nextRoute && !results.arrivedAtLocation) {
+            const flyBonus = Math.max(1, Math.floor(3 * flyPower));
             state.distanceTraveled += flyBonus;
             results.messages.push(`🦅 FLY ABILITY: Your Flying-type scouts shortcuts! (+${flyBonus} miles)`);
             // Re-check arrival after fly bonus
@@ -173,13 +184,13 @@
             }
         }
 
-        // --- Surf ability: faster on water routes ---
-        if (PT.Engine.GameState.hasAbility(state, 'surf') && pace.distance > 0 && nextRoute && !results.arrivedAtLocation) {
+        // --- Surf ability: faster on water routes (stacks + scales) ---
+        const surfPower = PT.Engine.GameState.getAbilityPower(state, 'surf');
+        if (surfPower > 0 && pace.distance > 0 && nextRoute && !results.arrivedAtLocation) {
             if (route.terrain === 'water') {
-                const surfMult = PT.Engine.GameState.starterAbilityMult(state, 'surf');
-                const surfBonus = 5 * surfMult;
+                const surfBonus = Math.max(1, Math.floor(5 * surfPower));
                 state.distanceTraveled += surfBonus;
-                results.messages.push(`🌊 SURF ABILITY: Your Water-type surfs ahead! (+${surfBonus} miles on water)${surfMult > 1 ? ' ⭐ Starter bonus!' : ''}`);
+                results.messages.push(`🌊 SURF ABILITY: Your Water-type surfs ahead! (+${surfBonus} miles on water)`);
                 if (state.distanceTraveled >= route.distanceToNext) {
                     state.currentLocationIndex++;
                     state.distanceTraveled = 0;
@@ -191,11 +202,12 @@
             }
         }
 
-        // --- Flash ability: find hidden items/money ---
-        if (PT.Engine.GameState.hasAbility(state, 'flash') && state.rng.chance(20)) {
+        // --- Flash ability: find hidden items/money (stacks + scales) ---
+        const flashPower = PT.Engine.GameState.getAbilityPower(state, 'flash');
+        if (flashPower > 0 && state.rng.chance(20)) {
             const flashRoll = state.rng.randInt(1, 100);
             if (flashRoll <= 40) {
-                const baseMoneyFound = state.rng.randInt(50, 200);
+                const baseMoneyFound = Math.floor(state.rng.randInt(50, 200) * flashPower);
                 const moneyFound = PT.Engine.GameState.applyPayDay(state, baseMoneyFound);
                 state.resources.money += moneyFound;
                 results.messages.push(`⚡ FLASH ABILITY: Your Electric-type illuminated a hidden stash! Found $${moneyFound}!${moneyFound > baseMoneyFound ? ' 💰 PAY DAY!' : ''}`);
@@ -234,8 +246,10 @@
             }
         }
 
-        // --- Psychic ability: foresight (pick between two outcomes) ---
-        if (PT.Engine.GameState.hasAbility(state, 'psychic') && state.rng.chance(40)) {
+        // --- Psychic ability: foresight (stacks: higher power = higher trigger chance) ---
+        const psychicPower = PT.Engine.GameState.getAbilityPower(state, 'psychic');
+        const psychicChance = psychicPower > 0 ? Math.min(70, Math.floor(20 * psychicPower)) : 0;
+        if (psychicPower > 0 && state.rng.chance(psychicChance)) {
             if (results.encounter) {
                 // Roll a second encounter as an alternative
                 const alt = PT.Engine.EncounterEngine.rollEncounter(state);
@@ -268,8 +282,9 @@
             }
         }
 
-        // --- Glitch ability: MissingNo chaos ---
-        if (PT.Engine.GameState.hasAbility(state, 'glitch') && state.rng.chance(15)) {
+        // --- Glitch ability: MissingNo chaos (stacks + scales) ---
+        const glitchPower = PT.Engine.GameState.getAbilityPower(state, 'glitch');
+        if (glitchPower > 0 && state.rng.chance(15)) {
             const glitchRoll = state.rng.randInt(1, 100);
             if (glitchRoll <= 30) {
                 // Duplicate a random item
