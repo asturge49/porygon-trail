@@ -106,12 +106,12 @@
         });
         const lines = Object.entries(abilities).map(([ability, count]) => {
             const desc = {
-                cut: 'Forage food', surf: 'Water speed', fly: 'Scout shortcuts',
-                strength: 'Reduce injury', flash: 'Find items/money', dig: 'Escape encounters',
-                fire: 'Save food', heal: 'Passive healing', psychic: 'Foresight: pick encounters/events',
-                poison: 'Battle win bonus', guard: 'Block injuries', intimidate: 'Catch rate bonus',
+                cut: 'Forage food', surf: 'Water route speed', fly: 'Bonus miles',
+                strength: 'Reduce injury', flash: 'Find money/items', dig: 'Guaranteed flee',
+                fire: 'Save food', heal: 'Passive healing', psychic: 'Pick encounters/events',
+                poison: 'Battle win bonus', guard: 'Block injuries', intimidate: 'Catch rate + battle bonus',
                 payday: 'Money bonus', safeguard: 'Save from death once',
-                system_restore: 'Revive one lost Pokemon (once per game)', glitch: 'Chaos effects',
+                system_restore: 'Revive one lost Pokemon (once)', glitch: 'Chaos effects',
                 mimic: 'Copies strongest party ability'
             };
             const power = PT.Engine.GameState.getAbilityPower(state, ability);
