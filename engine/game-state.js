@@ -68,33 +68,78 @@
 
     // Per-Pokemon HP overrides (id → HP)
     const HP_OVERRIDES = {
-        // Legendaries → 6 HP
-        144: 6, 145: 6, 146: 6, 150: 6, 151: 6, 0: 6,
-        // Tanky/iconic rares → 5 HP
+        // Legendaries → 9 HP
+        144: 9, 145: 9, 146: 9, 150: 9, 151: 9, 0: 9,
+        // Elite rares → 5 HP
+        3: 5,                    // Venusaur
+        6: 5,                    // Charizard
+        9: 5,                    // Blastoise
+        68: 5,                   // Machamp
+        94: 5,                   // Gengar
         113: 5,                  // Chansey
         115: 5,                  // Kangaskhan
+        130: 5,                  // Gyarados
         131: 5,                  // Lapras
         137: 5,                  // Porygon
         142: 5,                  // Aerodactyl
         143: 5,                  // Snorlax
         149: 5,                  // Dragonite
-        130: 5,                  // Gyarados
-        // Tough uncommons → 4 HP
+        // Tough uncommons/rares → 4 HP
         12: 4, 15: 4,            // Butterfree, Beedrill
         18: 4,                   // Pidgeot
         24: 4,                   // Arbok
-        53: 4,                   // Persian
+        62: 4,                   // Poliwrath
+        76: 4,                   // Golem
         95: 4,                   // Onix
         114: 4,                  // Tangela
         148: 4,                  // Dragonair
-        // Weak finals → 3 HP (stay weak even as final evo)
+        // Downgraded to 3 HP (mid evos, weaker finals, starter base forms)
+        1: 3,                    // Bulbasaur
+        4: 3,                    // Charmander
+        7: 3,                    // Squirtle
+        11: 3,                   // Metapod
+        14: 3,                   // Kakuna
+        17: 3,                   // Pidgeotto
         20: 3,                   // Raticate
-        // Weak early-game base forms → 2 HP
+        28: 3,                   // Sandslash
+        30: 3,                   // Nidorina
+        33: 3,                   // Nidorino
+        42: 3,                   // Golbat
+        44: 3,                   // Gloom
+        47: 3,                   // Parasect
+        53: 3,                   // Persian
+        61: 3,                   // Poliwhirl
+        64: 3,                   // Kadabra
+        70: 3,                   // Weepinbell
+        75: 3,                   // Graveler
+        117: 3,                  // Seadra
+        119: 3,                  // Seaking
+        121: 3,                  // Starmie
+        133: 3,                  // Eevee
+        138: 3,                  // Omanyte
+        140: 3,                  // Kabuto
+        147: 3,                  // Dratini
+        // Weak base forms → 2 HP
         10: 2,                   // Caterpie
         13: 2,                   // Weedle
         16: 2,                   // Pidgey
         19: 2,                   // Rattata
         21: 2,                   // Spearow
+        27: 2,                   // Sandshrew
+        29: 2,                   // Nidoran F
+        32: 2,                   // Nidoran M
+        41: 2,                   // Zubat
+        43: 2,                   // Oddish
+        46: 2,                   // Paras
+        52: 2,                   // Meowth
+        60: 2,                   // Poliwag
+        63: 2,                   // Abra
+        69: 2,                   // Bellsprout
+        72: 2,                   // Tentacool
+        74: 2,                   // Geodude
+        116: 2,                  // Horsea
+        118: 2,                  // Goldeen
+        120: 2,                  // Staryu
         // Ultra weak → 1 HP
         129: 1                   // Magikarp
     };
