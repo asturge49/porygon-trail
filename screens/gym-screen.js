@@ -61,7 +61,6 @@
                         if (hasDisadvantage) label += ' [NVE]';
                         return `<button class="btn btn-wide" data-index="${i}">${label}</button>`;
                     }).join('')}
-                    <button class="btn btn-wide" id="btn-leave-gym">LEAVE GYM</button>
                 </div>
             `;
             container.appendChild(div);
@@ -76,9 +75,6 @@
                 });
             });
 
-            document.getElementById('btn-leave-gym').addEventListener('click', () => {
-                PT.App.goto('TRAVEL');
-            });
         }
     };
 

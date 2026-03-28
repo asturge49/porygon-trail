@@ -301,8 +301,32 @@
                     const intLabel = result.intimidateBonus ? ' 😤 INTIMIDATE +15%' : '';
                     msgEl.textContent = `${'shake... '.repeat(result.shakes)}Oh no! ${pokemon.name} broke free! (${result.catchChance}% chance)${intLabel}`;
 
-                    // Re-enable actions
-                    actionsDiv.querySelectorAll('button').forEach(b => b.disabled = false);
+                    // Update ball counts and re-enable actions
+                    const pokeBtn = actionsDiv.querySelector('#btn-pokeball');
+                    const greatBtn = actionsDiv.querySelector('#btn-greatball');
+                    const ultraBtn = actionsDiv.querySelector('#btn-ultraball');
+                    if (pokeBtn) {
+                        pokeBtn.textContent = `POKE BALL (${state.resources.pokeballs})`;
+                        pokeBtn.disabled = state.resources.pokeballs <= 0;
+                    }
+                    if (greatBtn) {
+                        greatBtn.textContent = `GREAT BALL (${state.resources.greatballs})`;
+                        greatBtn.disabled = state.resources.greatballs <= 0;
+                    }
+                    if (ultraBtn) {
+                        ultraBtn.textContent = `ULTRA BALL (${state.resources.ultraballs})`;
+                        ultraBtn.disabled = state.resources.ultraballs <= 0;
+                    }
+                    // Re-enable non-ball buttons
+                    const otherBtns = actionsDiv.querySelectorAll('#btn-battle, #btn-flee, #btn-use-item');
+                    otherBtns.forEach(b => b.disabled = false);
+
+                    // Update ball total in info bar
+                    const infoDiv = document.querySelector('.encounter-info');
+                    if (infoDiv) {
+                        const newTotal = state.resources.pokeballs + state.resources.greatballs + state.resources.ultraballs;
+                        infoDiv.querySelector('span').textContent = `Balls: ${newTotal}`;
+                    }
 
                     // Pokemon might flee
                     if (state.rng.chance(30)) {
