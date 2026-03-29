@@ -9,8 +9,14 @@
             const leader = PT.Data.GymLeaders[leaderId];
             if (!leader) { PT.App.goto('TRAVEL'); return; }
 
-            // Pick a random Pokemon from the leader's pool
-            const opponent = state.rng.pick(leader.pokemon);
+            // Lock in opponent on first visit — prevents leaving and re-rolling
+            if (!state._gymLockedOpponent || state._gymLockedOpponent.leaderId !== leaderId) {
+                state._gymLockedOpponent = {
+                    leaderId: leaderId,
+                    opponent: state.rng.pick(leader.pokemon)
+                };
+            }
+            const opponent = state._gymLockedOpponent.opponent;
             const opponentSprite = PT.Engine.GameState.getSpriteUrl(opponent.id);
             const isAce = !!opponent.ace;
 
@@ -116,6 +122,9 @@
     }
 
     function resolveGymBattle(pokemon, leader, leaderId, state, container, opponent) {
+        // Clear locked opponent now that battle is committed
+        delete state._gymLockedOpponent;
+
         const isAce = !!opponent.ace;
         const opponentSprite = PT.Engine.GameState.getSpriteUrl(opponent.id);
 

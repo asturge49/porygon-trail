@@ -76,21 +76,52 @@
                 }));
             }
 
+            // Update ball button text and disabled state immediately
+            function updateBallButtons() {
+                const pokeBtn = document.getElementById('btn-pokeball');
+                const greatBtn = document.getElementById('btn-greatball');
+                const ultraBtn = document.getElementById('btn-ultraball');
+                if (pokeBtn) {
+                    pokeBtn.textContent = `POKE BALL (${state.resources.pokeballs})`;
+                    pokeBtn.disabled = state.resources.pokeballs <= 0;
+                }
+                if (greatBtn) {
+                    greatBtn.textContent = `GREAT BALL (${state.resources.greatballs})`;
+                    greatBtn.disabled = state.resources.greatballs <= 0;
+                }
+                if (ultraBtn) {
+                    ultraBtn.textContent = `ULTRA BALL (${state.resources.ultraballs})`;
+                    ultraBtn.disabled = state.resources.ultraballs <= 0;
+                }
+                const infoDiv = document.querySelector('.encounter-info');
+                if (infoDiv) {
+                    const newTotal = state.resources.pokeballs + state.resources.greatballs + state.resources.ultraballs;
+                    const span = infoDiv.querySelector('span');
+                    if (span) span.textContent = `Balls: ${newTotal}`;
+                }
+            }
+
             // Throw Poke Ball
             document.getElementById('btn-pokeball').addEventListener('click', () => {
+                if (state.resources.pokeballs <= 0) return;
                 const result = PT.Engine.EncounterEngine.attemptCatch(pokemon, 'pokeballs', state);
+                updateBallButtons();
                 handleCatchResult(result, pokemon, state, showResult);
             });
 
             // Throw Great Ball
             document.getElementById('btn-greatball').addEventListener('click', () => {
+                if (state.resources.greatballs <= 0) return;
                 const result = PT.Engine.EncounterEngine.attemptCatch(pokemon, 'greatballs', state);
+                updateBallButtons();
                 handleCatchResult(result, pokemon, state, showResult);
             });
 
             // Throw Ultra Ball
             document.getElementById('btn-ultraball').addEventListener('click', () => {
+                if (state.resources.ultraballs <= 0) return;
                 const result = PT.Engine.EncounterEngine.attemptCatch(pokemon, 'ultraballs', state);
+                updateBallButtons();
                 handleCatchResult(result, pokemon, state, showResult);
             });
 

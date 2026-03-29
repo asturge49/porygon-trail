@@ -239,6 +239,8 @@
             if (event.terrainTypes && !event.terrainTypes.includes(route.terrain)) return false;
             // Party size requirement (for sacrifice events that need enough Pokemon)
             if (event.requiresPartySize && PT.Engine.GameState.getAliveParty(state).length < event.requiresPartySize) return false;
+            // Pokemon buyer cooldown: at most once per 60 days
+            if (event.pokemonBuyerEvent && state._lastBuyerDay != null && (state.daysElapsed - state._lastBuyerDay) < 60) return false;
             // Route event pool check (if event has no location restriction, it can happen anywhere)
             if (!event.locationIds && !event.terrainTypes && route.eventPool && !route.eventPool.includes(event.id)) {
                 // General events can still occur anywhere
@@ -253,11 +255,11 @@
 
         if (availableEvents.length === 0) return null;
 
-        // Guaranteed Pokemon buyer: if past day 15 and never had a buyer event, massively boost weight
+        // Guaranteed Pokemon buyer: if past day 50 and never had a buyer event, boost weight
         const buyerCount = state._pokemonBuyerCount || 0;
-        if (buyerCount === 0 && state.daysElapsed >= 15) {
+        if (buyerCount === 0 && state.daysElapsed >= 50) {
             availableEvents.forEach(e => {
-                if (e.pokemonBuyerEvent) e.weight = (e.weight || 5) * 20; // massive boost
+                if (e.pokemonBuyerEvent) e.weight = (e.weight || 1) * 10;
             });
         }
 
@@ -266,6 +268,11 @@
 
         if (event.oneTime || event.maxTriggers) {
             state.eventsTriggered.push(event.id);
+        }
+
+        // Track buyer event cooldown
+        if (event.pokemonBuyerEvent) {
+            state._lastBuyerDay = state.daysElapsed;
         }
 
         return event;
