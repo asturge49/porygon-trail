@@ -198,7 +198,7 @@
         // Type advantage (smaller bonus than gyms)
         const hasAdvantage = pokemon.types.some(t => typeChart.weakTo.includes(t));
         const hasDisadvantage = pokemon.types.some(t => typeChart.strongTo.includes(t));
-        if (hasAdvantage) chance += 5; // SE matchups help but don't carry
+        if (hasAdvantage) chance += 25; // SE matchups are your lifeline
         if (hasDisadvantage) chance -= 25; // NVE is near-suicide
 
         // Badge bonus (minimal)
