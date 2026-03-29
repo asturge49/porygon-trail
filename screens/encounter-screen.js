@@ -428,10 +428,12 @@
         // Badge bonus
         chance += state.badges.length * 2;
 
-        // Poison ability: win chance scales with power (3% per power point)
-        const poisonPower = PT.Engine.GameState.getAbilityPower(state, 'poison');
-        if (poisonPower > 0) {
-            const poisonBonus = Math.floor(1 * poisonPower);
+        // Poison ability: only applies if the fighting Pokemon has poison
+        if (chosen.travelAbility === 'poison') {
+            const stage = PT.Engine.GameState.getEvoStage(chosen.id);
+            let power = stage === 1 ? 1.0 : stage === 2 ? 1.5 : 2.0;
+            power += (chosen.battleStars || 0) * 0.25;
+            const poisonBonus = Math.floor(1 * power);
             chance += poisonBonus;
             battleBonuses.push(`☠️ POISON +${poisonBonus}%`);
         }
