@@ -234,8 +234,10 @@
             battleBonuses.push(`${'★'.repeat(stars)} +${starWinBonus}%`);
         }
 
-        // Hard ceiling — even perfect conditions can't guarantee victory
-        chance = Math.max(8, Math.min(50, chance));
+        // Hard ceiling — staggered cap, gets tighter each round
+        const capByRound = [55, 54, 53, 51, 50];
+        const cap = capByRound[e4Index] || 50;
+        chance = Math.max(8, Math.min(cap, chance));
 
         const won = state.rng.chance(chance);
 
