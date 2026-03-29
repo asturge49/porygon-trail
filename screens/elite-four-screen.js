@@ -187,57 +187,55 @@
         const typeChart = getTypeWeaknesses(opponentTypes);
 
         // Calculate success chance — BRUTAL Elite Four
-        let chance = 30; // Base 30% (was 35%, gym is 45%)
+        let chance = 25; // Base 25% — the elite are ELITE
         let battleBonuses = [];
+
+        // Progressive difficulty — each fight is harder than the last
+        const progressionPenalty = e4Index * 3; // 0%, -3%, -6%, -9%, -12%
+        chance -= progressionPenalty;
+        if (progressionPenalty > 0) battleBonuses.push(`📈 Round ${e4Index + 1} penalty -${progressionPenalty}%`);
 
         // Type advantage (smaller bonus than gyms)
         const hasAdvantage = pokemon.types.some(t => typeChart.weakTo.includes(t));
         const hasDisadvantage = pokemon.types.some(t => typeChart.strongTo.includes(t));
-        if (hasAdvantage) chance += 20; // SE matchups are your lifeline
-        if (hasDisadvantage) chance -= 20; // NVE is near-suicide
+        if (hasAdvantage) chance += 18; // SE matchups are your lifeline
+        if (hasDisadvantage) chance -= 25; // NVE is near-suicide
 
         // Badge bonus (minimal)
         chance += state.badges.filter(b => b !== 'champion').length * 1;
 
-        // Party size bonus (reduced — being outnumbered barely helps here)
-        const aliveCount = PT.Engine.GameState.getAliveParty(state).length;
-        chance += aliveCount * 1;
-
-        // Poison ability: win chance scales with power
+        // Poison ability: win chance scales with power (halved in E4)
         const poisonPower = PT.Engine.GameState.getAbilityPower(state, 'poison');
         if (poisonPower > 0) {
-            const poisonBonus = Math.floor(1 * poisonPower);
+            const poisonBonus = Math.max(1, Math.floor(0.5 * poisonPower));
             chance += poisonBonus;
             battleBonuses.push(`☠️ POISON +${poisonBonus}%`);
         }
 
-        // Intimidate ability: scales with power
+        // Intimidate ability: scales with power (halved in E4)
         const intimidatePower = PT.Engine.GameState.getAbilityPower(state, 'intimidate');
         if (intimidatePower > 0) {
-            const intimBonus = Math.floor(3 * intimidatePower);
+            const intimBonus = Math.max(1, Math.floor(1.5 * intimidatePower));
             chance += intimBonus;
             battleBonuses.push(`😤 INTIMIDATE +${intimBonus}%`);
         }
 
-        // Psychic Dominance (Mewtwo) — +50% win chance on all battles
+        // Psychic Dominance (Mewtwo) — reduced in E4 (from +50% to +25%)
         if (PT.Engine.GameState.hasAbility(state, 'psychic_dominance')) {
-            chance += 50;
-            battleBonuses.push(`🧠 PSYCHIC DOMINANCE +50%`);
+            chance += 25;
+            battleBonuses.push(`🧠 PSYCHIC DOMINANCE +25%`);
         }
 
-        // Battle Stars bonus
-        const starBonus = PT.Engine.GameState.getStarBonus(pokemon);
-        if (starBonus.winChanceBonus > 0) {
-            chance += starBonus.winChanceBonus;
-            battleBonuses.push(`${'★'.repeat(pokemon.battleStars || 0)} +${starBonus.winChanceBonus}%`);
+        // Battle Stars bonus (halved in E4: +1.5% per star instead of +3%)
+        const stars = pokemon.battleStars || 0;
+        if (stars > 0) {
+            const starWinBonus = Math.floor(stars * 1.5);
+            chance += starWinBonus;
+            battleBonuses.push(`${'★'.repeat(stars)} +${starWinBonus}%`);
         }
-
-        // E4 flat scaling — expects you to have a 3-star Pokemon (+9% offset)
-        const e4Scaling = 9;
-        chance -= e4Scaling;
 
         // Hard ceiling — even perfect conditions can't guarantee victory
-        chance = Math.max(8, Math.min(55, chance));
+        chance = Math.max(8, Math.min(50, chance));
 
         const won = state.rng.chance(chance);
 
