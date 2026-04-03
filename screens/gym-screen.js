@@ -302,6 +302,7 @@
             `;
         }
         container.appendChild(div);
+        PT.Engine.GameState.saveGame(state);
 
         document.getElementById('btn-continue').addEventListener('click', () => {
             if (state.isGameOver || state.party.length === 0) {

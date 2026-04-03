@@ -295,6 +295,7 @@
                 </button>
             `;
             container.appendChild(div);
+            PT.Engine.GameState.saveGame(state);
 
             document.getElementById('btn-e4-next').addEventListener('click', () => {
                 if (isLastBattle) {
@@ -379,6 +380,7 @@
                 </button>
             `;
             container.appendChild(div);
+            PT.Engine.GameState.saveGame(state);
 
             document.getElementById('btn-e4-continue').addEventListener('click', () => {
                 if (partyWiped) {

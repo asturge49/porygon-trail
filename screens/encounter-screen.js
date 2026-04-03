@@ -55,6 +55,7 @@
                     <button class="btn btn-small" id="btn-use-item" ${state.resources.potions + state.resources.superPotions <= 0 ? 'disabled' : ''}>
                         USE POTION
                     </button>
+                    <button class="btn btn-small" id="btn-party">PARTY</button>
                 </div>
             `;
             container.appendChild(div);
@@ -64,6 +65,7 @@
 
             function showResult(text, callback) {
                 messageBox.textContent = text;
+                PT.Engine.GameState.saveGame(state);
                 actionsDiv.innerHTML = '<button class="btn btn-wide" id="btn-continue">CONTINUE</button>';
                 document.getElementById('btn-continue').addEventListener('click', callback || (() => {
                     if (state.isGameOver || state.party.length === 0) {
@@ -205,6 +207,11 @@
                     PT.Engine.GameState.healPokemon(target, 1);
                     messageBox.textContent = `Used Potion on ${target.name}! +1 HP.`;
                 }
+            });
+
+            // View party
+            document.getElementById('btn-party').addEventListener('click', () => {
+                PT.App.push('PARTY');
             });
         }
     };
@@ -492,6 +499,7 @@
                     <br><span style="font-size: 6px;">Win chance was ${chance}%${battleBonuses.length > 0 ? ' (' + battleBonuses.join(', ') + ')' : ''}</span>
                 </div>
             `;
+            PT.Engine.GameState.saveGame(state);
             actionsDiv.innerHTML = '<button class="btn btn-wide" id="btn-continue">CONTINUE</button>';
             document.getElementById('btn-continue').addEventListener('click', () => {
                 if (state.isGameOver || state.party.length === 0) {
@@ -524,6 +532,7 @@
                     <br><span style="font-size: 6px;">Win chance was ${chance}%${battleBonuses.length > 0 ? ' (' + battleBonuses.join(', ') + ')' : ''} | Wild ${pokemon.name} HP: ${wildHp}</span>
                 </div>
             `;
+            PT.Engine.GameState.saveGame(state);
             actionsDiv.innerHTML = '<button class="btn btn-wide" id="btn-continue">CONTINUE</button>';
             document.getElementById('btn-continue').addEventListener('click', () => {
                 if (state.isGameOver || state.party.length === 0) {

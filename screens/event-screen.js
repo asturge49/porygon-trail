@@ -535,6 +535,7 @@
     }
 
     function showEventContinue(state, choicesDiv) {
+        PT.Engine.GameState.saveGame(state);
         choicesDiv.innerHTML = '<button class="btn btn-wide" id="btn-event-continue">CONTINUE</button>';
         document.getElementById('btn-event-continue').addEventListener('click', () => {
             if (state.isGameOver) { PT.App.goto('GAMEOVER'); return; }
