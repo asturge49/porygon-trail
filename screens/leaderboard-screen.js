@@ -13,10 +13,13 @@
             </div>`;
         }
         return entries.map((entry, i) => `
-            <div class="leaderboard-row ${i === 0 ? 'rank-1' : ''}">
+            <div class="leaderboard-row ${i === 0 ? 'rank-1' : ''}"
+                 style="cursor: pointer;"
+                 data-user-id="${entry.userId || ''}"
+                 data-username="${entry.name}">
                 <span>${i + 1}</span>
                 <span>
-                    ${entry.name}${entry.won ? ' ★' : ''}
+                    <span style="text-decoration: underline; text-underline-offset: 2px;">${entry.name}</span>${entry.won ? ' ★' : ''}
                     <br><span style="font-size: 6px; color: var(--gb-dark);">${entry.pokedexCount} caught | Day ${entry.daysElapsed} | ${entry.date}</span>
                 </span>
                 <span>${entry.score.toLocaleString()}</span>
@@ -65,6 +68,17 @@
         `;
         container.appendChild(div);
 
+        function attachRowClicks() {
+            document.querySelectorAll('.leaderboard-row[data-user-id]').forEach(row => {
+                const userId = row.dataset.userId;
+                const username = row.dataset.username;
+                if (!userId) return;
+                row.addEventListener('click', () => {
+                    PT.App.goto('PROFILE', { userId, username });
+                });
+            });
+        }
+
         // Fetch and render the current mode
         function loadEntries() {
             const body = document.getElementById('leaderboard-body');
@@ -89,6 +103,7 @@
                     entries === null
                         ? '<div style="text-align: center; padding: 40px; font-size: 8px; color: var(--gb-dark);">Could not load scores.</div>'
                         : renderTable(entries, emptyMsg);
+                attachRowClicks();
             }).catch(() => {
                 const b = document.getElementById('leaderboard-body');
                 if (b) b.innerHTML = '<div style="text-align: center; padding: 40px; font-size: 8px; color: var(--gb-dark);">Could not load scores.</div>';

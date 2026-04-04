@@ -48,7 +48,7 @@
 
         const { data, error } = await client
             .from('pt_leaderboard')
-            .select('username, score, pokedex_count, badges, days_elapsed, won, date')
+            .select('user_id, username, score, pokedex_count, badges, days_elapsed, won, date')
             .order('score', { ascending: false })
             .limit(20);
 
@@ -58,6 +58,7 @@
         }
 
         return data.map(row => ({
+            userId: row.user_id,
             name: row.username,
             score: row.score,
             pokedexCount: row.pokedex_count,
@@ -95,6 +96,7 @@
             if (!seen.has(row.user_id)) {
                 seen.add(row.user_id);
                 trainers.push({
+                    userId: row.user_id,
                     name: row.username,
                     score: row.score,
                     pokedexCount: row.pokedex_count,

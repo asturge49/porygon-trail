@@ -20,11 +20,16 @@
             PT.Engine.Scoring.updateGlobalPokedex(state);
 
             // Telemetry
+            const _legendaryIds = new Set(PT.Data.Pokemon.filter(p => p.rarity === 'legendary').map(p => p.id));
+            const _champIds = survivors.map(p => p.id);
             PT.Engine.Telemetry.logEvent('victory', {
                 days_elapsed: state.daysElapsed,
                 score: score,
                 badges: state.badges.filter(b => b !== 'champion').length,
-                pokedex_count: state.pokedexCaught.length
+                pokedex_count: state.pokedexCaught.length,
+                legendary_caught: state.pokedexCaught.filter(id => _legendaryIds.has(id)).length,
+                champion_ids: _champIds,
+                legendary_champ_ids: _champIds.filter(id => _legendaryIds.has(id))
             });
 
             // Save score

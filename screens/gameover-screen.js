@@ -21,6 +21,7 @@
             PT.Engine.Scoring.updateGlobalPokedex(state);
 
             // Telemetry
+            const _legendaryIds = new Set(PT.Data.Pokemon.filter(p => p.rarity === 'legendary').map(p => p.id));
             PT.Engine.Telemetry.logEvent('game_over', {
                 route: route.name,
                 route_index: state.currentLocationIndex,
@@ -28,7 +29,8 @@
                 days_elapsed: state.daysElapsed,
                 score: score,
                 badges: state.badges.filter(b => b !== 'champion').length,
-                pokedex_count: state.pokedexCaught.length
+                pokedex_count: state.pokedexCaught.length,
+                legendary_caught: state.pokedexCaught.filter(id => _legendaryIds.has(id)).length
             });
 
             // Save score
