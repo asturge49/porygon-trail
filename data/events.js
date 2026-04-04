@@ -7801,6 +7801,638 @@
                     ]
                 }
             ]
+        },
+
+        // ===== NEW DILEMMA EVENTS =====
+
+        // 1. The Abandoned Egg
+        {
+            id: "abandoned_egg",
+            type: "dilemma",
+            name: "The Abandoned Egg!",
+            description: "You find a Pokemon egg on the side of the road, still warm. A note tied to it reads: \"Please take care of her.\" It looks healthy — but carrying it will slow you down. Two days minimum before it hatches.",
+            weight: 12,
+            oneTime: false,
+            minDay: 3,
+            choices: [
+                {
+                    text: "Carry it (2 days, random hatch)",
+                    outcomes: [
+                        { weight: 40, narration: "Two days of gentle travel. The egg cracks open in your arms and a Eevee tumbles out, blinking up at you. Worth every detour.", effects: { daysLost: 2, catchPokemon: 133 } },
+                        { weight: 25, narration: "A Dratini slithers out of the shell, tiny and iridescent. You have no idea how this ended up on the road — and you don't care. It's yours now.", effects: { daysLost: 2, catchPokemon: 147 } },
+                        { weight: 20, narration: "The egg hatches into a Clefairy who immediately grabs your hat and refuses to let go. A keeper.", effects: { daysLost: 2, catchPokemon: 35 } },
+                        { weight: 15, narration: "After two days of careful travel, the egg hatches. A Scyther unfurls enormous blades, looks at you once, then looks away — too cool to acknowledge you saved its life.", effects: { daysLost: 2, catchPokemon: 123 } }
+                    ]
+                },
+                {
+                    text: "Leave it — you can't afford the time",
+                    outcomes: [
+                        { weight: 70, narration: "You walk on. The egg sits there in the road. You don't look back.", effects: {} },
+                        { weight: 30, narration: "You walk on. Fifty meters down the path you stop, turn around, and go back for it. You're an idiot. A soft, egg-carrying idiot.", effects: { daysLost: 2, catchPokemon: 133 } }
+                    ]
+                }
+            ]
+        },
+
+        // 2. The Pokemon Centre Fire
+        {
+            id: "pokecenter_fire",
+            type: "dilemma",
+            name: "The Pokemon Centre Fire!",
+            description: "The local Pokemon Centre is burning. Nurse Joy and the Chansey evacuated safely — but the supply room is still intact and the door is accessible. The ceiling won't hold much longer. Nobody's stopping you.",
+            weight: 10,
+            oneTime: true,
+            minDay: 5,
+            choices: [
+                {
+                    text: "Rush in and grab what you can",
+                    outcomes: [
+                        { weight: 35, narration: "You sprint through smoke and pull out armfuls of supplies before the ceiling caves. Your team drags you out coughing. Battered — but loaded.", effects: { partyDamageAll: 1, food: 20, superPotions: 3, pokeballs: 8 } },
+                        { weight: 35, narration: "You get in and grab a haul, but a burning beam clips you on the way out. Your team takes the hit. Painful, but the supplies make it worth it.", effects: { partyDamage: 2, food: 12, potions: 3, greatballs: 3 } },
+                        { weight: 30, narration: "You barely make it inside before the roof collapses. You scramble out with almost nothing, your team in rough shape. Not worth it.", effects: { partyDamageAll: 2, potions: 1 } }
+                    ]
+                },
+                {
+                    text: "Stay back — it's not worth the risk",
+                    outcomes: [
+                        { weight: 60, narration: "You watch the building burn. Nurse Joy thanks you for not getting yourself killed. She hands you some basic supplies she grabbed on the way out.", effects: { potions: 2, food: 5 } },
+                        { weight: 40, narration: "You stay back. The building collapses in on itself with a groaning crash. Nothing gained, nothing lost.", effects: {} }
+                    ]
+                }
+            ]
+        },
+
+        // 3. The Ancient Shrine
+        {
+            id: "ancient_shrine",
+            type: "dilemma",
+            name: "The Ancient Shrine!",
+            description: "Hidden off the trail stands a moss-covered stone shrine. A carved inscription reads: \"Leave something. Take nothing. The old Pokemon will know.\" An offering bowl holds coins left by past travelers. Your team feels uneasy.",
+            weight: 12,
+            oneTime: false,
+            minDay: 6,
+            choices: [
+                {
+                    text: "Leave an offering (10 food)",
+                    requiresItem: "food",
+                    outcomes: [
+                        { weight: 40, narration: "You place food in the bowl. The air grows still. Your Pokemon settle, wounds closing. Something ancient and enormous approved of you today.", effects: { food: -10, healAll: true } },
+                        { weight: 35, narration: "You leave the offering. A faint shimmer passes over your strongest Pokemon. It stands straighter, somehow more itself than before.", effects: { food: -10, grantStar: true } },
+                        { weight: 25, narration: "You leave the offering. Nothing dramatic happens. The forest is quiet. Your team looks healthier. Maybe that's enough.", effects: { food: -10, healAll: true, food: 5 } }
+                    ]
+                },
+                {
+                    text: "Take the coins from the bowl",
+                    outcomes: [
+                        { weight: 50, narration: "You take the coins — about 800 Pokedollars worth. Your team seems unsettled the rest of the day. That evening, something in the shadows follows you.", effects: { money: 800, partyDamageAll: 1 } },
+                        { weight: 50, narration: "You reach for the coins. Your lead Pokemon steps in front of you and refuses to move until you back away. Fine. Fine. Some lessons cost nothing.", effects: {} }
+                    ]
+                }
+            ]
+        },
+
+        // 4. The Rival's Abandoned Camp
+        {
+            id: "garys_camp",
+            type: "dilemma",
+            name: "Gary's Abandoned Camp!",
+            description: "You stumble across a campsite — still warm coffee on the fire, half-eaten food on the table. A notebook with a familiar logo: Oak Laboratory. Gary left in a hurry. His supplies are right there.",
+            weight: 10,
+            oneTime: true,
+            minDay: 8,
+            choices: [
+                {
+                    text: "Ransack the camp",
+                    outcomes: [
+                        { weight: 50, narration: "You grab everything useful. Food, potions, a spare Great Ball. You're halfway down the road when you hear Gary shout in the distance. You run. Worth it.", effects: { food: 18, potions: 3, greatballs: 2, partyDamage: 1 } },
+                        { weight: 30, narration: "You grab the goods — then Gary returns earlier than expected. \"HEY! I saw that!\" He chases you down and demands a battle on the spot. Your team takes a beating before he finally storms off.", effects: { food: 15, partyDamageAll: 1, partyDamage: 1 } },
+                        { weight: 20, narration: "You raid the camp clean. Gary never catches on. His loss, your gain. No regrets.", effects: { food: 20, potions: 4, greatballs: 2, money: 400 } }
+                    ]
+                },
+                {
+                    text: "Leave everything untouched",
+                    outcomes: [
+                        { weight: 60, narration: "You leave it all. Gary returns, finds his camp intact, and spots you walking away. He doesn't say anything — just nods. It's the most respect he's ever shown you.", effects: {} },
+                        { weight: 40, narration: "You leave everything exactly as it was. A few minutes later Gary jogs back, rifling through his stuff. He spots you and jogs over. \"Uh. You didn't take anything.\" He shoves some food at you and walks away before you can respond.", effects: { food: 10, potions: 1 } }
+                    ]
+                }
+            ]
+        },
+
+        // 5. The Silph Co. Defector
+        {
+            id: "silph_defector",
+            type: "dilemma",
+            name: "The Silph Co. Defector!",
+            description: "A woman in a lab coat pulls you aside on a quiet stretch of road. She's shaking. \"I work at Silph Co. I know what Team Rocket is building. I can't take it with me — but I can give you some of the prototypes.\" She holds out a bag. \"Just don't tell anyone you saw me.\"",
+            weight: 10,
+            oneTime: true,
+            minDay: 12,
+            choices: [
+                {
+                    text: "Take the prototypes",
+                    outcomes: [
+                        { weight: 50, narration: "The bag contains experimental items — things you've never seen in a shop. You part ways quickly. A few hours later you hear Team Rocket grunts searching the area. You slip away clean.", effects: { superPotions: 3, rareCandy: 2, ultraballs: 2 } },
+                        { weight: 30, narration: "You take the bag and go your separate ways. But Team Rocket saw the exchange. Two grunts jump you an hour later. You fight them off, but not without cost.", effects: { superPotions: 2, rareCandy: 1, partyDamageAll: 1 } },
+                        { weight: 20, narration: "The bag is packed with high-grade supplies — and a tracking device. Rocket grunts swarm you within the hour. The ambush is brutal. You escape, but barely.", effects: { superPotions: 1, partyDamage: 3, money: -500 } }
+                    ]
+                },
+                {
+                    text: "\"I don't want any part of this.\"",
+                    outcomes: [
+                        { weight: 60, narration: "You walk away. The scientist disappears into the trees. Whatever happens to her, it's not your problem. You tell yourself that for the rest of the day.", effects: {} },
+                        { weight: 40, narration: "You decline. She nods, understanding. Then presses a single item into your hand anyway. \"For being decent,\" she says, and vanishes.", effects: { rareCandy: 1 } }
+                    ]
+                }
+            ]
+        },
+
+        // 7. The Magikarp on the Bank
+        {
+            id: "magikarp_on_bank",
+            type: "dilemma",
+            name: "The Magikarp on the Bank!",
+            description: "A Magikarp is flopping in the shallows, beached and drying out. It looks up at you with desperate googly eyes. It is, objectively, the worst Pokemon in existence. You know what it becomes, though.",
+            weight: 10,
+            oneTime: false,
+            minDay: 3,
+            choices: [
+                {
+                    text: "Throw it back — a kindness",
+                    outcomes: [
+                        { weight: 50, narration: "You toss the Magikarp back into the water. It splashes gratefully. Somewhere downstream, something large and red breaks the surface for just a moment before submerging. A good omen.", effects: { healOne: true } },
+                        { weight: 30, narration: "You throw it back. The Magikarp splashes around for a second, then launches itself back onto the bank and flops at your feet. You throw it back again. It stays this time.", effects: { food: 5 } },
+                        { weight: 20, narration: "The Magikarp lands safely in the current and disappears. Something about it feels right. The rest of the day goes quietly well.", effects: { healAll: true } }
+                    ]
+                },
+                {
+                    text: "Take it — you know what it becomes",
+                    outcomes: [
+                        { weight: 100, narration: "You catch the Magikarp. It flops uselessly in the ball. Your other Pokemon stare at you. You stare back. This is a long-term investment. A very long-term investment.", effects: { catchPokemon: 129 } }
+                    ]
+                }
+            ]
+        },
+
+        // 8. The Washed-Out Bridge
+        {
+            id: "washed_out_bridge",
+            type: "dilemma",
+            name: "The Washed-Out Bridge!",
+            description: "The bridge ahead is gone — swept away by last night's rain. A local fisherman lounges by his boat. \"Five hundred Pokedollars and I'll take you across. Or swim. Or go around — three days, easy.\" He spits into the river.",
+            weight: 11,
+            oneTime: false,
+            minDay: 5,
+            choices: [
+                {
+                    text: "Pay the fisherman ($500)",
+                    requiresMoney: 500,
+                    outcomes: [
+                        { weight: 80, narration: "Highway robbery. He rows in absolute silence the whole way across, collects his money, and rows back without a word.", effects: { money: -500 } },
+                        { weight: 20, narration: "Halfway across he starts telling stories about legendary Pokemon he's seen in this river. You don't believe him. But the crossing is oddly pleasant.", effects: { money: -500, food: 5 } }
+                    ]
+                },
+                {
+                    text: "Swim across with your team",
+                    bonusAbility: "surf",
+                    bonusOutcome: { narration: "Your Surf Pokemon cuts through the current like it was nothing, ferrying everyone across in minutes. The fisherman watches with quiet professional respect.", effects: {} },
+                    outcomes: [
+                        { weight: 50, narration: "Your team plunges into the current. It's rough — the water is colder and faster than it looks. Everyone makes it, but they're battered from fighting the flow.", effects: { partyDamageAll: 1 } },
+                        { weight: 50, narration: "The current catches two of your Pokemon mid-crossing and drags them downstream. You fish everyone out eventually, but it's a brutal scramble.", effects: { partyDamage: 2 } }
+                    ]
+                },
+                {
+                    text: "Take the long way around (3 days)",
+                    outcomes: [
+                        { weight: 70, narration: "Three uneventful days of detour. Your team rests properly along the way. Free, if you don't count the time.", effects: { daysLost: 3, healAll: true } },
+                        { weight: 30, narration: "Three days detour. Nothing interesting happens. Absolutely nothing. You have a lot of time to think about whether $500 was really that much money.", effects: { daysLost: 3 } }
+                    ]
+                }
+            ]
+        },
+
+        // 9. The Celadon Game Corner
+        {
+            id: "celadon_casino",
+            type: "dilemma",
+            name: "The Celadon Game Corner!",
+            description: "The slot machines are ringing. The air smells like desperation and cheap prizes. The attendant leans on the counter with the practiced smile of someone who has seen it all. \"Try your luck?\"",
+            weight: 10,
+            oneTime: false,
+            locationIds: ["celadon_city"],
+            choices: [
+                {
+                    text: "Bet big ($1000)",
+                    requiresMoney: 1000,
+                    outcomes: [
+                        { weight: 20, narration: "JACKPOT. The machines erupt. People stare. The attendant looks personally offended. You walk out with a Porygon ball and a grin.", effects: { money: -1000, catchPokemon: 137 } },
+                        { weight: 20, narration: "You win big — not the jackpot, but enough for a Scyther from the prize corner. The attendant counts out the coins with visible pain.", effects: { money: -1000, catchPokemon: 123 } },
+                        { weight: 20, narration: "A solid win. Not a Pokemon, but a pile of items worth more than you put in.", effects: { money: -1000, superPotions: 3, rareCandy: 1, ultraballs: 2 } },
+                        { weight: 40, narration: "The machines take everything. You watch $1000 disappear into flashing lights. The attendant is very sympathetic. He is not sympathetic.", effects: { money: -1000 } }
+                    ]
+                },
+                {
+                    text: "Bet small ($200)",
+                    requiresMoney: 200,
+                    outcomes: [
+                        { weight: 45, narration: "Small win — potions and a couple of pokeballs from the prize corner. Not exciting, not ruinous.", effects: { money: -200, potions: 3, greatballs: 2 } },
+                        { weight: 55, narration: "The machines eat your money politely. At least the losses are proportional.", effects: { money: -200 } }
+                    ]
+                },
+                {
+                    text: "Walk past — gambling is for fools",
+                    outcomes: [
+                        { weight: 100, narration: "You walk past. Someone behind you hits the jackpot on their first coin. You don't look back.", effects: {} }
+                    ]
+                }
+            ]
+        },
+
+        // 10. The Night in the Cave
+        {
+            id: "cave_camp",
+            type: "dilemma",
+            name: "The Night in the Cave!",
+            description: "Your team is running on empty, deep in a cave system. There's a dry alcove here — shelter, safety, a real night's rest. But every day matters. Push on exhausted, or make camp and lose the time?",
+            weight: 12,
+            oneTime: false,
+            terrainTypes: ["cave"],
+            choices: [
+                {
+                    text: "Make camp — the team needs rest",
+                    outcomes: [
+                        { weight: 60, narration: "A full night in the alcove. Your Pokemon sleep soundly. You eat a proper meal for the first time in days. Everyone wakes up genuinely restored.", effects: { daysLost: 1, healAll: true } },
+                        { weight: 40, narration: "You make camp and sleep — but cave sounds keep everyone half-awake. Still, the rest helps. You move on as well as you could hope for.", effects: { daysLost: 1, healAll: true, food: -5 } }
+                    ]
+                },
+                {
+                    text: "Keep moving — no time to stop",
+                    outcomes: [
+                        { weight: 50, narration: "You push through exhausted but intact. The cave opens up ahead. Whatever was in here left you alone tonight.", effects: {} },
+                        { weight: 50, narration: "Fatigue makes you sloppy. A territorial Zubat colony detects your stumbling team and attacks. It's chaotic and miserable.", effects: { partyDamageAll: 1 } }
+                    ]
+                }
+            ]
+        },
+
+        // 11. The Snorlax Toll
+        {
+            id: "snorlax_toll",
+            type: "dilemma",
+            name: "The Snorlax Toll!",
+            description: "A Snorlax is blocking the road. It is awake. It has seen you. It is not moving. It makes a low rumbling sound that you interpret as: \"pay up.\"",
+            weight: 11,
+            oneTime: false,
+            minDay: 15,
+            choices: [
+                {
+                    text: "Feed it (20 food)",
+                    requiresItem: "food",
+                    outcomes: [
+                        { weight: 70, narration: "You lay out 20 portions of food. The Snorlax eats everything in approximately four seconds, then rolls off the road with a satisfied grunt. Extortion. Pure extortion.", effects: { food: -20 } },
+                        { weight: 30, narration: "The Snorlax eats your offering and seems to warm up to you. It leans its massive head toward your team with a rumble. Everyone gets an unexpected nap against warm Snorlax fur.", effects: { food: -20, healAll: true } }
+                    ]
+                },
+                {
+                    text: "Fight your way through",
+                    outcomes: [
+                        { weight: 60, narration: "Your team throws everything at the Snorlax. It barely notices. It eventually gets bored and moves. Your team is wrecked.", effects: { partyDamage: 3 } },
+                        { weight: 40, narration: "A brutal slog of a fight. The Snorlax eventually lumbers off. Your team is battered. At least nobody died.", effects: { partyDamageAll: 1, partyDamage: 1 } }
+                    ]
+                },
+                {
+                    text: "Detour the long way (2 days)",
+                    outcomes: [
+                        { weight: 60, narration: "Two days through the wilderness. Your team is unhurt. You make camp properly each night. It's honestly not the worst.", effects: { daysLost: 2, healAll: true } },
+                        { weight: 40, narration: "Two days of detour. The wilderness is rough. You arrive at the next landmark more tired than if you'd just fought the Snorlax.", effects: { daysLost: 2, partyDamageAll: 1 } }
+                    ]
+                }
+            ]
+        },
+
+        // 12. The Fossil Researcher
+        {
+            id: "fossil_researcher",
+            type: "dilemma",
+            name: "The Fossil Researcher!",
+            description: "A Cinnabar Lab researcher is traveling with a recently revived Aerodactyl that keeps trying to bite her. \"I can't handle it and I can't take it back — the revival process is irreversible. I'll trade it for a Rare Candy. The nutrients help them stabilize.\"",
+            weight: 8,
+            oneTime: true,
+            locationIds: ["cinnabar_island"],
+            choices: [
+                {
+                    text: "Trade a Rare Candy for the Aerodactyl",
+                    requiresItem: "rareCandy",
+                    outcomes: [
+                        { weight: 70, narration: "The Aerodactyl locks eyes with you for a long moment, then stops biting. The researcher hands over the ball with visible relief. \"Good luck with that.\"", effects: { rareCandy: -1, catchPokemon: 142 } },
+                        { weight: 30, narration: "The trade happens fast. The Aerodactyl immediately tries to bite you too. Then it stops. Then it grudgingly accepts you. Ancient and terrifying — and now yours.", effects: { rareCandy: -1, catchPokemon: 142, partyDamage: 1 } }
+                    ]
+                },
+                {
+                    text: "\"Keep your prehistoric nightmare.\"",
+                    outcomes: [
+                        { weight: 100, narration: "The researcher nods wearily. She and the Aerodactyl continue down the road, arguing with each other. You keep your Rare Candy.", effects: {} }
+                    ]
+                }
+            ]
+        },
+
+        // 13. The Sick Chansey
+        {
+            id: "sick_chansey",
+            type: "dilemma",
+            name: "The Sick Chansey!",
+            description: "A wild Chansey sits alone by the roadside, shivering and clearly poisoned. It looks up at you with enormous eyes. Nurse Joy nowhere in sight. You have potions. It's going to die without help.",
+            weight: 10,
+            oneTime: false,
+            minDay: 10,
+            choices: [
+                {
+                    text: "Use your potions to heal it (costs 2)",
+                    requiresItem: "potions",
+                    outcomes: [
+                        { weight: 50, narration: "The poison clears. The Chansey wobbles upright, stares at you for a long moment, then carefully climbs into your arms. You didn't plan to have a Chansey. Here you are.", effects: { potions: -2, catchPokemon: 113 } },
+                        { weight: 30, narration: "The Chansey recovers. It nuzzles your hand and produces a Potion from the egg pouch on its stomach. Then it bounces away. A fair exchange.", effects: { potions: -2, potions: 1, healOne: true } },
+                        { weight: 20, narration: "You nurse it back to health over an hour. The Chansey fully recovers — and runs immediately. You watch it disappear into the trees. Two potions lighter. Warm in your chest anyway.", effects: { potions: -2 } }
+                    ]
+                },
+                {
+                    text: "Keep moving — you need your supplies",
+                    outcomes: [
+                        { weight: 100, narration: "You walk past. You tell yourself you're not a rescue service. You tell yourself this several more times.", effects: {} }
+                    ]
+                }
+            ]
+        },
+
+        // 14. The Legendary Rumor
+        {
+            id: "legendary_rumor",
+            type: "dilemma",
+            name: "The Legendary Rumor!",
+            description: "A trainer grabs your arm. \"I swear — two days north of here, I saw it. Huge. Flying. On fire.\" His eyes are wild. \"It was Moltres. Or Zapdos. Or... something.\" He's either telling the truth or he hasn't slept in a week. Possibly both.",
+            weight: 9,
+            oneTime: true,
+            minDay: 20,
+            choices: [
+                {
+                    text: "Hunt for it (2 days off-trail)",
+                    outcomes: [
+                        { weight: 20, narration: "You find it. Not a rumor — real, enormous, and wreathed in flame. It notices you for exactly three seconds before disappearing into the sky. In the place it stood, a single scorched feather remains. It pulses with warmth.", effects: { daysLost: 2, seePokemon: 146, rareCandy: 2, superPotions: 2 } },
+                        { weight: 20, narration: "You find the spot — scorch marks on stone, a massive wingprint. It was here. Recently. The air still crackles. You didn't see it, but you were close. Closer than most.", effects: { daysLost: 2, seePokemon: 145, food: 5 } },
+                        { weight: 60, narration: "Two days of wilderness searching. Nothing. The trainer was definitely not sleeping. You return to the road more tired than when you left.", effects: { daysLost: 2 } }
+                    ]
+                },
+                {
+                    text: "Ignore it — legends don't put food on the table",
+                    outcomes: [
+                        { weight: 100, narration: "You keep walking. Practical. Boring. Correct.", effects: {} }
+                    ]
+                }
+            ]
+        },
+
+        // 15. The Midnight Thief
+        {
+            id: "midnight_thief",
+            type: "dilemma",
+            name: "The Midnight Thief!",
+            description: "You wake to a rustling in your bag. A Meowth is sitting in your supplies, methodically eating your food with complete confidence. It has not noticed you're awake.",
+            weight: 12,
+            oneTime: false,
+            minDay: 3,
+            choices: [
+                {
+                    text: "Grab it!",
+                    outcomes: [
+                        { weight: 40, narration: "Your hand closes around the Meowth. It yowls, scratches you, then goes limp in resignation. You look at each other. Somehow this is its life now.", effects: { food: -5, catchPokemon: 52 } },
+                        { weight: 35, narration: "You lunge — the Meowth rockets out of the bag, off your Pokemon, and into the darkness. You count your remaining food. Down eight portions. The Meowth got away clean.", effects: { food: -8 } },
+                        { weight: 25, narration: "The Meowth sees you move and bolts — but drops everything it was carrying. Which is somehow more food than it could possibly have eaten. Where was it keeping that?", effects: { food: -3, money: 200 } }
+                    ]
+                },
+                {
+                    text: "Let it finish and go back to sleep",
+                    outcomes: [
+                        { weight: 60, narration: "You close your eyes. The rustling continues for another few minutes, then stops. In the morning, the bag is lighter — but the Meowth left a coin on top. A single coin. The audacity.", effects: { food: -10, money: 1 } },
+                        { weight: 40, narration: "You let it eat. In the morning, a Meowth is sitting next to your bag, looking at you. You look at it. You've apparently adopted each other.", effects: { food: -10, catchPokemon: 52 } }
+                    ]
+                }
+            ]
+        },
+
+        // 16. The Trainer's Debt
+        {
+            id: "trainers_debt",
+            type: "dilemma",
+            name: "The Trainer's Debt!",
+            description: "A young trainer blocks your path, eyes hollow. \"Please. I'm out of everything. My last Pokemon needs food. I'll give you — here —\" He holds out a Pokeball. \"She's good. I promise she's good. Eight hundred Pokedollars. I just need to get home.\"",
+            weight: 10,
+            oneTime: false,
+            minDay: 5,
+            choices: [
+                {
+                    text: "Buy the Pokemon ($800)",
+                    requiresMoney: 800,
+                    outcomes: [
+                        { weight: 35, narration: "The ball opens on a Growlithe — well-trained, alert, clearly cared for. The trainer smiles for just a second before turning away. \"She likes her neck scratched,\" he says, already walking. \"And watch out for the Rocket checkpoints past the next town. They're running ID checks.\"", effects: { money: -800, catchPokemon: 58 } },
+                        { weight: 35, narration: "A Jigglypuff pops out, immediately sings one note, and everyone nearby blinks sleepily. The trainer hands over the food money and waves. \"Thank you. Seriously.\" You gain a Pokemon and a warning about a rough route ahead.", effects: { money: -800, catchPokemon: 39, food: 5 } },
+                        { weight: 30, narration: "A Doduo bursts from the ball and immediately tries to run in two directions simultaneously. The trainer shrugs apologetically. \"She's, uh. She's loyal though.\" She is. Chaotically loyal.", effects: { money: -800, catchPokemon: 84 } }
+                    ]
+                },
+                {
+                    text: "\"I can't help you.\"",
+                    outcomes: [
+                        { weight: 60, narration: "You walk past. He watches you go without a word. The road feels longer after that.", effects: {} },
+                        { weight: 40, narration: "You can't buy the Pokemon — but you leave him some food without stopping. He calls after you. \"Thank you!\" You don't look back.", effects: { food: -8 } }
+                    ]
+                }
+            ]
+        },
+
+        // 17. The Poison Trail
+        {
+            id: "poison_trail",
+            type: "dilemma",
+            name: "The Poison Trail!",
+            description: "The path ahead is strung with trip-wires and poison needles — Team Rocket's work. Probably. You can see the traps clearly. There's a slow careful way through, or a fast reckless sprint. Turning back means two days gone.",
+            weight: 11,
+            oneTime: false,
+            minDay: 10,
+            choices: [
+                {
+                    text: "Step through carefully (1 day slower)",
+                    outcomes: [
+                        { weight: 80, narration: "Tedious, nerve-wracking work — every step deliberate. An hour in, you find a satchel caught on one of the wires. Someone else got unlucky here. Their loss, your find.", effects: { daysLost: 1, food: 8, potions: 2 } },
+                        { weight: 20, narration: "Slow and deliberate. You make it through clean. Nothing to show for the caution except intact Pokemon. That'll have to be enough.", effects: { daysLost: 1 } }
+                    ]
+                },
+                {
+                    text: "Sprint through — take the hits",
+                    outcomes: [
+                        { weight: 35, narration: "Your team moves fast enough that most needles miss. One clips your lead Pokemon. Painful, but you're through in thirty seconds.", effects: { partyDamage: 1 } },
+                        { weight: 40, narration: "The sprint goes badly. Needles find your team from every angle. The poison is mild, but multiple hits add up fast.", effects: { partyDamageAll: 1 } },
+                        { weight: 25, narration: "Somehow your team threads through every wire without a scratch. Dumb luck and fast legs. You don't question it.", effects: {} }
+                    ]
+                },
+                {
+                    text: "Turn back and detour (2 days)",
+                    outcomes: [
+                        { weight: 100, narration: "You backtrack and find another way. Two full days of extra travel. Your team is uninjured and profoundly bored.", effects: { daysLost: 2 } }
+                    ]
+                }
+            ]
+        },
+
+        // 18. The Sleeping Electrode
+        {
+            id: "sleeping_electrode",
+            type: "dilemma",
+            name: "The Sleeping Electrode!",
+            description: "An Electrode sits perfectly still in the middle of the path. Perfectly. Still. It has been there long enough that moss is growing on one side. Might be asleep. Might be seconds from detonating. No way to know.",
+            weight: 12,
+            oneTime: false,
+            minDay: 5,
+            choices: [
+                {
+                    text: "Attempt to move it very carefully",
+                    outcomes: [
+                        { weight: 45, narration: "You ease the Electrode to the side of the path inch by inch. It doesn't wake. It doesn't explode. You have never sweated this much in your life.", effects: {} },
+                        { weight: 35, narration: "It explodes. Not fully — a misfire, more of a BANG than a BOOM — but enough to knock your whole team flat.", effects: { partyDamageAll: 2 } },
+                        { weight: 20, narration: "The Electrode wakes up — and decides it likes you. It rolls off the path voluntarily and follows you for a few steps before drifting away. Make of that what you will.", effects: { catchPokemon: 101 } }
+                    ]
+                },
+                {
+                    text: "Back up slowly and take the long way",
+                    outcomes: [
+                        { weight: 100, narration: "You retreat with measured, deliberate steps, eyes never leaving the Electrode. It does not explode. You take the hour-long detour in respectful silence.", effects: { daysLost: 1 } }
+                    ]
+                }
+            ]
+        },
+
+        // 19. The Old Trainer's Farewell
+        {
+            id: "old_trainers_farewell",
+            type: "dilemma",
+            name: "The Old Trainer's Farewell!",
+            description: "An elderly trainer sits by the road with a worn Pokeball in his hands. \"Thirty years, this one and me. My hands don't work right anymore. I can't battle, can't travel. She deserves better than a rocking chair.\" He looks at you. \"You heading to the Plateau?\"",
+            weight: 9,
+            oneTime: true,
+            minDay: 15,
+            choices: [
+                {
+                    text: "Take his Arcanine with you",
+                    outcomes: [
+                        { weight: 60, narration: "The Arcanine bursts from the ball, enormous and proud. She looks at the old man once — a long look — then turns to face the road ahead. The old man can't speak for a moment. \"She'll know what to do,\" he finally says. A veteran joins your team.", effects: { catchPokemon: 59, grantStar: true } },
+                        { weight: 40, narration: "The Arcanine is larger than you expected. Battle-worn, scarred — and absolutely magnificent. She regards you with ancient calm before sitting at your feet. The old man wipes his eyes and waves you off.", effects: { catchPokemon: 59, boostPokemonMaxHp: 1 } }
+                    ]
+                },
+                {
+                    text: "\"She should stay with you.\"",
+                    outcomes: [
+                        { weight: 60, narration: "The old trainer looks at you for a long moment. Then he smiles. He rummages in his bag and hands you everything he has left — supplies accumulated over a lifetime. \"For the road,\" he says. \"Win it for us.\"", effects: { superPotions: 3, food: 20, rareCandy: 1, healAll: true } },
+                        { weight: 40, narration: "He nods slowly. \"You're right. I'm being selfish.\" He doesn't look sad anymore. He looks at peace. The Arcanine presses her head into his chest. He gives you his emergency supplies and a blessing from someone who's been to the Plateau and back.", effects: { superPotions: 2, food: 15, healAll: true } }
+                    ]
+                }
+            ]
+        },
+
+        // 20. The Smuggler's Bag
+        {
+            id: "smugglers_bag",
+            type: "dilemma",
+            name: "The Smuggler's Bag!",
+            description: "A large bag sits unattended at a crossroads. No trainer in sight. Inside: ultra balls, super potions, and a wad of cash. Clearly stolen. You could take what you need, report it to Officer Jenny at the next town, or leave it entirely.",
+            weight: 11,
+            oneTime: false,
+            minDay: 8,
+            choices: [
+                {
+                    text: "Take what you need",
+                    outcomes: [
+                        { weight: 50, narration: "You grab the supplies and go. An hour later, two Team Rocket grunts intercept you — apparently tracking the bag. They want it back. You don't give it back. The fight is ugly.", effects: { ultraballs: 2, superPotions: 3, money: 600, partyDamageAll: 1 } },
+                        { weight: 50, narration: "You grab everything useful and disappear down the trail. Nobody comes looking. Clean.", effects: { ultraballs: 2, superPotions: 3, money: 600 } }
+                    ]
+                },
+                {
+                    text: "Report it to Officer Jenny",
+                    outcomes: [
+                        { weight: 70, narration: "Jenny thanks you and hands you a proper reward for returning stolen goods. Clean conscience, clean hands.", effects: { money: 400, potions: 2 } },
+                        { weight: 30, narration: "Jenny thanks you profusely and insists you take a full reward. \"Honestly? Half the supplies were ours anyway.\" She hands over more than you expected.", effects: { money: 600, superPotions: 2, food: 10 } }
+                    ]
+                },
+                {
+                    text: "Leave it — not your problem",
+                    outcomes: [
+                        { weight: 100, narration: "You walk past the bag without touching it. Someone else's problem, someone else's risk. The road is cleaner without it.", effects: {} }
+                    ]
+                }
+            ]
+        },
+
+        // 21. The Mirror Cave
+        {
+            id: "mirror_cave",
+            type: "dilemma",
+            name: "The Mirror Cave!",
+            description: "The cave walls are sheeted in natural crystal, perfectly reflective. Your team sees themselves everywhere — reflections in every direction. Your Pokemon are agitated, spooked by their own doubles. Three ways through: push on confused, smash the crystals to navigate, or wait for everyone to adjust.",
+            weight: 10,
+            oneTime: false,
+            terrainTypes: ["cave"],
+            minDay: 10,
+            choices: [
+                {
+                    text: "Push through — ignore the reflections",
+                    outcomes: [
+                        { weight: 40, narration: "Your team makes it through bewildered but intact. On the other side, everyone shakes their heads and settles. Disorienting — but fine.", effects: {} },
+                        { weight: 35, narration: "Three of your Pokemon get into scuffles with their own reflections before you drag everyone through. Embarrassing for all parties.", effects: { partyDamageAll: 1 } },
+                        { weight: 25, narration: "Chaos. Total chaos. Your team crashes into each other trying to fight mirrors. You make it through, but it's a rough passage.", effects: { partyDamage: 2 } }
+                    ]
+                },
+                {
+                    text: "Smash the crystals — clear a path",
+                    outcomes: [
+                        { weight: 60, narration: "Your Pokemon break the crystals systematically. It takes time, and everyone picks up cuts from the shards — but the path is clear. Inside the broken crystal: a natural gem cache.", effects: { partyDamageAll: 1, money: 500, food: 5 } },
+                        { weight: 40, narration: "The crystals shatter easily. In the rubble, you find an old supply cache that previous trainers must have stashed. The cuts from the shards were worth it.", effects: { partyDamage: 1, superPotions: 2, greatballs: 2 } }
+                    ]
+                },
+                {
+                    text: "Wait for everyone to adjust (1 day)",
+                    outcomes: [
+                        { weight: 80, narration: "An hour in the crystal antechamber, letting your team get used to the reflections. Then a calm, focused march through. Clean passage, no drama.", effects: { daysLost: 1 } },
+                        { weight: 20, narration: "Waiting works. Your team acclimates, moves through smoothly — and on the far side, someone finds a hidden potion nook in the cave wall.", effects: { daysLost: 1, superPotions: 2, food: 8 } }
+                    ]
+                }
+            ]
+        },
+
+        // 6. The Psychic's Fork
+        {
+            id: "psychics_fork",
+            type: "dilemma",
+            name: "The Psychic's Fork!",
+            description: "Sabrina's apprentice blocks the crossroads, eyes glazed. \"I've seen both paths. The coastal route — safe, beautiful, slow. Two days longer. The mountain pass — fast, but something is waiting in there. I can't see what. I never can with mountain events.\" She steps aside.",
+            weight: 12,
+            oneTime: false,
+            minDay: 10,
+            choices: [
+                {
+                    text: "Coastal route — safe, lose 2 days",
+                    outcomes: [
+                        { weight: 60, narration: "Two unhurried days along the coast. Your team rests properly for the first time in weeks. They arrive at the next town in better shape than when they left.", effects: { daysLost: 2, healAll: true } },
+                        { weight: 40, narration: "The coastal route is peaceful. Nothing happens. Two full days of nothing. Your team is bored but healthy.", effects: { daysLost: 2, food: 5 } }
+                    ]
+                },
+                {
+                    text: "Mountain pass — fast, unknown danger",
+                    outcomes: [
+                        { weight: 30, narration: "The pass is clear. Whatever the psychic sensed must have moved on. You make excellent time — almost suspiciously good. No complaints.", effects: {} },
+                        { weight: 35, narration: "Halfway through the pass, you run into a rockslide. Your team digs through it, battered by falling stone.", effects: { partyDamageAll: 1 } },
+                        { weight: 20, narration: "A Graveler nest. They wake up angry. Your team runs a brutal gauntlet through the pass.", effects: { partyDamage: 3 } },
+                        { weight: 15, narration: "The danger the psychic sensed? A treasure-filled cave that's about to collapse. You grab everything before the entrance seals behind you.", effects: { food: 10, greatballs: 3, rareCandy: 1, partyDamageAll: 1 } }
+                    ]
+                }
+            ]
         }
     ];
 })();
