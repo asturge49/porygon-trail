@@ -15,6 +15,12 @@
         </div>
     </div>
 
+    <!-- Supabase -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <!-- Config (fill in your Supabase URL + anon key here) -->
+    <script src="engine/config.js"></script>
+
     <!-- Data -->
     <script src="data/pokemon.js"></script>
     <script src="data/routes.js"></script>
@@ -25,6 +31,7 @@
 
     <!-- Engine -->
     <script src="engine/rng.js"></script>
+    <script src="engine/auth.js"></script>
     <script src="engine/game-state.js"></script>
     <script src="engine/screen-manager.js"></script>
     <script src="engine/encounter-engine.js"></script>
@@ -33,9 +40,11 @@
     <script src="engine/leaderboard-api.js"></script>
     <script src="engine/scoring.js"></script>
     <script src="engine/records.js"></script>
+    <script src="engine/telemetry.js"></script>
 
     <!-- Screens -->
     <script src="screens/title-screen.js"></script>
+    <script src="screens/login-screen.js"></script>
     <script src="screens/starter-screen.js"></script>
     <script src="screens/travel-screen.js"></script>
     <script src="screens/encounter-screen.js"></script>
@@ -54,13 +63,24 @@
     <!-- Audio -->
     <script src="engine/audio.js"></script>
 
-    <!-- Main -->
+    <!-- Main: restore session then route to title or login -->
     <script>
         (function() {
             const PT = window.PorygonTrail;
             PT.App = PT.Engine.ScreenManager;
             PT.App.init(document.getElementById('app'));
-            PT.App.goto('TITLE');
+
+            const auth = PT.Engine.Auth;
+            if (auth && auth.isConfigured()) {
+                auth.restoreSession().then(loggedIn => {
+                    PT.App.goto(loggedIn ? 'TITLE' : 'LOGIN');
+                }).catch(() => {
+                    PT.App.goto('LOGIN');
+                });
+            } else {
+                // Supabase not configured — dev mode, skip auth
+                PT.App.goto('TITLE');
+            }
         })();
     </script>
 </body>

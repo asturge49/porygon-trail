@@ -1,15 +1,11 @@
 // Porygon Trail - Leaderboard API
-// Abstraction layer for local + global leaderboards.
-// Currently uses localStorage for both. When ready to add Firebase:
-// 1. Add Firebase SDK to index.html
-// 2. Replace the global methods below with Firebase calls
-// 3. Everything else (UI, scoring) stays the same
+// Local (localStorage) + Global (Supabase) leaderboards
 (function() {
     const PT = window.PorygonTrail;
     PT.Engine = PT.Engine || {};
 
     const LOCAL_KEY = 'porygonTrail_leaderboard';
-    const MAX_ENTRIES = 10;
+    const MAX_LOCAL = 10;
 
     // ===== LOCAL (Personal) =====
     function getLocalLeaderboard() {
@@ -25,7 +21,7 @@
         const board = getLocalLeaderboard();
         board.push(entry);
         board.sort((a, b) => b.score - a.score);
-        const top = board.slice(0, MAX_ENTRIES);
+        const top = board.slice(0, MAX_LOCAL);
         try {
             localStorage.setItem(LOCAL_KEY, JSON.stringify(top));
         } catch (e) {
@@ -38,53 +34,122 @@
         localStorage.removeItem(LOCAL_KEY);
     }
 
-    // ===== GLOBAL =====
-    // TODO: Replace these stubs with Firebase Realtime Database calls
-    // When ready:
-    //   1. npm install firebase (or add CDN script to index.html):
-    //      <script src="https://www.gstatic.com/firebasejs/10.x.x/firebase-app-compat.js"></script>
-    //      <script src="https://www.gstatic.com/firebasejs/10.x.x/firebase-database-compat.js"></script>
-    //   2. Initialize Firebase with your config:
-    //      firebase.initializeApp({ apiKey: "...", databaseURL: "...", projectId: "..." });
-    //   3. Replace getGlobalLeaderboard() with:
-    //      async function getGlobalLeaderboard() {
-    //          const snap = await firebase.database().ref('leaderboard').orderByChild('score').limitToLast(10).once('value');
-    //          const entries = [];
-    //          snap.forEach(child => entries.push(child.val()));
-    //          return entries.sort((a, b) => b.score - a.score);
-    //      }
-    //   4. Replace saveGlobal() with:
-    //      async function saveGlobal(entry) {
-    //          await firebase.database().ref('leaderboard').push(entry);
-    //      }
-    //   5. Set globalEnabled = true below
-
-    let globalEnabled = false;
+    // ===== GLOBAL (Supabase) =====
+    function isGlobalEnabled() {
+        return !!(PT.Engine.Auth && PT.Engine.Auth.isConfigured());
+    }
 
     async function getGlobalLeaderboard() {
-        if (!globalEnabled) return null; // null signals "not configured"
-        // Firebase implementation goes here
-        return [];
+        const auth = PT.Engine.Auth;
+        if (!auth || !auth.isConfigured()) return null;
+
+        const client = auth.getClient();
+        if (!client) return null;
+
+        const { data, error } = await client
+            .from('pt_leaderboard')
+            .select('username, score, pokedex_count, badges, days_elapsed, won, date')
+            .order('score', { ascending: false })
+            .limit(20);
+
+        if (error) {
+            console.warn('Could not fetch global leaderboard:', error);
+            return null;
+        }
+
+        return data.map(row => ({
+            name: row.username,
+            score: row.score,
+            pokedexCount: row.pokedex_count,
+            badges: row.badges,
+            daysElapsed: row.days_elapsed,
+            won: row.won,
+            date: row.date
+        }));
+    }
+
+    // Top 10 unique trainers ranked by their personal best run
+    async function getTopTrainers() {
+        const auth = PT.Engine.Auth;
+        if (!auth || !auth.isConfigured()) return null;
+
+        const client = auth.getClient();
+        if (!client) return null;
+
+        // Fetch enough rows to guarantee we find 10 unique users
+        const { data, error } = await client
+            .from('pt_leaderboard')
+            .select('user_id, username, score, pokedex_count, badges, days_elapsed, won, date')
+            .order('score', { ascending: false })
+            .limit(500);
+
+        if (error) {
+            console.warn('Could not fetch top trainers:', error);
+            return null;
+        }
+
+        // Keep only the highest-scoring run per user_id
+        const seen = new Set();
+        const trainers = [];
+        for (const row of data) {
+            if (!seen.has(row.user_id)) {
+                seen.add(row.user_id);
+                trainers.push({
+                    name: row.username,
+                    score: row.score,
+                    pokedexCount: row.pokedex_count,
+                    badges: row.badges,
+                    daysElapsed: row.days_elapsed,
+                    won: row.won,
+                    date: row.date
+                });
+            }
+            if (trainers.length >= 10) break;
+        }
+        return trainers;
     }
 
     async function saveGlobal(entry) {
-        if (!globalEnabled) return;
-        // Firebase implementation goes here
+        const auth = PT.Engine.Auth;
+        if (!auth || !auth.isLoggedIn()) return;
+
+        const client = auth.getClient();
+        if (!client) return;
+
+        const user = auth.getCurrentUser();
+        const username = auth.getCurrentUsername();
+
+        const { error } = await client.from('pt_leaderboard').insert({
+            user_id: user.id,
+            username: username,
+            score: entry.score,
+            pokedex_count: entry.pokedexCount || 0,
+            badges: entry.badges || 0,
+            days_elapsed: entry.daysElapsed || 0,
+            won: entry.won || false,
+            date: entry.date || new Date().toLocaleDateString()
+        });
+
+        if (error) {
+            console.warn('Could not save global score:', error);
+        }
     }
 
-    function isGlobalEnabled() {
-        return globalEnabled;
-    }
-
-    // ===== UNIFIED SAVE (called from gameover/victory) =====
+    // ===== UNIFIED SAVE (called from gameover/victory via Scoring module) =====
     function saveToLeaderboard(entry) {
         saveLocal(entry);
-        saveGlobal(entry); // no-op until Firebase is configured
+        // Tag with logged-in username before saving locally too
+        const auth = PT.Engine.Auth;
+        if (auth && auth.isLoggedIn()) {
+            entry.name = auth.getCurrentUsername();
+        }
+        saveGlobal(entry); // async, fire-and-forget
     }
 
     PT.Engine.LeaderboardAPI = {
         getLocalLeaderboard,
         getGlobalLeaderboard,
+        getTopTrainers,
         saveToLeaderboard,
         saveLocal,
         saveGlobal,

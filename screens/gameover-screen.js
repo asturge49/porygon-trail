@@ -20,6 +20,17 @@
             // Save Pokedex data across playthroughs
             PT.Engine.Scoring.updateGlobalPokedex(state);
 
+            // Telemetry
+            PT.Engine.Telemetry.logEvent('game_over', {
+                route: route.name,
+                route_index: state.currentLocationIndex,
+                reason: state.gameOverReason,
+                days_elapsed: state.daysElapsed,
+                score: score,
+                badges: state.badges.filter(b => b !== 'champion').length,
+                pokedex_count: state.pokedexCaught.length
+            });
+
             // Save score
             PT.Engine.Scoring.saveToLeaderboard({
                 name: state.trainerName,

@@ -66,8 +66,14 @@
             document.getElementById('btn-start').addEventListener('click', () => {
                 if (!selectedStarter) return;
                 const name = document.getElementById('trainer-name').value.trim().toUpperCase() || 'RED';
+                const starterData = STARTERS.find(s => s.id === selectedStarter);
                 PT.State = PT.Engine.GameState.createNewGame(name, selectedStarter);
-                PT.Engine.GameState.addToLog(PT.State, `${name} set out from Pallet Town with ${STARTERS.find(s => s.id === selectedStarter).name}!`);
+                PT.Engine.GameState.addToLog(PT.State, `${name} set out from Pallet Town with ${starterData.name}!`);
+                PT.Engine.Telemetry.logEvent('game_start', {
+                    trainer_name: name,
+                    starter_id: selectedStarter,
+                    starter_name: starterData.name
+                });
                 PT.App.goto('TRAVEL');
             });
 

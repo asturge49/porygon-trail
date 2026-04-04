@@ -541,17 +541,27 @@
     // ===== SAVE / LOAD =====
     const SAVE_KEY = 'porygonTrail_save';
 
+    function serializeState(state) {
+        const saveData = Object.assign({}, state);
+        saveData._rngSeed = state.rng.getSeed();
+        saveData._rngState = state.rng.getState();
+        delete saveData.rng;
+        delete saveData._gymWarningShown;
+        return saveData;
+    }
+
     function saveGame(state) {
         if (!state || state.isGameOver || state.hasWon) return false;
         try {
-            const saveData = Object.assign({}, state);
-            // Serialize RNG state (functions can't be stored in JSON)
-            saveData._rngSeed = state.rng.getSeed();
-            saveData._rngState = state.rng.getState();
-            delete saveData.rng;
-            // Remove any transient UI fields
-            delete saveData._gymWarningShown;
+            const saveData = serializeState(state);
             localStorage.setItem(SAVE_KEY, JSON.stringify(saveData));
+
+            // Background cloud sync (fire-and-forget)
+            const auth = PT.Engine.Auth;
+            if (auth && auth.isLoggedIn()) {
+                cloudSave(state).catch(() => {});
+            }
+
             return true;
         } catch (e) {
             console.warn('Could not save game:', e);
@@ -586,6 +596,88 @@
 
     function deleteSave() {
         localStorage.removeItem(SAVE_KEY);
+        // Also clear cloud save (fire-and-forget)
+        const auth = PT.Engine.Auth;
+        if (auth && auth.isLoggedIn()) {
+            deleteCloudSave().catch(() => {});
+        }
+    }
+
+    // ===== CLOUD SAVE / LOAD =====
+    async function cloudSave(state) {
+        const auth = PT.Engine.Auth;
+        if (!auth || !auth.isLoggedIn()) return false;
+        const client = auth.getClient();
+        if (!client) return false;
+        try {
+            const saveData = serializeState(state);
+            const { error } = await client.from('pt_saves').upsert({
+                user_id: auth.getCurrentUser().id,
+                save_data: saveData,
+                updated_at: new Date().toISOString()
+            }, { onConflict: 'user_id' });
+            return !error;
+        } catch (e) {
+            console.warn('Cloud save failed:', e);
+            return false;
+        }
+    }
+
+    async function cloudLoad() {
+        const auth = PT.Engine.Auth;
+        if (!auth || !auth.isLoggedIn()) return null;
+        const client = auth.getClient();
+        if (!client) return null;
+        try {
+            const { data, error } = await client
+                .from('pt_saves')
+                .select('save_data')
+                .eq('user_id', auth.getCurrentUser().id)
+                .maybeSingle();
+            if (error || !data) return null;
+
+            const saveData = data.save_data;
+            saveData.rng = PT.Engine.RNG.createRNG(saveData._rngSeed);
+            saveData.rng.setState(saveData._rngState);
+            delete saveData._rngSeed;
+            delete saveData._rngState;
+            (saveData.party || []).forEach(p => { p.spriteUrl = getSpriteUrl(p.id); });
+            return saveData;
+        } catch (e) {
+            console.warn('Cloud load failed:', e);
+            return null;
+        }
+    }
+
+    async function deleteCloudSave() {
+        const auth = PT.Engine.Auth;
+        if (!auth || !auth.isLoggedIn()) return;
+        const client = auth.getClient();
+        if (!client) return;
+        try {
+            await client.from('pt_saves')
+                .delete()
+                .eq('user_id', auth.getCurrentUser().id);
+        } catch (e) {
+            console.warn('Cloud delete failed:', e);
+        }
+    }
+
+    async function hasCloudSave() {
+        const auth = PT.Engine.Auth;
+        if (!auth || !auth.isLoggedIn()) return false;
+        const client = auth.getClient();
+        if (!client) return false;
+        try {
+            const { data } = await client
+                .from('pt_saves')
+                .select('user_id')
+                .eq('user_id', auth.getCurrentUser().id)
+                .maybeSingle();
+            return !!data;
+        } catch (e) {
+            return false;
+        }
     }
 
     PT.Engine.GameState = {
@@ -616,6 +708,10 @@
         saveGame,
         loadGame,
         hasSaveGame,
-        deleteSave
+        deleteSave,
+        cloudSave,
+        cloudLoad,
+        deleteCloudSave,
+        hasCloudSave
     };
 })();
