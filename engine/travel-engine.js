@@ -9,6 +9,37 @@
         push: { distance: 20, foodMult: 2, encounterMod: 10, eventMod: 15, injuryChance: 20 }
     };
 
+    // Return the name(s) of alive party members with the given ability
+    function abilityHolder(state, ability) {
+        const holders = state.party.filter(p => p.status !== 'fainted' && p.travelAbility === ability);
+        if (holders.length === 0) return null;
+        if (holders.length === 1) return holders[0].name;
+        return holders.slice(0, -1).map(p => p.name).join(', ') + ' & ' + holders[holders.length - 1].name;
+    }
+
+    // After any damagePokemon() call, check transient save flags and push named messages
+    function checkSaveMessages(pokemon, state, results) {
+        if (pokemon._safeguardSaved) {
+            const savior = abilityHolder(state, 'safeguard') || 'Chansey';
+            results.messages.push(`🩹 SAFEGUARD: ${savior} stepped in and saved ${pokemon.name} from fainting! (1 HP)`);
+            pokemon._safeguardSaved = false;
+        }
+        if (pokemon._systemRestored) {
+            const savior = abilityHolder(state, 'system_restore') || 'Porygon';
+            results.messages.push(`💾 SYSTEM RESTORE: ${savior} restored ${pokemon.name} from backup data! (1 HP)`);
+            pokemon._systemRestored = false;
+        }
+        if (pokemon._clutched) {
+            results.messages.push(`⭐ CLUTCH: ${pokemon.name}'s battle experience kicked in — survived at 1 HP!`);
+            pokemon._clutched = false;
+        }
+        if (pokemon._auroraBlocked) {
+            const savior = abilityHolder(state, 'aurora_veil') || 'Articuno';
+            results.messages.push(`❄️ AURORA VEIL: ${savior} absorbed the hit meant for ${pokemon.name}!`);
+            pokemon._auroraBlocked = false;
+        }
+    }
+
     function advanceDay(state) {
         const results = {
             dayNumber: state.daysElapsed + 1,
@@ -76,7 +107,8 @@
         if (firePower > 0 && foodConsumed > 1) {
             const fireSaved = Math.max(1, Math.floor(firePower));
             state.resources.food = Math.min(state.resources.food + fireSaved, 999);
-            results.messages.push(`🔥 FIRE ABILITY: Your Fire-type cooked efficiently! (+${fireSaved} food saved)`);
+            const fireName = abilityHolder(state, 'fire');
+            results.messages.push(`🔥 ${fireName} cooked efficiently, saving ${fireSaved} food!`);
         }
 
         // Cut ability forages for extra food (stacks + scales)
@@ -84,7 +116,8 @@
         if (cutPower > 0 && state.rng.chance(25)) {
             const foraged = Math.max(1, Math.floor(state.rng.randInt(1, 3) * cutPower));
             state.resources.food += foraged;
-            results.messages.push(`🌿 CUT ABILITY: Your Pokemon cut through brush and foraged +${foraged} food!`);
+            const cutName = abilityHolder(state, 'cut');
+            results.messages.push(`🌿 ${cutName} cut through the brush and foraged +${foraged} food!`);
         }
 
         // --- Starvation check ---
@@ -95,6 +128,7 @@
             const starving = PT.Engine.GameState.getAliveParty(state);
             starving.forEach(p => {
                 PT.Engine.GameState.damagePokemon(p, 1, state);
+                checkSaveMessages(p, state, results);
             });
             if (starving.length > 0) {
                 results.messages.push(`All Pokemon take 1 damage from hunger!`);
@@ -123,12 +157,13 @@
             const injured = PT.Engine.GameState.getAliveParty(state).filter(p => p.hp < p.maxHp);
             if (injured.length > 0 && state.rng.chance(40)) {
                 const healCount = Math.min(injured.length, Math.max(1, Math.floor(healPower)));
+                const healerName = abilityHolder(state, 'heal');
                 for (let h = 0; h < healCount; h++) {
                     const toHeal = injured.filter(p => p.hp < p.maxHp);
                     if (toHeal.length === 0) break;
                     const healed = state.rng.pick(toHeal);
                     healed.hp = Math.min(healed.hp + 1, healed.maxHp);
-                    results.messages.push(`💗 HEAL ABILITY: ${healed.name} was healed by your healer Pokemon!`);
+                    results.messages.push(`💗 ${healerName} nursed ${healed.name} back to health! (+1 HP)`);
                 }
             }
         }
@@ -144,18 +179,21 @@
             if (strengthPower > 0) {
                 const reduction = Math.min(0.8, strengthPower * 0.15); // 15% reduction per power, max 80%
                 effectiveInjuryChance = Math.floor(effectiveInjuryChance * (1 - reduction));
-                results.messages.push("💪 STRENGTH ABILITY: Your strong Pokemon carries the weaker ones, reducing injury risk!");
+                const strengthName = abilityHolder(state, 'strength');
+                results.messages.push(`💪 ${strengthName} is carrying the team, reducing injury risk!`);
             }
             if (state.rng.chance(effectiveInjuryChance)) {
                 // Guard ability can block the injury entirely (scales with power)
                 const guardPower = PT.Engine.GameState.getAbilityPower(state, 'guard');
                 const guardChance = guardPower > 0 ? Math.min(70, Math.floor(15 * guardPower)) : 0;
                 if (guardPower > 0 && state.rng.chance(guardChance)) {
-                    results.messages.push("🛡️ GUARD ABILITY: Your defensive Pokemon shielded the party from injury!");
+                    const guardName = abilityHolder(state, 'guard');
+                    results.messages.push(`🛡️ ${guardName} shielded the party from injury!`);
                 } else {
                     const victim = state.rng.pick(PT.Engine.GameState.getAliveParty(state));
                     if (victim) {
                         PT.Engine.GameState.damagePokemon(victim, 1, state);
+                        checkSaveMessages(victim, state, results);
                         results.messages.push(`The grueling pace injured ${victim.name}!`);
                     }
                 }
@@ -166,6 +204,7 @@
         [...state.party].forEach(p => {
             if (p.status === 'poisoned') {
                 const fainted = PT.Engine.GameState.damagePokemon(p, 1, state);
+                checkSaveMessages(p, state, results);
                 results.messages.push(`${p.name} takes poison damage!`);
                 if (fainted) {
                     results.messages.push(`${p.name} died from poison! 💀`);
@@ -187,7 +226,8 @@
         if (flyPower > 0 && pace.distance > 0 && nextRoute && !results.arrivedAtLocation) {
             const flyBonus = Math.max(1, Math.floor(3 * flyPower));
             state.distanceTraveled += flyBonus;
-            results.messages.push(`🦅 FLY ABILITY: Your Flying-type scouts shortcuts! (+${flyBonus} miles)`);
+            const flyName = abilityHolder(state, 'fly');
+            results.messages.push(`🦅 ${flyName} scouted a shortcut! (+${flyBonus} miles)`);
             // Re-check arrival after fly bonus
             if (state.distanceTraveled >= route.distanceToNext) {
                 state.currentLocationIndex++;
@@ -205,7 +245,8 @@
             if (route.terrain === 'water') {
                 const surfBonus = Math.max(1, Math.floor(5 * surfPower));
                 state.distanceTraveled += surfBonus;
-                results.messages.push(`🌊 SURF ABILITY: Your Water-type surfs ahead! (+${surfBonus} miles on water)`);
+                const surfName = abilityHolder(state, 'surf');
+                results.messages.push(`🌊 ${surfName} surfs ahead on the open water! (+${surfBonus} miles)`);
                 if (state.distanceTraveled >= route.distanceToNext) {
                     state.currentLocationIndex++;
                     state.distanceTraveled = 0;
@@ -220,18 +261,19 @@
         // --- Flash ability: find hidden items/money (stacks + scales) ---
         const flashPower = PT.Engine.GameState.getAbilityPower(state, 'flash');
         if (flashPower > 0 && state.rng.chance(20)) {
+            const flashName = abilityHolder(state, 'flash');
             const flashRoll = state.rng.randInt(1, 100);
             if (flashRoll <= 40) {
                 const baseMoneyFound = Math.floor(state.rng.randInt(50, 200) * flashPower);
                 const moneyFound = PT.Engine.GameState.applyPayDay(state, baseMoneyFound);
                 state.resources.money += moneyFound;
-                results.messages.push(`⚡ FLASH ABILITY: Your Electric-type illuminated a hidden stash! Found $${moneyFound}!${moneyFound > baseMoneyFound ? ' 💰 PAY DAY!' : ''}`);
+                results.messages.push(`⚡ ${flashName} lit up a hidden stash! Found $${moneyFound}!${moneyFound > baseMoneyFound ? ' 💰 PAY DAY!' : ''}`);
             } else if (flashRoll <= 70) {
                 state.resources.potions++;
-                results.messages.push("⚡ FLASH ABILITY: Your Electric-type lit up a hidden Potion!");
+                results.messages.push(`⚡ ${flashName} found a hidden Potion!`);
             } else {
                 state.resources.pokeballs += 2;
-                results.messages.push("⚡ FLASH ABILITY: Your Electric-type found 2 hidden Poke Balls!");
+                results.messages.push(`⚡ ${flashName} found 2 hidden Poke Balls!`);
             }
         }
 
@@ -265,13 +307,14 @@
         const psychicPower = PT.Engine.GameState.getAbilityPower(state, 'psychic');
         const psychicChance = psychicPower > 0 ? Math.min(70, Math.floor(20 * psychicPower)) : 0;
         if (psychicPower > 0 && state.rng.chance(psychicChance)) {
+            const psychicName = abilityHolder(state, 'psychic');
             if (results.encounter) {
                 // Roll a second encounter as an alternative
                 const alt = PT.Engine.EncounterEngine.rollEncounter(state);
                 if (alt && alt.id !== results.encounter.id) {
                     results.psychicChoice = 'encounter';
                     results.psychicAlt = alt;
-                    results.messages.push("🔮 PSYCHIC ABILITY: Your Psychic-type foresees two possible encounters!");
+                    results.messages.push(`🔮 ${psychicName} foresees two possible encounters!`);
                 }
             } else if (results.event) {
                 // Roll a second event as an alternative
@@ -279,7 +322,7 @@
                 if (alt && alt.id !== results.event.id) {
                     results.psychicChoice = 'event';
                     results.psychicAlt = alt;
-                    results.messages.push("🔮 PSYCHIC ABILITY: Your Psychic-type foresees two possible futures!");
+                    results.messages.push(`🔮 ${psychicName} foresees two possible futures!`);
                 }
             } else {
                 // No encounter or event — psychic forces an encounter choice
@@ -289,10 +332,10 @@
                     results.encounter = enc1;
                     results.psychicChoice = 'encounter';
                     results.psychicAlt = enc2;
-                    results.messages.push("🔮 PSYCHIC ABILITY: Your Psychic-type senses wild Pokemon nearby — choose which to face!");
+                    results.messages.push(`🔮 ${psychicName} senses wild Pokemon nearby — choose which to face!`);
                 } else if (enc1) {
                     results.encounter = enc1;
-                    results.messages.push("🔮 PSYCHIC ABILITY: Your Psychic-type detected a wild Pokemon!");
+                    results.messages.push(`🔮 ${psychicName} detected a wild Pokemon!`);
                 }
             }
         }
@@ -330,6 +373,7 @@
                 const victim = state.rng.pick(PT.Engine.GameState.getAliveParty(state));
                 if (victim) {
                     PT.Engine.GameState.damagePokemon(victim, 1, state);
+                    checkSaveMessages(victim, state, results);
                     results.messages.push(`👾 GLITCH ABILITY: Buffer overflow! ${victim.name} took 1 glitch damage!`);
                 }
             }
