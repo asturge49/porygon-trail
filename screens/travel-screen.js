@@ -237,7 +237,6 @@
                 <div class="travel-header">
                     <span>Day ${state.daysElapsed} | ${state.trainerName}</span>
                     <span>${state.badges.filter(b => b !== 'champion').length} Badges | ${state.pokedexCaught.length} Caught</span>
-                    <button class="btn-map" id="btn-map" title="Map">MAP</button>
                 </div>
 
                 <div class="travel-scene" data-time="${timeOfDay}" style="background: ${scene.sky}">
@@ -302,7 +301,7 @@
                 </div>
 
                 <div class="travel-actions">
-                    <button class="btn btn-small" id="btn-continue">${isAtDestination ? 'FINAL STOP' : 'CONTINUE'}</button>
+                    <button class="btn-map" id="btn-map" title="Map">MAP</button>
                     <button class="btn btn-small" id="btn-inventory">BAG</button>
                     ${route.hasShop ? '<button class="btn btn-small" id="btn-shop">MART</button>' : '<button class="btn btn-small" disabled>NO MART</button>'}
                     ${route.hasGym && !state.badges.includes(PT.Data.GymLeaders[route.gymLeader]?.badge)
@@ -326,6 +325,10 @@
                         </div>
                     `).join('')}
                     ${state.party.length === 0 ? '<div style="text-align:center;font-size:7px;">No Pokemon!</div>' : ''}
+                </div>
+
+                <div class="travel-continue-wrap">
+                    <button class="btn btn-wide btn-continue-main" id="btn-continue">${isAtDestination ? 'FINAL STOP' : 'CONTINUE'}</button>
                 </div>
             `;
             container.appendChild(div);
