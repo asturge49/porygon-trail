@@ -83,6 +83,23 @@
         return PT.Engine.LeaderboardAPI.saveToLeaderboard(entry);
     }
 
+    // Pushes the current (unfinished) run's score to the global leaderboard,
+    // so runs that get abandoned mid-game still show up.
+    function saveRunInProgress(state) {
+        if (!state || !state.runId) return;
+        const { score } = calculateScore(state);
+        PT.Engine.LeaderboardAPI.saveInProgress({
+            runId: state.runId,
+            name: state.trainerName,
+            score: score,
+            pokedexCount: state.pokedexCaught.length,
+            badges: state.badges.length,
+            daysElapsed: state.daysElapsed,
+            date: new Date().toLocaleDateString(),
+            won: false
+        });
+    }
+
     function getLeaderboard() {
         return PT.Engine.LeaderboardAPI.getLocalLeaderboard();
     }
@@ -179,7 +196,7 @@
     }
 
     PT.Engine.Scoring = {
-        calculateScore, saveToLeaderboard, getLeaderboard, clearLeaderboard,
+        calculateScore, saveToLeaderboard, saveRunInProgress, getLeaderboard, clearLeaderboard,
         getGlobalPokedex, updateGlobalPokedex, clearGlobalPokedex
     };
 })();

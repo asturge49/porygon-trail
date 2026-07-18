@@ -1976,6 +1976,8 @@ body {
 
 .rank-1 { color: var(--gb-darkest); font-weight: bold; }
 
+.leaderboard-row.in-progress { opacity: 0.7; font-style: italic; }
+
 .leaderboard-tabs {
     display: flex;
     gap: 0;

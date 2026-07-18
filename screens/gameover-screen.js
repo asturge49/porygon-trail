@@ -35,6 +35,7 @@
 
             // Save score
             PT.Engine.Scoring.saveToLeaderboard({
+                runId: state.runId,
                 name: state.trainerName,
                 score: score,
                 pokedexCount: state.pokedexCaught.length,

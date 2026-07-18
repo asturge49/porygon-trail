@@ -48,7 +48,7 @@
 
         const { data, error } = await client
             .from('pt_leaderboard')
-            .select('user_id, username, score, pokedex_count, badges, days_elapsed, won, date')
+            .select('user_id, username, score, pokedex_count, badges, days_elapsed, won, date, status')
             .order('score', { ascending: false })
             .limit(20);
 
@@ -65,7 +65,8 @@
             badges: row.badges,
             daysElapsed: row.days_elapsed,
             won: row.won,
-            date: row.date
+            date: row.date,
+            inProgress: row.status === 'in_progress'
         }));
     }
 
@@ -80,7 +81,7 @@
         // Fetch enough rows to guarantee we find 10 unique users
         const { data, error } = await client
             .from('pt_leaderboard')
-            .select('user_id, username, score, pokedex_count, badges, days_elapsed, won, date')
+            .select('user_id, username, score, pokedex_count, badges, days_elapsed, won, date, status')
             .order('score', { ascending: false })
             .limit(500);
 
@@ -103,7 +104,8 @@
                     badges: row.badges,
                     daysElapsed: row.days_elapsed,
                     won: row.won,
-                    date: row.date
+                    date: row.date,
+                    inProgress: row.status === 'in_progress'
                 });
             }
             if (trainers.length >= 10) break;
@@ -111,9 +113,12 @@
         return trainers;
     }
 
-    async function saveGlobal(entry) {
+    // Insert or update this run's row (keyed by run_id), so an in-progress run
+    // can keep updating the same leaderboard entry instead of spawning new rows.
+    async function upsertGlobal(entry) {
         const auth = PT.Engine.Auth;
         if (!auth || !auth.isLoggedIn()) return;
+        if (!entry.runId) return;
 
         const client = auth.getClient();
         if (!client) return;
@@ -121,7 +126,8 @@
         const user = auth.getCurrentUser();
         const username = auth.getCurrentUsername();
 
-        const { error } = await client.from('pt_leaderboard').insert({
+        const { error } = await client.from('pt_leaderboard').upsert({
+            run_id: entry.runId,
             user_id: user.id,
             username: username,
             score: entry.score,
@@ -129,8 +135,9 @@
             badges: entry.badges || 0,
             days_elapsed: entry.daysElapsed || 0,
             won: entry.won || false,
-            date: entry.date || new Date().toLocaleDateString()
-        });
+            date: entry.date || new Date().toLocaleDateString(),
+            status: entry.status || 'completed'
+        }, { onConflict: 'run_id' });
 
         if (error) {
             console.warn('Could not save global score:', error);
@@ -145,7 +152,15 @@
         if (auth && auth.isLoggedIn()) {
             entry.name = auth.getCurrentUsername();
         }
-        saveGlobal(entry); // async, fire-and-forget
+        entry.status = 'completed';
+        upsertGlobal(entry); // async, fire-and-forget
+    }
+
+    // Called after each day of an ongoing run so abandoned runs still show up
+    // on the global leaderboard. No-op unless the player is signed in.
+    function saveInProgress(entry) {
+        entry.status = 'in_progress';
+        upsertGlobal(entry); // async, fire-and-forget
     }
 
     PT.Engine.LeaderboardAPI = {
@@ -153,8 +168,9 @@
         getGlobalLeaderboard,
         getTopTrainers,
         saveToLeaderboard,
+        saveInProgress,
         saveLocal,
-        saveGlobal,
+        saveGlobal: upsertGlobal,
         clearLocal,
         isGlobalEnabled
     };

@@ -11,6 +11,7 @@
         return {
             version: 1,
             trainerName: trainerName || 'RED',
+            runId: (crypto.randomUUID ? crypto.randomUUID() : `${seed}-${Math.random().toString(36).slice(2)}`),
             seed: seed,
             rng: PT.Engine.RNG.createRNG(seed),
 

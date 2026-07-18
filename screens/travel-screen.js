@@ -352,6 +352,10 @@
                     return;
                 }
 
+                // Keep the global leaderboard aware of this run even if it's
+                // never finished, so abandoned runs still show up.
+                PT.Engine.Scoring.saveRunInProgress(state);
+
                 // Psychic choice — show picker instead of going straight to encounter/event
                 if (results.psychicChoice && results.psychicAlt) {
                     const nextAfterPick = () => {

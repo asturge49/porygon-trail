@@ -13,14 +13,14 @@
             </div>`;
         }
         return entries.map((entry, i) => `
-            <div class="leaderboard-row ${i === 0 ? 'rank-1' : ''}"
+            <div class="leaderboard-row ${i === 0 ? 'rank-1' : ''} ${entry.inProgress ? 'in-progress' : ''}"
                  style="cursor: pointer;"
                  data-user-id="${entry.userId || ''}"
                  data-username="${entry.name}">
                 <span>${i + 1}</span>
                 <span>
-                    <span style="text-decoration: underline; text-underline-offset: 2px;">${entry.name}</span>${entry.won ? ' ★' : ''}
-                    <br><span style="font-size: 6px; color: var(--gb-dark);">${entry.pokedexCount} caught | Day ${entry.daysElapsed} | ${entry.date}</span>
+                    <span style="text-decoration: underline; text-underline-offset: 2px;">${entry.name}</span>${entry.won ? ' ★' : entry.inProgress ? ' ⏳' : ''}
+                    <br><span style="font-size: 6px; color: var(--gb-dark);">${entry.pokedexCount} caught | Day ${entry.daysElapsed} | ${entry.inProgress ? 'IN PROGRESS' : entry.date}</span>
                 </span>
                 <span>${entry.score.toLocaleString()}</span>
                 <span>${entry.badges || 0}</span>
@@ -60,7 +60,7 @@
             </div>
 
             <div style="font-size: 6px; color: var(--gb-dark); padding: 4px; text-align: center;">
-                ★ = Reached Indigo Plateau
+                ★ = Reached Indigo Plateau &nbsp;|&nbsp; ⏳ = Run still in progress
             </div>
             <div class="btn-row">
                 <button class="btn flex-1" id="btn-back">BACK</button>
