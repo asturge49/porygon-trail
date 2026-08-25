@@ -29,8 +29,8 @@
         breakdown.healthyPokemon = healthyCount * 100;
         score += breakdown.healthyPokemon;
 
-        // Speed bonus (50 points per day under the 100-day threshold)
-        breakdown.speedBonus = Math.max(0, (100 - state.daysElapsed) * 50);
+        // Speed bonus (50 points per day under the 100-day threshold) — only rewards finishing fast, not dying fast
+        breakdown.speedBonus = state.hasWon ? Math.max(0, (100 - state.daysElapsed) * 50) : 0;
         score += breakdown.speedBonus;
 
         // Pokedex entries (tripled)
