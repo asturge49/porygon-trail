@@ -31,5 +31,74 @@
         return `<div class="pixel-building-sprite" style="${style || ''};width:${width}px;height:${height}px;--px-shadow:${shadow}"></div>`;
     }
 
-    PT.Engine.PixelArt = { building, buildingDiv };
+    // Generates a generic building shape (array of row-strings, using the
+    // same R/W/D convention as a hand-written grid) instead of requiring
+    // every landmark to be hand-drawn pixel-by-pixel. Bigger buildings are
+    // just bigger/taller parameters here, keeping the size hierarchy
+    // (house < shop < gym < tower...) easy to reason about and extend.
+    function civicBuilding(opts) {
+        const width = opts.width;
+        const floors = opts.floors || 1;
+        const doorWidth = opts.doorWidth || 3;
+        const windowWidth = opts.windowWidth || 2;
+        const roof = opts.roof || 'flat';
+        const antenna = !!opts.antenna;
+        const windowStyle = opts.windowStyle || 'sides';
+        const winInset = 3;
+
+        const rows = [];
+        const isBorder = x => x === 0 || x === width - 1;
+        const row = fillFn => {
+            let r = '';
+            for (let x = 0; x < width; x++) r += fillFn(x);
+            return r;
+        };
+
+        if (antenna) {
+            const mid = Math.floor(width / 2);
+            rows.push(row(x => x === mid ? 'R' : '.'));
+            rows.push(row(x => x === mid ? 'R' : '.'));
+        }
+
+        if (roof === 'peak') {
+            [3, Math.min(width - 6, 7), width - 4].forEach(peakWidth => {
+                const pad = Math.floor((width - peakWidth) / 2);
+                rows.push(row(x => (x >= pad && x < pad + peakWidth) ? 'R' : '.'));
+            });
+            rows.push(row(() => 'R'));
+        } else {
+            rows.push(row(x => isBorder(x) ? '.' : 'R'));
+            rows.push(row(() => 'R'));
+            rows.push(row(() => 'R'));
+        }
+
+        for (let f = 0; f < floors; f++) {
+            for (let r = 0; r < 2; r++) {
+                rows.push(row(x => {
+                    if (isBorder(x)) return 'R';
+                    if (windowStyle === 'center') {
+                        return x === Math.floor(width / 2) ? 'D' : 'W';
+                    }
+                    if (x >= winInset && x < winInset + windowWidth) return 'D';
+                    if (x < width - winInset && x >= width - winInset - windowWidth) return 'D';
+                    return 'W';
+                }));
+            }
+            rows.push(row(x => isBorder(x) ? 'R' : 'W'));
+        }
+
+        const doorStart = Math.floor((width - doorWidth) / 2);
+        for (let r = 0; r < 2; r++) {
+            rows.push(row(x => {
+                if (isBorder(x)) return 'R';
+                if (x >= doorStart && x < doorStart + doorWidth) return 'D';
+                return 'W';
+            }));
+        }
+        rows.push(row(() => 'R'));
+
+        return rows;
+    }
+
+    PT.Engine.PixelArt = { building, buildingDiv, civicBuilding };
 })();

@@ -66,6 +66,50 @@
         'RRRRRRRRRRR'
     ];
 
+    // Pokemon Center — flat roof, cross emblem in the wall
+    const CENTER_SHAPE = [
+        '.RRRRRRRRRRRRR.',
+        'RRRRRRRRRRRRRRR',
+        'RRRRRRRRRRRRRRR',
+        'RWWWWWWDWWWWWWR',
+        'RWWWWDDDDDWWWWR',
+        'RWWWWWWDWWWWWWR',
+        'RWWWWWWWWWWWWWR',
+        'RWWWWWDDDWWWWWR',
+        'RWWWWWDDDWWWWWR',
+        'RRRRRRRRRRRRRRR'
+    ];
+
+    // Mart — same footprint as a Center, diamond emblem instead of a cross
+    const MART_SHAPE = [
+        '.RRRRRRRRRRRRR.',
+        'RRRRRRRRRRRRRRR',
+        'RRRRRRRRRRRRRRR',
+        'RWWWWWWDWWWWWWR',
+        'RWWWWWDWDWWWWWR',
+        'RWWWWWWDWWWWWWR',
+        'RWWWWWWWWWWWWWR',
+        'RWWWWWDDDWWWWWR',
+        'RWWWWWDDDWWWWWR',
+        'RRRRRRRRRRRRRRR'
+    ];
+
+    // Generic small building for unlabeled/filler shopfronts
+    const SHOP_SHAPE = PT.Engine.PixelArt.civicBuilding({ width: 15, floors: 1, roof: 'flat' });
+
+    // Wide single-story hall — Pewter Museum
+    const MUSEUM_SHAPE = PT.Engine.PixelArt.civicBuilding({ width: 27, floors: 1, roof: 'flat' });
+
+    // Wide and multi-floor — Celadon Dept. Store
+    const DEPT_STORE_SHAPE = PT.Engine.PixelArt.civicBuilding({ width: 23, floors: 3, roof: 'flat' });
+
+    // The grandest building in Kanto — Pokemon League HQ
+    const LEAGUE_SHAPE = PT.Engine.PixelArt.civicBuilding({ width: 27, floors: 2, doorWidth: 5, roof: 'flat' });
+
+    // Same height tier as Silph Co., single center slit per floor
+    // (pagoda/crypt silhouette) — Pokemon Tower
+    const POKEMON_TOWER_SHAPE = PT.Engine.PixelArt.civicBuilding({ width: 11, floors: 5, roof: 'flat', windowStyle: 'center' });
+
     function landmark(shape, style) {
         return PT.Engine.PixelArt.buildingDiv(shape, BUILDING_COLORS, style);
     }
@@ -92,8 +136,8 @@
             sky: '#9bbc0f', ground: '#306230',
             art: `<div class="pixel-scene city-scene">
                 <div class="pixel-cloud" style="top:8px;left:50%;">~~~</div>
-                <div class="pixel-building" style="left:10%;height:45px;font-size:7px;">[P+]<br>[==]</div>
-                <div class="pixel-building" style="left:32%;height:45px;font-size:7px;">[M]<br>[==]</div>
+                ${landmark(CENTER_SHAPE, 'left:10%;bottom:5px;')}
+                ${landmark(MART_SHAPE, 'left:32%;bottom:5px;')}
                 <div class="pixel-tree" style="left:55%;">&Delta;<br>|</div>
                 <div class="pixel-tree" style="left:63%;">&Delta;<br>|</div>
                 <div class="pixel-tree" style="left:71%;">&Delta;<br>|</div>
@@ -107,7 +151,7 @@
         pewter_city: {
             sky: '#8bac0f', ground: '#306230',
             art: `<div class="pixel-scene city-scene">
-                <div class="pixel-building" style="left:5%;height:55px;font-size:6px;">[####]<br>[MUSEUM]<br>[####]</div>
+                ${landmark(MUSEUM_SHAPE, 'left:5%;bottom:5px;')}
                 <div class="pixel-rock" style="left:38%;bottom:5px;">^^</div>
                 ${landmark(GYM_SHAPE, 'left:50%;bottom:5px;')}
                 <div class="pixel-rock" style="left:75%;bottom:8px;">^</div>
@@ -141,8 +185,8 @@
             sky: '#9bbc0f', ground: '#306230',
             art: `<div class="pixel-scene city-scene">
                 <div class="pixel-cloud" style="top:6px;left:15%;">~~</div>
-                <div class="pixel-building" style="left:5%;height:45px;font-size:7px;">[P+]<br>[==]</div>
-                <div class="pixel-building" style="left:25%;height:45px;font-size:7px;">[~]<br>[==]</div>
+                ${landmark(CENTER_SHAPE, 'left:5%;bottom:5px;')}
+                ${landmark(SHOP_SHAPE, 'left:25%;bottom:5px;')}
                 <div class="pixel-wave" style="bottom:30px;font-size:6px;">~~~~~~~~~~~~~~~~~~~~~</div>
                 <div class="pixel-wave" style="bottom:24px;font-size:6px;">~~~~~~~~~~~~~~~~~~~</div>
                 <div class="pixel-bridge" style="left:65%;bottom:22px;font-size:6px;">|=|=|=|</div>
@@ -158,8 +202,8 @@
                 <div class="pixel-cloud" style="top:6px;left:25%;">~~~</div>
                 <div class="pixel-seagull" style="top:15px;left:60%;">&gt;</div>
                 <div class="pixel-seagull" style="top:10px;left:72%;">&gt;</div>
-                <div class="pixel-building" style="left:5%;height:45px;font-size:7px;">[!]<br>[==]</div>
-                <div class="pixel-building" style="left:22%;height:35px;font-size:7px;">[==]<br>[==]</div>
+                ${landmark(SHOP_SHAPE, 'left:5%;bottom:5px;')}
+                ${landmark(SHOP_SHAPE, 'left:22%;bottom:5px;')}
                 <div class="pixel-crane" style="left:42%;top:20px;font-size:6px;">/--o</div>
                 <div class="pixel-ship" style="left:55%;bottom:5px;font-size:6px;">__|===|__<br>&nbsp;&nbsp;|_T_|</div>
                 <div class="pixel-dock" style="left:50%;bottom:2px;font-size:6px;">|||&nbsp;|||&nbsp;|||</div>
@@ -170,7 +214,7 @@
         lavender_town: {
             sky: '#306230', ground: '#0f380f',
             art: `<div class="pixel-scene lavender-scene">
-                <div class="pixel-building" style="left:40%;height:80px;font-size:7px;">/-\\<br>[+]<br>[+]<br>[+]<br>[+]</div>
+                ${landmark(POKEMON_TOWER_SHAPE, 'left:40%;bottom:5px;')}
                 <div class="pixel-gravestone" style="left:10%;bottom:5px;">+</div>
                 <div class="pixel-gravestone" style="left:18%;bottom:8px;">+</div>
                 <div class="pixel-gravestone" style="left:25%;bottom:5px;">+</div>
@@ -188,10 +232,10 @@
             sky: '#9bbc0f', ground: '#306230',
             art: `<div class="pixel-scene city-scene">
                 <div class="pixel-cloud" style="top:5px;left:60%;">~~</div>
-                <div class="pixel-building" style="left:5%;height:75px;font-size:6px;">[==]<br>[==]<br>[DEPT]<br>[==]<br>[==]</div>
-                <div class="pixel-building" style="left:28%;height:40px;font-size:7px;">[$]<br>[==]</div>
-                <div class="pixel-building" style="left:48%;height:45px;font-size:7px;">[*]<br>[==]<br>[==]</div>
-                <div class="pixel-building" style="left:68%;height:35px;font-size:7px;">[==]<br>[==]</div>
+                ${landmark(DEPT_STORE_SHAPE, 'left:5%;bottom:5px;')}
+                ${landmark(MART_SHAPE, 'left:28%;bottom:5px;')}
+                ${landmark(GYM_SHAPE, 'left:48%;bottom:5px;')}
+                ${landmark(SHOP_SHAPE, 'left:68%;bottom:5px;')}
                 <div class="pixel-tree" style="left:85%;bottom:5px;font-size:10px;">&Delta;<br>|</div>
                 <div class="pixel-flower" style="left:88%;bottom:5px;font-size:6px;">*</div>
                 <div class="pixel-flower" style="left:92%;bottom:8px;font-size:6px;">*</div>
@@ -202,10 +246,10 @@
         saffron_city: {
             sky: '#9bbc0f', ground: '#306230',
             art: `<div class="pixel-scene city-scene">
-                <div class="pixel-building" style="left:8%;height:40px;font-size:7px;">[!!]<br>[==]</div>
+                ${landmark(SHOP_SHAPE, 'left:8%;bottom:5px;')}
                 ${landmark(SILPH_SHAPE, 'left:30%;bottom:5px;')}
-                <div class="pixel-building" style="left:55%;height:45px;font-size:7px;">[o]<br>[==]<br>[==]</div>
-                <div class="pixel-building" style="left:75%;height:55px;font-size:7px;">[=]<br>[=]<br>[=]</div>
+                ${landmark(GYM_SHAPE, 'left:55%;bottom:5px;')}
+                ${landmark(SHOP_SHAPE, 'left:75%;bottom:5px;')}
                 <div class="pixel-helicopter" style="top:8px;left:65%;font-size:5px;">=+=&gt;</div>
             </div>`
         },
@@ -218,7 +262,7 @@
                 <div class="pixel-gate" style="left:20%;bottom:5px;font-size:6px;">|&nbsp;SAFARI&nbsp;|<br>|==||==|</div>
                 <div class="pixel-fence" style="left:5%;bottom:18px;">------</div>
                 <div class="pixel-fence" style="left:60%;bottom:18px;">------</div>
-                <div class="pixel-building" style="left:70%;height:35px;font-size:7px;opacity:0.6;">[GYM]<br>[==]</div>
+                ${landmark(GYM_SHAPE, 'left:70%;bottom:5px;opacity:0.6;')}
                 <div class="pixel-grass" style="left:5%;bottom:5px;">vVvVv</div>
                 <div class="pixel-grass" style="left:85%;bottom:8px;">VvV</div>
                 <div class="pixel-tree" style="left:92%;">&Delta;<br>|</div>
@@ -251,8 +295,8 @@
                 <div class="pixel-smoke" style="left:45%;top:8px;">~~</div>
                 <div class="pixel-volcano" style="left:35%;bottom:5px;font-size:10px;">&nbsp;&nbsp;/\\<br>&nbsp;/&nbsp;&nbsp;\\<br>/&nbsp;&nbsp;&nbsp;&nbsp;\\</div>
                 <div class="pixel-glow cinnabar-glow" style="left:42%;bottom:8px;font-size:8px;">*</div>
-                <div class="pixel-building" style="left:5%;height:45px;font-size:6px;">[##]<br>[/\\]<br>[==]</div>
-                <div class="pixel-building" style="left:75%;height:35px;font-size:7px;">[?]<br>[==]</div>
+                ${landmark(LAB_SHAPE, 'left:5%;bottom:5px;')}
+                ${landmark(GYM_SHAPE, 'left:75%;bottom:5px;')}
                 <div class="pixel-wave" style="bottom:0px;font-size:6px;">~~~~~~~~~~~~~~~~~~~~~</div>
             </div>`
         },
@@ -262,11 +306,11 @@
             sky: '#8bac0f', ground: '#306230',
             art: `<div class="pixel-scene city-scene">
                 <div class="pixel-cloud" style="top:10px;left:45%;">~~</div>
-                <div class="pixel-building" style="left:10%;height:45px;font-size:7px;">[P+]<br>[==]</div>
-                <div class="pixel-building" style="left:35%;height:55px;font-size:7px;">R<br>[G]<br>[==]<br>[==]</div>
+                ${landmark(CENTER_SHAPE, 'left:10%;bottom:5px;')}
+                ${landmark(GYM_SHAPE, 'left:35%;bottom:5px;')}
                 <div class="pixel-tree" style="left:60%;">&Delta;<br>|</div>
                 <div class="pixel-tree" style="left:75%;">&Delta;<br>|</div>
-                <div class="pixel-building" style="left:85%;height:35px;font-size:7px;">[M]<br>[==]</div>
+                ${landmark(MART_SHAPE, 'left:85%;bottom:5px;')}
             </div>`
         },
 
@@ -277,7 +321,7 @@
                 <div class="pixel-cloud" style="top:3px;left:15%;">~~</div>
                 <div class="pixel-mountain" style="left:0%;font-size:10px;">/\\<br>/&nbsp;&nbsp;\\</div>
                 <div class="pixel-mountain" style="left:20%;font-size:8px;">/\\</div>
-                <div class="pixel-building" style="left:50%;height:65px;font-size:6px;">[===]<br>[POK]<br>[LGE]<br>[===]</div>
+                ${landmark(LEAGUE_SHAPE, 'left:50%;bottom:5px;')}
                 <div class="pixel-stairs" style="left:55%;bottom:3px;font-size:5px;">/___/___/</div>
                 <div class="pixel-rock" style="left:80%;bottom:8px;">^^</div>
                 <div class="pixel-mountain" style="left:85%;font-size:10px;">/\\<br>/&nbsp;&nbsp;\\</div>
