@@ -306,6 +306,10 @@
     function applyEffects(effects, state) {
         if (!effects) return;
 
+        // Effect objects are static data reused across triggers of the same event —
+        // clear last time's leftover pending-catch queue so it can't leak into this run.
+        effects._pendingCatch = undefined;
+
         // Resource changes
         const resourceKeys = ['food', 'pokeballs', 'greatballs', 'ultraballs', 'potions', 'superPotions', 'repels', 'rareCandy', 'escapeRope', 'money'];
         resourceKeys.forEach(key => {
