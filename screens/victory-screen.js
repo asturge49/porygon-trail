@@ -44,7 +44,8 @@
                 daysElapsed: state.daysElapsed,
                 date: new Date().toLocaleDateString(),
                 won: true,
-                legendaryCount: PT.Engine.Scoring.countLegendaries(state)
+                legendaryCount: PT.Engine.Scoring.countLegendaries(state),
+                championIds: PT.Engine.Scoring.getChampionIds(state)
             });
 
             // Update records

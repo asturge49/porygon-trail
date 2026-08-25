@@ -32,6 +32,7 @@
             const totalDex = PT.Data.Pokemon.length;
             const dexCaught = dex.caught.length;
             const dexPct = totalDex > 0 ? Math.round((dexCaught / totalDex) * 100) : 0;
+            const champCount = dex.champions.length;
 
             const div = document.createElement('div');
             div.className = 'screen records-screen';
@@ -44,6 +45,7 @@
                     ${recordRow('🎮', 'TOTAL RUNS', r.totalRuns > 0 ? r.totalRuns : '---', r.totalRuns > 0 ? r.totalWins + ' win' + (r.totalWins !== 1 ? 's' : '') + ' | ' + (r.totalRuns - r.totalWins) + ' loss' + ((r.totalRuns - r.totalWins) !== 1 ? 'es' : '') + ' | ' + winRate + '% win rate' : '')}
                     ${recordRow('🏆', 'HIGH SCORE', r.highScore ? r.highScore.value.toLocaleString() : '---', fmtBy(r.highScore))}
                     ${recordRow('📚', 'POKEDEX COMPLETION', dexCaught > 0 ? dexPct + '% (' + dexCaught + '/' + totalDex + ')' : '---', dexCaught > 0 ? 'Across all runs' : '')}
+                    ${recordRow('🏅', 'CHAMPION POKEMON', champCount > 0 ? champCount + '/' + totalDex : '---', champCount > 0 ? 'Survived an Elite Four win' : '')}
                     ${recordRow('⚡', 'FASTEST WIN', r.fastestWin ? r.fastestWin.value + ' days' : '---', fmtBy(r.fastestWin))}
                     ${recordRow('🐢', 'SLOWEST WIN', r.slowestWin ? r.slowestWin.value + ' days' : '---', fmtBy(r.slowestWin))}
                     ${recordRow('📖', 'MOST CATCHES IN A RUN', r.mostCatches ? r.mostCatches.value + ' pokemon' : '---', fmtBy(r.mostCatches))}

@@ -209,8 +209,24 @@
         localStorage.removeItem(POKEDEX_KEY);
     }
 
+    // Pokemon that would be tagged "champion" by this run — the surviving party
+    // plus their pre-evolutions, same set updateGlobalPokedex() merges in on a win.
+    function getChampionIds(state) {
+        if (!state.hasWon) return [];
+        const preEvoMap = buildPreEvoMap();
+        const ids = new Set();
+        state.party.forEach(p => {
+            if (p.hp > 0 && p.status !== 'fainted') {
+                ids.add(p.id);
+                getPreEvolutions(p.id, preEvoMap).forEach(id => ids.add(id));
+            }
+        });
+        return Array.from(ids);
+    }
+
     PT.Engine.Scoring = {
         calculateScore, saveToLeaderboard, saveRunInProgress, getLeaderboard, clearLeaderboard,
-        getGlobalPokedex, updateGlobalPokedex, clearGlobalPokedex, countLegendaries, getLegendaryIds
+        getGlobalPokedex, updateGlobalPokedex, clearGlobalPokedex, countLegendaries, getLegendaryIds,
+        getChampionIds
     };
 })();

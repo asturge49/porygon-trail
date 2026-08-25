@@ -214,6 +214,55 @@
         }));
     }
 
+    // Lifetime champions — unique Pokemon that have survived an Elite Four win
+    // (i.e. carry the "champion" tag), across ALL of a trainer's runs. Trainers
+    // with zero are excluded entirely (HAVING > 0). Requires a
+    // `champion_ids integer[] default '{}'` column on pt_leaderboard plus a
+    // Postgres function to union it per user — run this once in the Supabase
+    // SQL editor:
+    //   alter table pt_leaderboard add column if not exists champion_ids integer[] default '{}';
+    //   create or replace function pt_champion_leaderboard()
+    //   returns table(user_id uuid, username text, champion_count bigint, days_elapsed int, won boolean, date text)
+    //   language sql stable as $$
+    //     select
+    //       l.user_id,
+    //       max(l.username) as username,
+    //       count(distinct pid) as champion_count,
+    //       min(l.days_elapsed) as days_elapsed,
+    //       bool_or(l.won) as won,
+    //       max(l.date) as date
+    //     from pt_leaderboard l
+    //     left join lateral unnest(l.champion_ids) as pid on true
+    //     group by l.user_id
+    //     having count(distinct pid) > 0
+    //     order by champion_count desc
+    //     limit 20;
+    //   $$;
+    async function getChampionLeaderboard() {
+        const auth = PT.Engine.Auth;
+        if (!auth || !auth.isConfigured()) return null;
+
+        const client = auth.getClient();
+        if (!client) return null;
+
+        const { data, error } = await client.rpc('pt_champion_leaderboard');
+
+        if (error) {
+            console.warn('Could not fetch champion leaderboard (has the SQL migration run?):', error);
+            return null;
+        }
+
+        return data.map(row => ({
+            userId: row.user_id,
+            name: row.username,
+            championCount: row.champion_count,
+            daysElapsed: row.days_elapsed,
+            won: row.won,
+            date: row.date,
+            inProgress: false
+        }));
+    }
+
     // Top 10 unique trainers ranked by their personal best run
     async function getTopTrainers() {
         const auth = PT.Engine.Auth;
@@ -273,18 +322,20 @@
             status: entry.status || 'completed',
             legendary_count: entry.legendaryCount || 0,
             pokedex_ids: entry.pokedexIds || [],
-            legendary_ids: entry.legendaryIds || []
+            legendary_ids: entry.legendaryIds || [],
+            champion_ids: entry.championIds || []
         };
 
         let { error } = await client.from('pt_leaderboard').upsert(row, { onConflict: 'run_id' });
 
-        // legendary_count / pokedex_ids / legendary_ids don't exist until the
-        // pt_leaderboard migration runs — fall back to saving without them so
-        // scores keep saving in the meantime.
+        // legendary_count / pokedex_ids / legendary_ids / champion_ids don't exist
+        // until the pt_leaderboard migration runs — fall back to saving without
+        // them so scores keep saving in the meantime.
         if (error && error.code === 'PGRST204') {
             delete row.legendary_count;
             delete row.pokedex_ids;
             delete row.legendary_ids;
+            delete row.champion_ids;
             ({ error } = await client.from('pt_leaderboard').upsert(row, { onConflict: 'run_id' }));
         }
 
@@ -320,6 +371,7 @@
         getDexCompletionLeaderboard,
         getFastestWinLeaderboard,
         getLegendaryLeaderboard,
+        getChampionLeaderboard,
         saveToLeaderboard,
         saveInProgress,
         saveLocal,

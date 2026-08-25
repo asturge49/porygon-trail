@@ -9,7 +9,8 @@
         { key: 'pokedex', label: 'POKEDEX %', sub: 'Total Pokedex completion across all runs' },
         { key: 'fastest', label: 'FASTEST WIN', sub: 'Quickest trip to the Indigo Plateau' },
         { key: 'catches', label: 'MOST CATCHES', sub: 'Most Pokemon caught in a single run' },
-        { key: 'legendary', label: 'LEGENDARIES', sub: 'Total legendaries caught across all runs', hideBadges: true }
+        { key: 'legendary', label: 'LEGENDARIES', sub: 'Total legendaries caught across all runs', hideBadges: true },
+        { key: 'champions', label: 'CHAMPIONS', sub: 'Total Pokemon champion-tagged across all wins', hideBadges: true }
     ];
 
     let currentMode = 'runs';
@@ -29,6 +30,9 @@
         if (mode === 'legendary') {
             return `${entry.legendaryCount} legendaries lifetime`;
         }
+        if (mode === 'champions') {
+            return `${entry.championCount} champions lifetime`;
+        }
         if (mode === 'fastest') {
             return `Day ${entry.daysElapsed} | ${entry.pokedexCount} caught`;
         }
@@ -39,6 +43,7 @@
         if (mode === 'pokedex') return Math.round((entry.pokedexCount / totalDexCount()) * 100) + '%';
         if (mode === 'catches') return entry.pokedexCount;
         if (mode === 'legendary') return entry.legendaryCount;
+        if (mode === 'champions') return entry.championCount;
         if (mode === 'fastest') return entry.daysElapsed + 'd';
         return entry.score.toLocaleString();
     }
@@ -88,7 +93,7 @@
                 <div class="leaderboard-row header ${activeTab.hideBadges ? 'no-badges' : ''}">
                     <span>#</span>
                     <span>TRAINER</span>
-                    <span>${currentMode === 'runs' || currentMode === 'trainers' ? 'SCORE' : currentMode === 'pokedex' ? 'DEX %' : currentMode === 'catches' ? 'CAUGHT' : currentMode === 'legendary' ? 'LEGEND' : 'DAYS'}</span>
+                    <span>${currentMode === 'runs' || currentMode === 'trainers' ? 'SCORE' : currentMode === 'pokedex' ? 'DEX %' : currentMode === 'catches' ? 'CAUGHT' : currentMode === 'legendary' ? 'LEGEND' : currentMode === 'champions' ? 'CHAMPS' : 'DAYS'}</span>
                     ${activeTab.hideBadges ? '' : '<span>BADGES</span>'}
                 </div>
                 <div id="leaderboard-body">
@@ -132,7 +137,8 @@
                 pokedex: () => API.getDexCompletionLeaderboard(),
                 catches: () => API.getMostCatchesLeaderboard(),
                 fastest: () => API.getFastestWinLeaderboard(),
-                legendary: () => API.getLegendaryLeaderboard()
+                legendary: () => API.getLegendaryLeaderboard(),
+                champions: () => API.getChampionLeaderboard()
             };
 
             const emptyMsgs = {
@@ -141,7 +147,8 @@
                 pokedex: 'No runs yet!<br>Catch some Pokemon to appear here!',
                 catches: 'No runs yet!<br>Catch some Pokemon to appear here!',
                 fastest: 'No wins yet!<br>Reach the Indigo Plateau to appear here!',
-                legendary: 'No legendaries caught yet!'
+                legendary: 'No legendaries caught yet!',
+                champions: 'No champions yet!<br>Win a run to crown your team!'
             };
 
             fetchers[currentMode]().then(entries => {
