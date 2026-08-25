@@ -463,16 +463,6 @@ body {
     overflow-wrap: anywhere;
 }
 
-.travel-header-buttons {
-    display: flex;
-    gap: 4px;
-    flex-shrink: 0;
-}
-
-.travel-header-stats {
-    text-align: center;
-}
-
 .btn-menu-header {
     font-family: 'Press Start 2P', monospace;
     font-size: 6px;
