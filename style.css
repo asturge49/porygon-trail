@@ -444,12 +444,33 @@ body {
 
 .travel-header {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
+    flex-direction: column;
+    gap: 4px;
     font-size: var(--font-size-sm);
     padding: 6px 8px;
     border: 2px solid var(--gb-darkest);
     background: var(--gb-light);
+}
+
+.travel-header-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 6px;
+}
+
+.travel-header-row > span {
+    overflow-wrap: anywhere;
+}
+
+.travel-header-buttons {
+    display: flex;
+    gap: 4px;
+    flex-shrink: 0;
+}
+
+.travel-header-stats {
+    text-align: center;
 }
 
 .btn-menu-header {

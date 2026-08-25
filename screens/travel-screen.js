@@ -235,10 +235,14 @@
             div.className = 'screen travel-screen';
             div.innerHTML = `
                 <div class="travel-header">
-                    <span>Day ${state.daysElapsed} | ${state.trainerName}</span>
-                    <button class="btn-menu-header" id="btn-help" title="How to Play">?</button>
-                    <button class="btn-menu-header" id="btn-menu" title="Menu">MENU</button>
-                    <span>${state.badges.filter(b => b !== 'champion').length} Badges | ${state.pokedexCaught.length} Caught</span>
+                    <div class="travel-header-row">
+                        <span>Day ${state.daysElapsed} | ${state.trainerName}</span>
+                        <div class="travel-header-buttons">
+                            <button class="btn-menu-header" id="btn-help" title="How to Play">?</button>
+                            <button class="btn-menu-header" id="btn-menu" title="Menu">MENU</button>
+                        </div>
+                    </div>
+                    <div class="travel-header-stats">${state.badges.filter(b => b !== 'champion').length} Badges | ${state.pokedexCaught.length} Caught</div>
                 </div>
 
                 <div class="travel-scene" data-time="${timeOfDay}" style="background: ${scene.sky}">
