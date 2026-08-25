@@ -236,6 +236,7 @@
             div.innerHTML = `
                 <div class="travel-header">
                     <span>Day ${state.daysElapsed} | ${state.trainerName}</span>
+                    <button class="btn-menu-header" id="btn-menu" title="Menu">MENU</button>
                     <span>${state.badges.filter(b => b !== 'champion').length} Badges | ${state.pokedexCaught.length} Caught</span>
                 </div>
 
@@ -650,6 +651,11 @@
                 showMapOverlay(state);
             });
 
+            // Menu button
+            document.getElementById('btn-menu').addEventListener('click', () => {
+                showMenuOverlay(state);
+            });
+
             // Party member click → profile popup
             bindPartyClicks(state);
         }
@@ -710,6 +716,34 @@
         `;
         document.querySelector('.travel-screen').appendChild(overlay);
         document.getElementById('btn-map-close').addEventListener('click', () => overlay.remove());
+    }
+
+    function showMenuOverlay(state) {
+        const items = [
+            { label: '🎒 TEAM', screen: 'PARTY' },
+            { label: '📖 POKÉDEX', screen: 'POKEDEX' },
+            { label: '🏆 RECORDS', screen: 'RECORDS' },
+            { label: '🌐 LEADERBOARD', screen: 'LEADERBOARD' }
+        ];
+
+        const overlay = document.createElement('div');
+        overlay.className = 'day-recap-overlay';
+        overlay.innerHTML = `
+            <div class="day-recap-popup" style="min-width:220px;">
+                <div class="day-recap-title">MENU</div>
+                <div style="display:flex;flex-direction:column;gap:6px;margin-top:4px;">
+                    ${items.map(item => `<button class="btn btn-wide menu-nav-btn" data-screen="${item.screen}">${item.label}</button>`).join('')}
+                </div>
+                <button class="btn btn-small day-recap-btn" id="btn-menu-close" style="margin-top:8px;">CLOSE</button>
+            </div>
+        `;
+        document.querySelector('.travel-screen').appendChild(overlay);
+        overlay.querySelectorAll('.menu-nav-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                PT.App.push(btn.dataset.screen);
+            });
+        });
+        document.getElementById('btn-menu-close').addEventListener('click', () => overlay.remove());
     }
 
     function showE4PokemonCenter(container, state) {

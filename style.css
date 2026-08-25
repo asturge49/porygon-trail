@@ -382,6 +382,28 @@ body {
     background: var(--gb-light);
 }
 
+.btn-menu-header {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 6px;
+    background: var(--gb-lightest);
+    color: var(--gb-darkest);
+    border: 2px solid var(--gb-darkest);
+    padding: 3px 8px;
+    cursor: pointer;
+    text-transform: uppercase;
+    transition: all 0.1s;
+    flex-shrink: 0;
+}
+
+.btn-menu-header:hover {
+    background: var(--gb-darkest);
+    color: var(--gb-lightest);
+}
+
+.btn-menu-header:active {
+    transform: scale(0.96);
+}
+
 .btn-map {
     font-family: 'Press Start 2P', monospace;
     font-size: 7px;

@@ -63,7 +63,11 @@
             container.appendChild(div);
 
             document.getElementById('btn-back').addEventListener('click', () => {
-                PT.App.goto('TITLE');
+                if (PT.App.screenStack.length > 0) {
+                    PT.App.pop();
+                } else {
+                    PT.App.goto('TITLE');
+                }
             });
             document.getElementById('btn-hof').addEventListener('click', () => {
                 PT.App.push('HALLOFFAME');
