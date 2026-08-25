@@ -75,7 +75,9 @@
             if (error.message.includes('already registered')) {
                 return { success: false, error: 'That username is already taken.' };
             }
-            return { success: false, error: error.message };
+            // Never surface the raw Supabase error — it echoes back the internal
+            // synthetic email address, which shouldn't be user-visible.
+            return { success: false, error: 'Could not create account. Try a different trainer name.' };
         }
 
         if (data.user) {
