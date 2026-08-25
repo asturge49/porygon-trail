@@ -1015,7 +1015,7 @@
 
                 <div class="profile-actions">
                     <button class="btn btn-small profile-action-btn" id="profile-potion" ${!hasPotion || !needsHeal ? 'disabled' : ''}>${potionLabel} (${potionCount})</button>
-                    <button class="btn btn-small profile-action-btn" id="profile-candy" ${!hasCandy || !canEvolve ? 'disabled' : ''}>RARE CANDY (${state.resources.rareCandy})</button>
+                    <button class="btn btn-small profile-action-btn" id="profile-candy" ${!hasCandy || (!canEvolve && !canEarnMore) ? 'disabled' : ''}>RARE CANDY (${state.resources.rareCandy})</button>
                     <button class="btn btn-small profile-action-btn profile-danger-btn" id="profile-butcher" ${state.party.length <= 1 ? 'disabled' : ''}>BUTCHER (+${foodAmount} food)</button>
                     <button class="btn btn-small profile-action-btn" id="profile-close">CLOSE</button>
                 </div>
@@ -1043,14 +1043,19 @@
 
         // Use Rare Candy
         document.getElementById('profile-candy').addEventListener('click', () => {
-            if (state.resources.rareCandy <= 0 || !canEvolve) return;
+            if (state.resources.rareCandy <= 0 || (!canEvolve && !canEarnMore)) return;
             state.resources.rareCandy--;
-            const evoResult = PT.Engine.GameState.evolvePokemon(pokemon, state);
             if (PT.Engine.Audio) PT.Engine.Audio.buy();
-            if (evoResult.evolved) {
-                PT.Engine.GameState.addToLog(state, `${evoResult.oldName} evolved into ${evoResult.newName}!`);
+            if (canEvolve) {
+                const evoResult = PT.Engine.GameState.evolvePokemon(pokemon, state);
+                if (evoResult.evolved) {
+                    PT.Engine.GameState.addToLog(state, `${evoResult.oldName} evolved into ${evoResult.newName}!`);
+                } else {
+                    state.resources.rareCandy++; // refund
+                }
             } else {
-                state.resources.rareCandy++; // refund
+                pokemon.battleStars = (pokemon.battleStars || 0) + 1;
+                PT.Engine.GameState.addToLog(state, `${pokemon.name} gained a battle star! (★${pokemon.battleStars})`);
             }
             overlay.remove();
             PT.App._render();
