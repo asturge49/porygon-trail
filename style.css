@@ -532,6 +532,17 @@ body {
     line-height: 1;
     color: var(--gb-dark);
     text-align: center;
+    transform-origin: bottom center;
+    animation: treeSway 4s ease-in-out infinite;
+}
+
+.pixel-tree:nth-child(even) {
+    animation-delay: -2s;
+}
+
+@keyframes treeSway {
+    0%, 100% { transform: rotate(-2deg); }
+    50%      { transform: rotate(2deg); }
 }
 
 .pixel-stalactite {
@@ -597,6 +608,17 @@ body {
     position: absolute;
     font-size: 8px;
     color: var(--gb-dark);
+    transform-origin: bottom center;
+    animation: grassSway 2.2s ease-in-out infinite;
+}
+
+.pixel-grass:nth-child(even) {
+    animation-delay: -1.1s;
+}
+
+@keyframes grassSway {
+    0%, 100% { transform: skewX(-4deg); }
+    50%      { transform: skewX(4deg); }
 }
 
 .cave-scene .pixel-scene,
@@ -736,6 +758,12 @@ body {
     position: absolute;
     font-size: 8px;
     color: var(--gb-darkest);
+    animation: npcIdle 1.8s ease-in-out infinite;
+}
+
+@keyframes npcIdle {
+    0%, 100% { transform: translateX(0); }
+    50%      { transform: translateX(3px); }
 }
 
 .pixel-fossil {
@@ -781,6 +809,13 @@ body {
     position: absolute;
     font-size: 7px;
     color: var(--gb-darkest);
+    transform-origin: left center;
+    animation: craneSwing 5s ease-in-out infinite;
+}
+
+@keyframes craneSwing {
+    0%, 100% { transform: rotate(0deg); }
+    50%      { transform: rotate(2deg); }
 }
 
 .pixel-ship {
@@ -789,6 +824,12 @@ body {
     line-height: 1.1;
     color: var(--gb-darkest);
     text-align: center;
+    animation: shipBob 3s ease-in-out infinite;
+}
+
+@keyframes shipBob {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    50%      { transform: translateY(-2px) rotate(-1deg); }
 }
 
 .pixel-dock {
