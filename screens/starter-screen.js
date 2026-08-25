@@ -26,16 +26,20 @@
     PT.Screens.STARTER = {
         render(container) {
             selectedStarter = null;
+            const auth = PT.Engine.Auth;
+            const loggedInUsername = auth && auth.isLoggedIn() ? auth.getCurrentUsername() : null;
+
             const div = document.createElement('div');
             div.className = 'screen starter-screen';
             div.innerHTML = `
                 <div class="text-box">
                     <p>PROF. OAK: Hello there! Welcome to the world of POKEMON!</p>
-                    <p style="margin-top: 8px;">What is your name, trainer?</p>
+                    <p style="margin-top: 8px;">${loggedInUsername ? `Good to see you, ${loggedInUsername}!` : 'What is your name, trainer?'}</p>
                 </div>
+                ${loggedInUsername ? '' : `
                 <div class="name-input-area">
                     <input type="text" class="name-input" id="trainer-name" maxlength="10" placeholder="RED" value="">
-                </div>
+                </div>`}
                 <div class="text-box" style="min-height: auto; padding: 8px 16px;">
                     Now choose your partner Pokemon!
                 </div>
@@ -65,7 +69,8 @@
             // Start game
             document.getElementById('btn-start').addEventListener('click', () => {
                 if (!selectedStarter) return;
-                const name = document.getElementById('trainer-name').value.trim().toUpperCase() || 'RED';
+                const nameInput = document.getElementById('trainer-name');
+                const name = loggedInUsername || (nameInput.value.trim().toUpperCase() || 'RED');
                 const starterData = STARTERS.find(s => s.id === selectedStarter);
                 PT.State = PT.Engine.GameState.createNewGame(name, selectedStarter);
                 PT.Engine.GameState.addToLog(PT.State, `${name} set out from Pallet Town with ${starterData.name}!`);
@@ -78,7 +83,9 @@
             });
 
             // Focus name input
-            setTimeout(() => document.getElementById('trainer-name').focus(), 100);
+            if (!loggedInUsername) {
+                setTimeout(() => document.getElementById('trainer-name').focus(), 100);
+            }
         }
     };
 })();
