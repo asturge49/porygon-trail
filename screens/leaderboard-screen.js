@@ -56,7 +56,7 @@
                  data-username="${entry.name}">
                 <span>${i + 1}</span>
                 <span>
-                    <span style="text-decoration: underline; text-underline-offset: 2px;">${entry.name}</span>${entry.won ? ' ★' : entry.inProgress ? ' ⏳' : ''}
+                    <span>${entry.name}</span>${entry.won ? ' ★' : entry.inProgress ? ' ⏳' : ''}
                     <br><span style="font-size: 6px; color: var(--gb-dark);">${statLine(entry, mode)} | ${entry.inProgress ? 'IN PROGRESS' : entry.date}</span>
                 </span>
                 <span>${mainValue(entry, mode)}</span>
