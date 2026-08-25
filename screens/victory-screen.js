@@ -41,7 +41,8 @@
                 badges: state.badges.length,
                 daysElapsed: state.daysElapsed,
                 date: new Date().toLocaleDateString(),
-                won: true
+                won: true,
+                legendaryCount: PT.Engine.Scoring.countLegendaries(state)
             });
 
             // Update records

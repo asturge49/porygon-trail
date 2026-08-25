@@ -60,8 +60,7 @@
                     } else {
                         msg.textContent = `Release ${pokemon.name}? Click DROP again to confirm.`;
                         btn.dataset.confirm = 'true';
-                        btn.style.background = 'var(--gb-darkest)';
-                        btn.style.color = 'var(--gb-lightest)';
+                        btn.classList.add('btn-confirm-danger');
                     }
                 });
             });
@@ -83,8 +82,7 @@
                     } else {
                         msg.textContent = `Butcher ${pokemon.name} for ${foodAmount} food? Click BUTCHER again to confirm.`;
                         btn.dataset.confirm = 'true';
-                        btn.style.background = 'var(--gb-darkest)';
-                        btn.style.color = 'var(--gb-lightest)';
+                        btn.classList.add('btn-confirm-danger');
                     }
                 });
             });

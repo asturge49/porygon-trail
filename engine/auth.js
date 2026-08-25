@@ -1,5 +1,5 @@
 // Porygon Trail - Auth System
-// Username + 4-digit PIN authentication via Supabase Auth
+// Username + PIN authentication via Supabase Auth (new accounts: 6 digits, legacy accounts: 4 digits)
 // Email: username@porygontrail.app  |  Password: pt_PIN_PIN
 (function() {
     const PT = window.PorygonTrail;

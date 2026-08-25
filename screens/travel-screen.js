@@ -906,8 +906,7 @@
             } else {
                 butcherBtn.textContent = `CONFIRM BUTCHER ${pokemon.name}?`;
                 butcherBtn.dataset.confirm = 'true';
-                butcherBtn.style.background = 'var(--gb-darkest)';
-                butcherBtn.style.color = 'var(--gb-lightest)';
+                butcherBtn.classList.add('btn-confirm-danger');
             }
         });
     }

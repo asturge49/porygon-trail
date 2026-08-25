@@ -3,6 +3,6 @@
 // (Settings → API → Project URL / anon public key)
 window.PorygonTrail = window.PorygonTrail || {};
 window.PorygonTrail.Config = {
-    supabaseUrl: 'https://glcryiuqtskxutugwenr.supabase.co',
-    supabaseAnonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdsY3J5aXVxdHNreHV0dWd3ZW5yIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ5MDEwMjUsImV4cCI6MjA5MDQ3NzAyNX0.hMobFcRT_UqXJT2Ux04nGBiz8Lo4GJyhdNTVZ6mdYn0'
+    supabaseUrl: 'https://anxkyksrmvtsmhdaktrq.supabase.co',
+    supabaseAnonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFueGt5a3NybXZ0c21oZGFrdHJxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODc2MTMxODksImV4cCI6MjEwMzE4OTE4OX0.U2QcSjNMGqRvg82rbG1oHrQOr-i_Lfb-oeBLRJmP-2k'
 };

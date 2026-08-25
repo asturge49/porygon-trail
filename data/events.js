@@ -215,7 +215,7 @@
                 {
                     text: "Challenge Ash's Pikachu!",
                     outcomes: [
-                        { weight: 25, narration: "Your Pokemon fights valiantly and somehow overpowers Ash's Pikachu! Ash stares in disbelief. \"Wow... you're the real deal. Pikachu, go with them.\" The battle-hardened Pikachu joins your team — but it has a stubborn streak.", effects: { catchPokemon: 25, partyDamageAll: 1 } },
+                        { weight: 25, narration: "Your Pokemon fights valiantly and somehow overpowers Ash's Pikachu! Ash stares in disbelief. \"Wow... you're the real deal. Pikachu... go with them, buddy.\" The battle-hardened Pikachu joins your team — but it refuses to evolve, just like it always has with Ash.", effects: { catchPokemon: 25, catchPokemonOverrides: { name: "Ash's Pikachu", maxHp: 10, hp: 10, battleStars: 3, noEvolve: true }, partyDamageAll: 1 } },
                         { weight: 35, narration: "Ash's Pikachu is on another level. Thunderbolt after Thunderbolt rains down on your team. You lose badly. Ash helps patch up your Pokemon, but the damage is done.", effects: { partyDamageAll: 2 } },
                         { weight: 25, narration: "Pikachu's Thunder knocks your Pokemon out cold. It doesn't get back up. Ash looks horrified. \"I... I'm sorry. Pikachu doesn't know its own strength.\"", effects: { pokemonDeath: true } },
                         { weight: 15, narration: "A close fight! Your Pokemon holds its own but ultimately falls. Ash is impressed. \"You've got guts. Here, take these.\" He hands you supplies.", effects: { partyDamageAll: 1, potions: 3, food: 10 } }

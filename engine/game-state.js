@@ -145,12 +145,14 @@
         129: 1                   // Magikarp
     };
 
-    function createPartyPokemon(data, state) {
+    // `overrides` lets rare events hand back a customized individual (e.g. a
+    // renamed, boosted, non-evolving Pokemon) without a new data/pokemon.js entry.
+    function createPartyPokemon(data, state, overrides) {
         const baseHp = data.rarity === 'legendary' ? 6 :
                        data.rarity === 'rare' ? 4 : 3;
         const maxHp = HP_OVERRIDES[data.id] !== undefined ? HP_OVERRIDES[data.id] : baseHp;
         const route = state ? getCurrentRoute(state) : null;
-        return {
+        const pokemon = {
             id: data.id,
             name: data.name,
             types: data.types,
@@ -167,6 +169,8 @@
             caughtAt: route ? route.name : 'Pallet Town',
             caughtDay: state ? state.daysElapsed : 0
         };
+        if (overrides) Object.assign(pokemon, overrides);
+        return pokemon;
     }
 
     function getSpriteUrl(id) {
@@ -378,6 +382,7 @@
 
     // Evolution System — limited to once per location
     function evolvePokemon(partyMon, state) {
+        if (partyMon.noEvolve) return { evolved: false };
         const data = PT.Data.Pokemon.find(p => p.id === partyMon.id);
         if (!data || !data.evolvesTo) return { evolved: false };
 
@@ -479,6 +484,7 @@
 
     // Check if a Pokemon is at its final evolution (no evolvesTo)
     function isFinalEvolution(pokemon) {
+        if (pokemon.noEvolve) return true;
         const data = PT.Data.Pokemon.find(p => p.id === pokemon.id);
         return data && !data.evolvesTo;
     }

@@ -48,7 +48,7 @@
 
         const { data, error } = await client
             .from('pt_leaderboard')
-            .select('user_id, username, score, pokedex_count, badges, days_elapsed, won, date, status')
+            .select(BASE_COLUMNS)
             .order('score', { ascending: false })
             .limit(20);
 
@@ -57,7 +57,17 @@
             return null;
         }
 
-        return data.map(row => ({
+        return data.map(rowToEntry);
+    }
+
+    // Columns available since launch. legendary_count requires a schema migration
+    // (see engine/leaderboard-api.js comment on getLegendaryLeaderboard), so it's
+    // only requested by the query that actually needs it — otherwise a missing
+    // column would 400 every leaderboard tab, not just the Legendaries one.
+    const BASE_COLUMNS = 'user_id, username, score, pokedex_count, badges, days_elapsed, won, date, status';
+
+    function rowToEntry(row) {
+        return {
             userId: row.user_id,
             name: row.username,
             score: row.score,
@@ -66,8 +76,52 @@
             daysElapsed: row.days_elapsed,
             won: row.won,
             date: row.date,
-            inProgress: row.status === 'in_progress'
-        }));
+            inProgress: row.status === 'in_progress',
+            legendaryCount: row.legendary_count || 0
+        };
+    }
+
+    // Shared fetch: rows ordered by a column, optionally restricted to completed wins.
+    async function fetchOrdered(column, ascending, wonOnly, limit, columns) {
+        const auth = PT.Engine.Auth;
+        if (!auth || !auth.isConfigured()) return null;
+
+        const client = auth.getClient();
+        if (!client) return null;
+
+        let query = client
+            .from('pt_leaderboard')
+            .select(columns || BASE_COLUMNS)
+            .order(column, { ascending });
+
+        if (wonOnly) query = query.eq('won', true);
+
+        const { data, error } = await query.limit(limit || 20);
+
+        if (error) {
+            console.warn('Could not fetch leaderboard:', error);
+            return null;
+        }
+
+        return data.map(rowToEntry);
+    }
+
+    // Highest Pokedex count (also used for the Pokedex-completion leaderboard)
+    function getMostCatchesLeaderboard() {
+        return fetchOrdered('pokedex_count', false);
+    }
+
+    // Fastest win — lowest days_elapsed among completed wins
+    function getFastestWinLeaderboard() {
+        return fetchOrdered('days_elapsed', true, true);
+    }
+
+    // Most legendaries caught in a single run.
+    // Requires a `legendary_count integer default 0` column on pt_leaderboard —
+    // run this once in the Supabase SQL editor:
+    //   ALTER TABLE pt_leaderboard ADD COLUMN legendary_count integer DEFAULT 0;
+    function getLegendaryLeaderboard() {
+        return fetchOrdered('legendary_count', false, false, 20, BASE_COLUMNS + ', legendary_count');
     }
 
     // Top 10 unique trainers ranked by their personal best run
@@ -81,7 +135,7 @@
         // Fetch enough rows to guarantee we find 10 unique users
         const { data, error } = await client
             .from('pt_leaderboard')
-            .select('user_id, username, score, pokedex_count, badges, days_elapsed, won, date, status')
+            .select(BASE_COLUMNS)
             .order('score', { ascending: false })
             .limit(500);
 
@@ -96,17 +150,7 @@
         for (const row of data) {
             if (!seen.has(row.user_id)) {
                 seen.add(row.user_id);
-                trainers.push({
-                    userId: row.user_id,
-                    name: row.username,
-                    score: row.score,
-                    pokedexCount: row.pokedex_count,
-                    badges: row.badges,
-                    daysElapsed: row.days_elapsed,
-                    won: row.won,
-                    date: row.date,
-                    inProgress: row.status === 'in_progress'
-                });
+                trainers.push(rowToEntry(row));
             }
             if (trainers.length >= 10) break;
         }
@@ -126,7 +170,7 @@
         const user = auth.getCurrentUser();
         const username = auth.getCurrentUsername();
 
-        const { error } = await client.from('pt_leaderboard').upsert({
+        const row = {
             run_id: entry.runId,
             user_id: user.id,
             username: username,
@@ -136,8 +180,18 @@
             days_elapsed: entry.daysElapsed || 0,
             won: entry.won || false,
             date: entry.date || new Date().toLocaleDateString(),
-            status: entry.status || 'completed'
-        }, { onConflict: 'run_id' });
+            status: entry.status || 'completed',
+            legendary_count: entry.legendaryCount || 0
+        };
+
+        let { error } = await client.from('pt_leaderboard').upsert(row, { onConflict: 'run_id' });
+
+        // legendary_count doesn't exist until the pt_leaderboard migration runs —
+        // fall back to saving without it so scores keep saving in the meantime.
+        if (error && error.code === 'PGRST204') {
+            delete row.legendary_count;
+            ({ error } = await client.from('pt_leaderboard').upsert(row, { onConflict: 'run_id' }));
+        }
 
         if (error) {
             console.warn('Could not save global score:', error);
@@ -167,6 +221,9 @@
         getLocalLeaderboard,
         getGlobalLeaderboard,
         getTopTrainers,
+        getMostCatchesLeaderboard,
+        getFastestWinLeaderboard,
+        getLegendaryLeaderboard,
         saveToLeaderboard,
         saveInProgress,
         saveLocal,

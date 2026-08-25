@@ -3,6 +3,13 @@
     const PT = window.PorygonTrail;
     PT.Engine = PT.Engine || {};
 
+    function countLegendaries(state) {
+        return state.pokedexCaught.filter(id => {
+            const p = PT.Data.Pokemon.find(pk => pk.id === id);
+            return p && p.rarity === 'legendary';
+        }).length;
+    }
+
     function calculateScore(state) {
         let score = 0;
         const breakdown = {};
@@ -96,7 +103,8 @@
             badges: state.badges.length,
             daysElapsed: state.daysElapsed,
             date: new Date().toLocaleDateString(),
-            won: false
+            won: false,
+            legendaryCount: countLegendaries(state)
         });
     }
 
@@ -197,6 +205,6 @@
 
     PT.Engine.Scoring = {
         calculateScore, saveToLeaderboard, saveRunInProgress, getLeaderboard, clearLeaderboard,
-        getGlobalPokedex, updateGlobalPokedex, clearGlobalPokedex
+        getGlobalPokedex, updateGlobalPokedex, clearGlobalPokedex, countLegendaries
     };
 })();

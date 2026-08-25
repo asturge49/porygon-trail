@@ -11,6 +11,8 @@
     --gb-bg: #7b8c2a;
     --gb-white: #c4cfa1;
     --gb-shadow: #0a2a0a;
+    --gb-danger: #d3392a;
+    --gb-danger-light: #ffb84d;
     --font-size-sm: 8px;
     --font-size-md: 10px;
     --font-size-lg: 14px;
@@ -207,6 +209,18 @@ body {
 .btn-small {
     font-size: 7px;
     padding: 6px 10px;
+}
+
+.btn-confirm-danger {
+    background: var(--gb-danger) !important;
+    color: var(--gb-white) !important;
+    border-color: var(--gb-shadow) !important;
+    animation: btn-danger-pulse 0.6s ease-in-out infinite alternate;
+}
+
+@keyframes btn-danger-pulse {
+    from { box-shadow: 0 0 0 0 var(--gb-danger-light); }
+    to { box-shadow: 0 0 0 3px var(--gb-danger-light); }
 }
 
 .travel-continue-wrap {
@@ -1332,6 +1346,11 @@ body {
     border: 2px solid var(--gb-darkest) !important;
 }
 
+.profile-danger-btn.btn-confirm-danger {
+    color: var(--gb-white) !important;
+    border-color: var(--gb-shadow) !important;
+}
+
 /* ---- Day Recap Popup ---- */
 .day-recap-overlay {
     position: absolute;
@@ -1979,25 +1998,30 @@ body {
 .leaderboard-row.in-progress { opacity: 0.7; font-style: italic; }
 
 .leaderboard-tabs {
-    display: flex;
-    gap: 0;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
     border: 3px solid var(--gb-darkest);
 }
 
 .leaderboard-tab {
-    flex: 1;
-    padding: 6px 4px;
+    padding: 6px 2px;
     font-family: 'Press Start 2P', monospace;
-    font-size: 7px;
+    font-size: 6px;
     background: var(--gb-white);
     color: var(--gb-dark);
     border: none;
+    border-right: 2px solid var(--gb-darkest);
+    border-bottom: 2px solid var(--gb-darkest);
     cursor: pointer;
     transition: background 0.15s;
 }
 
-.leaderboard-tab:first-child {
-    border-right: 2px solid var(--gb-darkest);
+.leaderboard-tab:nth-child(3n) {
+    border-right: none;
+}
+
+.leaderboard-tab:nth-child(n+4) {
+    border-bottom: none;
 }
 
 .leaderboard-tab.active {

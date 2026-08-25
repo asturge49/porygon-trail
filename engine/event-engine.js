@@ -370,7 +370,7 @@
 
         // Catch Pokemon
         if (effects.catchPokemon) {
-            catchFromEffect(effects.catchPokemon, state, effects);
+            catchFromEffect(effects.catchPokemon, state, effects, effects.catchPokemonOverrides);
         }
         if (effects.catchPokemon2) {
             catchFromEffect(effects.catchPokemon2, state, effects);
@@ -523,7 +523,7 @@
         }
     }
 
-    function catchFromEffect(pokemonId, state, effects) {
+    function catchFromEffect(pokemonId, state, effects, overrides) {
         if (!state.pokedexCaught.includes(pokemonId)) {
             state.pokedexCaught.push(pokemonId);
         }
@@ -533,7 +533,7 @@
         const data = PT.Data.Pokemon.find(p => p.id === pokemonId);
         if (!data) return;
         if (state.party.length < 6) {
-            state.party.push(PT.Engine.GameState.createPartyPokemon(data, state));
+            state.party.push(PT.Engine.GameState.createPartyPokemon(data, state, overrides));
         } else if (effects) {
             // Party full — flag for swap UI in event screen
             if (!effects._pendingCatch) effects._pendingCatch = [];

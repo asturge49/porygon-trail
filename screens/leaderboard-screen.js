@@ -3,10 +3,47 @@
     const PT = window.PorygonTrail;
     PT.Screens = PT.Screens || {};
 
-    // 'runs' = top 20 individual runs | 'trainers' = top 10 users by best score
+    const TABS = [
+        { key: 'runs', label: 'HIGH SCORE', sub: 'Best 20 individual runs, by score' },
+        { key: 'trainers', label: 'TOP TRAINERS', sub: 'Best score per trainer (top 10)' },
+        { key: 'pokedex', label: 'POKEDEX %', sub: 'Highest Pokedex completion in a run' },
+        { key: 'fastest', label: 'FASTEST WIN', sub: 'Quickest trip to the Indigo Plateau' },
+        { key: 'catches', label: 'MOST CATCHES', sub: 'Most Pokemon caught in a single run' },
+        { key: 'legendary', label: 'LEGENDARIES', sub: 'Most legendaries caught in a single run' }
+    ];
+
     let currentMode = 'runs';
 
-    function renderTable(entries, emptyMsg) {
+    function totalDexCount() {
+        return PT.Data.Pokemon.length;
+    }
+
+    function statLine(entry, mode) {
+        if (mode === 'pokedex') {
+            const pct = Math.round((entry.pokedexCount / totalDexCount()) * 100);
+            return `${pct}% (${entry.pokedexCount}/${totalDexCount()}) | Day ${entry.daysElapsed}`;
+        }
+        if (mode === 'catches') {
+            return `${entry.pokedexCount} caught | Day ${entry.daysElapsed}`;
+        }
+        if (mode === 'legendary') {
+            return `${entry.legendaryCount} legendaries | Day ${entry.daysElapsed}`;
+        }
+        if (mode === 'fastest') {
+            return `Day ${entry.daysElapsed} | ${entry.pokedexCount} caught`;
+        }
+        return `${entry.pokedexCount} caught | Day ${entry.daysElapsed}`;
+    }
+
+    function mainValue(entry, mode) {
+        if (mode === 'pokedex') return Math.round((entry.pokedexCount / totalDexCount()) * 100) + '%';
+        if (mode === 'catches') return entry.pokedexCount;
+        if (mode === 'legendary') return entry.legendaryCount;
+        if (mode === 'fastest') return entry.daysElapsed + 'd';
+        return entry.score.toLocaleString();
+    }
+
+    function renderTable(entries, emptyMsg, mode) {
         if (!entries || entries.length === 0) {
             return `<div style="text-align: center; padding: 40px; font-size: 8px; color: var(--gb-dark);">
                 ${emptyMsg}
@@ -20,9 +57,9 @@
                 <span>${i + 1}</span>
                 <span>
                     <span style="text-decoration: underline; text-underline-offset: 2px;">${entry.name}</span>${entry.won ? ' ★' : entry.inProgress ? ' ⏳' : ''}
-                    <br><span style="font-size: 6px; color: var(--gb-dark);">${entry.pokedexCount} caught | Day ${entry.daysElapsed} | ${entry.inProgress ? 'IN PROGRESS' : entry.date}</span>
+                    <br><span style="font-size: 6px; color: var(--gb-dark);">${statLine(entry, mode)} | ${entry.inProgress ? 'IN PROGRESS' : entry.date}</span>
                 </span>
-                <span>${entry.score.toLocaleString()}</span>
+                <span>${mainValue(entry, mode)}</span>
                 <span>${entry.badges || 0}</span>
             </div>
         `).join('');
@@ -31,6 +68,7 @@
     function renderScreen(container) {
         const API = PT.Engine.LeaderboardAPI;
         const globalAvailable = API.isGlobalEnabled();
+        const activeTab = TABS.find(t => t.key === currentMode);
 
         const div = document.createElement('div');
         div.className = 'screen leaderboard-screen';
@@ -39,11 +77,10 @@
 
             ${globalAvailable ? `
             <div class="leaderboard-tabs">
-                <button class="leaderboard-tab ${currentMode === 'runs' ? 'active' : ''}" id="tab-runs">TOP RUNS</button>
-                <button class="leaderboard-tab ${currentMode === 'trainers' ? 'active' : ''}" id="tab-trainers">TOP TRAINERS</button>
+                ${TABS.map(t => `<button class="leaderboard-tab ${currentMode === t.key ? 'active' : ''}" data-tab="${t.key}">${t.label}</button>`).join('')}
             </div>
             <div style="font-size: 6px; color: var(--gb-dark); text-align: center; margin-bottom: 4px;">
-                ${currentMode === 'runs' ? 'Best 20 individual runs' : 'Best score per trainer (top 10)'}
+                ${activeTab.sub}
             </div>
             ` : ''}
 
@@ -51,7 +88,7 @@
                 <div class="leaderboard-row header">
                     <span>#</span>
                     <span>TRAINER</span>
-                    <span>SCORE</span>
+                    <span>${currentMode === 'runs' || currentMode === 'trainers' ? 'SCORE' : currentMode === 'pokedex' ? 'DEX %' : currentMode === 'catches' ? 'CAUGHT' : currentMode === 'legendary' ? 'LEGEND' : 'DAYS'}</span>
                     <span>BADGES</span>
                 </div>
                 <div id="leaderboard-body">
@@ -85,24 +122,34 @@
             if (!body) return;
 
             if (!globalAvailable) {
-                body.innerHTML = renderTable([], 'Sign in to see the global leaderboard!');
+                body.innerHTML = renderTable([], 'Sign in to see the global leaderboard!', currentMode);
                 return;
             }
 
-            const fetch = currentMode === 'runs'
-                ? API.getGlobalLeaderboard()
-                : API.getTopTrainers();
+            const fetchers = {
+                runs: () => API.getGlobalLeaderboard(),
+                trainers: () => API.getTopTrainers(),
+                pokedex: () => API.getMostCatchesLeaderboard(),
+                catches: () => API.getMostCatchesLeaderboard(),
+                fastest: () => API.getFastestWinLeaderboard(),
+                legendary: () => API.getLegendaryLeaderboard()
+            };
 
-            const emptyMsg = currentMode === 'runs'
-                ? 'No runs yet!<br>Be the first on the trail!'
-                : 'No trainers yet!<br>Complete a run to appear here!';
+            const emptyMsgs = {
+                runs: 'No runs yet!<br>Be the first on the trail!',
+                trainers: 'No trainers yet!<br>Complete a run to appear here!',
+                pokedex: 'No runs yet!<br>Catch some Pokemon to appear here!',
+                catches: 'No runs yet!<br>Catch some Pokemon to appear here!',
+                fastest: 'No wins yet!<br>Reach the Indigo Plateau to appear here!',
+                legendary: 'No legendaries caught yet!'
+            };
 
-            fetch.then(entries => {
+            fetchers[currentMode]().then(entries => {
                 if (!document.getElementById('leaderboard-body')) return;
                 document.getElementById('leaderboard-body').innerHTML =
                     entries === null
                         ? '<div style="text-align: center; padding: 40px; font-size: 8px; color: var(--gb-dark);">Could not load scores.</div>'
-                        : renderTable(entries, emptyMsg);
+                        : renderTable(entries, emptyMsgs[currentMode], currentMode);
                 attachRowClicks();
             }).catch(() => {
                 const b = document.getElementById('leaderboard-body');
@@ -112,15 +159,12 @@
 
         // Tab toggle
         if (globalAvailable) {
-            document.getElementById('tab-runs').addEventListener('click', () => {
-                if (currentMode === 'runs') return;
-                currentMode = 'runs';
-                PT.App.goto('LEADERBOARD');
-            });
-            document.getElementById('tab-trainers').addEventListener('click', () => {
-                if (currentMode === 'trainers') return;
-                currentMode = 'trainers';
-                PT.App.goto('LEADERBOARD');
+            document.querySelectorAll('.leaderboard-tab').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    if (currentMode === btn.dataset.tab) return;
+                    currentMode = btn.dataset.tab;
+                    PT.App.goto('LEADERBOARD');
+                });
             });
         }
 

@@ -1,5 +1,6 @@
 // Porygon Trail - Login Screen
-// Username + 4-digit PIN — no email, no password rules
+// Username + PIN — no email, no password rules.
+// New accounts use a 6-digit PIN; existing accounts keep their 4-digit PIN.
 (function() {
     const PT = window.PorygonTrail;
     PT.Screens = PT.Screens || {};
@@ -40,10 +41,10 @@
                                   background: var(--gb-lightest); border: 2px solid var(--gb-dark);
                                   color: var(--gb-darkest); margin-bottom: 14px; outline: none;">
 
-                    <div style="font-size: 7px; color: var(--gb-dark); margin-bottom: 4px;">4-DIGIT PIN</div>
-                    <input type="password" id="input-pin" maxlength="4"
+                    <div style="font-size: 7px; color: var(--gb-dark); margin-bottom: 4px;">${mode === 'signin' ? 'PIN' : '6-DIGIT PIN'}</div>
+                    <input type="password" id="input-pin" maxlength="6"
                            inputmode="numeric" pattern="[0-9]*" autocomplete="off"
-                           placeholder="••••"
+                           placeholder="${mode === 'signin' ? '••••' : '••••••'}"
                            style="width: 100%; box-sizing: border-box; padding: 8px 10px;
                                   font-family: inherit; font-size: 16px; letter-spacing: 8px;
                                   background: var(--gb-lightest); border: 2px solid var(--gb-dark);
@@ -64,7 +65,7 @@
                     <div style="font-size: 6px; color: var(--gb-dark); text-align: center; margin-top: 12px; line-height: 1.6;">
                         ${mode === 'signin'
                             ? 'Your scores appear on the global leaderboard.<br>Continue your journey on any device.'
-                            : 'Username: 3-12 chars (letters, numbers, _)<br>PIN: 4 digits \u2014 keep it secret!'}
+                            : 'Username: 3-12 chars (letters, numbers, _)<br>PIN: 6 digits \u2014 keep it secret!'}
                     </div>
                 `;
 
@@ -102,7 +103,12 @@
                         showError('3-12 chars: letters, numbers, _ only.');
                         return;
                     }
-                    if (pin.length !== 4) { showError('PIN must be exactly 4 digits.'); return; }
+                    if (mode === 'signup') {
+                        if (pin.length !== 6) { showError('PIN must be exactly 6 digits.'); return; }
+                    } else if (pin.length !== 4 && pin.length !== 6) {
+                        showError('PIN must be 4 or 6 digits.');
+                        return;
+                    }
 
                     setLoading(true);
 
