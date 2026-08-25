@@ -41,7 +41,6 @@
                             <div style="font-size: 6px;">${leader.title}</div>
                             <div style="font-size: 7px; margin-top: 2px;">${leader.type.toUpperCase()} TYPE</div>
                         </div>
-                        <div style="font-size: 14px; align-self: center; font-weight: bold;">VS</div>
                         <div class="gym-opponent-pokemon">
                             <img src="${opponentSprite}" alt="${opponent.name}"
                                  style="width: 80px; height: 80px; image-rendering: pixelated;"
