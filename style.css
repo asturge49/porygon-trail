@@ -2399,6 +2399,11 @@ body {
     #game-wrapper::before {
         display: none;
     }
+
+    .party-grid,
+    .inventory-grid {
+        grid-template-columns: 1fr;
+    }
 }
 
 /* ===== POKÉDEX SCREEN ===== */
