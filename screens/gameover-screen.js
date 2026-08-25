@@ -39,6 +39,8 @@
                 name: state.trainerName,
                 score: score,
                 pokedexCount: state.pokedexCaught.length,
+                pokedexIds: state.pokedexCaught,
+                legendaryIds: PT.Engine.Scoring.getLegendaryIds(state),
                 badges: state.badges.length,
                 daysElapsed: state.daysElapsed,
                 date: new Date().toLocaleDateString(),

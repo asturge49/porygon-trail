@@ -106,9 +106,58 @@
         return data.map(rowToEntry);
     }
 
-    // Highest Pokedex count (also used for the Pokedex-completion leaderboard)
+    // Highest Pokedex count in a single run
     function getMostCatchesLeaderboard() {
         return fetchOrdered('pokedex_count', false);
+    }
+
+    // Lifetime Pokedex completion — unique Pokemon ever caught across ALL of a
+    // trainer's runs, not just their best single run. Requires a
+    // `pokedex_ids integer[] default '{}'` column on pt_leaderboard plus a
+    // Postgres function to union it per user — run this once in the Supabase
+    // SQL editor:
+    //   alter table pt_leaderboard add column if not exists pokedex_ids integer[] default '{}';
+    //   create or replace function pt_dex_completion_leaderboard()
+    //   returns table(user_id uuid, username text, dex_count bigint, badges int, days_elapsed int, won boolean, date text)
+    //   language sql stable as $$
+    //     select
+    //       l.user_id,
+    //       max(l.username) as username,
+    //       count(distinct pid) as dex_count,
+    //       max(l.badges) as badges,
+    //       min(l.days_elapsed) as days_elapsed,
+    //       bool_or(l.won) as won,
+    //       max(l.date) as date
+    //     from pt_leaderboard l
+    //     left join lateral unnest(l.pokedex_ids) as pid on true
+    //     group by l.user_id
+    //     order by dex_count desc nulls last
+    //     limit 20;
+    //   $$;
+    async function getDexCompletionLeaderboard() {
+        const auth = PT.Engine.Auth;
+        if (!auth || !auth.isConfigured()) return null;
+
+        const client = auth.getClient();
+        if (!client) return null;
+
+        const { data, error } = await client.rpc('pt_dex_completion_leaderboard');
+
+        if (error) {
+            console.warn('Could not fetch dex completion leaderboard (has the SQL migration run?):', error);
+            return null;
+        }
+
+        return data.map(row => ({
+            userId: row.user_id,
+            name: row.username,
+            pokedexCount: row.dex_count,
+            badges: row.badges,
+            daysElapsed: row.days_elapsed,
+            won: row.won,
+            date: row.date,
+            inProgress: false
+        }));
     }
 
     // Fastest win — lowest days_elapsed among completed wins
@@ -116,12 +165,53 @@
         return fetchOrdered('days_elapsed', true, true);
     }
 
-    // Most legendaries caught in a single run.
-    // Requires a `legendary_count integer default 0` column on pt_leaderboard —
-    // run this once in the Supabase SQL editor:
-    //   ALTER TABLE pt_leaderboard ADD COLUMN legendary_count integer DEFAULT 0;
-    function getLegendaryLeaderboard() {
-        return fetchOrdered('legendary_count', false, false, 20, BASE_COLUMNS + ', legendary_count');
+    // Lifetime legendaries caught — unique legendary Pokemon ever caught across
+    // ALL of a trainer's runs, not just their best single run. Trainers with
+    // zero are excluded entirely (HAVING > 0), not shown as a 0 row. Requires a
+    // `legendary_ids integer[] default '{}'` column on pt_leaderboard plus a
+    // Postgres function to union it per user — run this once in the Supabase
+    // SQL editor:
+    //   alter table pt_leaderboard add column if not exists legendary_ids integer[] default '{}';
+    //   create or replace function pt_legendary_completion_leaderboard()
+    //   returns table(user_id uuid, username text, legendary_count bigint, days_elapsed int, won boolean, date text)
+    //   language sql stable as $$
+    //     select
+    //       l.user_id,
+    //       max(l.username) as username,
+    //       count(distinct pid) as legendary_count,
+    //       min(l.days_elapsed) as days_elapsed,
+    //       bool_or(l.won) as won,
+    //       max(l.date) as date
+    //     from pt_leaderboard l
+    //     left join lateral unnest(l.legendary_ids) as pid on true
+    //     group by l.user_id
+    //     having count(distinct pid) > 0
+    //     order by legendary_count desc
+    //     limit 20;
+    //   $$;
+    async function getLegendaryLeaderboard() {
+        const auth = PT.Engine.Auth;
+        if (!auth || !auth.isConfigured()) return null;
+
+        const client = auth.getClient();
+        if (!client) return null;
+
+        const { data, error } = await client.rpc('pt_legendary_completion_leaderboard');
+
+        if (error) {
+            console.warn('Could not fetch legendary completion leaderboard (has the SQL migration run?):', error);
+            return null;
+        }
+
+        return data.map(row => ({
+            userId: row.user_id,
+            name: row.username,
+            legendaryCount: row.legendary_count,
+            daysElapsed: row.days_elapsed,
+            won: row.won,
+            date: row.date,
+            inProgress: false
+        }));
     }
 
     // Top 10 unique trainers ranked by their personal best run
@@ -181,15 +271,20 @@
             won: entry.won || false,
             date: entry.date || new Date().toLocaleDateString(),
             status: entry.status || 'completed',
-            legendary_count: entry.legendaryCount || 0
+            legendary_count: entry.legendaryCount || 0,
+            pokedex_ids: entry.pokedexIds || [],
+            legendary_ids: entry.legendaryIds || []
         };
 
         let { error } = await client.from('pt_leaderboard').upsert(row, { onConflict: 'run_id' });
 
-        // legendary_count doesn't exist until the pt_leaderboard migration runs —
-        // fall back to saving without it so scores keep saving in the meantime.
+        // legendary_count / pokedex_ids / legendary_ids don't exist until the
+        // pt_leaderboard migration runs — fall back to saving without them so
+        // scores keep saving in the meantime.
         if (error && error.code === 'PGRST204') {
             delete row.legendary_count;
+            delete row.pokedex_ids;
+            delete row.legendary_ids;
             ({ error } = await client.from('pt_leaderboard').upsert(row, { onConflict: 'run_id' }));
         }
 
@@ -222,6 +317,7 @@
         getGlobalLeaderboard,
         getTopTrainers,
         getMostCatchesLeaderboard,
+        getDexCompletionLeaderboard,
         getFastestWinLeaderboard,
         getLegendaryLeaderboard,
         saveToLeaderboard,

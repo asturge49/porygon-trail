@@ -3,11 +3,15 @@
     const PT = window.PorygonTrail;
     PT.Engine = PT.Engine || {};
 
-    function countLegendaries(state) {
+    function getLegendaryIds(state) {
         return state.pokedexCaught.filter(id => {
             const p = PT.Data.Pokemon.find(pk => pk.id === id);
             return p && p.rarity === 'legendary';
-        }).length;
+        });
+    }
+
+    function countLegendaries(state) {
+        return getLegendaryIds(state).length;
     }
 
     function calculateScore(state) {
@@ -100,6 +104,8 @@
             name: state.trainerName,
             score: score,
             pokedexCount: state.pokedexCaught.length,
+            pokedexIds: state.pokedexCaught,
+            legendaryIds: getLegendaryIds(state),
             badges: state.badges.length,
             daysElapsed: state.daysElapsed,
             date: new Date().toLocaleDateString(),
@@ -205,6 +211,6 @@
 
     PT.Engine.Scoring = {
         calculateScore, saveToLeaderboard, saveRunInProgress, getLeaderboard, clearLeaderboard,
-        getGlobalPokedex, updateGlobalPokedex, clearGlobalPokedex, countLegendaries
+        getGlobalPokedex, updateGlobalPokedex, clearGlobalPokedex, countLegendaries, getLegendaryIds
     };
 })();

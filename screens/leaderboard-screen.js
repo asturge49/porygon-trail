@@ -6,10 +6,10 @@
     const TABS = [
         { key: 'runs', label: 'HIGH SCORE', sub: 'Best 20 individual runs, by score' },
         { key: 'trainers', label: 'TOP TRAINERS', sub: 'Best score per trainer (top 10)' },
-        { key: 'pokedex', label: 'POKEDEX %', sub: 'Highest Pokedex completion in a run' },
+        { key: 'pokedex', label: 'POKEDEX %', sub: 'Total Pokedex completion across all runs' },
         { key: 'fastest', label: 'FASTEST WIN', sub: 'Quickest trip to the Indigo Plateau' },
         { key: 'catches', label: 'MOST CATCHES', sub: 'Most Pokemon caught in a single run' },
-        { key: 'legendary', label: 'LEGENDARIES', sub: 'Most legendaries caught in a single run' }
+        { key: 'legendary', label: 'LEGENDARIES', sub: 'Total legendaries caught across all runs', hideBadges: true }
     ];
 
     let currentMode = 'runs';
@@ -21,13 +21,13 @@
     function statLine(entry, mode) {
         if (mode === 'pokedex') {
             const pct = Math.round((entry.pokedexCount / totalDexCount()) * 100);
-            return `${pct}% (${entry.pokedexCount}/${totalDexCount()}) | Day ${entry.daysElapsed}`;
+            return `${pct}% (${entry.pokedexCount}/${totalDexCount()}) lifetime`;
         }
         if (mode === 'catches') {
             return `${entry.pokedexCount} caught | Day ${entry.daysElapsed}`;
         }
         if (mode === 'legendary') {
-            return `${entry.legendaryCount} legendaries | Day ${entry.daysElapsed}`;
+            return `${entry.legendaryCount} legendaries lifetime`;
         }
         if (mode === 'fastest') {
             return `Day ${entry.daysElapsed} | ${entry.pokedexCount} caught`;
@@ -43,14 +43,14 @@
         return entry.score.toLocaleString();
     }
 
-    function renderTable(entries, emptyMsg, mode) {
+    function renderTable(entries, emptyMsg, mode, hideBadges) {
         if (!entries || entries.length === 0) {
             return `<div style="text-align: center; padding: 40px; font-size: 8px; color: var(--gb-dark);">
                 ${emptyMsg}
             </div>`;
         }
         return entries.map((entry, i) => `
-            <div class="leaderboard-row ${i === 0 ? 'rank-1' : ''} ${entry.inProgress ? 'in-progress' : ''}"
+            <div class="leaderboard-row ${hideBadges ? 'no-badges' : ''} ${i === 0 ? 'rank-1' : ''} ${entry.inProgress ? 'in-progress' : ''}"
                  style="cursor: pointer;"
                  data-user-id="${entry.userId || ''}"
                  data-username="${entry.name}">
@@ -60,7 +60,7 @@
                     <br><span style="font-size: 6px; color: var(--gb-dark);">${statLine(entry, mode)} | ${entry.inProgress ? 'IN PROGRESS' : entry.date}</span>
                 </span>
                 <span>${mainValue(entry, mode)}</span>
-                <span>${entry.badges || 0}</span>
+                ${hideBadges ? '' : `<span>${entry.badges || 0}</span>`}
             </div>
         `).join('');
     }
@@ -85,11 +85,11 @@
             ` : ''}
 
             <div class="leaderboard-table">
-                <div class="leaderboard-row header">
+                <div class="leaderboard-row header ${activeTab.hideBadges ? 'no-badges' : ''}">
                     <span>#</span>
                     <span>TRAINER</span>
                     <span>${currentMode === 'runs' || currentMode === 'trainers' ? 'SCORE' : currentMode === 'pokedex' ? 'DEX %' : currentMode === 'catches' ? 'CAUGHT' : currentMode === 'legendary' ? 'LEGEND' : 'DAYS'}</span>
-                    <span>BADGES</span>
+                    ${activeTab.hideBadges ? '' : '<span>BADGES</span>'}
                 </div>
                 <div id="leaderboard-body">
                     <div style="text-align: center; padding: 40px; font-size: 8px; color: var(--gb-dark);">Loading...</div>
@@ -129,7 +129,7 @@
             const fetchers = {
                 runs: () => API.getGlobalLeaderboard(),
                 trainers: () => API.getTopTrainers(),
-                pokedex: () => API.getMostCatchesLeaderboard(),
+                pokedex: () => API.getDexCompletionLeaderboard(),
                 catches: () => API.getMostCatchesLeaderboard(),
                 fastest: () => API.getFastestWinLeaderboard(),
                 legendary: () => API.getLegendaryLeaderboard()
@@ -149,7 +149,7 @@
                 document.getElementById('leaderboard-body').innerHTML =
                     entries === null
                         ? '<div style="text-align: center; padding: 40px; font-size: 8px; color: var(--gb-dark);">Could not load scores.</div>'
-                        : renderTable(entries, emptyMsgs[currentMode], currentMode);
+                        : renderTable(entries, emptyMsgs[currentMode], currentMode, activeTab.hideBadges);
                 attachRowClicks();
             }).catch(() => {
                 const b = document.getElementById('leaderboard-body');

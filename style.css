@@ -1983,6 +1983,10 @@ body {
     align-items: center;
 }
 
+.leaderboard-row.no-badges {
+    grid-template-columns: 30px 1fr 80px;
+}
+
 .leaderboard-row.header {
     font-size: var(--font-size-sm);
     background: var(--gb-light);
