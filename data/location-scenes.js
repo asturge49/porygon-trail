@@ -14,7 +14,7 @@
                 <div class="pixel-house" style="left:8%;font-size:9px;">_[]_<br>|__|</div>
                 <div class="pixel-house" style="left:28%;font-size:9px;">_[]_<br>|__|</div>
                 <div class="pixel-tree" style="left:48%;">&Delta;<br>|</div>
-                <div class="pixel-building" style="left:58%;height:50px;font-size:7px;">[LAB]<br>[==]<br>[==]</div>
+                <div class="pixel-oak-lab" style="left:58%;bottom:5px;"></div>
                 <div class="pixel-grass" style="left:82%;bottom:5px;">vvv</div>
                 <div class="pixel-grass" style="left:90%;bottom:8px;">vv</div>
                 <div class="pixel-fence" style="left:5%;bottom:2px;">--.--.--.--</div>

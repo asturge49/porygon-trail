@@ -525,6 +525,40 @@ body {
     text-align: center;
 }
 
+/* Oak's Lab — small pixel-art building (Pallet Town), same box-shadow
+   sprite technique as .trail-trainer-sprite: a 2px dot repeated via
+   box-shadow offsets to draw a 9x8 pixel-grid building. */
+.pixel-oak-lab {
+    position: absolute;
+    width: 18px;
+    height: 16px;
+}
+
+.pixel-oak-lab::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 2px;
+    height: 2px;
+    box-shadow:
+        /* roof ridge */
+        2px 0 var(--gb-darkest), 4px 0 var(--gb-darkest), 6px 0 var(--gb-darkest), 8px 0 var(--gb-darkest), 10px 0 var(--gb-darkest), 12px 0 var(--gb-darkest), 14px 0 var(--gb-darkest),
+        /* roof */
+        0px 2px var(--gb-danger), 2px 2px var(--gb-danger), 4px 2px var(--gb-danger), 6px 2px var(--gb-danger), 8px 2px var(--gb-danger), 10px 2px var(--gb-danger), 12px 2px var(--gb-danger), 14px 2px var(--gb-danger), 16px 2px var(--gb-danger),
+        /* eave */
+        0px 4px var(--gb-darkest), 2px 4px var(--gb-darkest), 4px 4px var(--gb-darkest), 6px 4px var(--gb-darkest), 8px 4px var(--gb-darkest), 10px 4px var(--gb-darkest), 12px 4px var(--gb-darkest), 14px 4px var(--gb-darkest), 16px 4px var(--gb-darkest),
+        /* wall + windows (2px tall) */
+        0px 6px var(--gb-darkest), 2px 6px var(--gb-white), 4px 6px var(--gb-dark), 6px 6px var(--gb-white), 8px 6px var(--gb-white), 10px 6px var(--gb-white), 12px 6px var(--gb-dark), 14px 6px var(--gb-white), 16px 6px var(--gb-darkest),
+        0px 8px var(--gb-darkest), 2px 8px var(--gb-white), 4px 8px var(--gb-dark), 6px 8px var(--gb-white), 8px 8px var(--gb-white), 10px 8px var(--gb-white), 12px 8px var(--gb-dark), 14px 8px var(--gb-white), 16px 8px var(--gb-darkest),
+        /* plain wall gap */
+        0px 10px var(--gb-darkest), 2px 10px var(--gb-white), 4px 10px var(--gb-white), 6px 10px var(--gb-white), 8px 10px var(--gb-white), 10px 10px var(--gb-white), 12px 10px var(--gb-white), 14px 10px var(--gb-white), 16px 10px var(--gb-darkest),
+        /* wall + centered door */
+        0px 12px var(--gb-darkest), 2px 12px var(--gb-white), 4px 12px var(--gb-white), 6px 12px var(--gb-darkest), 8px 12px var(--gb-darkest), 10px 12px var(--gb-darkest), 12px 12px var(--gb-white), 14px 12px var(--gb-white), 16px 12px var(--gb-darkest),
+        /* base line */
+        0px 14px var(--gb-darkest), 2px 14px var(--gb-darkest), 4px 14px var(--gb-darkest), 6px 14px var(--gb-darkest), 8px 14px var(--gb-darkest), 10px 14px var(--gb-darkest), 12px 14px var(--gb-darkest), 14px 14px var(--gb-darkest), 16px 14px var(--gb-darkest);
+}
+
 .pixel-tree {
     position: absolute;
     bottom: 5px;
