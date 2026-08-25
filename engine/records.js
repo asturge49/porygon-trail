@@ -58,6 +58,18 @@
         return false;
     }
 
+    // Walk forward through evolvesTo links to collect every stage of a Pokemon's line
+    function getEvolutionChain(id) {
+        const chain = new Set();
+        let current = id;
+        while (current != null && !chain.has(current)) {
+            chain.add(current);
+            const data = PT.Data.Pokemon.find(p => p.id === current);
+            current = data ? data.evolvesTo : null;
+        }
+        return chain;
+    }
+
     // Called at end of every run (victory or gameover)
     function updateRecords(state, score) {
         const records = getRecords();
@@ -82,8 +94,10 @@
         updateMax(records, 'mostCatches', caught, name, date);
         updateMax(records, 'richestEnding', money, name, date);
 
-        // Catch tally — every Pokemon caught this run, excluding the starter's initial catch
-        state.pokedexCaught.slice(1).forEach(id => {
+        // Catch tally — every Pokemon caught this run, excluding the starter's whole evolution chain
+        const starterChain = getEvolutionChain(state.pokedexCaught[0]);
+        state.pokedexCaught.forEach(id => {
+            if (starterChain.has(id)) return;
             records.catchTally[id] = (records.catchTally[id] || 0) + 1;
         });
 
