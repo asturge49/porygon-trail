@@ -413,8 +413,8 @@
         } else if (partyMon.maxHp < 6) {
             partyMon.maxHp += 1;
         }
-        // Heal 1 HP on evolution
-        partyMon.hp = Math.min(partyMon.hp + 1, partyMon.maxHp);
+        // Fully heal on evolution
+        partyMon.hp = partyMon.maxHp;
         // Track evolution location
         partyMon.lastEvoLocation = currentLoc;
 
