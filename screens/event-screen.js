@@ -485,7 +485,7 @@
                         <button class="btn sell-mon-btn" data-idx="${i}" style="display:flex; align-items:center; gap:6px; padding:4px 8px; font-size:7px;">
                             <img src="${p.spriteUrl}" style="width:24px; height:24px; image-rendering:pixelated;">
                             <span style="flex:1; text-align:left;">${p.name}${stars} (${p.hp}/${p.maxHp} HP)</span>
-                            <span style="color:#4a5; font-weight:bold;">$${price}</span>
+                            <span style="font-weight:bold;">$${price}</span>
                         </button>
                     `;
                 }).join('')}
@@ -516,7 +516,7 @@
                 <img src="${pokemon.spriteUrl}" style="width:40px; height:40px; image-rendering:pixelated;">
                 <div style="font-size:9px; font-weight:bold; margin:4px 0;">${pokemon.name}${stars}</div>
                 <div style="font-size:8px;">${pokemon.hp}/${pokemon.maxHp} HP</div>
-                <div style="font-size:10px; color:#4a5; font-weight:bold; margin:6px 0;">SELL FOR $${price}?</div>
+                <div style="font-size:10px; color:var(--gb-darkest); font-weight:bold; margin:6px 0;">SELL FOR $${price}?</div>
                 <div style="font-size:7px; opacity:0.7;">This is permanent — ${pokemon.name} will be gone forever.</div>
             </div>
             <div style="display:flex; gap:4px;">
