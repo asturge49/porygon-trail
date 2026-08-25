@@ -726,6 +726,8 @@
             { label: '🌐 LEADERBOARD', screen: 'LEADERBOARD' }
         ];
 
+        const soundOn = PT.Engine.Audio && PT.Engine.Audio.isEnabled();
+
         const overlay = document.createElement('div');
         overlay.className = 'day-recap-overlay';
         overlay.innerHTML = `
@@ -733,6 +735,7 @@
                 <div class="day-recap-title">MENU</div>
                 <div style="display:flex;flex-direction:column;gap:6px;margin-top:4px;">
                     ${items.map(item => `<button class="btn btn-wide menu-nav-btn" data-screen="${item.screen}">${item.label}</button>`).join('')}
+                    <button class="btn btn-wide" id="btn-menu-sound">🔊 SOUND: ${soundOn ? 'ON' : 'OFF'}</button>
                 </div>
                 <button class="btn btn-small day-recap-btn" id="btn-menu-close" style="margin-top:8px;">CLOSE</button>
             </div>
@@ -742,6 +745,10 @@
             btn.addEventListener('click', () => {
                 PT.App.push(btn.dataset.screen);
             });
+        });
+        document.getElementById('btn-menu-sound').addEventListener('click', () => {
+            const on = PT.Engine.Audio.toggle();
+            document.getElementById('btn-menu-sound').textContent = '🔊 SOUND: ' + (on ? 'ON' : 'OFF');
         });
         document.getElementById('btn-menu-close').addEventListener('click', () => overlay.remove());
     }
