@@ -720,10 +720,10 @@
 
     function showMenuOverlay(state) {
         const items = [
-            { label: '🎒 TEAM', screen: 'PARTY' },
-            { label: '📖 POKÉDEX', screen: 'POKEDEX' },
-            { label: '🏆 RECORDS', screen: 'RECORDS' },
-            { label: '🌐 LEADERBOARD', screen: 'LEADERBOARD' }
+            { label: 'TEAM', screen: 'PARTY' },
+            { label: 'POKÉDEX', screen: 'POKEDEX' },
+            { label: 'RECORDS', screen: 'RECORDS' },
+            { label: 'LEADERBOARD', screen: 'LEADERBOARD' }
         ];
 
         const soundOn = PT.Engine.Audio && PT.Engine.Audio.isEnabled();
@@ -735,7 +735,7 @@
                 <div class="day-recap-title">MENU</div>
                 <div style="display:flex;flex-direction:column;gap:6px;margin-top:4px;">
                     ${items.map(item => `<button class="btn btn-wide menu-nav-btn" data-screen="${item.screen}">${item.label}</button>`).join('')}
-                    <button class="btn btn-wide" id="btn-menu-sound">🔊 SOUND: ${soundOn ? 'ON' : 'OFF'}</button>
+                    <button class="btn btn-wide" id="btn-menu-sound">SOUND: ${soundOn ? 'ON' : 'OFF'}</button>
                 </div>
                 <button class="btn btn-small day-recap-btn" id="btn-menu-close" style="margin-top:8px;">CLOSE</button>
             </div>
@@ -748,7 +748,7 @@
         });
         document.getElementById('btn-menu-sound').addEventListener('click', () => {
             const on = PT.Engine.Audio.toggle();
-            document.getElementById('btn-menu-sound').textContent = '🔊 SOUND: ' + (on ? 'ON' : 'OFF');
+            document.getElementById('btn-menu-sound').textContent = 'SOUND: ' + (on ? 'ON' : 'OFF');
         });
         document.getElementById('btn-menu-close').addEventListener('click', () => overlay.remove());
     }
