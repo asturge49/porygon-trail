@@ -54,7 +54,7 @@
                         return `<button class="btn btn-wide ${canChoose ? '' : ''}" data-choice="${i}" ${canChoose ? '' : 'disabled'}>${label}</button>`;
                     }).join('')}
                 </div>
-                <div class="btn-row" style="margin-top: 4px;">
+                <div class="btn-row" id="event-utility-row" style="margin-top: 4px;">
                     <button class="btn btn-small flex-1" id="btn-event-check-bag">CHECK BAG</button>
                     <button class="btn btn-small flex-1" id="btn-event-check-party">CHECK PARTY</button>
                 </div>
@@ -74,6 +74,12 @@
                 btn.addEventListener('click', () => {
                     const choiceIndex = parseInt(btn.dataset.choice);
                     const choice = event.choices[choiceIndex];
+
+                    // Once a choice is committed, checking bag/party would lose this
+                    // event's resolution progress on return (it only lives in local
+                    // state here, not in the screen params) — remove the option.
+                    const utilRow = document.getElementById('event-utility-row');
+                    if (utilRow) utilRow.remove();
 
                     // Event battle — show Pokemon picker for 1v1 fight
                     if (choice.eventBattle) {
