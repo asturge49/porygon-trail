@@ -8,10 +8,27 @@
             const event = params.event;
             if (!event) { PT.App.goto('TRAVEL'); return; }
 
+            const route = PT.Engine.GameState.getCurrentRoute(state);
+            const nextRoute = PT.Engine.GameState.getNextRoute(state);
+            const progress = nextRoute ? Math.min(100, (state.distanceTraveled / route.distanceToNext) * 100) : 100;
+
             const div = document.createElement('div');
             div.className = 'screen event-screen';
             div.innerHTML = `
                 <div class="event-title">${event.name}</div>
+                <div class="travel-progress" style="margin-bottom: 4px;">
+                    <div style="display: flex; justify-content: space-between; font-size: 7px; margin-bottom: 2px;">
+                        <span>${route.name}</span>
+                        <span>${nextRoute ? nextRoute.name : 'VICTORY!'}</span>
+                    </div>
+                    <div class="progress-bar-container">
+                        <div class="progress-bar-fill" style="width: ${progress}%"></div>
+                    </div>
+                    <div class="progress-labels">
+                        <span>${state.distanceTraveled} / ${route.distanceToNext} mi</span>
+                        <span>${nextRoute ? (route.distanceToNext - state.distanceTraveled) + ' mi left' : 'ARRIVED'}</span>
+                    </div>
+                </div>
                 <div class="event-narrative" id="event-narrative">
                     ${event.description}
                 </div>
@@ -36,6 +53,10 @@
                         }
                         return `<button class="btn btn-wide ${canChoose ? '' : ''}" data-choice="${i}" ${canChoose ? '' : 'disabled'}>${label}</button>`;
                     }).join('')}
+                </div>
+                <div class="btn-row" style="margin-top: 4px;">
+                    <button class="btn btn-small flex-1" id="btn-event-check-bag">CHECK BAG</button>
+                    <button class="btn btn-small flex-1" id="btn-event-check-party">CHECK PARTY</button>
                 </div>
             `;
             container.appendChild(div);
@@ -69,6 +90,13 @@
                     // Normal choice resolution
                     handleNormalChoice(event, choiceIndex, state, narrative, choicesDiv);
                 });
+            });
+
+            document.getElementById('btn-event-check-bag').addEventListener('click', () => {
+                PT.App.push('INVENTORY');
+            });
+            document.getElementById('btn-event-check-party').addEventListener('click', () => {
+                PT.App.push('PARTY');
             });
         }
     };
