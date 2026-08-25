@@ -4,6 +4,72 @@
     const PT = window.PorygonTrail;
     PT.Data = PT.Data || {};
 
+    // Monochrome GB palette for every landmark building — no accent
+    // colors, only shape (peaked roof = house-like, flat roof = civic)
+    // and grid size distinguish one landmark from another.
+    const BUILDING_COLORS = { R: 'var(--gb-darkest)', W: 'var(--gb-white)', D: 'var(--gb-dark)' };
+
+    // Bigger than a house (~36x20px), peaked roof — Professor Oak's Lab
+    const LAB_SHAPE = [
+        '.........RRR.........',
+        '.......RRRRRRR.......',
+        '....RRRRRRRRRRRRR....',
+        'RRRRRRRRRRRRRRRRRRRRR',
+        'RWWWDDWWWWWWWWWDDWWWR',
+        'RWWWDDWWWWWWWWWDDWWWR',
+        'RWWWWWWWWWWWWWWWWWWWR',
+        'RWWWWWWWWDDDWWWWWWWWR',
+        'RWWWWWWWWDDDWWWWWWWWR',
+        'RWWWWWWWWWWWWWWWWWWWR',
+        'RRRRRRRRRRRRRRRRRRRRR'
+    ];
+
+    // Slightly bigger than the Lab (~46x24px), flat roof, two floors — a Gym
+    const GYM_SHAPE = [
+        '.RRRRRRRRRRRRRRRRRRRRR.',
+        'RRRRRRRRRRRRRRRRRRRRRRR',
+        'RRRRRRRRRRRRRRRRRRRRRRR',
+        'RWWWWDDWWWWWWWWWDDWWWWR',
+        'RWWWWDDWWWWWWWWWDDWWWWR',
+        'RWWWWWWWWWWWWWWWWWWWWWR',
+        'RWWWWDDWWWWWWWWWDDWWWWR',
+        'RWWWWDDWWWWWWWWWDDWWWWR',
+        'RWWWWWWWWWWWWWWWWWWWWWR',
+        'RWWWWWWWWWDDDWWWWWWWWWR',
+        'RWWWWWWWWWDDDWWWWWWWWWR',
+        'RRRRRRRRRRRRRRRRRRRRRRR'
+    ];
+
+    // The tallest of them all (~22x44px) — Silph Co.'s skyscraper
+    const SILPH_SHAPE = [
+        '.....R.....',
+        '.....R.....',
+        '.RRRRRRRRR.',
+        'RRRRRRRRRRR',
+        'RWWDWWWDWWR',
+        'RWWDWWWDWWR',
+        'RWWWWWWWWWR',
+        'RWWDWWWDWWR',
+        'RWWDWWWDWWR',
+        'RWWWWWWWWWR',
+        'RWWDWWWDWWR',
+        'RWWDWWWDWWR',
+        'RWWWWWWWWWR',
+        'RWWDWWWDWWR',
+        'RWWDWWWDWWR',
+        'RWWWWWWWWWR',
+        'RWWDWWWDWWR',
+        'RWWDWWWDWWR',
+        'RWWWWWWWWWR',
+        'RWWWDDDWWWR',
+        'RWWWDDDWWWR',
+        'RRRRRRRRRRR'
+    ];
+
+    function landmark(shape, style) {
+        return PT.Engine.PixelArt.buildingDiv(shape, BUILDING_COLORS, style);
+    }
+
     PT.Data.LocationScenes = {
         // Pallet Town — Oak's Lab, two small houses, starter garden
         pallet_town: {
@@ -14,7 +80,7 @@
                 <div class="pixel-house" style="left:8%;font-size:9px;">_[]_<br>|__|</div>
                 <div class="pixel-house" style="left:28%;font-size:9px;">_[]_<br>|__|</div>
                 <div class="pixel-tree" style="left:48%;">&Delta;<br>|</div>
-                <div class="pixel-oak-lab" style="left:58%;bottom:5px;"></div>
+                ${landmark(LAB_SHAPE, 'left:58%;bottom:5px;')}
                 <div class="pixel-grass" style="left:82%;bottom:5px;">vvv</div>
                 <div class="pixel-grass" style="left:90%;bottom:8px;">vv</div>
                 <div class="pixel-fence" style="left:5%;bottom:2px;">--.--.--.--</div>
@@ -43,7 +109,7 @@
             art: `<div class="pixel-scene city-scene">
                 <div class="pixel-building" style="left:5%;height:55px;font-size:6px;">[####]<br>[MUSEUM]<br>[####]</div>
                 <div class="pixel-rock" style="left:38%;bottom:5px;">^^</div>
-                <div class="pixel-building" style="left:50%;height:40px;font-size:7px;">[GYM]<br>[==]</div>
+                ${landmark(GYM_SHAPE, 'left:50%;bottom:5px;')}
                 <div class="pixel-rock" style="left:75%;bottom:8px;">^</div>
                 <div class="pixel-rock" style="left:85%;bottom:5px;">^^</div>
                 <div class="pixel-mountain" style="left:70%;top:8px;font-size:8px;">/\\</div>
@@ -137,7 +203,7 @@
             sky: '#9bbc0f', ground: '#306230',
             art: `<div class="pixel-scene city-scene">
                 <div class="pixel-building" style="left:8%;height:40px;font-size:7px;">[!!]<br>[==]</div>
-                <div class="pixel-building" style="left:30%;height:90px;font-size:6px;">T<br>[S]<br>[=]<br>[=]<br>[=]<br>[=]</div>
+                ${landmark(SILPH_SHAPE, 'left:30%;bottom:5px;')}
                 <div class="pixel-building" style="left:55%;height:45px;font-size:7px;">[o]<br>[==]<br>[==]</div>
                 <div class="pixel-building" style="left:75%;height:55px;font-size:7px;">[=]<br>[=]<br>[=]</div>
                 <div class="pixel-helicopter" style="top:8px;left:65%;font-size:5px;">=+=&gt;</div>
