@@ -277,7 +277,21 @@
         if (effects.rareCandy > 0) lines.push(`+${effects.rareCandy} Rare Candy`);
         if (effects.escapeRope > 0) lines.push(`+${effects.escapeRope} Escape Rope`);
         if (effects.escapeRope < 0) lines.push(`-1 Escape Rope`);
-        if (effects.partyDamage) lines.push(`Party takes ${effects.partyDamage} damage!`);
+        // Party damage hit list — built below alongside deathLines so fainted
+        // Pokemon get the same emphasized death treatment as other death effects.
+        const partyDamageTally = [];
+        if ((effects.partyDamage || effects.partyDamageAll) && effects._partyDamageResults) {
+            effects._partyDamageResults.forEach(r => {
+                const existing = partyDamageTally.find(t => t.name === r.name);
+                if (existing) { existing.hits++; existing.fainted = existing.fainted || r.fainted; }
+                else partyDamageTally.push({ name: r.name, hits: 1, fainted: r.fainted });
+            });
+            partyDamageTally.filter(t => !t.fainted).forEach(t => {
+                lines.push(`💥 ${t.name} was hit${t.hits > 1 ? ` (${t.hits}x)` : ''}!`);
+            });
+        } else if (effects.partyDamage) {
+            lines.push(`Party takes ${effects.partyDamage} damage!`);
+        }
         if (effects.healAll) lines.push('All Pokemon healed!');
         if (effects.healOne) lines.push('One Pokemon healed!');
         if (effects.daysLost) lines.push(`Lost ${effects.daysLost} day(s)`);
@@ -336,6 +350,9 @@
         if (effects.pokemonDeath3 && effects._deathResult3 && effects._deathResult3.killed) {
             deathLines.push(`💀 ${effects._deathResult3.name} was lost forever!`);
         }
+        partyDamageTally.filter(t => t.fainted).forEach(t => {
+            deathLines.push(`💀 ${t.name} was hit and fainted!`);
+        });
 
         if (lines.length === 0 && deathLines.length === 0) return '';
         let html = '<br><br><div style="border-top: 2px solid #0f380f; padding-top: 8px; font-size: 9px;">';

@@ -325,21 +325,27 @@
 
         // Party damage (hits random individual Pokemon per point)
         if (effects.partyDamage) {
+            effects._partyDamageResults = [];
             for (let i = 0; i < effects.partyDamage; i++) {
                 const alive = PT.Engine.GameState.getAliveParty(state);
                 if (alive.length === 0) break;
                 const victim = state.rng.pick(alive);
                 if (victim) {
-                    PT.Engine.GameState.damagePokemon(victim, 1, state);
+                    const name = victim.name;
+                    const fainted = PT.Engine.GameState.damagePokemon(victim, 1, state);
+                    effects._partyDamageResults.push({ name, fainted: !!fainted });
                 }
             }
         }
 
         // Party-wide damage (hits EVERY alive Pokemon)
         if (effects.partyDamageAll) {
+            effects._partyDamageResults = [];
             const alive = PT.Engine.GameState.getAliveParty(state);
             alive.forEach(p => {
-                PT.Engine.GameState.damagePokemon(p, effects.partyDamageAll, state);
+                const name = p.name;
+                const fainted = PT.Engine.GameState.damagePokemon(p, effects.partyDamageAll, state);
+                effects._partyDamageResults.push({ name, fainted: !!fainted });
             });
         }
 
