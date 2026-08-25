@@ -1459,6 +1459,13 @@ body {
    PACE SELECTOR
    ============================================ */
 
+.pace-selector-label {
+    text-align: center;
+    font-size: 6px;
+    color: var(--gb-dark);
+    margin-top: 4px;
+}
+
 .pace-selector {
     display: flex;
     gap: 4px;

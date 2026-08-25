@@ -289,6 +289,7 @@
                     </div>
                 </div>
 
+                <div class="pace-selector-label">Select your pace of travel</div>
                 <div class="pace-selector" style="justify-content: center; margin: 4px 0;">
                     ${[
                         { key: 'explore', label: 'EXPLORE', dist: '0 mi', note: 'heal' },
