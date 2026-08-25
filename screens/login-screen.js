@@ -44,7 +44,7 @@
                     <div style="font-size: 7px; color: var(--gb-dark); margin-bottom: 4px;">${mode === 'signin' ? 'PIN' : '6-DIGIT PIN'}</div>
                     <input type="password" id="input-pin" maxlength="6"
                            inputmode="numeric" pattern="[0-9]*" autocomplete="off"
-                           placeholder="${mode === 'signin' ? '••••' : '••••••'}"
+                           placeholder="••••••"
                            style="width: 100%; box-sizing: border-box; padding: 8px 10px;
                                   font-family: inherit; font-size: 16px; letter-spacing: 8px;
                                   background: var(--gb-lightest); border: 2px solid var(--gb-dark);
