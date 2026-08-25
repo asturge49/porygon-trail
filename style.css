@@ -375,6 +375,73 @@ body {
     position: relative;
 }
 
+.travel-screen {
+    position: relative;
+}
+
+/* ---- Onboarding Tour ---- */
+.tutorial-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 200;
+    animation: recap-fadein 0.15s ease-out;
+}
+
+.tutorial-spotlight {
+    position: absolute;
+    border: 2px solid var(--gb-lightest);
+    border-radius: 3px;
+    box-shadow: 0 0 0 2000px rgba(15, 56, 15, 0.78);
+    pointer-events: none;
+    transition: top 0.2s ease, left 0.2s ease, width 0.2s ease, height 0.2s ease;
+    animation: tutorial-pulse 1.6s ease-in-out infinite;
+}
+
+@keyframes tutorial-pulse {
+    0%, 100% { border-color: var(--gb-lightest); }
+    50% { border-color: var(--gb-danger-light); }
+}
+
+.tutorial-tooltip {
+    position: absolute;
+    background: var(--gb-white);
+    border: 3px solid var(--gb-darkest);
+    box-shadow: 4px 4px 0 var(--gb-shadow);
+    padding: 8px 10px;
+    max-width: 220px;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.tutorial-step-count {
+    font-size: 6px;
+    color: var(--gb-dark);
+    letter-spacing: 1px;
+}
+
+.tutorial-title {
+    font-size: 9px;
+    font-weight: bold;
+    color: var(--gb-darkest);
+}
+
+.tutorial-text {
+    font-size: 7px;
+    line-height: 1.6;
+    color: var(--gb-darkest);
+}
+
+.tutorial-actions {
+    display: flex;
+    justify-content: space-between;
+    gap: 6px;
+    margin-top: 2px;
+}
+
 .travel-header {
     display: flex;
     justify-content: space-between;

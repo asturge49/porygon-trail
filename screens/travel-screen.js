@@ -236,6 +236,7 @@
             div.innerHTML = `
                 <div class="travel-header">
                     <span>Day ${state.daysElapsed} | ${state.trainerName}</span>
+                    <button class="btn-menu-header" id="btn-help" title="How to Play">?</button>
                     <button class="btn-menu-header" id="btn-menu" title="Menu">MENU</button>
                     <span>${state.badges.filter(b => b !== 'champion').length} Badges | ${state.pokedexCaught.length} Caught</span>
                 </div>
@@ -657,10 +658,127 @@
                 showMenuOverlay(state);
             });
 
+            // Help button — replay the onboarding tour on demand
+            document.getElementById('btn-help').addEventListener('click', () => {
+                startTutorial(state, true);
+            });
+
             // Party member click → profile popup
             bindPartyClicks(state);
+
+            // First-ever visit to the Travel screen — walk the player through the basics
+            startTutorial(state, false);
         }
     };
+
+    const TUTORIAL_SEEN_KEY = 'pt_tutorial_seen';
+    const TUTORIAL_STEPS = [
+        {
+            selector: '.pace-selector-label',
+            includeSelector: '.pace-selector',
+            title: 'Choose Your Pace',
+            text: 'EXPLORE heals up but covers no ground. STEADY is safe travel. PUSH covers the most miles but risks injury.'
+        },
+        {
+            selector: '.travel-resources',
+            title: 'Watch Your Food',
+            text: "Your party eats every day you travel. Hit zero and Pokémon start to starve — restock FOOD at a MART."
+        },
+        {
+            selector: '.travel-actions',
+            title: 'Gyms & Centers',
+            text: 'GYM battles earn badges. CENTER fully heals your team for free. Use both whenever a route offers them.'
+        },
+        {
+            selector: '.travel-party-hp',
+            title: 'Your Party',
+            text: 'Tap any Pokémon here to see its travel ability, HP, and options like Potions or Rare Candy.'
+        },
+        {
+            selector: '#btn-continue',
+            title: "You're Ready!",
+            text: 'Hit CONTINUE to advance a day. Good luck out there, Trainer!'
+        }
+    ];
+
+    function startTutorial(state, force) {
+        if (!force) {
+            if (localStorage.getItem(TUTORIAL_SEEN_KEY)) return;
+            localStorage.setItem(TUTORIAL_SEEN_KEY, '1');
+        }
+
+        const screenEl = document.querySelector('.travel-screen');
+        if (!screenEl) return;
+
+        let stepIndex = 0;
+        renderTutorialStep();
+
+        function renderTutorialStep() {
+            const existing = screenEl.querySelector('.tutorial-overlay');
+            if (existing) existing.remove();
+
+            // Skip any step whose target isn't on screen right now (e.g. no party yet)
+            while (stepIndex < TUTORIAL_STEPS.length && !document.querySelector(TUTORIAL_STEPS[stepIndex].selector)) {
+                stepIndex++;
+            }
+            if (stepIndex >= TUTORIAL_STEPS.length) return;
+
+            const step = TUTORIAL_STEPS[stepIndex];
+            const target = document.querySelector(step.selector);
+            const highlightTarget = step.includeSelector ? document.querySelector(step.includeSelector) || target : target;
+            const containerRect = screenEl.getBoundingClientRect();
+            const rect = highlightTarget.getBoundingClientRect();
+            const pad = 5;
+
+            const overlay = document.createElement('div');
+            overlay.className = 'tutorial-overlay';
+
+            const spot = document.createElement('div');
+            spot.className = 'tutorial-spotlight';
+            spot.style.top = (rect.top - containerRect.top - pad) + 'px';
+            spot.style.left = (rect.left - containerRect.left - pad) + 'px';
+            spot.style.width = (rect.width + pad * 2) + 'px';
+            spot.style.height = (rect.height + pad * 2) + 'px';
+            overlay.appendChild(spot);
+
+            const tooltip = document.createElement('div');
+            tooltip.className = 'tutorial-tooltip';
+            tooltip.innerHTML = `
+                <div class="tutorial-step-count">${stepIndex + 1} / ${TUTORIAL_STEPS.length}</div>
+                <div class="tutorial-title">${step.title}</div>
+                <div class="tutorial-text">${step.text}</div>
+                <div class="tutorial-actions">
+                    <button class="btn btn-small" id="tut-skip">SKIP</button>
+                    <button class="btn btn-small" id="tut-next">${stepIndex === TUTORIAL_STEPS.length - 1 ? 'GOT IT' : 'NEXT'}</button>
+                </div>
+            `;
+            overlay.appendChild(tooltip);
+            screenEl.appendChild(overlay);
+
+            // Place the tooltip above or below the spotlight, whichever fits
+            const ttRect = tooltip.getBoundingClientRect();
+            const spaceBelow = containerRect.bottom - rect.bottom;
+            const placeAbove = spaceBelow < ttRect.height + 16;
+            let top = placeAbove
+                ? (rect.top - containerRect.top - ttRect.height - 10)
+                : (rect.bottom - containerRect.top + 10);
+            top = Math.max(4, Math.min(top, screenEl.clientHeight - ttRect.height - 4));
+            let left = rect.left - containerRect.left + rect.width / 2 - ttRect.width / 2;
+            left = Math.max(4, Math.min(left, screenEl.clientWidth - ttRect.width - 4));
+            tooltip.style.top = top + 'px';
+            tooltip.style.left = left + 'px';
+
+            overlay.querySelector('#tut-skip').addEventListener('click', () => overlay.remove());
+            overlay.querySelector('#tut-next').addEventListener('click', () => {
+                stepIndex++;
+                if (stepIndex >= TUTORIAL_STEPS.length) {
+                    overlay.remove();
+                } else {
+                    renderTutorialStep();
+                }
+            });
+        }
+    }
 
     function showMapOverlay(state) {
         const routes = PT.Data.Routes;
