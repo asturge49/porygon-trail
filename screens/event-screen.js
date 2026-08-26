@@ -188,7 +188,15 @@
             // Victory — apply win effects
             if (PT.Engine.Audio) PT.Engine.Audio.gymVictory();
 
-            const winEffects = battle.winEffects || {};
+            // Shallow-copy so we can safely neutralize trainPokemon below without
+            // mutating the static event data shared across every trigger of this fight.
+            const winEffects = Object.assign({}, battle.winEffects || {});
+            // trainPokemon evolves a random party member — but the Pokemon that
+            // actually fought already gets its own shot at evolving via
+            // evolvePokemon(chosen) below. Leaving trainPokemon active here would
+            // spend it on a random, uninvolved teammate instead, which is what
+            // made it look like the wrong Pokemon got credit for the win.
+            winEffects.trainPokemon = false;
             PT.Engine.EventEngine.applyEffects(winEffects, state);
             PT.Engine.GameState.addToLog(state, `${chosen.name} defeated ${battle.trainerName || 'trainer'}'s ${opponent.name}!`);
 
