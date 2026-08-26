@@ -556,8 +556,9 @@
                                     <div class="recap-line">${gymLeaderData.name} awaits at the ${gymLeaderData.badge} gym.</div>
                                     <div class="recap-line">You're about to leave — are you sure?</div>
                                 </div>
-                                <div style="display: flex; gap: 8px; justify-content: center;">
+                                <div style="display: flex; gap: 8px; justify-content: center; flex-wrap: wrap;">
                                     <button class="btn btn-small" id="btn-gym-warn-stay">FIGHT GYM</button>
+                                    <button class="btn btn-small" id="btn-gym-warn-town">STAY IN TOWN</button>
                                     <button class="btn btn-small" id="btn-gym-warn-leave">LEAVE ANYWAY</button>
                                 </div>
                             </div>
@@ -566,6 +567,10 @@
                         document.getElementById('btn-gym-warn-stay').addEventListener('click', () => {
                             gymOverlay.remove();
                             PT.App.goto('GYM', { gymLeader: route.gymLeader });
+                        });
+                        document.getElementById('btn-gym-warn-town').addEventListener('click', () => {
+                            // Just dismiss — stay put so the player can hit the Mart, Center, etc.
+                            gymOverlay.remove();
                         });
                         document.getElementById('btn-gym-warn-leave').addEventListener('click', () => {
                             gymOverlay.remove();
