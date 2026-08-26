@@ -28,7 +28,7 @@
                 <div class="pokedex-legend" style="text-align: center; font-size: 6px; margin-bottom: 8px;">
                     <span style="opacity: 0.3;">? = Unknown</span> &nbsp;
                     <span>&#128065; = Seen</span> &nbsp;
-                    <span style="color: var(--gb-darkest);">&#9679; = Caught</span> &nbsp;
+                    <span style="color: var(--gb-darkest);">&#10003; = Caught</span> &nbsp;
                     <span>&#9733; = Champion</span>
                 </div>
                 <div class="pokedex-filter" style="text-align: center; margin-bottom: 6px;">
@@ -86,7 +86,7 @@
             if (filter === 'unknown' && (isSeen || isCaught)) return '';
 
             const spriteUrl = PT.Engine.GameState.getSpriteUrl(p.id);
-            const statusIcon = isChampion ? '&#9733;' : isCaught ? '&#9679;' : isSeen ? '&#128065;' : '?';
+            const statusIcon = isChampion ? '&#9733;' : isCaught ? '&#10003;' : isSeen ? '&#128065;' : '?';
             const known = isSeen || isCaught;
 
             return `

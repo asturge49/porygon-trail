@@ -1617,6 +1617,48 @@ body {
     justify-content: center;
     border: 3px solid var(--gb-darkest);
     background: var(--gb-white);
+    position: relative;
+}
+
+.encounter-status-tag {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    z-index: 2;
+}
+
+.encounter-tag-ball {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    border: 1px solid var(--gb-darkest);
+    background: linear-gradient(to bottom, var(--gb-danger) 0%, var(--gb-danger) 46%, var(--gb-darkest) 46%, var(--gb-darkest) 54%, var(--gb-white) 54%, var(--gb-white) 100%);
+    position: relative;
+    box-shadow: 0 0 3px rgba(0,0,0,0.4);
+}
+
+.encounter-tag-ball::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 5px;
+    height: 5px;
+    background: var(--gb-white);
+    border: 1px solid var(--gb-darkest);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.encounter-tag-star {
+    font-size: 12px;
+    color: #d4af37;
+    text-shadow: 0 0 3px rgba(0,0,0,0.5);
+    line-height: 1;
 }
 
 .encounter-sprite {
@@ -2408,10 +2450,10 @@ body {
 }
 
 .pokedex-entry.champion {
-    background: var(--gb-lightest);
-    border-color: var(--gb-darkest);
+    background: #f4e07a;
+    border-color: #a8860a;
     border-width: 2px;
-    box-shadow: 0 0 4px var(--gb-dark);
+    box-shadow: 0 0 5px #d4af37;
 }
 
 .pokedex-sprite {
@@ -2421,9 +2463,10 @@ body {
     filter: brightness(0.8) sepia(1) hue-rotate(70deg) saturate(3);
 }
 
+.pokedex-entry.caught .pokedex-sprite,
 .pokedex-entry.champion .pokedex-sprite {
     filter: none;
-    /* Champions show in full color - stand out */
+    /* Caught/champion Pokemon show in full color - stand out from seen-only (green) */
 }
 
 .pokedex-sprite-unknown {

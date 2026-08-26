@@ -15,6 +15,10 @@
 
             const totalBalls = state.resources.pokeballs + state.resources.greatballs + state.resources.ultraballs;
 
+            const dex = PT.Engine.Scoring.getGlobalPokedex();
+            const isCaught = dex.caught.includes(pokemon.id);
+            const isChampion = dex.champions.includes(pokemon.id);
+
             const div = document.createElement('div');
             div.className = 'screen encounter-screen';
             div.innerHTML = `
@@ -22,6 +26,12 @@
                     Wild ${pokemon.name} appeared!
                 </div>
                 <div class="encounter-sprite-area">
+                    ${isCaught || isChampion ? `
+                        <div class="encounter-status-tag" title="${[isCaught ? 'Caught' : '', isChampion ? 'Champion' : ''].filter(Boolean).join(' & ')}">
+                            ${isCaught ? '<div class="encounter-tag-ball"></div>' : ''}
+                            ${isChampion ? '<div class="encounter-tag-star">&#9733;</div>' : ''}
+                        </div>
+                    ` : ''}
                     <div style="text-align: center;">
                         <img class="encounter-sprite" src="${pokemon.spriteUrl}" alt="${pokemon.name}"
                              onerror="this.style.display='none'; this.parentElement.innerHTML='<div style=\\'font-size:48px; padding:20px;\\'>?</div>'">
