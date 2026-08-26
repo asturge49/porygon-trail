@@ -98,17 +98,19 @@
                 ? aliveParty.reduce((sum, p) => sum + PT.Engine.GameState.getFoodCost(p), 0)
                 : 1;
             foodConsumed = Math.ceil(baseFood * pace.foodMult);
+
+            // Fire ability reduces food consumption (stacks + scales) — applied
+            // before subtracting so it can't mask starvation via a post-hoc refill
+            const firePower = PT.Engine.GameState.getAbilityPower(state, 'fire');
+            if (firePower > 0 && foodConsumed > 1) {
+                const fireSaved = Math.min(foodConsumed - 1, Math.max(1, Math.floor(firePower)));
+                foodConsumed -= fireSaved;
+                const fireName = abilityHolder(state, 'fire');
+                results.messages.push(`🔥 ${fireName} cooked efficiently, saving ${fireSaved} food!`);
+            }
+
             state.resources.food = Math.max(0, state.resources.food - foodConsumed);
             results.messages.push(`Party consumed ${foodConsumed} food.`);
-        }
-
-        // Fire ability reduces food consumption (stacks + scales)
-        const firePower = PT.Engine.GameState.getAbilityPower(state, 'fire');
-        if (firePower > 0 && foodConsumed > 1) {
-            const fireSaved = Math.max(1, Math.floor(firePower));
-            state.resources.food = Math.min(state.resources.food + fireSaved, 999);
-            const fireName = abilityHolder(state, 'fire');
-            results.messages.push(`🔥 ${fireName} cooked efficiently, saving ${fireSaved} food!`);
         }
 
         // Cut ability forages for extra food (stacks + scales)
