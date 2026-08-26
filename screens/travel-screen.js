@@ -455,6 +455,18 @@
             function showPsychicPicker(results, state) {
                 const enc1 = results.encounter;
                 const enc2 = results.psychicAlt;
+                const dex = PT.Engine.Scoring.getGlobalPokedex();
+                const statusTag = (p) => {
+                    const isCaught = dex.caught.includes(p.id);
+                    const isChampion = dex.champions.includes(p.id);
+                    if (!isCaught && !isChampion) return '';
+                    return `
+                        <div class="encounter-status-tag" title="${[isCaught ? 'Caught' : '', isChampion ? 'Champion' : ''].filter(Boolean).join(' & ')}">
+                            ${isCaught ? '<div class="encounter-tag-ball"></div>' : ''}
+                            ${isChampion ? '<div class="encounter-tag-star">&#9733;</div>' : ''}
+                        </div>
+                    `;
+                };
                 const overlay = document.createElement('div');
                 overlay.className = 'day-recap-overlay';
                 overlay.innerHTML = `
@@ -464,12 +476,14 @@
                             Your Psychic-type senses two wild Pokemon nearby. Choose which to face!
                         </div>
                         <div style="display: flex; gap: 8px; justify-content: center; margin: 8px 0;">
-                            <button class="btn btn-small psychic-pick" data-pick="1" style="flex: 1; padding: 8px 4px;">
+                            <button class="btn btn-small psychic-pick" data-pick="1" style="flex: 1; padding: 8px 4px; position: relative;">
+                                ${statusTag(enc1)}
                                 <img src="${enc1.spriteUrl}" style="width: 40px; height: 40px; image-rendering: pixelated; display: block; margin: 0 auto 4px;" onerror="this.style.display='none'">
                                 <div style="font-size: 7px;">${enc1.name}</div>
                                 <div style="font-size: 6px;">${enc1.types.join('/')} | ${enc1.rarity}</div>
                             </button>
-                            <button class="btn btn-small psychic-pick" data-pick="2" style="flex: 1; padding: 8px 4px;">
+                            <button class="btn btn-small psychic-pick" data-pick="2" style="flex: 1; padding: 8px 4px; position: relative;">
+                                ${statusTag(enc2)}
                                 <img src="${enc2.spriteUrl}" style="width: 40px; height: 40px; image-rendering: pixelated; display: block; margin: 0 auto 4px;" onerror="this.style.display='none'">
                                 <div style="font-size: 7px;">${enc2.name}</div>
                                 <div style="font-size: 6px;">${enc2.types.join('/')} | ${enc2.rarity}</div>
