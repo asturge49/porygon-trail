@@ -761,6 +761,7 @@ body {
 .trail-trainer-sprite {
     width: 22px;
     height: 26px;
+    object-fit: contain;
     position: relative;
     flex-shrink: 0;
     z-index: 4;
@@ -768,45 +769,6 @@ body {
     animation: trailBounce 1.2s ease-in-out infinite;
     background: transparent;
     margin-right: 2px;
-}
-
-.trail-trainer-sprite::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 2px;
-    height: 2px;
-    /* Gen 1 Red overworld sprite — walking down, 11x13 grid at 2px/pixel
-       Matches the original RB sprite: cap, hair, face, jacket, legs
-       GB palette: darkest=outline/hair, dark=cap/jacket, light=skin, white=lightest */
-    box-shadow:
-        /* Row 0: cap top */
-        6px 0 var(--gb-darkest), 8px 0 var(--gb-darkest), 10px 0 var(--gb-darkest), 12px 0 var(--gb-darkest),
-        /* Row 1: cap body */
-        4px 2px var(--gb-darkest), 6px 2px var(--gb-dark), 8px 2px var(--gb-dark), 10px 2px var(--gb-dark), 12px 2px var(--gb-dark), 14px 2px var(--gb-darkest),
-        /* Row 2: cap brim — wide */
-        2px 4px var(--gb-darkest), 4px 4px var(--gb-dark), 6px 4px var(--gb-dark), 8px 4px var(--gb-darkest), 10px 4px var(--gb-dark), 12px 4px var(--gb-dark), 14px 4px var(--gb-dark), 16px 4px var(--gb-darkest),
-        /* Row 3: hair + forehead */
-        2px 6px var(--gb-darkest), 4px 6px var(--gb-darkest), 6px 6px var(--gb-light), 8px 6px var(--gb-light), 10px 6px var(--gb-light), 12px 6px var(--gb-light), 14px 6px var(--gb-darkest), 16px 6px var(--gb-darkest),
-        /* Row 4: face — eyes */
-        2px 8px var(--gb-darkest), 4px 8px var(--gb-light), 6px 8px var(--gb-darkest), 8px 8px var(--gb-light), 10px 8px var(--gb-light), 12px 8px var(--gb-darkest), 14px 8px var(--gb-light), 16px 8px var(--gb-darkest),
-        /* Row 5: face — mouth */
-        4px 10px var(--gb-darkest), 6px 10px var(--gb-light), 8px 10px var(--gb-light), 10px 10px var(--gb-dark), 12px 10px var(--gb-light), 14px 10px var(--gb-darkest),
-        /* Row 6: neck/collar */
-        4px 12px var(--gb-darkest), 6px 12px var(--gb-darkest), 8px 12px var(--gb-darkest), 10px 12px var(--gb-darkest), 12px 12px var(--gb-darkest), 14px 12px var(--gb-darkest),
-        /* Row 7: jacket top */
-        2px 14px var(--gb-darkest), 4px 14px var(--gb-darkest), 6px 14px var(--gb-darkest), 8px 14px var(--gb-darkest), 10px 14px var(--gb-darkest), 12px 14px var(--gb-darkest), 14px 14px var(--gb-darkest), 16px 14px var(--gb-darkest),
-        /* Row 8: jacket + arms */
-        0px 16px var(--gb-light), 2px 16px var(--gb-darkest), 4px 16px var(--gb-darkest), 6px 16px var(--gb-darkest), 8px 16px var(--gb-darkest), 10px 16px var(--gb-darkest), 12px 16px var(--gb-darkest), 14px 16px var(--gb-darkest), 16px 16px var(--gb-darkest), 18px 16px var(--gb-light),
-        /* Row 9: lower jacket */
-        4px 18px var(--gb-darkest), 6px 18px var(--gb-dark), 8px 18px var(--gb-dark), 10px 18px var(--gb-dark), 12px 18px var(--gb-dark), 14px 18px var(--gb-darkest),
-        /* Row 10: legs top */
-        4px 20px var(--gb-darkest), 6px 20px var(--gb-dark), 8px 20px var(--gb-darkest), 10px 20px var(--gb-dark), 12px 20px var(--gb-dark), 14px 20px var(--gb-darkest),
-        /* Row 11: legs */
-        4px 22px var(--gb-darkest), 6px 22px var(--gb-dark), 8px 22px var(--gb-darkest), 10px 22px var(--gb-darkest), 12px 22px var(--gb-dark), 14px 22px var(--gb-darkest),
-        /* Row 12: feet */
-        2px 24px var(--gb-darkest), 4px 24px var(--gb-darkest), 6px 24px var(--gb-darkest), 12px 24px var(--gb-darkest), 14px 24px var(--gb-darkest), 16px 24px var(--gb-darkest);
 }
 
 /* Party parade — base sprite styles */

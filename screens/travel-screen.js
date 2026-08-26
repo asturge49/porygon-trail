@@ -216,7 +216,7 @@
             const timeElements = route.terrain !== 'cave' ? getTimeElements(timeOfDay) : '';
 
             // Trainer sprite leads the party
-            const trainerSprite = `<div class="trail-trainer-sprite" title="${state.trainerName}"></div>`;
+            const trainerSprite = `<img class="trail-trainer-sprite" src="https://images.gamebanana.com/img/ico/sprays/sgi_common_thumbs_5b9089fef122c_530.webp" alt="${state.trainerName}" title="${state.trainerName}">`;
 
             // Party Pokemon sprites — all alive members walk in a line, sized by actual Pokemon size
             const aliveParty = state.party.filter(p => p.status !== 'fainted' && p.hp > 0);
