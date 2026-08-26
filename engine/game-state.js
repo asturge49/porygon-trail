@@ -388,7 +388,10 @@
 
         // Location-based evolution limit
         const currentLoc = state ? state.currentLocationIndex : -1;
-        if (currentLoc >= 0 && (partyMon.lastEvoLocation || -1) === currentLoc) {
+        // Plain equality, not `|| -1` — lastEvoLocation is legitimately 0 at the
+        // first location (Pallet Town), and `0 || -1` would coerce that to -1,
+        // silently disabling this guard there and letting a Pokemon evolve twice.
+        if (currentLoc >= 0 && partyMon.lastEvoLocation === currentLoc) {
             return { evolved: false }; // already evolved here
         }
         // Support branching evolution (e.g. Eevee -> [Vaporeon, Jolteon, Flareon])
