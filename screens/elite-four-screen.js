@@ -327,6 +327,10 @@
             const killed = pokemon.hp <= 0;
 
             if (killed) {
+                // Mark fainted first — getAliveParty() (which drives the next
+                // battle's Pokemon picker) filters on this, not array membership,
+                // so this must be set regardless of whether the splice below finds it.
+                pokemon.status = 'fainted';
                 if (!state.graveyard) state.graveyard = [];
                 const route = PT.Engine.GameState.getCurrentRoute(state);
                 state.graveyard.push({

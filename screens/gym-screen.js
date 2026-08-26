@@ -251,6 +251,9 @@
             let gymFainted = false;
             if (state.rng.chance(deathChance)) {
                 // Ace Pokemon kills bypass Battle Star death avoidance
+                // Mark fainted first — getAliveParty() filters on this, not array
+                // membership, so this must be set regardless of the splice below.
+                pokemon.status = 'fainted';
                 const idx = state.party.indexOf(pokemon);
                 if (idx !== -1) {
                     if (!state.graveyard) state.graveyard = [];
