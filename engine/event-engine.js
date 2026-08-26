@@ -241,6 +241,9 @@
             if (event.requiresPartySize && PT.Engine.GameState.getAliveParty(state).length < event.requiresPartySize) return false;
             // Pokemon buyer cooldown: at most once per 60 days
             if (event.pokemonBuyerEvent && state._lastBuyerDay != null && (state.daysElapsed - state._lastBuyerDay) < 60) return false;
+            // Mutually-exclusive events (e.g. a legendary's location encounter and its
+            // roaming-anywhere encounter) — once either has fired, the other is out.
+            if (event.conflictsWith && event.conflictsWith.some(id => state.eventsTriggered.includes(id))) return false;
             // Route event pool check (if event has no location restriction, it can happen anywhere)
             if (!event.locationIds && !event.terrainTypes && route.eventPool && !route.eventPool.includes(event.id)) {
                 // General events can still occur anywhere

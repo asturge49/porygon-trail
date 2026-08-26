@@ -208,7 +208,7 @@
             type: "legendary",
             name: "Ash's Pikachu!",
             description: "A kid in a red cap grins at you. His Pikachu's cheeks spark with terrifying power. \"I've beaten the Indigo League, y'know! My Pikachu can take on anyone. Wanna try?\"",
-            weight: 4,
+            weight: 17,
             oneTime: true,
             locationIds: ["pallet_town"],
             choices: [
@@ -545,6 +545,7 @@
             weight: 3,
             oneTime: true,
             locationIds: ["seafoam_islands"],
+            conflictsWith: ["articuno_wild"],
             choices: [
                 {
                     text: "Throw an Ultra Ball!",
@@ -604,6 +605,7 @@
             weight: 3,
             oneTime: true,
             locationIds: ["cinnabar_island"],
+            conflictsWith: ["moltres_wild"],
             choices: [
                 {
                     text: "Throw an Ultra Ball!",
@@ -631,7 +633,7 @@
             type: "legendary",
             name: "The Unknown Dungeon!",
             description: "Deep in a cave behind Cerulean City, you sense an overwhelming psychic presence. The air itself vibrates with power.",
-            weight: 2,
+            weight: 6,
             oneTime: true,
             minDay: 25,
             minBadges: 6,
@@ -650,6 +652,62 @@
                     outcomes: [
                         { weight: 80, narration: "Wisdom prevails. You leave the cave unharmed.", effects: { seePokemon: 150 } },
                         { weight: 20, narration: "As you turn, a psychic blast hits your team!", effects: { partyDamageAll: 1, seePokemon: 150 } }
+                    ]
+                }
+            ]
+        },
+        {
+            id: "articuno_wild",
+            type: "legendary",
+            name: "Articuno Passes Overhead!",
+            description: "The temperature drops without warning. Snow starts falling from a clear sky. High above, a massive blue-white bird cuts through the clouds — Articuno, far from its island home!",
+            weight: 3,
+            oneTime: true,
+            minDay: 12,
+            conflictsWith: ["articuno_encounter"],
+            choices: [
+                {
+                    text: "Throw an Ultra Ball!",
+                    requiresItem: "ultraballs",
+                    bonusAbility: "ice",
+                    outcomes: [
+                        { weight: 20, narration: "Incredible! Articuno is caught!", effects: { ultraballs: -1, catchPokemon: 144 } },
+                        { weight: 80, narration: "Articuno breaks free of the ball and vanishes into the clouds!", effects: { ultraballs: -1 } }
+                    ],
+                    bonusOutcome: { weight: 35, narration: "Your Ice-type calls out to Articuno! The Ultra Ball connects! Articuno is caught!", effects: { ultraballs: -1, catchPokemon: 144 } }
+                },
+                {
+                    text: "Watch it pass",
+                    outcomes: [
+                        { weight: 100, narration: "Frost forms on every leaf for a mile around as Articuno glides overhead, then disappears over the horizon.", effects: { seePokemon: 144 } }
+                    ]
+                }
+            ]
+        },
+        {
+            id: "moltres_wild",
+            type: "legendary",
+            name: "Moltres Passes Overhead!",
+            description: "The air shimmers with heat. High above, trailing embers, a great flame-winged bird crosses the sky — Moltres, far from Cinnabar's volcano!",
+            weight: 3,
+            oneTime: true,
+            minDay: 12,
+            conflictsWith: ["moltres_volcano"],
+            choices: [
+                {
+                    text: "Throw an Ultra Ball!",
+                    requiresItem: "ultraballs",
+                    bonusAbility: "fire",
+                    outcomes: [
+                        { weight: 15, narration: "Against all odds, the Ultra Ball holds! Moltres is yours!", effects: { ultraballs: -1, catchPokemon: 146 } },
+                        { weight: 85, narration: "Moltres melts the ball mid-air and soars off, trailing embers.", effects: { ultraballs: -1 } }
+                    ],
+                    bonusOutcome: { weight: 30, narration: "Your Fire-type resonates with Moltres! The catch succeeds!", effects: { ultraballs: -1, catchPokemon: 146 } }
+                },
+                {
+                    text: "Watch it pass",
+                    outcomes: [
+                        { weight: 100, narration: "The sky glows orange as Moltres streaks past, gone before you can react.", effects: { seePokemon: 146 } }
                     ]
                 }
             ]
@@ -4912,7 +4970,7 @@
             type: "legendary",
             name: "Mew!",
             description: "The air shimmers. A pink, cat-like Pokemon materializes out of thin air, floating inches from your face. It giggles — actually giggles — and does a backflip. This is Mew. The original. The mythical ancestor of all Pokemon. You have one shot.",
-            weight: 1,
+            weight: 3,
             oneTime: true,
             minDay: 10,
             choices: [
