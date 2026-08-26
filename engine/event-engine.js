@@ -247,7 +247,7 @@
             // Route event pool check (if event has no location restriction, it can happen anywhere)
             if (!event.locationIds && !event.terrainTypes && route.eventPool && !route.eventPool.includes(event.id)) {
                 // General events can still occur anywhere
-                if (event.type === 'combat' || event.type === 'weather' || event.type === 'discovery' || event.type === 'hazard' || event.type === 'story' || event.type === 'legendary' || event.type === 'special') {
+                if (event.type === 'combat' || event.type === 'weather' || event.type === 'discovery' || event.type === 'hazard' || event.type === 'story' || event.type === 'legendary' || event.type === 'special' || event.type === 'dilemma' || event.type === 'trade') {
                     // Allow general events
                 } else {
                     return false;
