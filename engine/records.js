@@ -40,6 +40,125 @@
         }
     }
 
+    // ===== CLOUD SYNC =====
+    async function cloudPushRecords(records) {
+        const auth = PT.Engine.Auth;
+        if (!auth || !auth.isLoggedIn()) return false;
+        const client = auth.getClient();
+        if (!client) return false;
+        try {
+            const { error } = await client.from('pt_records').upsert({
+                user_id: auth.getCurrentUser().id,
+                records_data: records,
+                updated_at: new Date().toISOString()
+            }, { onConflict: 'user_id' });
+            return !error;
+        } catch (e) {
+            console.warn('Cloud records push failed:', e);
+            return false;
+        }
+    }
+
+    async function cloudFetchRecords() {
+        const auth = PT.Engine.Auth;
+        if (!auth || !auth.isLoggedIn()) return null;
+        const client = auth.getClient();
+        if (!client) return null;
+        try {
+            const { data, error } = await client
+                .from('pt_records')
+                .select('records_data')
+                .eq('user_id', auth.getCurrentUser().id)
+                .maybeSingle();
+            if (error || !data) return null;
+            return data.records_data;
+        } catch (e) {
+            console.warn('Cloud records fetch failed:', e);
+            return null;
+        }
+    }
+
+    async function clearCloudRecords() {
+        const auth = PT.Engine.Auth;
+        if (!auth || !auth.isLoggedIn()) return;
+        const client = auth.getClient();
+        if (!client) return;
+        try {
+            await client.from('pt_records').delete().eq('user_id', auth.getCurrentUser().id);
+        } catch (e) {
+            console.warn('Cloud records clear failed:', e);
+        }
+    }
+
+    // Keep whichever of two "record" objects ({ value, name, date }) wins by isBetter
+    function betterOf(a, b, isBetter) {
+        if (!a) return b;
+        if (!b) return a;
+        return isBetter(a.value, b.value) ? a : b;
+    }
+
+    // Combine local (this browser) and cloud (this account) records. Additive
+    // counters take cloud + local's excess over cloud rather than a flat sum —
+    // this stays a one-time "catch cloud up to local" op (safe to re-run) rather
+    // than a running double-count, since updateRecords() pushes to cloud after
+    // every run once logged in, so local should only exceed cloud in the
+    // pre-login-history case this merge exists to handle.
+    function mergeRecords(local, cloud) {
+        if (!cloud) return local;
+
+        const merged = getDefaultRecords();
+
+        const runDelta = Math.max(0, local.totalRuns - cloud.totalRuns);
+        const winDelta = Math.max(0, local.totalWins - cloud.totalWins);
+        const legDelta = Math.max(0, local.totalLegendaryCatches - cloud.totalLegendaryCatches);
+        merged.totalRuns = cloud.totalRuns + runDelta;
+        merged.totalWins = cloud.totalWins + winDelta;
+        merged.totalLegendaryCatches = cloud.totalLegendaryCatches + legDelta;
+
+        // catchTally: per-key max, not sum — safe under repeated merges.
+        merged.catchTally = {};
+        const allKeys = new Set([...Object.keys(local.catchTally || {}), ...Object.keys(cloud.catchTally || {})]);
+        allKeys.forEach(k => {
+            merged.catchTally[k] = Math.max(local.catchTally[k] || 0, cloud.catchTally[k] || 0);
+        });
+
+        ['highScore', 'mostCatches', 'richestEnding'].forEach(key => {
+            merged[key] = betterOf(local[key], cloud[key], (a, b) => a > b);
+        });
+        ['fastestWin', 'fewestCatchesWin'].forEach(key => {
+            merged[key] = betterOf(local[key], cloud[key], (a, b) => a < b);
+        });
+        merged.slowestWin = betterOf(local.slowestWin, cloud.slowestWin, (a, b) => a > b);
+
+        // hallOfFame: union, dedupe by name+date+team length, sort desc by date, cap 5
+        const combined = [...(local.hallOfFame || []), ...(cloud.hallOfFame || [])];
+        const seen = new Set();
+        merged.hallOfFame = combined
+            .filter(entry => {
+                const key = `${entry.name}|${entry.date}|${entry.team.length}`;
+                if (seen.has(key)) return false;
+                seen.add(key);
+                return true;
+            })
+            .sort((a, b) => new Date(b.date) - new Date(a.date))
+            .slice(0, MAX_HALL_OF_FAME);
+
+        return merged;
+    }
+
+    // Call once on login (fresh sign-in/up or restored session) to reconcile
+    // this browser's local records with the account's cloud records.
+    async function syncRecordsOnLogin() {
+        const cloud = await cloudFetchRecords();
+        const local = getRecords();
+        const merged = mergeRecords(local, cloud);
+        saveRecords(merged);
+        if (JSON.stringify(merged) !== JSON.stringify(cloud)) {
+            cloudPushRecords(merged).catch(() => {});
+        }
+        return merged;
+    }
+
     // Helper: update a "highest is best" record
     function updateMax(records, key, value, name, date) {
         if (records[key] === null || value > records[key].value) {
@@ -121,16 +240,19 @@
         }
 
         saveRecords(records);
+        cloudPushRecords(records).catch(() => {});
         return records;
     }
 
     function clearRecords() {
         localStorage.removeItem(RECORDS_KEY);
+        clearCloudRecords().catch(() => {});
     }
 
     PT.Engine.Records = {
         getRecords,
         updateRecords,
-        clearRecords
+        clearRecords,
+        syncRecordsOnLogin
     };
 })();

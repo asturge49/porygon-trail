@@ -81,10 +81,19 @@
         }
 
         if (data.user) {
-            await client.from('pt_profiles').upsert({
-                id: data.user.id,
-                username: username.trim()
-            }, { onConflict: 'id' });
+            const profile = { id: data.user.id, username: username.trim() };
+            const { error: profileError } = await client.from('pt_profiles').upsert(profile, { onConflict: 'id' });
+
+            if (profileError) {
+                // Can fail transiently if the client's session isn't attached yet
+                // when this fires right after signUp() — retry once before giving up.
+                console.warn('Profile creation failed, retrying:', profileError);
+                const retry = await client.from('pt_profiles').upsert(profile, { onConflict: 'id' });
+                if (retry.error) {
+                    console.error('Profile creation failed for new account', data.user.id, retry.error);
+                }
+            }
+
             _currentUser = data.user;
             _currentUsername = username.trim();
         }

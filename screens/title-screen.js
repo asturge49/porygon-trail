@@ -62,6 +62,7 @@
                     </button>
                     ` : ''}
                     <button class="btn btn-wide btn-small" id="btn-sound">SOUND: ${PT.Engine.Audio && PT.Engine.Audio.isEnabled() ? 'ON' : 'OFF'}</button>
+                    <button class="btn btn-wide btn-small" id="btn-discord">JOIN DISCORD</button>
                 </div>
                 <div class="blink text-sm" style="margin-top: 8px;">PRESS START</div>
             `;
@@ -136,6 +137,10 @@
                     PT.App.goto('LOGIN');
                 });
             }
+
+            document.getElementById('btn-discord').addEventListener('click', () => {
+                window.open('https://discord.gg/6yNHjbAYF', '_blank', 'noopener');
+            });
 
             document.getElementById('btn-sound').addEventListener('click', () => {
                 if (PT.Engine.Audio) {

@@ -75,7 +75,8 @@
 
             const auth = PT.Engine.Auth;
             if (auth && auth.isConfigured()) {
-                auth.restoreSession().then(loggedIn => {
+                auth.restoreSession().then(async loggedIn => {
+                    if (loggedIn) await PT.Engine.Records.syncRecordsOnLogin().catch(() => {});
                     PT.App.goto(loggedIn ? 'TITLE' : 'LOGIN');
                 }).catch(() => {
                     PT.App.goto('LOGIN');

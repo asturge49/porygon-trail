@@ -117,6 +117,7 @@
                         : await auth.signUp(username, pin);
 
                     if (result.success) {
+                        await PT.Engine.Records.syncRecordsOnLogin().catch(() => {});
                         PT.App.goto('TITLE');
                     } else {
                         showError(result.error || 'Something went wrong.');
