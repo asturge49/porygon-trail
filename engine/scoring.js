@@ -142,6 +142,89 @@
         }
     }
 
+    // ===== CLOUD SYNC =====
+    // Mirrors the pt_records sync in engine/records.js. Requires a Supabase
+    // migration this codebase can't apply on its own:
+    //   create table if not exists pt_pokedex (
+    //     user_id uuid primary key references auth.users(id),
+    //     pokedex_data jsonb not null,
+    //     updated_at timestamptz not null default now()
+    //   );
+    async function cloudPushPokedex(dex) {
+        const auth = PT.Engine.Auth;
+        if (!auth || !auth.isLoggedIn()) return false;
+        const client = auth.getClient();
+        if (!client) return false;
+        try {
+            const { error } = await client.from('pt_pokedex').upsert({
+                user_id: auth.getCurrentUser().id,
+                pokedex_data: dex,
+                updated_at: new Date().toISOString()
+            }, { onConflict: 'user_id' });
+            return !error;
+        } catch (e) {
+            console.warn('Cloud pokedex push failed:', e);
+            return false;
+        }
+    }
+
+    async function cloudFetchPokedex() {
+        const auth = PT.Engine.Auth;
+        if (!auth || !auth.isLoggedIn()) return null;
+        const client = auth.getClient();
+        if (!client) return null;
+        try {
+            const { data, error } = await client
+                .from('pt_pokedex')
+                .select('pokedex_data')
+                .eq('user_id', auth.getCurrentUser().id)
+                .maybeSingle();
+            if (error || !data) return null;
+            return data.pokedex_data;
+        } catch (e) {
+            console.warn('Cloud pokedex fetch failed:', e);
+            return null;
+        }
+    }
+
+    async function clearCloudPokedex() {
+        const auth = PT.Engine.Auth;
+        if (!auth || !auth.isLoggedIn()) return;
+        const client = auth.getClient();
+        if (!client) return;
+        try {
+            await client.from('pt_pokedex').delete().eq('user_id', auth.getCurrentUser().id);
+        } catch (e) {
+            console.warn('Cloud pokedex clear failed:', e);
+        }
+    }
+
+    // Union of id lists — unlike records' counters, seen/caught/champions are
+    // just sets, so merging local (this browser) with cloud (this account) is
+    // a plain dedupe, safe to re-run.
+    function mergePokedex(local, cloud) {
+        if (!cloud) return local;
+        const merge = (a, b) => Array.from(new Set([...(a || []), ...(b || [])]));
+        return {
+            seen: merge(local.seen, cloud.seen),
+            caught: merge(local.caught, cloud.caught),
+            champions: merge(local.champions, cloud.champions)
+        };
+    }
+
+    // Call once on login (fresh sign-in/up or restored session) to reconcile
+    // this browser's local pokedex with the account's cloud pokedex.
+    async function syncPokedexOnLogin() {
+        const cloud = await cloudFetchPokedex();
+        const local = getGlobalPokedex();
+        const merged = mergePokedex(local, cloud);
+        saveGlobalPokedex(merged);
+        if (JSON.stringify(merged) !== JSON.stringify(cloud)) {
+            cloudPushPokedex(merged).catch(() => {});
+        }
+        return merged;
+    }
+
     // Build reverse evolution map: { evolvedId -> preEvoId }
     // e.g. { 9: 8, 8: 7 } means Blastoise(9) <- Wartortle(8) <- Squirtle(7)
     function buildPreEvoMap() {
@@ -202,11 +285,13 @@
         }
 
         saveGlobalPokedex(dex);
+        cloudPushPokedex(dex).catch(() => {});
         return dex;
     }
 
     function clearGlobalPokedex() {
         localStorage.removeItem(POKEDEX_KEY);
+        clearCloudPokedex().catch(() => {});
     }
 
     // Pokemon that would be tagged "champion" by this run — the surviving party
@@ -227,6 +312,6 @@
     PT.Engine.Scoring = {
         calculateScore, saveToLeaderboard, saveRunInProgress, getLeaderboard, clearLeaderboard,
         getGlobalPokedex, updateGlobalPokedex, clearGlobalPokedex, countLegendaries, getLegendaryIds,
-        getChampionIds
+        getChampionIds, syncPokedexOnLogin
     };
 })();

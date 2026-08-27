@@ -76,7 +76,10 @@
             const auth = PT.Engine.Auth;
             if (auth && auth.isConfigured()) {
                 auth.restoreSession().then(async loggedIn => {
-                    if (loggedIn) await PT.Engine.Records.syncRecordsOnLogin().catch(() => {});
+                    if (loggedIn) {
+                        await PT.Engine.Records.syncRecordsOnLogin().catch(() => {});
+                        await PT.Engine.Scoring.syncPokedexOnLogin().catch(() => {});
+                    }
                     PT.App.goto(loggedIn ? 'TITLE' : 'LOGIN');
                 }).catch(() => {
                     PT.App.goto('LOGIN');

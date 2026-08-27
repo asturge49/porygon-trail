@@ -3,6 +3,24 @@
     const PT = window.PorygonTrail;
     PT.Screens = PT.Screens || {};
 
+    // Renders one party member row for the travel HP panel, gold-highlighting
+    // Pokemon that already carry the lifetime "champion" tag from a past win.
+    function partyMemberHtml(p, idx, dex) {
+        const isChampion = dex.champions.includes(p.id);
+        return `
+            <div class="travel-party-member ${p.hp <= 1 ? 'critical' : ''} ${isChampion ? 'champion' : ''}" data-party-idx="${idx}" style="cursor:pointer;" title="${isChampion ? 'Champion Pokemon' : ''}">
+                <img class="travel-party-sprite" src="${p.spriteUrl}" alt="${p.name}" onerror="this.style.display='none'">
+                <div class="travel-party-info">
+                    <div class="travel-party-name">${isChampion ? '&#9733; ' : ''}${p.name}</div>
+                    <div class="travel-hp-bar">
+                        <div class="travel-hp-fill ${p.hp <= 1 ? 'low' : p.hp <= Math.ceil(p.maxHp / 2) ? 'mid' : ''}" style="width:${(p.hp / p.maxHp) * 100}%"></div>
+                    </div>
+                    <div class="travel-hp-text">HP ${p.hp}/${p.maxHp}${p.status !== 'healthy' ? ' ' + p.status.toUpperCase() : ''}${(p.battleStars || 0) > 0 ? ' <span class="battle-stars">' + '★'.repeat(p.battleStars) + '</span>' : ''}</div>
+                </div>
+            </div>
+        `;
+    }
+
     // Pokemon size categories based on actual game sizes
     // small: ~0-3ft, medium: ~3-6ft, large: 6ft+
     const POKEMON_SIZE = {
@@ -191,6 +209,7 @@
 
     PT.Screens.TRAVEL = {
         render(container, state) {
+            const partyDex = PT.Engine.Scoring.getGlobalPokedex();
             const route = PT.Engine.GameState.getCurrentRoute(state);
 
             // Pokemon League — show mandatory Pokemon Center heal, then E4
@@ -319,18 +338,7 @@
                 </div>
 
                 <div class="travel-party-hp" id="travel-party-hp">
-                    ${state.party.map((p, idx) => `
-                        <div class="travel-party-member ${p.hp <= 1 ? 'critical' : ''}" data-party-idx="${idx}" style="cursor:pointer;">
-                            <img class="travel-party-sprite" src="${p.spriteUrl}" alt="${p.name}" onerror="this.style.display='none'">
-                            <div class="travel-party-info">
-                                <div class="travel-party-name">${p.name}</div>
-                                <div class="travel-hp-bar">
-                                    <div class="travel-hp-fill ${p.hp <= 1 ? 'low' : p.hp <= Math.ceil(p.maxHp / 2) ? 'mid' : ''}" style="width:${(p.hp / p.maxHp) * 100}%"></div>
-                                </div>
-                                <div class="travel-hp-text">HP ${p.hp}/${p.maxHp}${p.status !== 'healthy' ? ' ' + p.status.toUpperCase() : ''}${(p.battleStars || 0) > 0 ? ' <span class="battle-stars">' + '★'.repeat(p.battleStars) + '</span>' : ''}</div>
-                            </div>
-                        </div>
-                    `).join('')}
+                    ${state.party.map((p, idx) => partyMemberHtml(p, idx, partyDex)).join('')}
                     ${state.party.length === 0 ? '<div style="text-align:center;font-size:7px;">No Pokemon!</div>' : ''}
                 </div>
 
@@ -430,18 +438,8 @@
                 // Update party HP display in real-time behind the popup
                 const hpPanel = document.getElementById('travel-party-hp');
                 if (hpPanel) {
-                    hpPanel.innerHTML = state.party.map((p, idx) => `
-                        <div class="travel-party-member ${p.hp <= 1 ? 'critical' : ''}" data-party-idx="${idx}" style="cursor:pointer;">
-                            <img class="travel-party-sprite" src="${p.spriteUrl}" alt="${p.name}" onerror="this.style.display='none'">
-                            <div class="travel-party-info">
-                                <div class="travel-party-name">${p.name}</div>
-                                <div class="travel-hp-bar">
-                                    <div class="travel-hp-fill ${p.hp <= 1 ? 'low' : p.hp <= Math.ceil(p.maxHp / 2) ? 'mid' : ''}" style="width:${(p.hp / p.maxHp) * 100}%"></div>
-                                </div>
-                                <div class="travel-hp-text">HP ${p.hp}/${p.maxHp}${p.status !== 'healthy' ? ' ' + p.status.toUpperCase() : ''}${(p.battleStars || 0) > 0 ? ' <span class="battle-stars">' + '★'.repeat(p.battleStars) + '</span>' : ''}</div>
-                            </div>
-                        </div>
-                    `).join('');
+                    const dex = PT.Engine.Scoring.getGlobalPokedex();
+                    hpPanel.innerHTML = state.party.map((p, idx) => partyMemberHtml(p, idx, dex)).join('');
                     bindPartyClicks(state);
                 }
 

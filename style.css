@@ -1284,6 +1284,14 @@ body {
     animation: critical-pulse 1.2s ease-in-out infinite;
 }
 
+.travel-party-member.champion {
+    background: #f4e07a;
+    border: 2px solid #a8860a;
+    border-radius: 3px;
+    box-shadow: 0 0 5px #d4af37;
+    padding: 2px 4px;
+}
+
 @keyframes critical-pulse {
     0%, 100% { opacity: 1; }
     50% { opacity: 0.5; }

@@ -118,6 +118,7 @@
 
                     if (result.success) {
                         await PT.Engine.Records.syncRecordsOnLogin().catch(() => {});
+                        await PT.Engine.Scoring.syncPokedexOnLogin().catch(() => {});
                         PT.App.goto('TITLE');
                     } else {
                         showError(result.error || 'Something went wrong.');
