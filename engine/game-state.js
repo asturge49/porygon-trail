@@ -175,7 +175,7 @@
 
     function getSpriteUrl(id) {
         if (id === 0) {
-            return 'https://static.wikia.nocookie.net/fcoc-vs-battles/images/e/e0/MissingNo.1.png/revision/latest?cb=20200404195127';
+            return 'https://archives.bulbagarden.net/media/upload/9/98/Missingno_RB.png';
         }
         return `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-i/red-blue/gray/${id}.png`;
     }
