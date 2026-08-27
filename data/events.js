@@ -511,6 +511,7 @@
             weight: 10,
             oneTime: false,
             minDay: 5,
+            requiresEventOccurred: "pokeflute_busker",
             choices: [
                 {
                     text: "Play the Poke Flute",
@@ -7060,6 +7061,7 @@
             weight: 5,
             oneTime: true,
             locationIds: ["route_8_celadon"],
+            requiresEventOccurred: "pokeflute_busker",
             choices: [
                 {
                     text: "Use a Poke Flute (if you have one)",

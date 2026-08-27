@@ -244,6 +244,8 @@
             // Mutually-exclusive events (e.g. a legendary's location encounter and its
             // roaming-anywhere encounter) — once either has fired, the other is out.
             if (event.conflictsWith && event.conflictsWith.some(id => state.eventsTriggered.includes(id))) return false;
+            // Requires another event to have already fired (e.g. Snorlax roadblocks need the Poke Flute to have been offered)
+            if (event.requiresEventOccurred && !state.eventsTriggered.includes(event.requiresEventOccurred)) return false;
             // Route event pool check (if event has no location restriction, it can happen anywhere)
             if (!event.locationIds && !event.terrainTypes && route.eventPool && !route.eventPool.includes(event.id)) {
                 // General events can still occur anywhere
