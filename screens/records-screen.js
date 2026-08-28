@@ -42,17 +42,17 @@
                     ${r.totalRuns} run${r.totalRuns !== 1 ? 's' : ''} | ${r.totalWins} win${r.totalWins !== 1 ? 's' : ''} | ${winRate}% win rate
                 </div>
                 <div class="records-list" style="font-size: 7px; max-height: 280px; overflow-y: auto;">
-                    ${recordRow('🎮', 'TOTAL RUNS', r.totalRuns > 0 ? r.totalRuns : '---', r.totalRuns > 0 ? r.totalWins + ' win' + (r.totalWins !== 1 ? 's' : '') + ' | ' + (r.totalRuns - r.totalWins) + ' loss' + ((r.totalRuns - r.totalWins) !== 1 ? 'es' : '') + ' | ' + winRate + '% win rate' : '')}
-                    ${recordRow('🏆', 'HIGH SCORE', r.highScore ? r.highScore.value.toLocaleString() : '---', fmtBy(r.highScore))}
-                    ${recordRow('📚', 'POKEDEX COMPLETION', dexCaught > 0 ? dexPct + '% (' + dexCaught + '/' + totalDex + ')' : '---', dexCaught > 0 ? 'Across all runs' : '')}
-                    ${recordRow('🏅', 'CHAMPION POKEMON', champCount > 0 ? champCount + '/' + totalDex : '---', champCount > 0 ? 'Survived an Elite Four win' : '')}
-                    ${recordRow('⚡', 'FASTEST WIN', r.fastestWin ? r.fastestWin.value + ' days' : '---', fmtBy(r.fastestWin))}
-                    ${recordRow('🐢', 'SLOWEST WIN', r.slowestWin ? r.slowestWin.value + ' days' : '---', fmtBy(r.slowestWin))}
-                    ${recordRow('📖', 'MOST CATCHES IN A RUN', r.mostCatches ? r.mostCatches.value + ' pokemon' : '---', fmtBy(r.mostCatches))}
-                    ${recordRow('🎯', 'FEWEST CATCHES IN A WIN', r.fewestCatchesWin ? r.fewestCatchesWin.value + ' pokemon' : '---', fmtBy(r.fewestCatchesWin))}
-                    ${recordRow('🧲', 'MOST CAUGHT MON (NON STARTER)', favCatch ? pokemonName(favCatch.id) : '---', favCatch ? 'Caught ' + favCatch.count + ' time' + (favCatch.count !== 1 ? 's' : '') + ' across all runs' : '')}
-                    ${recordRow('👑', 'LEGENDARIES CAUGHT', (r.totalLegendaryCatches || 0) > 0 ? r.totalLegendaryCatches + ' total' : '---', (r.totalLegendaryCatches || 0) > 0 ? 'Across all runs' : '')}
-                    ${recordRow('💰', 'RICHEST ENDING', r.richestEnding ? '$' + r.richestEnding.value.toLocaleString() : '---', fmtBy(r.richestEnding))}
+                    ${recordRow('TOTAL RUNS', r.totalRuns > 0 ? r.totalRuns : '---', r.totalRuns > 0 ? r.totalWins + ' win' + (r.totalWins !== 1 ? 's' : '') + ' | ' + (r.totalRuns - r.totalWins) + ' loss' + ((r.totalRuns - r.totalWins) !== 1 ? 'es' : '') + ' | ' + winRate + '% win rate' : '')}
+                    ${recordRow('HIGH SCORE', r.highScore ? r.highScore.value.toLocaleString() : '---', fmtBy(r.highScore))}
+                    ${recordRow('POKEDEX COMPLETION', dexCaught > 0 ? dexPct + '% (' + dexCaught + '/' + totalDex + ')' : '---', dexCaught > 0 ? 'Across all runs' : '')}
+                    ${recordRow('CHAMPION POKEMON', champCount > 0 ? champCount + '/' + totalDex : '---', champCount > 0 ? 'Survived an Elite Four win' : '')}
+                    ${recordRow('FASTEST WIN', r.fastestWin ? r.fastestWin.value + ' days' : '---', fmtBy(r.fastestWin))}
+                    ${recordRow('SLOWEST WIN', r.slowestWin ? r.slowestWin.value + ' days' : '---', fmtBy(r.slowestWin))}
+                    ${recordRow('MOST CATCHES IN A RUN', r.mostCatches ? r.mostCatches.value + ' pokemon' : '---', fmtBy(r.mostCatches))}
+                    ${recordRow('FEWEST CATCHES IN A WIN', r.fewestCatchesWin ? r.fewestCatchesWin.value + ' pokemon' : '---', fmtBy(r.fewestCatchesWin))}
+                    ${recordRow('MOST CAUGHT MON (NON STARTER)', favCatch ? pokemonName(favCatch.id) : '---', favCatch ? 'Caught ' + favCatch.count + ' time' + (favCatch.count !== 1 ? 's' : '') + ' across all runs' : '')}
+                    ${recordRow('LEGENDARIES CAUGHT', (r.totalLegendaryCatches || 0) > 0 ? r.totalLegendaryCatches + ' total' : '---', (r.totalLegendaryCatches || 0) > 0 ? 'Across all runs' : '')}
+                    ${recordRow('RICHEST ENDING', r.richestEnding ? '$' + r.richestEnding.value.toLocaleString() : '---', fmtBy(r.richestEnding))}
                 </div>
                 <div class="btn-row" style="width: 100%; max-width: 500px; margin-top: 6px;">
                     <button class="btn flex-1" id="btn-back">BACK</button>
@@ -83,10 +83,10 @@
         }
     };
 
-    function recordRow(icon, label, value, sub) {
+    function recordRow(label, value, sub) {
         return `
             <div class="record-row">
-                <div class="record-label">${icon} ${label}</div>
+                <div class="record-label">${label}</div>
                 <div class="record-value">${value}</div>
                 ${sub ? `<div class="record-sub">${sub}</div>` : ''}
             </div>
