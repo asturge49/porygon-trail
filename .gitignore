@@ -2,3 +2,5 @@
 .DS_Store
 node_modules/
 .vercel
+test-results/
+playwright-report/

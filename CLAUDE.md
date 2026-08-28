@@ -39,7 +39,7 @@ All scripts are loaded via `<script>` tags in `index.html` — order matters.
 | `PT.Engine` | All game logic — state, RNG, travel, encounters, events, scoring, auth, leaderboards |
 | `PT.Screens` | 17 UI screens, each with a `render(container, state, params)` function |
 | `PT.State` | Current game state singleton (defined in `engine/game-state.js`) |
-| `PT.Config` | Supabase credentials (`config.js`, not in source control) |
+| `PT.Config` | Supabase credentials (`engine/config.js`, tracked in git — picks prod vs. staging by hostname) |
 
 ### Screen Manager (State Machine)
 
@@ -80,16 +80,9 @@ Put large static content in `data/` — this keeps it out of context when workin
 
 ## Supabase / Cloud Features
 
-Cloud saves, global leaderboard, auth, and telemetry all require a `config.js` at the root:
+Cloud saves, global leaderboard, auth, and telemetry all require `engine/config.js`, which is tracked in git and picks credentials by `window.location.hostname`: the production domains (`porygontrail.com`, `www.porygontrail.com`, `porygon-trail.vercel.app`) get the prod Supabase project; everything else — local dev, every PR preview, the persistent `staging` branch deploy — gets a separate staging Supabase project. This keeps test runs and preview links from ever touching real user data or the live leaderboard. Schema for both projects lives in [`supabase/schema.sql`](supabase/schema.sql) (there's no migration tooling — apply it by hand via the SQL editor when the schema changes).
 
-```js
-window.PorygonTrail.Config = {
-    supabaseUrl: '...',
-    supabaseKey: '...'
-};
-```
-
-Without it the game runs in dev mode — local saves and leaderboard still work via localStorage.
+If `engine/config.js` is ever deleted or the URL check fails to match, the game falls back to dev mode — local saves and leaderboard still work via localStorage, cloud features are just disabled.
 
 ## Game Rules Worth Knowing
 

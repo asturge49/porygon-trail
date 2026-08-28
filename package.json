@@ -1,0 +1,11 @@
+{
+  "name": "porygon-trail",
+  "private": true,
+  "description": "Dev-only tooling (Playwright smoke tests). The game itself ships with no build step.",
+  "scripts": {
+    "test": "playwright test"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.48.0"
+  }
+}
