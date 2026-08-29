@@ -18,7 +18,7 @@
             challengeText: "Brock stands firm, arms crossed. \"You think you have what it takes? Show me a Pokemon that can withstand my rock-hard defense!\"",
             victoryText: "\"Your Pokemon's determination shattered my defenses. Take the Boulder Badge!\"",
             defeatText: "\"Your team crumbles like sandstone. Come back when you're stronger.\"",
-            reward: { money: 500 },
+            reward: { money: 450 },
             strongAgainst: ["fire", "flying", "bug"],
             weakAgainst: ["water", "grass", "fighting", "ground"],
             level: 14
@@ -37,7 +37,7 @@
             challengeText: "Misty flips her hair confidently. \"My water Pokemon will wash away your hopes! Can your team handle the current?\"",
             victoryText: "\"You navigated my currents perfectly! The Cascade Badge is yours!\"",
             defeatText: "\"You're all washed up! My Starmie barely broke a sweat.\"",
-            reward: { money: 800 },
+            reward: { money: 720 },
             strongAgainst: ["fire", "ground", "rock"],
             weakAgainst: ["electric", "grass"],
             level: 21
@@ -56,7 +56,7 @@
             challengeText: "Lt. Surge laughs thunderously. \"I've fought in wars, kid! Your little Pokemon don't scare me. Let's see if you can handle the voltage!\"",
             victoryText: "\"Well I'll be shocked! You've got real talent, soldier. Take the Thunder Badge!\"",
             defeatText: "\"You've been grounded, baby! My Raichu packs too much power for you.\"",
-            reward: { money: 1000 },
+            reward: { money: 900 },
             strongAgainst: ["water", "flying"],
             weakAgainst: ["ground"],
             level: 24
@@ -75,7 +75,7 @@
             challengeText: "Erika smiles gently. \"How lovely that you've come to challenge me. Let us see if your team can bloom under pressure.\"",
             victoryText: "\"Your team blossomed beautifully in battle. Please accept the Rainbow Badge.\"",
             defeatText: "\"Oh my, it seems your team has wilted. Perhaps with more care, you'll grow stronger.\"",
-            reward: { money: 1200 },
+            reward: { money: 1080 },
             strongAgainst: ["water", "ground", "rock"],
             weakAgainst: ["fire", "ice", "flying", "poison", "bug"],
             level: 29
@@ -94,7 +94,7 @@
             challengeText: "Koga appears from the shadows. \"A ninja does not fight fair. My Pokemon will poison your team's resolve. Can you see through my illusions?\"",
             victoryText: "\"You saw through my techniques! A worthy opponent. The Soul Badge is yours.\"",
             defeatText: "\"You fell for every trap. A ninja always has the advantage.\"",
-            reward: { money: 1500 },
+            reward: { money: 1350 },
             strongAgainst: ["grass", "bug"],
             weakAgainst: ["ground", "psychic"],
             level: 37
@@ -113,7 +113,7 @@
             challengeText: "Sabrina stares with unblinking eyes. \"I foresaw your arrival. My psychic Pokemon already know your strategy. Can you defy fate?\"",
             victoryText: "\"Impossible... I did not foresee this outcome. You have earned the Marsh Badge.\"",
             defeatText: "\"As I predicted. Your mind was an open book to my Pokemon.\"",
-            reward: { money: 1800 },
+            reward: { money: 1620 },
             strongAgainst: ["fighting", "poison"],
             weakAgainst: ["bug", "ghost"],
             level: 43
@@ -132,7 +132,7 @@
             challengeText: "Blaine adjusts his sunglasses. \"Hah! Answer me this: Can your Pokemon survive the heat of Cinnabar's volcano? Let's find out!\"",
             victoryText: "\"You've extinguished my flames! Take the Volcano Badge, you've earned it!\"",
             defeatText: "\"Too hot to handle! My fire burns too bright for your team.\"",
-            reward: { money: 2000 },
+            reward: { money: 1800 },
             strongAgainst: ["grass", "ice", "bug"],
             weakAgainst: ["water", "ground", "rock"],
             level: 47
@@ -151,7 +151,7 @@
             challengeText: "Giovanni smirks from behind his desk. \"So you've made it this far. Team Rocket's boss also happens to be the final gym leader. Prepare to be crushed.\"",
             victoryText: "\"What?! This cannot be! Fine... take the Earth Badge. But this isn't over.\"",
             defeatText: "\"Pathetic. You were never a match for the power of Team Rocket's boss.\"",
-            reward: { money: 2500 },
+            reward: { money: 2250 },
             strongAgainst: ["electric", "fire", "rock", "poison"],
             weakAgainst: ["water", "grass", "ice"],
             level: 50
