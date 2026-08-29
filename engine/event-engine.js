@@ -267,23 +267,28 @@
 
         if (availableEvents.length === 0) return null;
 
-        // Guaranteed Pokemon buyer: if past day 50 and never had a buyer event, boost weight
+        // Guaranteed Pokemon buyer: if past day 50 and never had a buyer
+        // event, boost its odds for THIS roll only. Weight adjustments below
+        // are applied to per-roll wrapper objects, never to the shared event
+        // objects in PT.Data.Events — mutating those directly would leak the
+        // boost into every future roll, for every game, for the rest of the
+        // browser session.
         const buyerCount = state._pokemonBuyerCount || 0;
-        if (buyerCount === 0 && state.daysElapsed >= 50) {
-            availableEvents.forEach(e => {
-                if (e.pokemonBuyerEvent) e.weight = (e.weight || 1) * 10;
-            });
-        }
+        const buyerBoostActive = buyerCount === 0 && state.daysElapsed >= 50;
 
-        // Silph Scope: skews the roll toward Team Rocket / legendary events
-        // without permanently mutating the shared event weights above.
+        // Silph Scope: skews the roll toward Team Rocket / legendary events,
+        // also for this roll only.
         const silphMult = PT.Engine.GameState.getSilphScopeMultiplier(state);
+
         let event;
-        if (silphMult > 1) {
+        if (buyerBoostActive || silphMult > 1) {
             const weightedPool = availableEvents.map(e => {
+                let weight = e.weight || 1;
+                if (buyerBoostActive && e.pokemonBuyerEvent) weight *= 10;
                 const isRocketOrLegendary = e.type === 'legendary' ||
                     (e.id && (e.id.startsWith('team_rocket_') || e.id.startsWith('death_rocket_') || e.id === 'rocket_shakedown'));
-                return { event: e, weight: (e.weight || 1) * (isRocketOrLegendary ? silphMult : 1) };
+                if (silphMult > 1 && isRocketOrLegendary) weight *= silphMult;
+                return { event: e, weight };
             });
             const picked = state.rng.weightedChoice(weightedPool);
             event = picked ? picked.event : null;
