@@ -1,7 +1,8 @@
 // Porygon Trail - Gym Reward Screen
 // Shown after a gym victory: recap money earned, then two "pick 1 of 3"
-// steps — a key item (stackable win/catch/money buff) and an ability buff
-// (stacks a boost onto a travel ability already in the party).
+// steps — a key item (stackable buff, 3 sampled from the 5-item pool each
+// gym) and an ability buff (stacks a boost onto a travel ability already
+// in the party). HP Up additionally asks which Pokemon should get it.
 (function() {
     const PT = window.PorygonTrail;
     PT.Screens = PT.Screens || {};
@@ -22,11 +23,22 @@
         const info = PT.Data.AbilityBuffs[abilityId];
         return `
             <button class="reward-card" data-ability="${abilityId}">
-                <div class="reward-card-emoji">${info.emoji}</div>
                 <div class="reward-card-body">
                     <div class="reward-card-name">${info.name} Boost${stacks > 0 ? ` <span class="reward-card-owned">(x${stacks})</span>` : ''}</div>
                     <div class="reward-card-desc">${info.desc}</div>
                     <div class="reward-card-buff">${active ? '✓ active in your party' : '⚠ dormant — no Pokemon with this ability yet'}</div>
+                </div>
+            </button>`;
+    }
+
+    function hpTargetCardHtml(pokemon, index) {
+        const canBoost = PT.Engine.GameState.canApplyHpUpBoost(pokemon);
+        return `
+            <button class="reward-card" data-target="${index}" ${canBoost ? '' : 'disabled'} style="${canBoost ? '' : 'opacity: 0.5; cursor: default;'}">
+                <img src="${pokemon.spriteUrl}" alt="${pokemon.name}" class="reward-card-icon" onerror="this.style.display='none'">
+                <div class="reward-card-body">
+                    <div class="reward-card-name">${pokemon.name}${pokemon.hpBonus > 0 ? ` <span class="reward-card-owned">(+${pokemon.hpBonus} HP Up)</span>` : ''}</div>
+                    <div class="reward-card-buff">${canBoost ? `HP ${pokemon.hp}/${pokemon.maxHp} → ${pokemon.hp + 1}/${pokemon.maxHp + 1}` : `⚠ MAXED OUT (+${pokemon.hpBonus} is the cap)`}</div>
                 </div>
             </button>`;
     }
@@ -44,6 +56,19 @@
                 const step = div.dataset.step || 'item';
 
                 if (step === 'item') {
+                    if (!div.dataset.itemChoices) {
+                        const alive = PT.Engine.GameState.getAliveParty(state);
+                        const eligible = PT.Data.KeyItemOrder.filter(id => {
+                            if (id === 'hpUp') return alive.some(p => PT.Engine.GameState.canApplyHpUpBoost(p));
+                            return !PT.Engine.GameState.isKeyItemMaxed(state, id);
+                        });
+                        const sampled = state.rng.shuffle([...eligible]).slice(0, 3);
+                        // Keep the fixed relative order for whichever 3 got picked
+                        const ordered = PT.Data.KeyItemOrder.filter(id => sampled.includes(id));
+                        div.dataset.itemChoices = JSON.stringify(ordered);
+                    }
+                    const choices = JSON.parse(div.dataset.itemChoices);
+
                     div.innerHTML = `
                         <div class="event-title">GYM REWARDS</div>
                         <div class="text-box" style="font-size: 7px; text-align: center;">
@@ -51,12 +76,37 @@
                             <br>Choose a key item to keep — its bonus stacks every time you pick it.
                         </div>
                         <div class="event-choices">
-                            ${PT.Data.KeyItemOrder.map(id => statCardHtml(PT.Data.KeyItems[id], state.buffs.keyItems[id] || 0)).join('')}
+                            ${choices.map(id => statCardHtml(PT.Data.KeyItems[id], state.buffs.keyItems[id] || 0)).join('')}
                         </div>
                     `;
                     div.querySelectorAll('[data-item]').forEach(btn => {
                         btn.addEventListener('click', () => {
-                            PT.Engine.GameState.grantKeyItem(state, btn.dataset.item);
+                            const item = PT.Data.KeyItems[btn.dataset.item];
+                            if (item.targeted) {
+                                div.dataset.step = 'hpTarget';
+                            } else {
+                                PT.Engine.GameState.grantKeyItem(state, btn.dataset.item);
+                                div.dataset.step = 'ability';
+                            }
+                            renderStep();
+                        });
+                    });
+                } else if (step === 'hpTarget') {
+                    const alive = PT.Engine.GameState.getAliveParty(state);
+
+                    div.innerHTML = `
+                        <div class="event-title">USE HP UP ON WHO?</div>
+                        <div class="text-box" style="font-size: 7px; text-align: center;">
+                            Pick a Pokemon to permanently raise its HP by 1. It'll keep this bonus through evolution.
+                        </div>
+                        <div class="event-choices">
+                            ${alive.map((p, i) => hpTargetCardHtml(p, i)).join('')}
+                        </div>
+                    `;
+                    div.querySelectorAll('[data-target]').forEach(btn => {
+                        btn.addEventListener('click', () => {
+                            const pokemon = alive[parseInt(btn.dataset.target)];
+                            PT.Engine.GameState.applyHpUpBoost(state, pokemon);
                             div.dataset.step = 'ability';
                             renderStep();
                         });

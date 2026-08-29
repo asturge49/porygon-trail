@@ -31,9 +31,31 @@
             stat: "win",
             amount: 2,
             buffLabel: "+2% Win Rate"
+        },
+        hpUp: {
+            id: "hpUp",
+            name: "HP Up",
+            icon: "assets/key-items/hp-up.png",
+            desc: "A vitamin that permanently raises a chosen Pokemon's HP. Survives evolution.",
+            stat: "hp",
+            amount: 1,
+            buffLabel: "+1 Max HP (choose a Pokemon)",
+            targeted: true,
+            maxStacksPerTarget: 3
+        },
+        whiteFlute: {
+            id: "whiteFlute",
+            name: "White Flute",
+            icon: "assets/key-items/white-flute.png",
+            desc: "Its high pitch stirs up wild Pokemon activity along the route.",
+            stat: "event",
+            amount: 10,
+            buffLabel: "+10% Event Rate",
+            maxStacks: 7
         }
     };
 
-    // Display/offer order on the gym reward screen
-    PT.Data.KeyItemOrder = ["amuletCoin", "sootheBell", "muscleBand"];
+    // Fixed relative order used whenever items are displayed. Each gym
+    // reward only offers 3 of these 5, sampled at random.
+    PT.Data.KeyItemOrder = ["amuletCoin", "sootheBell", "muscleBand", "hpUp", "whiteFlute"];
 })();

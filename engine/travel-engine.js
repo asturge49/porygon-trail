@@ -282,7 +282,7 @@
         // --- Encounter roll ---
         if (!results.arrivedAtLocation || pace.distance === 0) {
             const baseEncounterRate = route.encounterRate !== undefined ? route.encounterRate : 30;
-            const encounterChance = baseEncounterRate + (pace.encounterMod || 0);
+            const encounterChance = baseEncounterRate + (pace.encounterMod || 0) + PT.Engine.GameState.getWildEncounterRateBonus(state);
             if (state.repelSteps > 0) {
                 state.repelSteps--;
                 results.messages.push(`Repel active (${state.repelSteps} left).`);
@@ -296,7 +296,7 @@
 
         // --- Event roll ---
         if (!results.encounter && (!results.arrivedAtLocation || pace.distance === 0)) {
-            const eventChance = 25 + (pace.eventMod || 0);
+            const eventChance = 25 + (pace.eventMod || 0) + PT.Engine.GameState.getEventRateBonus(state);
             if (state.rng.chance(eventChance)) {
                 results.event = PT.Engine.EventEngine.rollEvent(state);
                 if (results.event) {

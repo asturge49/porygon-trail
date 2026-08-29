@@ -19,7 +19,7 @@
         const info = PT.Data.AbilityBuffs[abilityId];
         return `
             <div class="profile-row" style="display: flex; justify-content: space-between; align-items: baseline; opacity: ${stacks > 0 ? '1' : '0.55'};">
-                <span>${info.emoji} ${info.name}</span>
+                <span>${info.name}</span>
                 <span style="text-align: right;">
                     ${stacks > 0 ? `x${stacks}` : '—'}
                     <div class="profile-hint">${stacks === 0 ? 'not boosted' : (active ? 'active' : 'dormant — no matching Pokemon')}</div>
@@ -32,7 +32,9 @@
             const winBonus = PT.Engine.GameState.getWinRateBonus(state);
             const catchBonus = PT.Engine.GameState.getCatchRateBonus(state);
             const moneyBonus = PT.Engine.GameState.getMoneyMultBonus(state);
+            const eventBonus = PT.Engine.GameState.getEventRateBonus(state);
             const ki = state.buffs.keyItems;
+            const totalHpUp = state.party.reduce((sum, p) => sum + (p.hpBonus || 0), 0);
 
             const div = document.createElement('div');
             div.className = 'screen';
@@ -40,10 +42,13 @@
             div.innerHTML = `
                 <div class="event-title">TRAINER STATS</div>
 
-                <div class="profile-section">
+                <div class="profile-section" style="margin-top: 8px;">
+                    <div class="profile-row" style="font-size: 8px; font-weight: bold; margin-bottom: 2px;">KEY ITEMS</div>
                     ${statRow('Win Rate Bonus', `+${winBonus}%`, ki.muscleBand > 0 ? `${ki.muscleBand}x Muscle Band` : 'No Muscle Band yet')}
                     ${statRow('Catch Rate Bonus', `+${catchBonus}%`, ki.sootheBell > 0 ? `${ki.sootheBell}x Soothe Bell` : 'No Soothe Bell yet')}
                     ${statRow('Money Multiplier', `+${moneyBonus}%`, ki.amuletCoin > 0 ? `${ki.amuletCoin}x Amulet Coin` : 'No Amulet Coin yet')}
+                    ${statRow('Event Rate Bonus', `+${eventBonus}%`, ki.whiteFlute > 0 ? `${ki.whiteFlute}x White Flute${PT.Engine.GameState.isKeyItemMaxed(state, 'whiteFlute') ? ' — MAXED OUT' : ''}` : 'No White Flute yet')}
+                    ${statRow('HP Up Used', `${totalHpUp}`, ki.hpUp > 0 ? `${ki.hpUp}x across your party (max +${PT.Data.KeyItems.hpUp.maxStacksPerTarget}/Pokemon)` : 'No HP Up yet')}
                 </div>
 
                 <div class="profile-section" style="margin-top: 8px;">

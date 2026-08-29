@@ -158,6 +158,11 @@
         }
     };
 
+    // Route-encounter order (matches data/routes.js gymLeader order, which
+    // is how players actually reach them). Used to scale gym loss damage —
+    // the last 4 gyms (sabrina onward) hit harder than the first 4.
+    PT.Data.GymOrder = ["brock", "misty", "lt_surge", "erika", "sabrina", "koga", "blaine", "giovanni"];
+
     // Elite Four + Champion - gauntlet battles
     PT.Data.EliteFour = [
         {

@@ -252,7 +252,13 @@
 
             // Ace Pokemon: 60% death chance, non-ace: 30%
             const deathChance = isAce ? 60 : 30;
-            const damage = isAce ? 3 : 2;
+            // Loss damage steps up for the back-half gyms (Sabrina onward, by
+            // route-encounter order) — ace Pokemon always hit for the top of
+            // that tier's range.
+            const gymIndex = PT.Data.GymOrder.indexOf(leaderId);
+            const isLateGym = gymIndex >= 4;
+            const baseDamage = isLateGym ? 3 : 2;
+            const damage = isAce ? baseDamage + 1 : baseDamage;
 
             let gymKilled = false;
             let gymFainted = false;

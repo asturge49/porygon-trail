@@ -12,7 +12,7 @@
         const abilities = {};
         BUFFABLE_ABILITIES.forEach(a => { abilities[a] = 0; });
         return {
-            keyItems: { amuletCoin: 0, sootheBell: 0, muscleBand: 0 },
+            keyItems: { amuletCoin: 0, sootheBell: 0, muscleBand: 0, hpUp: 0, whiteFlute: 0 },
             abilities
         };
     }
@@ -29,13 +29,35 @@
         return (state.buffs.keyItems.amuletCoin || 0) * PT.Data.KeyItems.amuletCoin.amount;
     }
 
+    function getEventRateBonus(state) {
+        return (state.buffs.keyItems.whiteFlute || 0) * PT.Data.KeyItems.whiteFlute.amount;
+    }
+
+    // White Flute's smaller secondary effect — nudges the separate wild
+    // encounter roll up too, so encounters creep up slightly faster than
+    // narrative events do as flutes stack.
+    const WILD_ENCOUNTER_RATE_UNIT = 3;
+    function getWildEncounterRateBonus(state) {
+        return (state.buffs.keyItems.whiteFlute || 0) * WILD_ENCOUNTER_RATE_UNIT;
+    }
+
     function getAbilityBoost(state, ability) {
         return (state.buffs.abilities[ability] || 0);
     }
 
-    // Grants one more stack of a key item's buff
+    // Whether a key item still has room to stack further (account-wide cap,
+    // e.g. White Flute). Items with no maxStacks are uncapped.
+    function isKeyItemMaxed(state, itemId) {
+        const itemData = PT.Data.KeyItems[itemId];
+        if (!itemData || itemData.maxStacks == null) return false;
+        return (state.buffs.keyItems[itemId] || 0) >= itemData.maxStacks;
+    }
+
+    // Grants one more stack of a key item's buff. No-ops once an item's
+    // maxStacks cap (if any) is reached.
     function grantKeyItem(state, itemId) {
         if (!state.buffs.keyItems.hasOwnProperty(itemId)) return;
+        if (isKeyItemMaxed(state, itemId)) return;
         state.buffs.keyItems[itemId] = (state.buffs.keyItems[itemId] || 0) + 1;
         if (!state.keyItems.includes(itemId)) state.keyItems.push(itemId);
     }
@@ -44,6 +66,23 @@
     function grantAbilityBuff(state, ability) {
         if (!state.buffs.abilities.hasOwnProperty(ability)) return;
         state.buffs.abilities[ability] = (state.buffs.abilities[ability] || 0) + 1;
+    }
+
+    // Whether a specific Pokemon can still take another HP Up stack
+    // (per-target cap, separate from any account-wide key item cap).
+    function canApplyHpUpBoost(pokemon) {
+        return (pokemon.hpBonus || 0) < PT.Data.KeyItems.hpUp.maxStacksPerTarget;
+    }
+
+    // HP Up: permanently raises one chosen Pokemon's HP by 1, stacks per
+    // Pokemon up to maxStacksPerTarget, and survives evolution (see
+    // evolvePokemon's hpBonus handling). No-ops once that Pokemon is capped.
+    function applyHpUpBoost(state, pokemon) {
+        if (!canApplyHpUpBoost(pokemon)) return;
+        pokemon.hpBonus = (pokemon.hpBonus || 0) + 1;
+        pokemon.maxHp += 1;
+        pokemon.hp += 1;
+        grantKeyItem(state, 'hpUp');
     }
 
     function createNewGame(trainerName, starterId) {
@@ -208,6 +247,7 @@
             spriteUrl: getSpriteUrl(data.id),
             battleWins: 0,
             battleStars: 0,
+            hpBonus: 0,  // permanent HP Up stacks — survives evolution, see evolvePokemon
             lastStarLocation: -1,  // location index where last star was earned
             lastEvoLocation: -1,   // location index where last evolution happened
             caughtAt: route ? route.name : 'Pallet Town',
@@ -463,13 +503,19 @@
         partyMon.rarity = evoData.rarity;
         partyMon.travelAbility = evoData.travelAbility;
         partyMon.spriteUrl = getSpriteUrl(evoData.id);
-        // Set new maxHp — use override if exists, otherwise +1 capped at 6
+        // Set new maxHp — use override if exists, otherwise +1 capped at 6.
+        // HP Up bonus is tracked separately so it survives being reset by
+        // the species-based evolution jump below, then re-added on top.
+        const hpBonus = partyMon.hpBonus || 0;
+        const baseMaxHpBeforeEvo = partyMon.maxHp - hpBonus;
         const evoMaxHp = getMaxHpForPokemon(evoData);
-        if (evoMaxHp > partyMon.maxHp) {
-            partyMon.maxHp = evoMaxHp;
-        } else if (partyMon.maxHp < 6) {
-            partyMon.maxHp += 1;
+        let newBaseMaxHp = baseMaxHpBeforeEvo;
+        if (evoMaxHp > baseMaxHpBeforeEvo) {
+            newBaseMaxHp = evoMaxHp;
+        } else if (baseMaxHpBeforeEvo < 6) {
+            newBaseMaxHp = baseMaxHpBeforeEvo + 1;
         }
+        partyMon.maxHp = newBaseMaxHp + hpBonus;
         // Fully heal on evolution
         partyMon.hp = partyMon.maxHp;
         // Track evolution location
@@ -754,9 +800,14 @@
         getWinRateBonus,
         getCatchRateBonus,
         getMoneyMultBonus,
+        getEventRateBonus,
+        getWildEncounterRateBonus,
         getAbilityBoost,
         grantKeyItem,
         grantAbilityBuff,
+        applyHpUpBoost,
+        canApplyHpUpBoost,
+        isKeyItemMaxed,
         createPartyPokemon,
         getMaxHpForPokemon,
         getSpriteUrl,
