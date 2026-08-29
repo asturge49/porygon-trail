@@ -258,6 +258,8 @@
             if (evoResult.evolved) {
                 evoLine = `<br>${evoResult.oldName} evolved into ${evoResult.newName}!`;
                 PT.Engine.GameState.addToLog(state, `${evoResult.oldName} evolved into ${evoResult.newName}!`);
+            } else if (evoResult.reason === 'location_limit') {
+                evoLine = `<br><span style="font-size: 6px;">(${pokemon.name} already evolved at this location — no further evolution here.)</span>`;
             }
 
             // Award battle star (evolution win doesn't count)

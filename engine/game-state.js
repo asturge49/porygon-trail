@@ -269,7 +269,7 @@
             battleStars: 0,
             hpBonus: 0,  // permanent HP Up stacks — survives evolution, see evolvePokemon
             lastStarLocation: -1,  // location index where last star was earned
-            evolvedFromAtLocation: {},  // { speciesId: locationIndex } — see evolvePokemon
+            lastEvoLocation: -1,   // location index where last evolution happened
             caughtAt: route ? route.name : 'Pallet Town',
             caughtDay: state ? state.daysElapsed : 0
         };
@@ -508,15 +508,15 @@
         const data = PT.Data.Pokemon.find(p => p.id === partyMon.id);
         if (!data || !data.evolvesTo) return { evolved: false };
 
-        // Location-based evolution limit — keyed by the FROM species so a
-        // multi-stage Pokemon (e.g. Caterpie -> Metapod -> Butterfree) can
-        // still complete each distinct stage transition once per location.
-        // Only a repeat of the exact same transition is blocked; keying off
-        // location alone would wrongly block a later, different stage.
+        // Location-based evolution limit — at most one evolution per Pokemon
+        // per location, period. A Pokemon may not climb multiple evolution
+        // stages (e.g. Caterpie -> Metapod -> Butterfree) in one place.
         const currentLoc = state ? state.currentLocationIndex : -1;
-        if (!partyMon.evolvedFromAtLocation) partyMon.evolvedFromAtLocation = {};
-        if (currentLoc >= 0 && partyMon.evolvedFromAtLocation[partyMon.id] === currentLoc) {
-            return { evolved: false }; // already evolved from this species here
+        // Plain equality, not `|| -1` — lastEvoLocation is legitimately 0 at the
+        // first location (Pallet Town), and `0 || -1` would coerce that to -1,
+        // silently disabling this guard there and letting a Pokemon evolve twice.
+        if (currentLoc >= 0 && partyMon.lastEvoLocation === currentLoc) {
+            return { evolved: false, reason: 'location_limit' }; // already evolved here
         }
         // Support branching evolution (e.g. Eevee -> [Vaporeon, Jolteon, Flareon])
         let evoId = data.evolvesTo;
@@ -527,7 +527,6 @@
         if (!evoData) return { evolved: false };
 
         const oldName = partyMon.name;
-        const fromId = partyMon.id;
         partyMon.id = evoData.id;
         partyMon.name = evoData.name;
         partyMon.types = evoData.types;
@@ -549,8 +548,8 @@
         partyMon.maxHp = newBaseMaxHp + hpBonus;
         // Fully heal on evolution
         partyMon.hp = partyMon.maxHp;
-        // Track evolution location, keyed by the species evolved FROM
-        partyMon.evolvedFromAtLocation[fromId] = currentLoc;
+        // Track evolution location
+        partyMon.lastEvoLocation = currentLoc;
 
         // Register evolution in Pokedex
         if (state) {
