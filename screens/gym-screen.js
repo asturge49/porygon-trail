@@ -142,8 +142,12 @@
         if (hasAdvantage) chance += 20;
         if (hasDisadvantage) chance -= 20;
 
-        // Badge count bonus
-        chance += state.badges.length * 2;
+        // Win Rate buff (Muscle Band stacks)
+        const winRateBonus = PT.Engine.GameState.getWinRateBonus(state);
+        if (winRateBonus > 0) {
+            chance += winRateBonus;
+            battleBonuses.push(`💪 WIN RATE +${winRateBonus}%`);
+        }
 
         // Party size bonus
         const aliveCount = PT.Engine.GameState.getAliveParty(state).length;
@@ -187,9 +191,12 @@
         if (gymScaling > 0) chance -= gymScaling;
 
         // Clamp
+        const preClampChance = chance;
         chance = Math.max(10, Math.min(80, chance));
+        if (preClampChance !== chance) battleBonuses.push(chance === 80 ? '⚠️ MAXED OUT' : '⚠️ FLOORED OUT');
 
         const won = state.rng.chance(chance);
+        let gymMoneyReward = 0;
 
         container.innerHTML = '';
         const div = document.createElement('div');
@@ -198,7 +205,7 @@
         if (won) {
             state.badges.push(leader.badge);
             state.gymBattlesWon++;
-            const gymMoneyReward = PT.Engine.GameState.applyPayDay(state, leader.reward.money);
+            gymMoneyReward = PT.Engine.GameState.applyPayDay(state, leader.reward.money);
             state.resources.money += gymMoneyReward;
 
             PT.Engine.GameState.addToLog(state, `Defeated ${leader.name}'s ${opponent.name}! Got ${leader.badge}!`);
@@ -234,7 +241,7 @@
                     <div class="gym-challenge-text">${leader.victoryText}</div>
                     <div style="font-size: 8px; margin-top: 8px;">
                         ${pokemon.name} defeated ${leader.name}'s ${opponent.name}!
-                        <br>Earned: <span class="badge-earned">${leader.badge}</span> + $${gymMoneyReward}${gymMoneyReward > leader.reward.money ? ' 💰 PAY DAY!' : ''}${evoLine}${starLine}
+                        <br>Earned: <span class="badge-earned">${leader.badge}</span> + $${gymMoneyReward}${gymMoneyReward > leader.reward.money ? ' 💰 BONUS!' : ''}${evoLine}${starLine}
                         <br><span style="font-size: 6px;">Win chance was ${chance}%${battleBonuses.length > 0 ? ' (' + battleBonuses.join(', ') + ')' : ''}</span>
                     </div>
                 </div>
@@ -311,6 +318,8 @@
                 state.isGameOver = true;
                 if (!state.gameOverReason) state.gameOverReason = 'party_wiped';
                 PT.App.goto('GAMEOVER');
+            } else if (won) {
+                PT.App.goto('GYM_REWARD', { leaderId, moneyReward: gymMoneyReward });
             } else {
                 PT.App.goto('TRAVEL');
             }

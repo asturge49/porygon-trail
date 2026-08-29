@@ -34,8 +34,9 @@
 
         let catchChance = (baseCatch[ballType] || 40) + (rarityMod[pokemon.rarity] || 0);
 
-        // Badge bonus: +2% per badge
-        catchChance += (state.badges.length * 2);
+        // Catch Rate buff (Soothe Bell stacks)
+        const catchRateBonus = PT.Engine.GameState.getCatchRateBonus(state);
+        catchChance += catchRateBonus;
 
         // Intimidate ability: catch rate bonus scales with power (8% per power point)
         const intimidatePower = PT.Engine.GameState.getAbilityPower(state, 'intimidate');
@@ -45,7 +46,9 @@
         }
 
         // Clamp
+        const preClampChance = catchChance;
         catchChance = Math.max(5, Math.min(95, catchChance));
+        const maxed = preClampChance !== catchChance;
 
         // Consume ball
         state.resources[ballType] = Math.max(0, state.resources[ballType] - 1);
@@ -60,7 +63,9 @@
             success,
             catchChance: Math.round(catchChance),
             shakes: success ? 3 : state.rng.randInt(0, 2),
-            intimidateBonus: hasIntimidate
+            intimidateBonus: hasIntimidate,
+            catchRateBonus,
+            maxed
         };
     }
 

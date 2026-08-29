@@ -333,6 +333,7 @@
                 if (result.success) {
                     const addResult = PT.Engine.EncounterEngine.addPokemonToParty(state, pokemon);
                     const intLabel = result.intimidateBonus ? ' 😤 INTIMIDATE +15%' : '';
+                    const maxedLabel = result.maxed ? ' ⚠️ CATCH RATE MAXED OUT' : '';
                     PT.Engine.GameState.addToLog(state, `Caught ${pokemon.name}! (${result.catchChance}% chance)`);
                     if (A) A.catchSuccess();
                     if (sprite) sprite.classList.add('catch-sparkle');
@@ -341,13 +342,14 @@
                         // Party full — show swap/food/release options
                         showPartyFullOptions(state, pokemon, addResult, msgEl, actionsDiv);
                     } else {
-                        showResult(`${'shake... '.repeat(result.shakes)}CLICK!\n\nGotcha! ${pokemon.name} was caught!${intLabel} ${addResult.message}`);
+                        showResult(`${'shake... '.repeat(result.shakes)}CLICK!\n\nGotcha! ${pokemon.name} was caught!${intLabel}${maxedLabel} ${addResult.message}`);
                     }
                 } else {
                     if (A) A.catchFail();
                     if (sprite) sprite.classList.add('damage-flash');
                     const intLabel = result.intimidateBonus ? ' 😤 INTIMIDATE +15%' : '';
-                    msgEl.textContent = `${'shake... '.repeat(result.shakes)}Oh no! ${pokemon.name} broke free! (${result.catchChance}% chance)${intLabel}`;
+                    const maxedLabel = result.maxed ? ' ⚠️ CATCH RATE MAXED OUT' : '';
+                    msgEl.textContent = `${'shake... '.repeat(result.shakes)}Oh no! ${pokemon.name} broke free! (${result.catchChance}% chance)${intLabel}${maxedLabel}`;
 
                     // Update ball counts and re-enable actions
                     const pokeBtn = actionsDiv.querySelector('#btn-pokeball');
@@ -442,8 +444,12 @@
         if (pokemon.rarity === 'legendary') chance -= 15;
         if (pokemon.rarity === 'rare') chance -= 5;
 
-        // Badge bonus
-        chance += state.badges.length * 2;
+        // Win Rate buff (Muscle Band stacks)
+        const winRateBonus = PT.Engine.GameState.getWinRateBonus(state);
+        if (winRateBonus > 0) {
+            chance += winRateBonus;
+            battleBonuses.push(`💪 WIN RATE +${winRateBonus}%`);
+        }
 
         // Poison ability: only applies if the fighting Pokemon has poison
         if (chosen.travelAbility === 'poison') {
@@ -471,7 +477,9 @@
         }
 
         // Clamp
+        const preClampChance = chance;
         chance = Math.max(15, Math.min(85, chance));
+        if (preClampChance !== chance) battleBonuses.push(chance === 85 ? '⚠️ MAXED OUT' : '⚠️ FLOORED OUT');
 
         const won = state.rng.chance(chance);
         const wildHp = PT.Engine.GameState.getMaxHpForPokemon(pokemon);
@@ -505,7 +513,7 @@
             msgEl.innerHTML = `
                 <div style="text-align: center;">
                     <strong>${chosen.name} defeated wild ${pokemon.name}!</strong>
-                    <br>Won $${moneyReward}!${moneyReward > baseMoneyReward ? ' 💰 PAY DAY!' : ''}${evoLine}${starLine}
+                    <br>Won $${moneyReward}!${moneyReward > baseMoneyReward ? ' 💰 BONUS!' : ''}${evoLine}${starLine}
                     <br><span style="font-size: 6px;">Win chance was ${chance}%${battleBonuses.length > 0 ? ' (' + battleBonuses.join(', ') + ')' : ''}</span>
                 </div>
             `;

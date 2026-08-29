@@ -3,6 +3,49 @@
     const PT = window.PorygonTrail;
     PT.Engine = PT.Engine || {};
 
+    // Gym-reward buffs: stacking key items (win/catch/money %) and stacking
+    // boosts to travel abilities the player already has active in the party.
+    const BUFFABLE_ABILITIES = ["poison", "intimidate", "cut", "fly", "surf", "strength", "flash", "guard", "psychic"];
+    const ABILITY_BOOST_UNIT = 0.5; // power added per stack, half a stage-1 Pokemon's worth
+
+    function createDefaultBuffs() {
+        const abilities = {};
+        BUFFABLE_ABILITIES.forEach(a => { abilities[a] = 0; });
+        return {
+            keyItems: { amuletCoin: 0, sootheBell: 0, muscleBand: 0 },
+            abilities
+        };
+    }
+
+    function getWinRateBonus(state) {
+        return (state.buffs.keyItems.muscleBand || 0) * PT.Data.KeyItems.muscleBand.amount;
+    }
+
+    function getCatchRateBonus(state) {
+        return (state.buffs.keyItems.sootheBell || 0) * PT.Data.KeyItems.sootheBell.amount;
+    }
+
+    function getMoneyMultBonus(state) {
+        return (state.buffs.keyItems.amuletCoin || 0) * PT.Data.KeyItems.amuletCoin.amount;
+    }
+
+    function getAbilityBoost(state, ability) {
+        return (state.buffs.abilities[ability] || 0);
+    }
+
+    // Grants one more stack of a key item's buff
+    function grantKeyItem(state, itemId) {
+        if (!state.buffs.keyItems.hasOwnProperty(itemId)) return;
+        state.buffs.keyItems[itemId] = (state.buffs.keyItems[itemId] || 0) + 1;
+        if (!state.keyItems.includes(itemId)) state.keyItems.push(itemId);
+    }
+
+    // Grants one more stack of an ability boost
+    function grantAbilityBuff(state, ability) {
+        if (!state.buffs.abilities.hasOwnProperty(ability)) return;
+        state.buffs.abilities[ability] = (state.buffs.abilities[ability] || 0) + 1;
+    }
+
     function createNewGame(trainerName, starterId) {
         const seed = Date.now();
         const starterData = PT.Data.Pokemon.find(p => p.id === starterId);
@@ -43,6 +86,7 @@
             // Progress
             badges: [],
             keyItems: [],
+            buffs: createDefaultBuffs(),
             pokedexCaught: [starterId],
             pokedexSeen: [starterId],
 
@@ -302,6 +346,11 @@
                 total += power;
             });
         }
+        // Gym-reward ability boosts only amplify an ability the party already
+        // has active — a boost with no matching Pokemon stays dormant.
+        if (total > 0 && state.buffs) {
+            total += getAbilityBoost(state, ability) * ABILITY_BOOST_UNIT;
+        }
         return total;
     }
 
@@ -342,10 +391,12 @@
     // Pay Day ability — scales with power (25% bonus per power point)
     function applyPayDay(state, amount) {
         const power = getAbilityPower(state, 'payday');
-        if (power > 0) {
-            return Math.floor(amount * (1 + 0.25 * power));
+        let result = power > 0 ? amount * (1 + 0.25 * power) : amount;
+        const moneyMult = state.buffs ? getMoneyMultBonus(state) : 0;
+        if (moneyMult > 0) {
+            result *= (1 + moneyMult / 100);
         }
-        return amount;
+        return Math.floor(result);
     }
 
     // Evolution stage: 1 = base, 2 = mid, 3 = final/single-stage
@@ -596,6 +647,8 @@
             data.party.forEach(p => {
                 p.spriteUrl = getSpriteUrl(p.id);
             });
+            // Older saves predate the buffs schema — default it in
+            if (!data.buffs) data.buffs = createDefaultBuffs();
             return data;
         } catch (e) {
             console.warn('Could not load save:', e);
@@ -655,6 +708,7 @@
             delete saveData._rngSeed;
             delete saveData._rngState;
             (saveData.party || []).forEach(p => { p.spriteUrl = getSpriteUrl(p.id); });
+            if (!saveData.buffs) saveData.buffs = createDefaultBuffs();
             return saveData;
         } catch (e) {
             console.warn('Cloud load failed:', e);
@@ -695,6 +749,14 @@
 
     PT.Engine.GameState = {
         createNewGame,
+        createDefaultBuffs,
+        BUFFABLE_ABILITIES,
+        getWinRateBonus,
+        getCatchRateBonus,
+        getMoneyMultBonus,
+        getAbilityBoost,
+        grantKeyItem,
+        grantAbilityBuff,
         createPartyPokemon,
         getMaxHpForPokemon,
         getSpriteUrl,

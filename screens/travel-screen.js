@@ -334,7 +334,7 @@
                             ? `<button class="btn btn-small" id="btn-gym">GYM</button>`
                             : '<button class="btn btn-small" disabled>NO GYM</button>'}
                     ${route.hasCenter ? '<button class="btn btn-small" id="btn-center">CENTER</button>' : '<button class="btn btn-small" disabled>NO CENTER</button>'}
-                    <button class="btn btn-small" id="btn-save">SAVE</button>
+                    <button class="btn btn-small" id="btn-stats">STATS</button>
                 </div>
 
                 <div class="travel-party-hp" id="travel-party-hp">
@@ -651,22 +651,9 @@
                 });
             }
 
-            // Save button
-            document.getElementById('btn-save').addEventListener('click', () => {
-                const saved = PT.Engine.GameState.saveGame(state);
-                const saveOverlay = document.createElement('div');
-                saveOverlay.className = 'day-recap-overlay';
-                saveOverlay.innerHTML = `
-                    <div class="day-recap-popup">
-                        <div class="day-recap-title">${saved ? '💾 SAVED' : '⚠️ ERROR'}</div>
-                        <div class="day-recap-body">
-                            <div class="recap-line">${saved ? 'Game saved successfully!' : 'Could not save game.'}</div>
-                        </div>
-                        <button class="btn btn-small day-recap-btn" id="btn-save-ok">OK</button>
-                    </div>
-                `;
-                document.querySelector('.travel-screen').appendChild(saveOverlay);
-                document.getElementById('btn-save-ok').addEventListener('click', () => saveOverlay.remove());
+            // Stats button
+            document.getElementById('btn-stats').addEventListener('click', () => {
+                PT.App.push('STATS');
             });
 
             // Map button

@@ -177,8 +177,12 @@
         if (hasAdvantage) { chance += 20; battleBonuses.push('SE +20%'); }
         if (hasDisadvantage) { chance -= 15; battleBonuses.push('NVE -15%'); }
 
-        // Badge bonus
-        chance += state.badges.filter(b => b !== 'champion').length * 2;
+        // Win Rate buff (Muscle Band stacks)
+        const winRateBonus = PT.Engine.GameState.getWinRateBonus(state);
+        if (winRateBonus > 0) {
+            chance += winRateBonus;
+            battleBonuses.push(`💪 WIN RATE +${winRateBonus}%`);
+        }
 
         // Poison ability: scales with power
         const poisonPower = PT.Engine.GameState.getAbilityPower(state, 'poison');
@@ -208,13 +212,16 @@
             battleBonuses.push(`${'★'.repeat(chosen.battleStars || 0)} +${starBonus.winChanceBonus}%`);
         }
 
+        const preClampChance = chance;
         chance = Math.max(15, Math.min(85, chance));
+        const maxed = preClampChance !== chance;
+        if (maxed) battleBonuses.push(chance === 85 ? '⚠️ MAXED OUT' : '⚠️ FLOORED OUT');
 
         const won = state.rng.chance(chance);
         const opponentHp = PT.Engine.GameState.getMaxHpForPokemon(opponent);
         const lossDamage = Math.max(1, opponentHp - 1);
 
-        return { won, chance, opponent, lossDamage, battleBonuses, hasAdvantage, hasDisadvantage };
+        return { won, chance, opponent, lossDamage, battleBonuses, hasAdvantage, hasDisadvantage, maxed };
     }
 
     function rollEvent(state) {

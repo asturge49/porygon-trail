@@ -29,7 +29,11 @@
                     </div>
                 </div>
                 <div style="font-size: 7px; padding: 4px; border: 2px solid var(--gb-darkest); background: var(--gb-light);">
-                    Key Items: ${state.keyItems.length > 0 ? state.keyItems.join(', ') : 'None'}
+                    Key Items: ${state.keyItems.length > 0 ? state.keyItems.map(id => {
+                        const ki = PT.Data.KeyItems[id];
+                        const count = state.buffs.keyItems[id] || 1;
+                        return ki ? `${ki.name} x${count}` : id;
+                    }).join(', ') : 'None'}
                 </div>
                 <div class="btn-row" style="margin-top: 4px;">
                     <button class="btn btn-small flex-1" id="btn-use-potion" ${state.resources.potions <= 0 && state.resources.superPotions <= 0 ? 'disabled' : ''}>USE POTION</button>
