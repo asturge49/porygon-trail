@@ -9,6 +9,23 @@
     let _currentUser = null;
     let _currentUsername = null;
 
+    const GUEST_MODE_KEY = 'pt_guest_mode';
+
+    // Guest mode: staging-only bypass of the login screen (see PT.Config.isProd) so
+    // testers can jump straight into gameplay. Guests are simply never logged in —
+    // every cloud sync path already no-ops when isLoggedIn() is false.
+    function isGuestMode() {
+        return sessionStorage.getItem(GUEST_MODE_KEY) === '1';
+    }
+
+    function enterGuestMode() {
+        sessionStorage.setItem(GUEST_MODE_KEY, '1');
+    }
+
+    function exitGuestMode() {
+        sessionStorage.removeItem(GUEST_MODE_KEY);
+    }
+
     function isConfigured() {
         return PT.Config &&
                PT.Config.supabaseUrl !== 'YOUR_SUPABASE_URL' &&
@@ -46,6 +63,7 @@
 
         _currentUser = data.user;
         _currentUsername = data.user.user_metadata?.username || username.trim();
+        exitGuestMode();
         return { success: true, username: _currentUsername };
     }
 
@@ -96,6 +114,7 @@
 
             _currentUser = data.user;
             _currentUsername = username.trim();
+            exitGuestMode();
         }
 
         return { success: true, username: _currentUsername };
@@ -136,6 +155,9 @@
         getCurrentUser,
         getCurrentUsername,
         isLoggedIn,
-        isConfigured
+        isConfigured,
+        isGuestMode,
+        enterGuestMode,
+        exitGuestMode
     };
 })();

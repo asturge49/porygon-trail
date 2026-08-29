@@ -9,8 +9,9 @@
             const auth = PT.Engine.Auth;
             const authConfigured = auth && auth.isConfigured();
 
-            // Guard: if auth is configured and user isn't logged in, send them to login
-            if (authConfigured && !auth.isLoggedIn()) {
+            // Guard: if auth is configured and user isn't logged in (and isn't a
+            // staging-only guest), send them to login
+            if (authConfigured && !auth.isLoggedIn() && !auth.isGuestMode()) {
                 PT.App.goto('LOGIN');
                 return;
             }

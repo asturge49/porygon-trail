@@ -62,6 +62,11 @@
                         ${mode === 'signin' ? 'NEW TRAINER? CREATE ACCOUNT' : 'HAVE AN ACCOUNT? SIGN IN'}
                     </button>
 
+                    ${!PT.Config.isProd ? `
+                    <button class="btn btn-wide btn-small" id="btn-guest" style="margin-bottom: 4px;">
+                        PLAY AS GUEST
+                    </button>` : ''}
+
                     <div style="font-size: 6px; color: var(--gb-dark); text-align: center; margin-top: 12px; line-height: 1.6;">
                         ${mode === 'signin'
                             ? 'Your scores appear on the global leaderboard.<br>Continue your journey on any device.'
@@ -91,6 +96,14 @@
                     mode = mode === 'signin' ? 'signup' : 'signin';
                     buildScreen();
                 });
+
+                const guestBtn = document.getElementById('btn-guest');
+                if (guestBtn) {
+                    guestBtn.addEventListener('click', () => {
+                        auth.enterGuestMode();
+                        PT.App.goto('TITLE');
+                    });
+                }
 
                 document.getElementById('btn-submit').addEventListener('click', async () => {
                     document.getElementById('login-error').style.display = 'none';
