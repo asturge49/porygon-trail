@@ -266,6 +266,9 @@
             if (starResult.earned) {
                 starLine = `<br>⭐ ${pokemon.name} earned a Battle Star! [${'★'.repeat(pokemon.battleStars)}] (${pokemon.battleStars}/3)`;
             }
+            if (starResult.expShareBonus) {
+                starLine += `<br>🎓 EXP. SHARE: ${starResult.expShareBonus.name} also earned a Battle Star!`;
+            }
 
             const isLastBattle = e4Index >= PT.Data.EliteFour.length - 1;
 

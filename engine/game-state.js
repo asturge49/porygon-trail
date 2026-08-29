@@ -12,7 +12,10 @@
         const abilities = {};
         BUFFABLE_ABILITIES.forEach(a => { abilities[a] = 0; });
         return {
-            keyItems: { amuletCoin: 0, sootheBell: 0, muscleBand: 0, hpUp: 0, whiteFlute: 0 },
+            keyItems: {
+                amuletCoin: 0, sootheBell: 0, muscleBand: 0, hpUp: 0, whiteFlute: 0,
+                focusBand: 0, bicycle: 0, silphScope: 0, expShare: 0
+            },
             abilities
         };
     }
@@ -43,6 +46,23 @@
 
     function getAbilityBoost(state, ability) {
         return (state.buffs.abilities[ability] || 0);
+    }
+
+    // Focus Band — stacking chance to survive a would-be-fatal hit at 1 HP,
+    // independent of Battle Stars/Safeguard/System Restore.
+    function getFocusBandBonus(state) {
+        return (state.buffs.keyItems.focusBand || 0) * PT.Data.KeyItems.focusBand.amount;
+    }
+
+    // Bicycle — flat bonus travel distance per day, no Pokemon required.
+    function getBicycleBonus(state) {
+        return (state.buffs.keyItems.bicycle || 0) * PT.Data.KeyItems.bicycle.amount;
+    }
+
+    // Silph Scope — weight multiplier applied to Team Rocket / legendary
+    // events during the event roll. 1 = no change.
+    function getSilphScopeMultiplier(state) {
+        return 1 + (state.buffs.keyItems.silphScope || 0) * (PT.Data.KeyItems.silphScope.amount / 100);
     }
 
     // Whether a key item still has room to stack further (account-wide cap,
@@ -249,7 +269,7 @@
             battleStars: 0,
             hpBonus: 0,  // permanent HP Up stacks — survives evolution, see evolvePokemon
             lastStarLocation: -1,  // location index where last star was earned
-            lastEvoLocation: -1,   // location index where last evolution happened
+            evolvedFromAtLocation: {},  // { speciesId: locationIndex } — see evolvePokemon
             caughtAt: route ? route.name : 'Pallet Town',
             caughtDay: state ? state.daysElapsed : 0
         };
@@ -295,6 +315,14 @@
                 pokemon.hp = 1;
                 pokemon.status = 'healthy';
                 pokemon._clutched = true; // transient flag for UI
+                return false; // survived!
+            }
+            // Focus Band — stacking held-item death avoidance
+            const focusBandChance = state ? getFocusBandBonus(state) : 0;
+            if (focusBandChance > 0 && state.rng && state.rng.chance(focusBandChance)) {
+                pokemon.hp = 1;
+                pokemon.status = 'healthy';
+                pokemon._focusBandSaved = true; // transient flag for UI
                 return false; // survived!
             }
             // Safeguard ability — Chansey saves a Pokemon from death once
@@ -480,13 +508,15 @@
         const data = PT.Data.Pokemon.find(p => p.id === partyMon.id);
         if (!data || !data.evolvesTo) return { evolved: false };
 
-        // Location-based evolution limit
+        // Location-based evolution limit — keyed by the FROM species so a
+        // multi-stage Pokemon (e.g. Caterpie -> Metapod -> Butterfree) can
+        // still complete each distinct stage transition once per location.
+        // Only a repeat of the exact same transition is blocked; keying off
+        // location alone would wrongly block a later, different stage.
         const currentLoc = state ? state.currentLocationIndex : -1;
-        // Plain equality, not `|| -1` — lastEvoLocation is legitimately 0 at the
-        // first location (Pallet Town), and `0 || -1` would coerce that to -1,
-        // silently disabling this guard there and letting a Pokemon evolve twice.
-        if (currentLoc >= 0 && partyMon.lastEvoLocation === currentLoc) {
-            return { evolved: false }; // already evolved here
+        if (!partyMon.evolvedFromAtLocation) partyMon.evolvedFromAtLocation = {};
+        if (currentLoc >= 0 && partyMon.evolvedFromAtLocation[partyMon.id] === currentLoc) {
+            return { evolved: false }; // already evolved from this species here
         }
         // Support branching evolution (e.g. Eevee -> [Vaporeon, Jolteon, Flareon])
         let evoId = data.evolvesTo;
@@ -497,6 +527,7 @@
         if (!evoData) return { evolved: false };
 
         const oldName = partyMon.name;
+        const fromId = partyMon.id;
         partyMon.id = evoData.id;
         partyMon.name = evoData.name;
         partyMon.types = evoData.types;
@@ -518,8 +549,8 @@
         partyMon.maxHp = newBaseMaxHp + hpBonus;
         // Fully heal on evolution
         partyMon.hp = partyMon.maxHp;
-        // Track evolution location
-        partyMon.lastEvoLocation = currentLoc;
+        // Track evolution location, keyed by the species evolved FROM
+        partyMon.evolvedFromAtLocation[fromId] = currentLoc;
 
         // Register evolution in Pokedex
         if (state) {
@@ -544,6 +575,12 @@
         if (starBonus.deathAvoidChance > 0 && state.rng.chance(starBonus.deathAvoidChance)) {
             victim.hp = 1;
             return { killed: false, name: victim.name, clutched: true };
+        }
+        // Focus Band — stacking held-item death avoidance
+        const focusBandChance = getFocusBandBonus(state);
+        if (focusBandChance > 0 && state.rng.chance(focusBandChance)) {
+            victim.hp = 1;
+            return { killed: false, name: victim.name, focusBandSaved: true };
         }
         // Safeguard ability — Chansey saves from death once per Pokemon
         if (!victim._safeguarded && hasAbility(state, 'safeguard')) {
@@ -592,36 +629,53 @@
         return data && !data.evolvesTo;
     }
 
-    // Award a battle win. Returns { earned: bool, reason: string|null, evolved: bool }
-    // Call AFTER evolution check — if the mon just evolved this fight, skip the star.
-    function addBattleWin(pokemon, state, justEvolved) {
-        pokemon.battleWins = (pokemon.battleWins || 0) + 1;
-
-        // Must be final evolution to earn stars
+    // Shared star-earning check, used both for the Pokemon that actually won
+    // the fight and (via Exp Share) for one teammate riding along on the win.
+    function tryEarnStar(pokemon, state) {
         if (!isFinalEvolution(pokemon)) {
             return { earned: false, reason: 'not_final_evo' };
         }
-
-        // The win that caused evolution doesn't count toward stars
-        if (justEvolved) {
-            return { earned: false, reason: 'evolution_win' };
-        }
-
-        // Already max stars (3)
         if ((pokemon.battleStars || 0) >= 3) {
             return { earned: false, reason: 'max_stars' };
         }
-
-        // Can only earn one star per location
         const currentLoc = state ? state.currentLocationIndex : -1;
         if (pokemon.lastStarLocation === currentLoc && currentLoc >= 0) {
             return { earned: false, reason: 'location_limit' };
         }
-
-        // Award +1 star
         pokemon.battleStars = (pokemon.battleStars || 0) + 1;
         pokemon.lastStarLocation = currentLoc;
         return { earned: true, reason: null };
+    }
+
+    // Award a battle win. Returns { earned: bool, reason: string|null, expShareBonus?: {name} }
+    // Call AFTER evolution check — if the mon just evolved this fight, skip the star.
+    function addBattleWin(pokemon, state, justEvolved) {
+        pokemon.battleWins = (pokemon.battleWins || 0) + 1;
+
+        // The win that caused evolution doesn't count toward stars
+        const result = justEvolved
+            ? { earned: false, reason: 'evolution_win' }
+            : tryEarnStar(pokemon, state);
+
+        // Exp Share: one other eligible teammate also gets a shot at a star
+        // this win, regardless of whether the active battler earned one.
+        if (state && state.buffs && (state.buffs.keyItems.expShare || 0) > 0) {
+            const currentLoc = state.currentLocationIndex;
+            const teammate = getAliveParty(state).find(p =>
+                p !== pokemon &&
+                isFinalEvolution(p) &&
+                (p.battleStars || 0) < 3 &&
+                !(p.lastStarLocation === currentLoc && currentLoc >= 0)
+            );
+            if (teammate) {
+                const teammateResult = tryEarnStar(teammate, state);
+                if (teammateResult.earned) {
+                    result.expShareBonus = { name: teammate.name };
+                }
+            }
+        }
+
+        return result;
     }
 
     function getStarBonus(pokemon) {
@@ -802,6 +856,9 @@
         getMoneyMultBonus,
         getEventRateBonus,
         getWildEncounterRateBonus,
+        getFocusBandBonus,
+        getBicycleBonus,
+        getSilphScopeMultiplier,
         getAbilityBoost,
         grantKeyItem,
         grantAbilityBuff,

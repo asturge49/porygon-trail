@@ -33,6 +33,10 @@
             results.messages.push(`⭐ CLUTCH: ${pokemon.name}'s battle experience kicked in — survived at 1 HP!`);
             pokemon._clutched = false;
         }
+        if (pokemon._focusBandSaved) {
+            results.messages.push(`🎒 FOCUS BAND: ${pokemon.name} held on and survived at 1 HP!`);
+            pokemon._focusBandSaved = false;
+        }
         if (pokemon._auroraBlocked) {
             const savior = abilityHolder(state, 'aurora_veil') || 'Articuno';
             results.messages.push(`❄️ AURORA VEIL: ${savior} absorbed the hit meant for ${pokemon.name}!`);
@@ -221,6 +225,21 @@
             results.gameOver = true;
             results.messages.push("All your Pokemon have perished...");
             return results;
+        }
+
+        // --- Bicycle: flat bonus travel distance, no Pokemon required (stacks) ---
+        const bicycleBonus = PT.Engine.GameState.getBicycleBonus(state);
+        if (bicycleBonus > 0 && pace.distance > 0 && nextRoute && !results.arrivedAtLocation) {
+            state.distanceTraveled += bicycleBonus;
+            results.messages.push(`🚲 The Bicycle covers extra ground! (+${bicycleBonus} miles)`);
+            if (state.distanceTraveled >= route.distanceToNext) {
+                state.currentLocationIndex++;
+                state.distanceTraveled = 0;
+                results.arrivedAtLocation = true;
+                const newRoute = PT.Engine.GameState.getCurrentRoute(state);
+                results.messages.push(`Arrived at ${newRoute.name}!`);
+                PT.Engine.GameState.addToLog(state, `Arrived at ${newRoute.name}!`);
+            }
         }
 
         // --- Fly ability: bonus travel distance (stacks + scales) ---

@@ -225,6 +225,9 @@
             if (starResult.earned) {
                 starLine = `<br>⭐ ${pokemon.name} earned a Battle Star! [${'★'.repeat(pokemon.battleStars)}] (${pokemon.battleStars}/3)`;
             }
+            if (starResult.expShareBonus) {
+                starLine += `<br>🎓 EXP. SHARE: ${starResult.expShareBonus.name} also earned a Battle Star!`;
+            }
 
             div.innerHTML = `
                 <div class="event-title">VICTORY!</div>
@@ -262,23 +265,32 @@
 
             let gymKilled = false;
             let gymFainted = false;
+            let focusBandSaved = false;
             if (state.rng.chance(deathChance)) {
-                // Ace Pokemon kills bypass Battle Star death avoidance
-                // Mark fainted first — getAliveParty() filters on this, not array
-                // membership, so this must be set regardless of the splice below.
-                pokemon.status = 'fainted';
-                const idx = state.party.indexOf(pokemon);
-                if (idx !== -1) {
-                    if (!state.graveyard) state.graveyard = [];
-                    const route = PT.Engine.GameState.getCurrentRoute(state);
-                    state.graveyard.push({
-                        name: pokemon.name, id: pokemon.id, spriteUrl: pokemon.spriteUrl,
-                        battleStars: pokemon.battleStars || 0,
-                        location: route ? route.name : 'Unknown', day: state.daysElapsed
-                    });
-                    state.party.splice(idx, 1);
-                    state.pokemonLost++;
-                    gymKilled = true;
+                // Focus Band gets a chance to intercept the instant-kill roll
+                // itself — this is the one death vector Battle Stars don't
+                // reach ("Ace Pokemon ignore Battle Star protection" below).
+                const focusBandChance = PT.Engine.GameState.getFocusBandBonus(state);
+                if (focusBandChance > 0 && state.rng.chance(focusBandChance)) {
+                    focusBandSaved = true;
+                    gymFainted = PT.Engine.GameState.damagePokemon(pokemon, damage, state);
+                } else {
+                    // Mark fainted first — getAliveParty() filters on this, not array
+                    // membership, so this must be set regardless of the splice below.
+                    pokemon.status = 'fainted';
+                    const idx = state.party.indexOf(pokemon);
+                    if (idx !== -1) {
+                        if (!state.graveyard) state.graveyard = [];
+                        const route = PT.Engine.GameState.getCurrentRoute(state);
+                        state.graveyard.push({
+                            name: pokemon.name, id: pokemon.id, spriteUrl: pokemon.spriteUrl,
+                            battleStars: pokemon.battleStars || 0,
+                            location: route ? route.name : 'Unknown', day: state.daysElapsed
+                        });
+                        state.party.splice(idx, 1);
+                        state.pokemonLost++;
+                        gymKilled = true;
+                    }
                 }
             } else {
                 gymFainted = PT.Engine.GameState.damagePokemon(pokemon, damage, state);
@@ -308,6 +320,7 @@
                         ${died
                             ? `💀 ${pokemon.name} was killed by ${opponent.name}!`
                             : `${pokemon.name} takes ${damage} damage from ${opponent.name}!`}
+                        ${focusBandSaved ? `<br>🎒 FOCUS BAND: ${pokemon.name} held on through what should've been a finishing blow!` : ''}
                         ${isAce ? '<br><span style="font-size: 6px;">⚠️ Ace Pokemon ignore Battle Star protection!</span>' : ''}
                         <br><span style="font-size: 6px;">Win chance was ${chance}%${battleBonuses.length > 0 ? ' (' + battleBonuses.join(', ') + ')' : ''}</span>
                         ${died ? '' : '<br>You can try again next time you visit.'}

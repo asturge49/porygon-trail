@@ -11,8 +11,8 @@
             icon: "assets/key-items/amulet-coin.png",
             desc: "A charm coin that draws prize money toward its holder.",
             stat: "money",
-            amount: 4,
-            buffLabel: "+4% Money Earned"
+            amount: 8,
+            buffLabel: "+8% Money Earned"
         },
         sootheBell: {
             id: "sootheBell",
@@ -20,8 +20,8 @@
             icon: "assets/key-items/soothe-bell.png",
             desc: "Its gentle chime calms wild Pokemon, making them easier to catch.",
             stat: "catch",
-            amount: 4,
-            buffLabel: "+4% Catch Rate"
+            amount: 8,
+            buffLabel: "+8% Catch Rate"
         },
         muscleBand: {
             id: "muscleBand",
@@ -29,8 +29,8 @@
             icon: "assets/key-items/muscle-band.png",
             desc: "A worn wristband that sharpens battle instincts.",
             stat: "win",
-            amount: 2,
-            buffLabel: "+2% Win Rate"
+            amount: 5,
+            buffLabel: "+5% Win Rate"
         },
         hpUp: {
             id: "hpUp",
@@ -52,10 +52,50 @@
             amount: 10,
             buffLabel: "+10% Event Rate",
             maxStacks: 7
+        },
+        focusBand: {
+            id: "focusBand",
+            name: "Focus Band",
+            icon: "assets/key-items/focus-band.png",
+            desc: "A worn headband that lets a Pokemon cling to consciousness through a finishing blow.",
+            stat: "deathAvoid",
+            amount: 6,
+            buffLabel: "+6% Death Avoidance",
+            maxStacks: 3
+        },
+        bicycle: {
+            id: "bicycle",
+            name: "Bicycle",
+            icon: "assets/key-items/bicycle.png",
+            desc: "Covers extra ground every day, no matter which Pokemon are in your party.",
+            stat: "travel",
+            amount: 2,
+            buffLabel: "+2 Miles/Day",
+            maxStacks: 4
+        },
+        silphScope: {
+            id: "silphScope",
+            name: "Silph Scope",
+            icon: "assets/key-items/silph-scope.png",
+            desc: "Reveals what's really out there — Team Rocket activity and legendary sightings both turn up more often.",
+            stat: "eventWeight",
+            amount: 50,
+            buffLabel: "+50% Rocket/Legendary Odds",
+            maxStacks: 3
+        },
+        expShare: {
+            id: "expShare",
+            name: "Exp. Share",
+            icon: "assets/key-items/exp-share.png",
+            desc: "Splits battle experience with the team — one other eligible Pokemon also gets a shot at a Battle Star on every win. Rare, and you can only carry one.",
+            stat: "teamExp",
+            buffLabel: "Shares Battle Stars",
+            maxStacks: 1,
+            pickWeight: 1
         }
     };
 
     // Fixed relative order used whenever items are displayed. Each gym
-    // reward only offers 3 of these 5, sampled at random.
-    PT.Data.KeyItemOrder = ["amuletCoin", "sootheBell", "muscleBand", "hpUp", "whiteFlute"];
+    // reward samples 3 of these at random (weighted by pickWeight, default 3).
+    PT.Data.KeyItemOrder = ["amuletCoin", "sootheBell", "muscleBand", "hpUp", "whiteFlute", "focusBand", "bicycle", "silphScope", "expShare"];
 })();

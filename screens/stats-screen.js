@@ -33,6 +33,9 @@
             const catchBonus = PT.Engine.GameState.getCatchRateBonus(state);
             const moneyBonus = PT.Engine.GameState.getMoneyMultBonus(state);
             const eventBonus = PT.Engine.GameState.getEventRateBonus(state);
+            const focusBandBonus = PT.Engine.GameState.getFocusBandBonus(state);
+            const bicycleBonus = PT.Engine.GameState.getBicycleBonus(state);
+            const silphMult = PT.Engine.GameState.getSilphScopeMultiplier(state);
             const ki = state.buffs.keyItems;
             const totalHpUp = state.party.reduce((sum, p) => sum + (p.hpBonus || 0), 0);
 
@@ -49,6 +52,10 @@
                     ${statRow('Money Multiplier', `+${moneyBonus}%`, ki.amuletCoin > 0 ? `${ki.amuletCoin}x Amulet Coin` : 'No Amulet Coin yet')}
                     ${statRow('Event Rate Bonus', `+${eventBonus}%`, ki.whiteFlute > 0 ? `${ki.whiteFlute}x White Flute${PT.Engine.GameState.isKeyItemMaxed(state, 'whiteFlute') ? ' — MAXED OUT' : ''}` : 'No White Flute yet')}
                     ${statRow('HP Up Used', `${totalHpUp}`, ki.hpUp > 0 ? `${ki.hpUp}x across your party (max +${PT.Data.KeyItems.hpUp.maxStacksPerTarget}/Pokemon)` : 'No HP Up yet')}
+                    ${statRow('Death Avoidance', `+${focusBandBonus}%`, ki.focusBand > 0 ? `${ki.focusBand}x Focus Band${PT.Engine.GameState.isKeyItemMaxed(state, 'focusBand') ? ' — MAXED OUT' : ''}` : 'No Focus Band yet')}
+                    ${statRow('Bonus Travel Distance', `+${bicycleBonus}mi/day`, ki.bicycle > 0 ? `${ki.bicycle}x Bicycle${PT.Engine.GameState.isKeyItemMaxed(state, 'bicycle') ? ' — MAXED OUT' : ''}` : 'No Bicycle yet')}
+                    ${statRow('Rocket/Legendary Odds', `${silphMult.toFixed(2)}x`, ki.silphScope > 0 ? `${ki.silphScope}x Silph Scope${PT.Engine.GameState.isKeyItemMaxed(state, 'silphScope') ? ' — MAXED OUT' : ''}` : 'No Silph Scope yet')}
+                    ${statRow('Exp. Share', ki.expShare > 0 ? 'OWNED' : 'not owned', 'One other Pokemon shares every Battle Star win')}
                 </div>
 
                 <div class="profile-section" style="margin-top: 8px;">

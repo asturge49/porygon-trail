@@ -275,7 +275,21 @@
             });
         }
 
-        const event = state.rng.weightedChoice(availableEvents);
+        // Silph Scope: skews the roll toward Team Rocket / legendary events
+        // without permanently mutating the shared event weights above.
+        const silphMult = PT.Engine.GameState.getSilphScopeMultiplier(state);
+        let event;
+        if (silphMult > 1) {
+            const weightedPool = availableEvents.map(e => {
+                const isRocketOrLegendary = e.type === 'legendary' ||
+                    (e.id && (e.id.startsWith('team_rocket_') || e.id.startsWith('death_rocket_') || e.id === 'rocket_shakedown'));
+                return { event: e, weight: (e.weight || 1) * (isRocketOrLegendary ? silphMult : 1) };
+            });
+            const picked = state.rng.weightedChoice(weightedPool);
+            event = picked ? picked.event : null;
+        } else {
+            event = state.rng.weightedChoice(availableEvents);
+        }
         if (!event) return null;
 
         if (event.oneTime || event.maxTriggers) {

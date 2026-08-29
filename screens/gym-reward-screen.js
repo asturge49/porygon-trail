@@ -1,11 +1,27 @@
 // Porygon Trail - Gym Reward Screen
 // Shown after a gym victory: recap money earned, then two "pick 1 of 3"
-// steps — a key item (stackable buff, 3 sampled from the 5-item pool each
-// gym) and an ability buff (stacks a boost onto a travel ability already
-// in the party). HP Up additionally asks which Pokemon should get it.
+// steps — a key item (stackable buff, 3 sampled from the key item pool each
+// gym, weighted so rarer items like Exp. Share show up less often) and an
+// ability buff (stacks a boost onto a travel ability already in the party).
+// HP Up additionally asks which Pokemon should get it.
 (function() {
     const PT = window.PorygonTrail;
     PT.Screens = PT.Screens || {};
+
+    // Weighted sample without replacement — used so rarer key items
+    // (lower pickWeight, e.g. Exp. Share) show up less often than the rest.
+    function weightedSample(rng, ids, weightFn, count) {
+        const pool = ids.slice();
+        const picked = [];
+        while (pool.length > 0 && picked.length < count) {
+            const weighted = pool.map(id => ({ id, weight: weightFn(id) }));
+            const chosen = rng.weightedChoice(weighted);
+            if (!chosen) break;
+            picked.push(chosen.id);
+            pool.splice(pool.indexOf(chosen.id), 1);
+        }
+        return picked;
+    }
 
     function statCardHtml(item, stacks) {
         return `
@@ -62,7 +78,7 @@
                             if (id === 'hpUp') return alive.some(p => PT.Engine.GameState.canApplyHpUpBoost(p));
                             return !PT.Engine.GameState.isKeyItemMaxed(state, id);
                         });
-                        const sampled = state.rng.shuffle([...eligible]).slice(0, 3);
+                        const sampled = weightedSample(state.rng, eligible, id => PT.Data.KeyItems[id].pickWeight || 3, 3);
                         // Keep the fixed relative order for whichever 3 got picked
                         const ordered = PT.Data.KeyItemOrder.filter(id => sampled.includes(id));
                         div.dataset.itemChoices = JSON.stringify(ordered);
