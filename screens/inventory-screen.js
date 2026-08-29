@@ -47,7 +47,7 @@
 
             const msg = document.getElementById('inv-message');
 
-            // --- USE POTION: show Pokemon picker ---
+            // --- USE POTION: show potion type picker (if needed), then Pokemon picker ---
             document.getElementById('btn-use-potion').addEventListener('click', () => {
                 const injured = state.party.filter(p => p.status !== 'fainted' && p.hp < p.maxHp);
                 if (injured.length === 0) {
@@ -55,8 +55,46 @@
                     return;
                 }
 
-                // Determine potion type
-                const isSuper = state.resources.superPotions > 0;
+                const hasPotion = state.resources.potions > 0;
+                const hasSuper = state.resources.superPotions > 0;
+
+                if (hasPotion && hasSuper) {
+                    showPotionTypePicker();
+                } else {
+                    showPotionTargetPicker(hasSuper);
+                }
+            });
+
+            function showPotionTypePicker() {
+                msg.innerHTML = `
+                    <div class="potion-picker">
+                        <div style="margin-bottom: 6px; font-weight: bold;">Use which item?</div>
+                        <div class="potion-pokemon-list">
+                            <button class="potion-target-btn" id="btn-pick-potion">
+                                <div class="potion-target-info">
+                                    <div style="font-weight: bold;">Potion (+1 HP)</div>
+                                    <div>${state.resources.potions} left</div>
+                                </div>
+                            </button>
+                            <button class="potion-target-btn" id="btn-pick-super-potion">
+                                <div class="potion-target-info">
+                                    <div style="font-weight: bold;">Super Potion (+2 HP)</div>
+                                    <div>${state.resources.superPotions} left</div>
+                                </div>
+                            </button>
+                        </div>
+                        <button class="btn btn-small" id="btn-potion-cancel" style="margin-top: 6px; width: 100%;">CANCEL</button>
+                    </div>
+                `;
+                document.getElementById('btn-pick-potion').addEventListener('click', () => showPotionTargetPicker(false));
+                document.getElementById('btn-pick-super-potion').addEventListener('click', () => showPotionTargetPicker(true));
+                document.getElementById('btn-potion-cancel').addEventListener('click', () => {
+                    msg.textContent = '';
+                });
+            }
+
+            function showPotionTargetPicker(isSuper) {
+                const injured = state.party.filter(p => p.status !== 'fainted' && p.hp < p.maxHp);
                 const potionName = isSuper ? 'Super Potion' : 'Potion';
                 const healAmt = isSuper ? 2 : 1;
                 const potionCount = isSuper ? state.resources.superPotions : state.resources.potions;
@@ -127,7 +165,7 @@
                 document.getElementById('btn-potion-cancel').addEventListener('click', () => {
                     msg.textContent = '';
                 });
-            });
+            }
 
             // --- USE RARE CANDY ---
             document.getElementById('btn-use-candy').addEventListener('click', () => {
