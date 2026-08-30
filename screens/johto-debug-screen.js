@@ -10,7 +10,6 @@
 
     const KANTO_BADGES = ['Boulder Badge', 'Cascade Badge', 'Thunder Badge', 'Rainbow Badge',
         'Marsh Badge', 'Soul Badge', 'Volcano Badge', 'Earth Badge'];
-    const JOHTO_STARTER_IDS = [152, 155, 158]; // Chikorita/Cyndaquil/Totodile
 
     const PROFILES = {
         'full-strong': {
@@ -72,7 +71,10 @@
                     const state = buildJohtoState(btn.dataset.profile, GS);
                     PT.State = state;
                     GS.saveGame(state);
-                    PT.App.goto('TRAVEL');
+                    // Route through the real Elm starter picker (screens/johto-starter-screen.js)
+                    // rather than auto-assigning one, so the debug harness exercises the
+                    // same flow a real Kanto->Johto transition would.
+                    PT.App.goto('ELMSTARTER');
                 });
             });
 
@@ -114,15 +116,6 @@
         state.badges = KANTO_BADGES.slice(0, cfg.badges).concat(['champion']);
         state.gymBattlesWon = cfg.badges;
 
-        const starterId = JOHTO_STARTER_IDS[Math.floor(Math.random() * JOHTO_STARTER_IDS.length)];
-        const starterData = PT.Data.Pokemon.find(p => p.id === starterId);
-        if (starterData) {
-            const starter = GS.createPartyPokemon(starterData, state);
-            state.party.push(starter);
-            state.pokedexCaught.push(starterId);
-            state.pokedexSeen.push(starterId);
-        }
-
         state.resources = Object.assign({}, cfg.resources);
         state.buffs = GS.createDefaultBuffs();
         Object.keys(cfg.keyItems).forEach(k => {
@@ -130,7 +123,11 @@
             state.keyItems.push(k);
         });
 
-        state.currentLocationIndex = johtoStartIndex >= 0 ? johtoStartIndex : 0;
+        // Sit one location short of New Bark Town — ELMSTARTER's own
+        // enterJohto() does currentLocationIndex++ after the player picks a
+        // starter, exactly like the real post-E4 flow. Landing here directly
+        // would skip that increment and land a location early.
+        state.currentLocationIndex = johtoStartIndex > 0 ? johtoStartIndex - 1 : 0;
         state.distanceTraveled = 0;
 
         return state;
