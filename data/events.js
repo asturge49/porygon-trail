@@ -5847,7 +5847,7 @@
 
         // Power Plant - Electrical Overload
         {
-            id: "power_plant_overload",
+            id: "power_plant_electrical_overload",
             type: "hazard",
             name: "Electrical Overload!",
             description: "The Power Plant's generators are going critical! Arcs of electricity leap across the floor. The main circuit breaker is on the far wall — one of your Pokemon could absorb the surge to shut it down, but the voltage would be lethal.",
@@ -6331,7 +6331,7 @@
             ]
         },
         {
-            id: "old_man_last_lesson",
+            id: "old_man_farewell_stories",
             type: "story",
             name: "The Old Man's Last Lesson!",
             description: "The old man who taught you how to catch Pokemon sits by the road, looking frail. \"I used to be a champion, long time ago. My last Pokemon passed last winter.\" He coughs. \"I can train your team — but it'll take 2 days. Or I can just tell you stories. The stories of a champion are worth something too.\"",
@@ -11923,6 +11923,166 @@
                     text: "\"Not today.\"",
                     outcomes: [
                         { weight: 100, narration: "\"Suit yourself.\" He goes back to sorting his cooler, unbothered.", effects: {} }
+                    ]
+                }
+            ]
+        },
+
+        // ===== JOHTO ACQUISITION GAPS (added post-launch) =====
+        // Route 34 Day Care egg — a common, breeder-flavored source for the
+        // eight baby Pokemon that otherwise have no acquisition path
+        // (Pichu/Cleffa/Igglybuff/Togepi/Tyrogue/Smoochum/Elekid/Magby).
+        // Deliberately separate from the existing route34_daycare_couple
+        // flavor event (which already teases "an egg on the way") rather than
+        // folded into it, so that event's tested outcomes stay untouched.
+        {
+            id: "route34_breeder_egg",
+            type: "story",
+            name: "An Egg from the Day Care",
+            description: "The Day Care man catches you before you're past the fence. \"Actually — funny timing. One of our Pokemon left an egg behind this morning. We can't exactly raise it ourselves, what with the other twenty. You want it?\"",
+            weight: 14,
+            oneTime: true,
+            locationIds: ["route_34"],
+            choices: [
+                {
+                    text: "Take the egg",
+                    outcomes: [
+                        { weight: 12.5, narration: "The egg wobbles, cracks, and a Pichu blinks up at you, static already crackling in its cheeks.", effects: { catchPokemon: 172 } },
+                        { weight: 12.5, narration: "The egg wobbles, cracks, and a Cleffa tumbles out, immediately delighted by absolutely everything.", effects: { catchPokemon: 173 } },
+                        { weight: 12.5, narration: "The egg wobbles, cracks, and an Igglybuff rolls out, already humming something tuneless and off-key.", effects: { catchPokemon: 174 } },
+                        { weight: 12.5, narration: "The egg wobbles, cracks, and a Togepi peeks out, still half-wearing its shell like a hat.", effects: { catchPokemon: 175 } },
+                        { weight: 12.5, narration: "The egg wobbles, cracks, and a Tyrogue springs out throwing practice punches at nothing in particular.", effects: { catchPokemon: 236 } },
+                        { weight: 12.5, narration: "The egg wobbles, cracks, and a Smoochum steps out, already checking its reflection in a nearby puddle.", effects: { catchPokemon: 238 } },
+                        { weight: 12.5, narration: "The egg wobbles, cracks, and an Elekid hops out, sparking faintly with every excited bounce.", effects: { catchPokemon: 239 } },
+                        { weight: 12.5, narration: "The egg wobbles, cracks, and a Magby yawns out a small puff of smoke before opening its eyes.", effects: { catchPokemon: 240 } }
+                    ]
+                },
+                {
+                    text: "\"We can't take on anything else right now.\"",
+                    outcomes: [
+                        { weight: 100, narration: "\"No trouble — someone else will come along.\" He tucks the egg back into a warm blanket by the porch.", effects: {} }
+                    ]
+                }
+            ]
+        },
+
+        // Ruins of Alph — Route 32's counterpart to the Union Cave entrance
+        // event, a fairly common risky puzzle rather than a rare legendary
+        // hunt, matching Unown's role as an accessible curiosity rather than
+        // a box legendary.
+        {
+            id: "route32_ruins_of_alph",
+            type: "discovery",
+            name: "Ruins of Alph",
+            description: "A short detour off the main path leads to a sunken stone chamber, its walls covered floor to ceiling in identical, unreadable glyphs. Some of them seem to be watching you back.",
+            weight: 9,
+            oneTime: true,
+            locationIds: ["route_32"],
+            choices: [
+                {
+                    text: "Trace the glyph pattern",
+                    outcomes: [
+                        { weight: 55, narration: "One glyph blinks — actually blinks — and peels itself off the wall. An Unown, apparently unbothered by several thousand years of being mistaken for architecture.", effects: { catchPokemon: 201 } },
+                        { weight: 45, narration: "The pattern shifts under your finger and a slab grinds loose overhead, showering the chamber in dust and small rocks. Nothing broken, but your nerves.", effects: { partyDamage: 1 } }
+                    ]
+                },
+                {
+                    text: "Leave the ruins undisturbed",
+                    outcomes: [
+                        { weight: 100, narration: "Whatever's down here has waited this long. It can keep waiting.", effects: {} }
+                    ]
+                }
+            ]
+        },
+
+        // Tin Tower — Ho-Oh. True legendary tier: ultraball-gated, very low
+        // weight, high minDay, mirroring zapdos_storm/moltres_volcano's
+        // structure exactly rather than Unown's common accessible framing.
+        {
+            id: "ecruteak_tin_tower_hooh",
+            type: "legendary",
+            name: "A Flash of Rainbow Fire",
+            description: "Above the Bell Tower, where the old maps still mark a Tin Tower that isn't there anymore, the sky ripples with color that has no business existing. Something enormous banks through the clouds and is gone.",
+            weight: 2,
+            oneTime: true,
+            minDay: 60,
+            locationIds: ["ecruteak_city"],
+            choices: [
+                {
+                    text: "Throw an Ultra Ball!",
+                    requiresItem: "ultraballs",
+                    bonusAbility: "fire",
+                    outcomes: [
+                        { weight: 12, narration: "The Ultra Ball arcs impossibly high and connects. Ho-Oh is caught!", effects: { ultraballs: -1, catchPokemon: 250 } },
+                        { weight: 88, narration: "Ho-Oh is already three ridgelines away by the time the ball comes back down. You didn't even hear it land.", effects: { ultraballs: -1, seePokemon: 250 } }
+                    ],
+                    bonusOutcome: { weight: 30, narration: "Your Fire-type calls out, and — impossibly — Ho-Oh circles back once. The Ultra Ball connects!", effects: { ultraballs: -1, catchPokemon: 250 } }
+                },
+                {
+                    text: "Just watch it go",
+                    outcomes: [
+                        { weight: 100, narration: "You watch until the color fades from the sky, and then a while longer after that.", effects: { seePokemon: 250 } }
+                    ]
+                }
+            ]
+        },
+
+        // Whirl Islands — Lugia, at the Route 40/41 ferry crossing (the
+        // closest thing this map has to Johto's open-sea Whirl Islands
+        // geography). Same rare-legendary treatment as Ho-Oh.
+        {
+            id: "route40_41_whirl_islands_lugia",
+            type: "legendary",
+            name: "Something Beneath the Whirlpools",
+            description: "Past the ferry lane, a ring of slow whirlpools churns around a cluster of sea caves nobody local will name out loud. The water goes very still just before something vast moves beneath it.",
+            weight: 2,
+            oneTime: true,
+            minDay: 60,
+            locationIds: ["route_40_41"],
+            choices: [
+                {
+                    text: "Throw an Ultra Ball!",
+                    requiresItem: "ultraballs",
+                    bonusAbility: "psychic",
+                    outcomes: [
+                        { weight: 12, narration: "The ball vanishes beneath the surface — one long pause — then the telltale click. Lugia is caught!", effects: { ultraballs: -1, catchPokemon: 249 } },
+                        { weight: 88, narration: "The water swallows the ball and gives nothing back. Whatever's down there isn't interested today.", effects: { ultraballs: -1, seePokemon: 249 } }
+                    ],
+                    bonusOutcome: { weight: 30, narration: "Your Psychic-type goes very quiet, then nods once — Lugia surfaces just long enough for the Ultra Ball to connect!", effects: { ultraballs: -1, catchPokemon: 249 } }
+                },
+                {
+                    text: "Keep the ferry moving",
+                    outcomes: [
+                        { weight: 100, narration: "The captain doesn't slow down for legends. You catch one last glimpse of something pale beneath the waves.", effects: { seePokemon: 249 } }
+                    ]
+                }
+            ]
+        },
+
+        // Smeargle — National Park's contest/exhibition flavor already
+        // established (bug-catching contest, flower show) made this the
+        // natural home for a traveling-artist encounter over inventing a new
+        // location for it.
+        {
+            id: "national_park_traveling_artist",
+            type: "discovery",
+            name: "The Traveling Artist",
+            description: "An easel is set up at the edge of the park, half-finished landscape on the canvas. The artist keeps glancing over their shoulder at a smear of paint on a nearby tree trunk that's shaped, unmistakably, like their own brushstrokes.",
+            weight: 6,
+            oneTime: true,
+            locationIds: ["route_35_national_park"],
+            choices: [
+                {
+                    text: "Follow the brushstrokes",
+                    outcomes: [
+                        { weight: 45, narration: "Behind the tree, a Smeargle sits proudly next to a row of tail-painted copies of the artist's own canvas. It seems to think it's helping.", effects: { catchPokemon: 235 } },
+                        { weight: 55, narration: "By the time you circle the tree, whatever left the paint is long gone. The artist never even noticed.", effects: {} }
+                    ]
+                },
+                {
+                    text: "Let the artist work in peace",
+                    outcomes: [
+                        { weight: 100, narration: "You leave them to it. The mystery smear on the tree trunk remains, appropriately, a mystery.", effects: {} }
                     ]
                 }
             ]
