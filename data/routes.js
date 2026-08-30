@@ -1041,11 +1041,11 @@
             flavor: "Escalators hum inside the department store. Whitney's gym is packed with fans."
         },
         {
-            id: "route_35_national_park",
+            id: "route_35",
             region: "johto",
-            name: "Route 35 / National Park",
-            description: "A manicured park route famous for its annual bug-catching contest.",
-            distanceToNext: 58,
+            name: "Route 35",
+            description: "An open grassy corridor leading from Goldenrod toward the National Park.",
+            distanceToNext: 42,
             terrain: "route",
             hasShop: false,
             hasCenter: false,
@@ -1053,27 +1053,44 @@
             gymLeader: null,
             encounterRate: 45,
             encounterTable: [
-                { pokemonId: 191, weight: 5 },  // Sunkern
-                { pokemonId: 192, weight: 19 }, // Sunflora
-                { pokemonId: 187, weight: 5 },  // Hoppip
-                { pokemonId: 189, weight: 16 }, // Jumpluff
-                { pokemonId: 43, weight: 4 },   // Oddish
-                { pokemonId: 45, weight: 7 },   // Vileplume
-                { pokemonId: 182, weight: 7 },  // Bellossom
-                { pokemonId: 193, weight: 16 }, // Yanma
-                { pokemonId: 190, weight: 12 }, // Aipom
-                { pokemonId: 123, weight: 4 },  // Scyther
-                { pokemonId: 212, weight: 5 }   // Scizor
+                { pokemonId: 191, weight: 10 }, // Sunkern
+                { pokemonId: 192, weight: 30 }, // Sunflora
+                { pokemonId: 187, weight: 10 }, // Hoppip
+                { pokemonId: 189, weight: 26 }  // Jumpluff
+            ],
+            eventPool: [],
+            flavor: "Sunkern and Hoppip drift through open fields on the way to the park gates."
+        },
+        {
+            id: "national_park",
+            region: "johto",
+            name: "National Park",
+            description: "A manicured park route famous for its annual bug-catching contest.",
+            distanceToNext: 45,
+            terrain: "route",
+            hasShop: false,
+            hasCenter: false,
+            hasGym: false,
+            gymLeader: null,
+            encounterRate: 45,
+            encounterTable: [
+                { pokemonId: 43, weight: 6 },   // Oddish
+                { pokemonId: 45, weight: 12 },  // Vileplume
+                { pokemonId: 182, weight: 12 }, // Bellossom
+                { pokemonId: 193, weight: 22 }, // Yanma
+                { pokemonId: 190, weight: 18 }, // Aipom
+                { pokemonId: 123, weight: 6 },  // Scyther
+                { pokemonId: 212, weight: 8 }   // Scizor
             ],
             eventPool: ["national_park_bug_catching_contest", "national_park_general", "national_park_flower_show", "national_park_sudowoodo_copycat"],
             flavor: "Manicured flowerbeds line the path. Bug catchers compare nets and jars."
         },
         {
-            id: "route_36_37",
+            id: "route_36",
             region: "johto",
-            name: "Route 36 / 37",
-            description: "A hilly route winding toward the mysterious city of Ecruteak.",
-            distanceToNext: 62,
+            name: "Route 36",
+            description: "A quiet forest path out of the National Park, blocked by an oddly convincing tree.",
+            distanceToNext: 44,
             terrain: "route",
             hasShop: false,
             hasCenter: false,
@@ -1081,17 +1098,34 @@
             gymLeader: null,
             encounterRate: 48,
             encounterTable: [
-                { pokemonId: 163, weight: 5 },  // Hoothoot
-                { pokemonId: 164, weight: 18 }, // Noctowl
-                { pokemonId: 204, weight: 5 },  // Pineco
-                { pokemonId: 205, weight: 15 }, // Forretress
-                { pokemonId: 203, weight: 16 }, // Girafarig
-                { pokemonId: 198, weight: 18 }, // Murkrow (night)
-                { pokemonId: 234, weight: 14 }, // Stantler
-                { pokemonId: 214, weight: 9 }   // Heracross
+                { pokemonId: 163, weight: 8 },  // Hoothoot
+                { pokemonId: 164, weight: 26 }, // Noctowl
+                { pokemonId: 204, weight: 8 },  // Pineco
+                { pokemonId: 205, weight: 24 }  // Forretress
             ],
-            eventPool: ["route36_37_general", "sudowoodo_event", "route36_37_ecruteak_legend", "route36_37_stantler_illusion"],
+            eventPool: ["sudowoodo_event", "route36_37_stantler_illusion"],
             flavor: "A strange tree stands motionless at the roadside, oddly still even in the wind."
+        },
+        {
+            id: "route_37",
+            region: "johto",
+            name: "Route 37",
+            description: "The hills climb steadily toward the mysterious city of Ecruteak.",
+            distanceToNext: 42,
+            terrain: "route",
+            hasShop: false,
+            hasCenter: false,
+            hasGym: false,
+            gymLeader: null,
+            encounterRate: 48,
+            encounterTable: [
+                { pokemonId: 203, weight: 22 }, // Girafarig
+                { pokemonId: 198, weight: 24 }, // Murkrow (night)
+                { pokemonId: 234, weight: 20 }, // Stantler
+                { pokemonId: 214, weight: 12 }  // Heracross
+            ],
+            eventPool: ["route36_37_general", "route36_37_ecruteak_legend"],
+            flavor: "The hills climb steadily. Ecruteak's twin towers rise in the distance."
         },
         {
             id: "ecruteak_city",
@@ -1110,11 +1144,11 @@
             flavor: "The Burned Tower's charred beams still stand. Morty reads the fog like a book."
         },
         {
-            id: "route_38_39",
+            id: "route_38",
             region: "johto",
-            name: "Route 38 / 39",
-            description: "A pastoral route past Moomoo Farm on the way to Olivine City.",
-            distanceToNext: 60,
+            name: "Route 38",
+            description: "A pastoral road out of Ecruteak, dotted with grazing Pokemon.",
+            distanceToNext: 42,
             terrain: "route",
             hasShop: false,
             hasCenter: false,
@@ -1122,17 +1156,34 @@
             gymLeader: null,
             encounterRate: 45,
             encounterTable: [
-                { pokemonId: 241, weight: 26 }, // Miltank (farm)
-                { pokemonId: 128, weight: 22 }, // Tauros
-                { pokemonId: 81, weight: 5 },   // Magnemite
-                { pokemonId: 82, weight: 15 },  // Magneton
-                { pokemonId: 209, weight: 5 },  // Snubbull
-                { pokemonId: 210, weight: 17 }, // Granbull
-                { pokemonId: 113, weight: 3 },  // Chansey
-                { pokemonId: 242, weight: 7 }   // Blissey
+                { pokemonId: 241, weight: 34 }, // Miltank
+                { pokemonId: 128, weight: 30 }  // Tauros
             ],
-            eventPool: ["route38_39_moomoo_farm", "route38_39_general", "route38_39_runaway_miltank"],
+            eventPool: ["route38_39_general"],
             flavor: "Miltank low contentedly in the pasture. The road smells of fresh hay."
+        },
+        {
+            id: "route_39",
+            region: "johto",
+            name: "Route 39",
+            description: "The road past Moomoo Farm on the way to Olivine City.",
+            distanceToNext: 46,
+            terrain: "route",
+            hasShop: false,
+            hasCenter: false,
+            hasGym: false,
+            gymLeader: null,
+            encounterRate: 45,
+            encounterTable: [
+                { pokemonId: 81, weight: 8 },   // Magnemite
+                { pokemonId: 82, weight: 22 },  // Magneton
+                { pokemonId: 209, weight: 8 },  // Snubbull
+                { pokemonId: 210, weight: 24 }, // Granbull
+                { pokemonId: 113, weight: 5 },  // Chansey
+                { pokemonId: 242, weight: 11 }  // Blissey
+            ],
+            eventPool: ["route38_39_moomoo_farm", "route38_39_runaway_miltank"],
+            flavor: "Snubbull trot along the fences. Olivine's harbor lights glimmer ahead."
         },
         {
             id: "olivine_city",
@@ -1151,11 +1202,11 @@
             flavor: "The lighthouse beam sweeps across the harbor. Ferries creak against the dock."
         },
         {
-            id: "route_40_41",
+            id: "route_40",
             region: "johto",
-            name: "Route 40 / 41",
-            description: "An open sea route crossed by ferry, teeming with aquatic life.",
-            distanceToNext: 70,
+            name: "Route 40",
+            description: "The harbor waters just south of Olivine, crossed by ferry.",
+            distanceToNext: 48,
             terrain: "water",
             hasShop: false,
             hasCenter: false,
@@ -1163,20 +1214,37 @@
             gymLeader: null,
             encounterRate: 45,
             encounterTable: [
-                { pokemonId: 72, weight: 6 },   // Tentacool
-                { pokemonId: 73, weight: 20 },  // Tentacruel
-                { pokemonId: 98, weight: 4 },   // Krabby
-                { pokemonId: 99, weight: 14 },  // Kingler
-                { pokemonId: 116, weight: 6 },  // Horsea
-                { pokemonId: 117, weight: 10 }, // Seadra
-                { pokemonId: 230, weight: 4 },  // Kingdra
-                { pokemonId: 170, weight: 4 },  // Chinchou
-                { pokemonId: 171, weight: 12 }, // Lanturn
-                { pokemonId: 223, weight: 4 },  // Remoraid
-                { pokemonId: 224, weight: 12 }, // Octillery
-                { pokemonId: 211, weight: 6 }   // Qwilfish
+                { pokemonId: 72, weight: 10 },  // Tentacool
+                { pokemonId: 73, weight: 30 },  // Tentacruel
+                { pokemonId: 98, weight: 8 },   // Krabby
+                { pokemonId: 99, weight: 22 }   // Kingler
             ],
-            eventPool: ["route40_41_ferry_crossing", "route40_41_general", "route40_41_mantine_sighting", "route40_41_jasmine_errand"],
+            eventPool: ["route40_41_general", "route40_41_jasmine_errand"],
+            flavor: "Ferries creak at the dock as the harbor gives way to open water."
+        },
+        {
+            id: "route_41",
+            region: "johto",
+            name: "Route 41",
+            description: "An open sea route teeming with aquatic life, stretching on to Cianwood.",
+            distanceToNext: 52,
+            terrain: "water",
+            hasShop: false,
+            hasCenter: false,
+            hasGym: false,
+            gymLeader: null,
+            encounterRate: 45,
+            encounterTable: [
+                { pokemonId: 116, weight: 6 },  // Horsea
+                { pokemonId: 117, weight: 14 }, // Seadra
+                { pokemonId: 230, weight: 4 },  // Kingdra
+                { pokemonId: 170, weight: 6 },  // Chinchou
+                { pokemonId: 171, weight: 18 }, // Lanturn
+                { pokemonId: 223, weight: 6 },  // Remoraid
+                { pokemonId: 224, weight: 18 }, // Octillery
+                { pokemonId: 211, weight: 8 }   // Qwilfish
+            ],
+            eventPool: ["route40_41_ferry_crossing", "route40_41_mantine_sighting", "route40_41_whirl_islands_lugia"],
             flavor: "Salt spray coats the deck. Something large glides beneath the waves."
         },
         {
@@ -1196,11 +1264,32 @@
             flavor: "Waves crash against the cliffs. Chuck trains alone on the beach at dawn."
         },
         {
-            id: "route_42_mt_mortar",
+            id: "route_42",
             region: "johto",
-            name: "Route 42 / Mt. Mortar",
-            description: "A steep mountain route riddled with caves and hot springs.",
-            distanceToNext: 75,
+            name: "Route 42",
+            description: "The trail climbs sharply out of Cianwood toward a steep, cave-riddled mountain.",
+            distanceToNext: 45,
+            terrain: "route",
+            hasShop: false,
+            hasCenter: false,
+            hasGym: false,
+            gymLeader: null,
+            encounterRate: 50,
+            encounterTable: [
+                { pokemonId: 66, weight: 8 },   // Machop
+                { pokemonId: 68, weight: 28 },  // Machamp
+                { pokemonId: 183, weight: 8 },  // Marill
+                { pokemonId: 184, weight: 24 }  // Azumarill
+            ],
+            eventPool: [],
+            flavor: "The trail climbs sharply. A steep mountain looms ahead, riddled with caves."
+        },
+        {
+            id: "mt_mortar",
+            region: "johto",
+            name: "Mt. Mortar",
+            description: "A steep mountain riddled with caves and hidden hot springs.",
+            distanceToNext: 50,
             terrain: "cave",
             hasShop: false,
             hasCenter: false,
@@ -1208,18 +1297,14 @@
             gymLeader: null,
             encounterRate: 50,
             encounterTable: [
-                { pokemonId: 66, weight: 4 },   // Machop
-                { pokemonId: 68, weight: 16 },  // Machamp
-                { pokemonId: 74, weight: 4 },   // Geodude
-                { pokemonId: 76, weight: 16 },  // Golem
-                { pokemonId: 183, weight: 4 },  // Marill
-                { pokemonId: 184, weight: 14 }, // Azumarill
-                { pokemonId: 216, weight: 4 },  // Teddiursa
-                { pokemonId: 217, weight: 12 }, // Ursaring
-                { pokemonId: 218, weight: 4 },  // Slugma
-                { pokemonId: 219, weight: 12 }, // Magcargo
-                { pokemonId: 95, weight: 3 },   // Onix
-                { pokemonId: 208, weight: 9 }   // Steelix
+                { pokemonId: 74, weight: 6 },   // Geodude
+                { pokemonId: 76, weight: 22 },  // Golem
+                { pokemonId: 216, weight: 6 },  // Teddiursa
+                { pokemonId: 217, weight: 18 }, // Ursaring
+                { pokemonId: 218, weight: 6 },  // Slugma
+                { pokemonId: 219, weight: 18 }, // Magcargo
+                { pokemonId: 95, weight: 4 },   // Onix
+                { pokemonId: 208, weight: 12 }  // Steelix
             ],
             eventPool: ["mt_mortar_general", "mt_mortar_hermit_master", "mt_mortar_waterfall_training", "mt_mortar_hot_spring_healing"],
             flavor: "Steam rises from hidden hot springs. Somewhere above, a waterfall roars."
@@ -1269,11 +1354,32 @@
             flavor: "Fog clings to the water's surface. Fishermen speak in hushed tones of a red Gyarados."
         },
         {
-            id: "route_44_ice_path",
+            id: "route_44",
             region: "johto",
-            name: "Route 44 / Ice Path",
+            name: "Route 44",
+            description: "The road out of Mahogany Town, snow deepening underfoot.",
+            distanceToNext: 42,
+            terrain: "route",
+            hasShop: false,
+            hasCenter: false,
+            hasGym: false,
+            gymLeader: null,
+            encounterRate: 50,
+            encounterTable: [
+                { pokemonId: 220, weight: 10 }, // Swinub
+                { pokemonId: 221, weight: 32 }, // Piloswine
+                { pokemonId: 86, weight: 10 },  // Seel
+                { pokemonId: 87, weight: 28 }   // Dewgong
+            ],
+            eventPool: [],
+            flavor: "Snow deepens underfoot. Ahead, the path vanishes into solid ice."
+        },
+        {
+            id: "ice_path",
+            region: "johto",
+            name: "Ice Path",
             description: "A frozen, slippery cave leading toward Blackthorn City.",
-            distanceToNext: 70,
+            distanceToNext: 50,
             terrain: "cave",
             hasShop: false,
             hasCenter: false,
@@ -1281,16 +1387,12 @@
             gymLeader: null,
             encounterRate: 50,
             encounterTable: [
-                { pokemonId: 220, weight: 6 },  // Swinub
-                { pokemonId: 221, weight: 22 }, // Piloswine
-                { pokemonId: 86, weight: 6 },   // Seel
-                { pokemonId: 87, weight: 20 },  // Dewgong
-                { pokemonId: 216, weight: 4 },  // Teddiursa
-                { pokemonId: 217, weight: 12 }, // Ursaring
-                { pokemonId: 215, weight: 8 },  // Sneasel
-                { pokemonId: 225, weight: 8 },  // Delibird
-                { pokemonId: 246, weight: 5 },  // Larvitar
-                { pokemonId: 247, weight: 9 }   // Pupitar
+                { pokemonId: 216, weight: 6 },  // Teddiursa
+                { pokemonId: 217, weight: 20 }, // Ursaring
+                { pokemonId: 215, weight: 14 }, // Sneasel
+                { pokemonId: 225, weight: 14 }, // Delibird
+                { pokemonId: 246, weight: 8 },  // Larvitar
+                { pokemonId: 247, weight: 16 }  // Pupitar
             ],
             eventPool: ["ice_path_general", "ice_path_slippery_puzzle", "ice_path_frozen_hiker", "ice_path_delibird_gift"],
             flavor: "Your footing slides with every step. Ice groans deep beneath the frozen floor."

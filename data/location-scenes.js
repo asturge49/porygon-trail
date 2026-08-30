@@ -448,7 +448,7 @@
         },
 
         // Route 35 / National Park — flowerbeds, bug-catching-contest grasses
-        route_35_national_park: {
+        national_park: {
             sky: 'var(--gsc-light)', ground: 'var(--gsc-dark)',
             art: `<div class="pixel-scene johto-scene route-scene">
                 <div class="pixel-cloud" style="top:10px;left:25%;">~~</div>
@@ -465,7 +465,7 @@
         },
 
         // Route 36/37 — quiet forest path toward Ecruteak; Sudowoodo's fake tree lurks
-        route_36_37: {
+        route_37: {
             sky: 'var(--gsc-dark)', ground: 'var(--gsc-darkest)',
             art: `<div class="pixel-scene johto-scene route-scene">
                 <div class="pixel-tree" style="left:10%;">&Delta;<br>|</div>
@@ -507,7 +507,7 @@
         },
 
         // Route 40/41 — open sea ferry crossing to Cianwood
-        route_40_41: {
+        route_41: {
             sky: 'var(--gsc-lightest)', ground: 'var(--gsc-bg)',
             art: `<div class="pixel-scene johto-scene water-scene">
                 <div class="pixel-cloud" style="top:8px;left:20%;">~~~</div>
@@ -535,7 +535,7 @@
         },
 
         // Route 42 / Mt. Mortar — steep cave-mountain, hot spring glow
-        route_42_mt_mortar: {
+        mt_mortar: {
             sky: 'var(--gsc-darkest)', ground: 'var(--gsc-darkest)',
             art: `<div class="pixel-scene johto-scene cave-scene">
                 <div class="pixel-mountain" style="left:5%;top:0;font-size:10px;">/\\<br>/&nbsp;&nbsp;\\</div>
@@ -576,7 +576,7 @@
         },
 
         // Route 44 / Ice Path — frozen cave, sheer ice walls, whistling wind
-        route_44_ice_path: {
+        ice_path: {
             sky: 'var(--gsc-darkest)', ground: 'var(--gsc-darkest)',
             art: `<div class="pixel-scene johto-scene cave-scene">
                 <div class="pixel-icicle" style="left:8%;top:0;">Y Y</div>

@@ -9981,7 +9981,7 @@
             weight: 10,
             oneTime: false,
             maxTriggers: 3,
-            locationIds: ["route_35_national_park"],
+            locationIds: ["national_park"],
             choices: [
                 {
                     text: "Enter the contest",
@@ -10007,7 +10007,7 @@
             description: "National Park is quiet outside contest hours — gardeners trimming hedges, a couple picnicking, sprinklers hissing over the flowerbeds.",
             weight: 9,
             oneTime: false,
-            locationIds: ["route_35_national_park"],
+            locationIds: ["national_park"],
             choices: [
                 {
                     text: "Rest on a park bench",
@@ -10031,7 +10031,7 @@
             description: "A judge in a wide-brimmed hat is scoring flowerbeds with theatrical seriousness. \"You there! Trainer! I need a second opinion — which bloom radiates more... vitality?\"",
             weight: 8,
             oneTime: true,
-            locationIds: ["route_35_national_park"],
+            locationIds: ["national_park"],
             choices: [
                 {
                     text: "Play along and judge the flowers",
@@ -10057,7 +10057,7 @@
             description: "Route 36/37 rolls over grassy hills, Girafarig grazing in loose herds and Hoothoot watching from the treeline, unblinking.",
             weight: 9,
             oneTime: false,
-            locationIds: ["route_36_37"],
+            locationIds: ["route_37"],
             choices: [
                 {
                     text: "Push on through the hills",
@@ -10081,7 +10081,7 @@
             description: "A lone tree stands at the roadside — bare, gray, motionless even as the wind bends everything else around it. It's been in exactly the same position since you first noticed it. Trees don't usually pose.",
             weight: 10,
             oneTime: true,
-            locationIds: ["route_36_37"],
+            locationIds: ["route_36"],
             choices: [
                 {
                     text: "Splash it with a Water-type move",
@@ -10108,7 +10108,7 @@
             description: "An old man rests against a milestone marker, watching the smoke-colored clouds gather over Ecruteak in the distance. \"You headed for the city? Careful there. Three beasts walked out of a burning tower once, and folks say they never really stopped walking.\"",
             weight: 8,
             oneTime: false,
-            locationIds: ["route_36_37"],
+            locationIds: ["route_37"],
             choices: [
                 {
                     text: "Ask him to tell the whole story",
@@ -10211,7 +10211,7 @@
             weight: 10,
             oneTime: false,
             maxTriggers: 2,
-            locationIds: ["route_38_39"],
+            locationIds: ["route_39"],
             choices: [
                 {
                     text: "Buy a bucket of Moomoo Milk ($400)",
@@ -10236,7 +10236,7 @@
             description: "Route 38/39 smells like fresh hay and rain-softened dirt. Snubbull nap in patches of sun; a Tauros herd thunders across a distant field for no reason anyone can explain.",
             weight: 9,
             oneTime: false,
-            locationIds: ["route_38_39"],
+            locationIds: ["route_38"],
             choices: [
                 {
                     text: "Continue toward Olivine",
@@ -10336,7 +10336,7 @@
             description: "The ferry churns out into open water, Olivine shrinking behind you. It's a long way to Cianwood — nothing but waves, gulls, and the occasional splash of something large beneath the surface.",
             weight: 9,
             oneTime: false,
-            locationIds: ["route_40_41"],
+            locationIds: ["route_41"],
             choices: [
                 {
                     text: "Stay on deck and watch the water",
@@ -10360,7 +10360,7 @@
             description: "The sea turns choppy without warning, spray coming up over the rail in cold sheets. Somewhere below, something big enough to rock the boat swims past.",
             weight: 10,
             oneTime: false,
-            locationIds: ["route_40_41"],
+            locationIds: ["route_40"],
             choices: [
                 {
                     text: "Hold on and ride it out",
@@ -10379,7 +10379,7 @@
             description: "A shadow the size of a small boat glides beneath the surface, keeping pace with the ferry for a while before breaking the water in a slow, graceful leap.",
             weight: 8,
             oneTime: true,
-            locationIds: ["route_40_41"],
+            locationIds: ["route_41"],
             choices: [
                 {
                     text: "Try to get its attention",
@@ -10456,7 +10456,7 @@
             description: "Hot spring steam rolls through the tunnels of Mt. Mortar in slow, disorienting waves. Somewhere above, water thunders over rock — the waterfall the mountain is named for.",
             weight: 10,
             oneTime: false,
-            locationIds: ["route_42_mt_mortar"],
+            locationIds: ["mt_mortar"],
             choices: [
                 {
                     text: "Push through the steam",
@@ -10475,7 +10475,7 @@
             description: "Deep in Mt. Mortar, an old man in torn training clothes sits cross-legged by a hot spring. \"You want to pass? Prove your Pokemon's spirit is stronger than mine.\"",
             weight: 10,
             oneTime: true,
-            locationIds: ["route_42_mt_mortar"],
+            locationIds: ["mt_mortar"],
             choices: [
                 {
                     text: "Accept his challenge",
@@ -10504,7 +10504,7 @@
             description: "A thundering waterfall splits the cave in two. Local trainers say standing under it builds resilience. It also looks like it would hurt considerably.",
             weight: 8,
             oneTime: false,
-            locationIds: ["route_42_mt_mortar"],
+            locationIds: ["mt_mortar"],
             choices: [
                 {
                     text: "Train under the waterfall",
@@ -10676,7 +10676,7 @@
             description: "Ice Path lives up to its name — floor, walls, ceiling, all of it slick and glittering. Every step is a small negotiation with gravity.",
             weight: 10,
             oneTime: false,
-            locationIds: ["route_44_ice_path"],
+            locationIds: ["ice_path"],
             choices: [
                 {
                     text: "Move carefully",
@@ -10695,7 +10695,7 @@
             description: "A section of Ice Path is one continuous sheet of ice — step on it and you slide until you hit a wall. There's no obvious safe way across, just a lot of ways to end up somewhere you didn't intend.",
             weight: 8,
             oneTime: false,
-            locationIds: ["route_44_ice_path"],
+            locationIds: ["ice_path"],
             choices: [
                 {
                     text: "Slide across and hope for the best",
@@ -10720,7 +10720,7 @@
             description: "A hiker sits against the tunnel wall, one leg wedged awkwardly under a chunk of fallen ice, breath visible in ragged clouds. \"Been stuck here since yesterday. Didn't think anyone else would be crazy enough to come through.\"",
             weight: 8,
             oneTime: true,
-            locationIds: ["route_44_ice_path"],
+            locationIds: ["ice_path"],
             choices: [
                 {
                     text: "Help free him",
@@ -12038,7 +12038,7 @@
             weight: 2,
             oneTime: true,
             minDay: 60,
-            locationIds: ["route_40_41"],
+            locationIds: ["route_41"],
             choices: [
                 {
                     text: "Throw an Ultra Ball!",
@@ -12070,7 +12070,7 @@
             description: "An easel is set up at the edge of the park, half-finished landscape on the canvas. The artist keeps glancing over their shoulder at a smear of paint on a nearby tree trunk that's shaped, unmistakably, like their own brushstrokes.",
             weight: 6,
             oneTime: true,
-            locationIds: ["route_35_national_park"],
+            locationIds: ["national_park"],
             choices: [
                 {
                     text: "Follow the brushstrokes",
@@ -12482,7 +12482,7 @@
             description: "A trainer crouches beside an obviously ordinary tree, arms crossed, glaring at it with total conviction. \"I know it's a Sudowoodo. I've read about this. It's not fooling me. I'm just going to wait it out.\" The tree does not move. It has not moved in twenty minutes. It is, in fact, a tree.",
             weight: 7,
             oneTime: true,
-            locationIds: ["route_35_national_park"],
+            locationIds: ["national_park"],
             choices: [
                 {
                     text: "Point out that it's just a tree",
@@ -12508,7 +12508,7 @@
             description: "A Stantler watches you from a break in the trees, antlers catching the light strangely. The path ahead suddenly looks different — wider, shorter, definitely not the path you were just walking. You've heard the stories about this.",
             weight: 7,
             oneTime: false,
-            locationIds: ["route_36_37"],
+            locationIds: ["route_36"],
             choices: [
                 {
                     text: "Trust your own sense of direction",
@@ -12589,7 +12589,7 @@
             weight: 8,
             oneTime: false,
             minDay: 1,
-            locationIds: ["route_38_39"],
+            locationIds: ["route_39"],
             choices: [
                 {
                     text: "Try to intercept it",
@@ -12617,7 +12617,7 @@
             weight: 8,
             oneTime: true,
             minDay: 3,
-            locationIds: ["route_40_41"],
+            locationIds: ["route_40"],
             choices: [
                 {
                     text: "Agree to carry the request",
@@ -12670,7 +12670,7 @@
             weight: 8,
             oneTime: false,
             minDay: 2,
-            locationIds: ["route_42_mt_mortar"],
+            locationIds: ["mt_mortar"],
             choices: [
                 {
                     text: "Let your team soak",
@@ -12750,7 +12750,7 @@
             description: "A Delibird waddles out from behind an ice formation, tail-pouch stuffed full, and drops something at your feet with the businesslike efficiency of a creature that takes its one job very seriously.",
             weight: 7,
             oneTime: true,
-            locationIds: ["route_44_ice_path"],
+            locationIds: ["ice_path"],
             choices: [
                 {
                     text: "Accept the gift",
