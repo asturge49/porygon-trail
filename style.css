@@ -2323,7 +2323,6 @@ body {
     display: flex;
     flex-direction: column;
     border: 3px solid var(--gb-darkest);
-    border-top: none;
     margin-bottom: 4px;
 }
 
