@@ -10,7 +10,8 @@
         { key: 'fastest', label: 'FASTEST WIN', sub: 'Quickest trip to the Indigo Plateau' },
         { key: 'catches', label: 'MOST CATCHES', sub: 'Most Pokemon caught in a single run' },
         { key: 'legendary', label: 'LEGENDARIES', sub: 'Total legendaries caught across all runs', hideBadges: true },
-        { key: 'champions', label: 'CHAMPIONS', sub: 'Total Pokemon champion-tagged across all wins', hideBadges: true }
+        { key: 'champions', label: 'CHAMPIONS', sub: 'Total Pokemon champion-tagged across all wins', hideBadges: true },
+        { key: 'e4wins', label: 'E4 WINS', sub: 'Total Elite Four wins across all runs', hideBadges: true }
     ];
 
     let currentMode = 'runs';
@@ -22,7 +23,14 @@
     // tabs (pokedex %, legendaries, champions) aggregate across ALL of a
     // trainer's runs and don't have a region split in the schema, so the toggle
     // doesn't apply to them.
-    const REGION_TOGGLE_TABS = ['runs', 'trainers', 'catches', 'fastest'];
+    //
+    // e4wins is also a lifetime aggregate, but IS in this list — its RPC
+    // returns both a kanto_e4_wins and johto_e4_wins count per trainer in one
+    // query, so the toggle here just picks/sorts by whichever count matches
+    // the region client-side (see the entries.filter/.sort in loadEntries)
+    // rather than changing what gets fetched, unlike the other row-based
+    // tabs where the region drives the actual server-side query.
+    const REGION_TOGGLE_TABS = ['runs', 'trainers', 'catches', 'fastest', 'e4wins'];
     // 'all' (every run, combined) is the default view; 'kanto' now means
     // only runs that never continued into Johto, 'johto' only ones that did.
     let currentRegion = 'all';
@@ -52,6 +60,9 @@
         if (mode === 'champions') {
             return `${entry.championCount} champions lifetime`;
         }
+        if (mode === 'e4wins') {
+            return `${entry.kantoE4Wins} Kanto / ${entry.johtoE4Wins} Johto lifetime`;
+        }
         if (mode === 'fastest') {
             const days = fieldFor(entry, region, 'daysElapsed', 'johtoDaysElapsed');
             const caught = fieldFor(entry, region, 'pokedexCount', 'johtoPokedexCount');
@@ -66,6 +77,11 @@
         if (mode === 'catches') return fieldFor(entry, region, 'pokedexCount', 'johtoPokedexCount');
         if (mode === 'legendary') return entry.legendaryCount;
         if (mode === 'champions') return entry.championCount;
+        if (mode === 'e4wins') {
+            if (region === 'johto') return entry.johtoE4Wins;
+            if (region === 'kanto') return entry.kantoE4Wins;
+            return entry.kantoE4Wins + entry.johtoE4Wins;
+        }
         if (mode === 'fastest') return fieldFor(entry, region, 'daysElapsed', 'johtoDaysElapsed') + 'd';
         return (fieldFor(entry, region, 'score', 'johtoScore') || 0).toLocaleString();
     }
@@ -125,7 +141,7 @@
                 <div class="leaderboard-row header ${activeTab.hideBadges ? 'no-badges' : ''}">
                     <span>#</span>
                     <span>TRAINER</span>
-                    <span>${currentMode === 'runs' || currentMode === 'trainers' ? 'SCORE' : currentMode === 'pokedex' ? 'DEX %' : currentMode === 'catches' ? 'CAUGHT' : currentMode === 'legendary' ? 'LEGEND' : currentMode === 'champions' ? 'CHAMPS' : 'DAYS'}</span>
+                    <span>${currentMode === 'runs' || currentMode === 'trainers' ? 'SCORE' : currentMode === 'pokedex' ? 'DEX %' : currentMode === 'catches' ? 'CAUGHT' : currentMode === 'legendary' ? 'LEGEND' : currentMode === 'champions' ? 'CHAMPS' : currentMode === 'e4wins' ? 'WINS' : 'DAYS'}</span>
                     ${activeTab.hideBadges ? '' : '<span>BADGES</span>'}
                 </div>
                 <div id="leaderboard-body">
@@ -135,7 +151,11 @@
 
             <div style="font-size: 6px; color: var(--gb-dark); padding: 4px; text-align: center;">
                 ★ = Reached Indigo Plateau &nbsp;|&nbsp; ⏳ = Run still in progress
-                ${regionToggleApplies ? '<br>KANTO = never reached Johto &nbsp;|&nbsp; JOHTO = only runs that did' : ''}
+                ${regionToggleApplies
+                    ? (currentMode === 'e4wins'
+                        ? '<br>KANTO/JOHTO = lifetime wins of that Elite Four &nbsp;|&nbsp; ALL = combined'
+                        : '<br>KANTO = never reached Johto &nbsp;|&nbsp; JOHTO = only runs that did')
+                    : ''}
             </div>
             <div class="btn-row">
                 <button class="btn flex-1" id="btn-back">BACK</button>
@@ -173,7 +193,8 @@
                 catches: () => API.getMostCatchesLeaderboard(currentRegion),
                 fastest: () => API.getFastestWinLeaderboard(currentRegion),
                 legendary: () => API.getLegendaryLeaderboard(),
-                champions: () => API.getChampionLeaderboard()
+                champions: () => API.getChampionLeaderboard(),
+                e4wins: () => API.getE4WinsLeaderboard()
             };
 
             const emptyMsgs = {
@@ -183,12 +204,21 @@
                 catches: 'No runs yet!<br>Catch some Pokemon to appear here!',
                 fastest: 'No wins yet!<br>Reach the Indigo Plateau to appear here!',
                 legendary: 'No legendaries caught yet!',
-                champions: 'No champions yet!<br>Win a run to crown your team!'
+                champions: 'No champions yet!<br>Win a run to crown your team!',
+                e4wins: 'No Elite Four wins yet!<br>Beat the Elite Four to appear here!'
             };
 
             const region = regionToggleApplies ? currentRegion : null;
             fetchers[currentMode]().then(entries => {
                 if (!document.getElementById('leaderboard-body')) return;
+                // e4wins fetches one combined dataset regardless of region (its
+                // RPC has no server-side region split) — the toggle only picks
+                // which count to sort/show, so re-sort and drop zero-count
+                // entries for the selected view here, client-side.
+                if (entries && currentMode === 'e4wins') {
+                    const valueFor = e => region === 'johto' ? e.johtoE4Wins : region === 'kanto' ? e.kantoE4Wins : (e.kantoE4Wins + e.johtoE4Wins);
+                    entries = entries.filter(e => valueFor(e) > 0).sort((a, b) => valueFor(b) - valueFor(a));
+                }
                 document.getElementById('leaderboard-body').innerHTML =
                     entries === null
                         ? '<div style="text-align: center; padding: 40px; font-size: 8px; color: var(--gb-dark);">Could not load scores.</div>'

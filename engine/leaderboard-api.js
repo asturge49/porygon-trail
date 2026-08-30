@@ -283,6 +283,57 @@
         }));
     }
 
+    // Lifetime Elite Four wins — total number of times a trainer has beaten
+    // an Elite Four (Kanto's `won` flag and/or Johto's `johto_completed`
+    // flag), summed across ALL of their runs, not just their best one. No
+    // schema migration needed — both source columns already exist on
+    // pt_leaderboard. Unlike the other lifetime tabs (pokedex/legendary/
+    // champions), this ONE DOES support the ALL/KANTO/JOHTO region toggle —
+    // the RPC returns both counts per trainer in one shot, and
+    // getE4WinsLeaderboard's caller (leaderboard-screen.js) picks which
+    // count to sort/display by client-side, the same way fieldFor() already
+    // does for the row-based tabs. Run this once in the Supabase SQL editor:
+    //   create or replace function pt_e4_wins_leaderboard()
+    //   returns table(user_id uuid, username text, kanto_e4_wins bigint, johto_e4_wins bigint, days_elapsed int, date text)
+    //   language sql stable as $$
+    //     select
+    //       l.user_id,
+    //       max(l.username) as username,
+    //       count(*) filter (where l.won) as kanto_e4_wins,
+    //       count(*) filter (where l.johto_completed) as johto_e4_wins,
+    //       min(l.days_elapsed) as days_elapsed,
+    //       max(l.date) as date
+    //     from pt_leaderboard l
+    //     where l.won or l.johto_completed
+    //     group by l.user_id
+    //     order by (count(*) filter (where l.won) + count(*) filter (where l.johto_completed)) desc
+    //     limit 20;
+    //   $$;
+    async function getE4WinsLeaderboard() {
+        const auth = PT.Engine.Auth;
+        if (!auth || !auth.isConfigured()) return null;
+
+        const client = auth.getClient();
+        if (!client) return null;
+
+        const { data, error } = await client.rpc('pt_e4_wins_leaderboard');
+
+        if (error) {
+            console.warn('Could not fetch E4 wins leaderboard (has the SQL migration run?):', error);
+            return null;
+        }
+
+        return data.map(row => ({
+            userId: row.user_id,
+            name: row.username,
+            kantoE4Wins: row.kanto_e4_wins,
+            johtoE4Wins: row.johto_e4_wins,
+            daysElapsed: row.days_elapsed,
+            date: row.date,
+            inProgress: false
+        }));
+    }
+
     // Top 10 unique trainers ranked by their personal best run. `region`: 'kanto'
     // (default) or 'johto' — the Johto view ranks by johto_score and only
     // considers runs that reached Johto.
@@ -414,6 +465,7 @@
         getFastestWinLeaderboard,
         getLegendaryLeaderboard,
         getChampionLeaderboard,
+        getE4WinsLeaderboard,
         saveToLeaderboard,
         saveInProgress,
         saveLocal,
