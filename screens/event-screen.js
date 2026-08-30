@@ -221,7 +221,9 @@
                 starLine = `<br>⭐ ${chosen.name} earned a Battle Star! [${'★'.repeat(chosen.battleStars)}] (${chosen.battleStars}/3)`;
             }
             if (starResult.expShareBonus) {
-                starLine += `<br>🎓 EXP. SHARE: ${starResult.expShareBonus.name} also earned a Battle Star!`;
+                starLine += starResult.expShareBonus.type === 'evolution'
+                    ? `<br>🎓 EXP. SHARE: ${starResult.expShareBonus.name} also evolved into ${starResult.expShareBonus.newName}!`
+                    : `<br>🎓 EXP. SHARE: ${starResult.expShareBonus.name} also earned a Battle Star!`;
             }
 
             const winNarration = battle.winNarration || `${chosen.name} won the battle!`;

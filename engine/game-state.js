@@ -759,7 +759,7 @@
         return { earned: true, reason: null };
     }
 
-    // Award a battle win. Returns { earned: bool, reason: string|null, expShareBonus?: {name} }
+    // Award a battle win. Returns { earned: bool, reason: string|null, expShareBonus?: {...} }
     // Call AFTER evolution check — if the mon just evolved this fight, skip the star.
     function addBattleWin(pokemon, state, justEvolved) {
         pokemon.battleWins = (pokemon.battleWins || 0) + 1;
@@ -769,20 +769,38 @@
             ? { earned: false, reason: 'evolution_win' }
             : tryEarnStar(pokemon, state);
 
-        // Exp Share: one other eligible teammate also gets a shot at a star
-        // this win, regardless of whether the active battler earned one.
+        // Exp Share: one other eligible teammate also benefits from this win —
+        // a Battle Star if they're already a final evolution, or a shot at
+        // evolving in place if they're not (the same once-per-location
+        // evolution cap every other evolution trigger already respects, so
+        // this can't double up on one route). Picked at random among
+        // everyone eligible, not just the first party slot — Array#find
+        // used to always return the same teammate in party order.
         if (state && state.buffs && (state.buffs.keyItems.expShare || 0) > 0) {
             const currentLoc = state.currentLocationIndex;
-            const teammate = getAliveParty(state).find(p =>
-                p !== pokemon &&
+            const candidates = getAliveParty(state).filter(p => p !== pokemon);
+            const starCandidates = candidates.filter(p =>
                 isFinalEvolution(p) &&
                 (p.battleStars || 0) < 3 &&
                 !(p.lastStarLocation === currentLoc && currentLoc >= 0)
             );
-            if (teammate) {
-                const teammateResult = tryEarnStar(teammate, state);
-                if (teammateResult.earned) {
-                    result.expShareBonus = { name: teammate.name };
+            const evoCandidates = candidates.filter(p =>
+                !isFinalEvolution(p) &&
+                !(p.lastEvoLocation === currentLoc && currentLoc >= 0)
+            );
+            const pool = starCandidates.concat(evoCandidates);
+            if (pool.length > 0 && state.rng) {
+                const teammate = state.rng.pick(pool);
+                if (starCandidates.includes(teammate)) {
+                    const teammateResult = tryEarnStar(teammate, state);
+                    if (teammateResult.earned) {
+                        result.expShareBonus = { type: 'star', name: teammate.name };
+                    }
+                } else {
+                    const evoResult = evolvePokemon(teammate, state);
+                    if (evoResult.evolved) {
+                        result.expShareBonus = { type: 'evolution', name: evoResult.oldName, newName: evoResult.newName };
+                    }
                 }
             }
         }

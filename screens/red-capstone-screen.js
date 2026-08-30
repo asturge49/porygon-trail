@@ -270,7 +270,9 @@
                 starLine = `<br>⭐ ${pokemon.name} earned a Battle Star! [${'★'.repeat(pokemon.battleStars)}] (${pokemon.battleStars}/3)`;
             }
             if (starResult.expShareBonus) {
-                starLine += `<br>🎓 EXP. SHARE: ${starResult.expShareBonus.name} also earned a Battle Star!`;
+                starLine += starResult.expShareBonus.type === 'evolution'
+                    ? `<br>🎓 EXP. SHARE: ${starResult.expShareBonus.name} also evolved into ${starResult.expShareBonus.newName}!`
+                    : `<br>🎓 EXP. SHARE: ${starResult.expShareBonus.name} also earned a Battle Star!`;
             }
 
             const isLastBattle = redIndex >= order.length - 1;
