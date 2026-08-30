@@ -23,7 +23,9 @@
     // trainer's runs and don't have a region split in the schema, so the toggle
     // doesn't apply to them.
     const REGION_TOGGLE_TABS = ['runs', 'trainers', 'catches', 'fastest'];
-    let currentRegion = 'kanto';
+    // 'all' (every run, combined) is the default view; 'kanto' now means
+    // only runs that never continued into Johto, 'johto' only ones that did.
+    let currentRegion = 'all';
 
     function totalDexCount() {
         return PT.Data.Pokemon.length;
@@ -110,8 +112,11 @@
             </div>
             ${regionToggleApplies ? `
             <div class="leaderboard-region-toggle">
-                <button class="leaderboard-tab ${currentRegion === 'kanto' ? 'active' : ''}" data-region="kanto">KANTO</button>
-                <button class="leaderboard-tab ${currentRegion === 'johto' ? 'active' : ''}" data-region="johto">JOHTO</button>
+                <button class="leaderboard-tab ${currentRegion === 'all' ? 'active' : ''}" data-region="all">ALL</button>
+                <div class="leaderboard-region-split">
+                    <button class="leaderboard-tab ${currentRegion === 'kanto' ? 'active' : ''}" data-region="kanto">KANTO</button>
+                    <button class="leaderboard-tab ${currentRegion === 'johto' ? 'active' : ''}" data-region="johto">JOHTO</button>
+                </div>
             </div>
             ` : ''}
             ` : ''}
@@ -130,7 +135,7 @@
 
             <div style="font-size: 6px; color: var(--gb-dark); padding: 4px; text-align: center;">
                 ★ = Reached Indigo Plateau &nbsp;|&nbsp; ⏳ = Run still in progress
-                ${regionToggleApplies ? '<br>JOHTO view only shows runs that reached Johto' : ''}
+                ${regionToggleApplies ? '<br>KANTO = never reached Johto &nbsp;|&nbsp; JOHTO = only runs that did' : ''}
             </div>
             <div class="btn-row">
                 <button class="btn flex-1" id="btn-back">BACK</button>
@@ -202,10 +207,10 @@
                     if (currentMode === btn.dataset.tab) return;
                     currentMode = btn.dataset.tab;
                     // Landing on a tab that doesn't support the region toggle
-                    // (pokedex/legendary/champions) always shows Kanto/lifetime
+                    // (pokedex/legendary/champions) always shows lifetime
                     // data — reset so a later return to a toggle-able tab
-                    // doesn't strand the view on Johto silently.
-                    if (!REGION_TOGGLE_TABS.includes(currentMode)) currentRegion = 'kanto';
+                    // doesn't strand the view on Kanto/Johto silently.
+                    if (!REGION_TOGGLE_TABS.includes(currentMode)) currentRegion = 'all';
                     PT.App.goto('LEADERBOARD');
                 });
             });

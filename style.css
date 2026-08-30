@@ -2315,22 +2315,33 @@ body {
     background: var(--gb-bg);
 }
 
-/* Johto expansion (§13.2) — Kanto/Johto leaderboard toggle. Reuses
-   .leaderboard-tab for the individual buttons but its own 2-column grid,
-   since .leaderboard-tabs above is tuned for a 3-per-row layout. */
+/* Johto expansion (§13.2) — All/Kanto/Johto leaderboard toggle. ALL sits
+   full-width on top (the combined view, and the default), with KANTO/JOHTO
+   as a 2-column split underneath. One shared outer border so the two rows
+   read as a single control, not two stacked boxes. */
 .leaderboard-region-toggle {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
+    display: flex;
+    flex-direction: column;
     border: 3px solid var(--gb-darkest);
     border-top: none;
     margin-bottom: 4px;
 }
 
-.leaderboard-region-toggle .leaderboard-tab {
+.leaderboard-region-toggle > .leaderboard-tab {
+    width: 100%;
+    border-bottom: 2px solid var(--gb-darkest);
+}
+
+.leaderboard-region-split {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+}
+
+.leaderboard-region-split .leaderboard-tab {
     border-bottom: none;
 }
 
-.leaderboard-region-toggle .leaderboard-tab:first-child {
+.leaderboard-region-split .leaderboard-tab:first-child {
     border-right: 2px solid var(--gb-darkest);
 }
 

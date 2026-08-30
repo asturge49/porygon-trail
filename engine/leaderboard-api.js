@@ -83,6 +83,11 @@
     // wins. `region` ('kanto' | 'johto') picks which pair of columns to sort/filter
     // by — the Johto view only shows runs that actually reached Johto (i.e. have a
     // non-null johtoColumn value), same idea as the existing wonOnly filter.
+    // `region`: 'all' (default — every run, no filter), 'kanto' (only runs
+    // that never continued into Johto), or 'johto' (only runs that did,
+    // ranked by their johto_* column). 'all' and 'kanto' both rank by the
+    // base column since a run's overall score/badges/etc. already reflect
+    // the whole run regardless of how far it went.
     async function fetchOrdered(column, ascending, wonOnly, limit, columns, region, johtoColumn) {
         const auth = PT.Engine.Auth;
         if (!auth || !auth.isConfigured()) return null;
@@ -91,6 +96,7 @@
         if (!client) return null;
 
         const isJohto = region === 'johto';
+        const isKantoOnly = region === 'kanto';
         const sortColumn = isJohto ? (johtoColumn || column) : column;
 
         let query = client
@@ -101,8 +107,9 @@
         if (isJohto) {
             query = query.not(sortColumn, 'is', null);
             if (wonOnly) query = query.eq('johto_completed', true);
-        } else if (wonOnly) {
-            query = query.eq('won', true);
+        } else {
+            if (isKantoOnly) query = query.is('johto_score', null);
+            if (wonOnly) query = query.eq('won', true);
         }
 
         const { data, error } = await query.limit(limit || 20);
@@ -287,6 +294,7 @@
         if (!client) return null;
 
         const isJohto = region === 'johto';
+        const isKantoOnly = region === 'kanto';
         const sortColumn = isJohto ? 'johto_score' : 'score';
 
         // Fetch enough rows to guarantee we find 10 unique users
@@ -295,6 +303,7 @@
             .select(isJohto ? JOHTO_COLUMNS : BASE_COLUMNS)
             .order(sortColumn, { ascending: false });
         if (isJohto) query = query.not(sortColumn, 'is', null);
+        else if (isKantoOnly) query = query.is('johto_score', null);
 
         const { data, error } = await query.limit(500);
 
