@@ -403,6 +403,13 @@
                 // never finished, so abandoned runs still show up.
                 PT.Engine.Scoring.saveRunInProgress(state);
 
+                // Persist the local save after every day's travel resolves —
+                // previously only encounters/events/gyms/etc. saved, so a
+                // "quiet" day (no encounter, no event, or an arrival with no
+                // location event) was never written to localStorage at all,
+                // and reloading mid-Johto (or anywhere) could roll back a day.
+                PT.Engine.GameState.saveGame(state);
+
                 // Psychic choice — show picker instead of going straight to encounter/event
                 if (results.psychicChoice && results.psychicAlt) {
                     const nextAfterPick = () => {
