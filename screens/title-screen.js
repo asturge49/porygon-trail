@@ -64,6 +64,9 @@
                     ` : ''}
                     <button class="btn btn-wide btn-small" id="btn-sound">SOUND: ${PT.Engine.Audio && PT.Engine.Audio.isEnabled() ? 'ON' : 'OFF'}</button>
                     <button class="btn btn-wide btn-small" id="btn-discord">JOIN DISCORD</button>
+                    ${!PT.Config.isProd ? `
+                    <button class="btn btn-wide btn-small" id="btn-johto-debug">🧪 JUMP TO JOHTO (DEBUG)</button>
+                    ` : ''}
                 </div>
                 <div class="blink text-sm" style="margin-top: 8px;">PRESS START</div>
             `;
@@ -142,6 +145,14 @@
             document.getElementById('btn-discord').addEventListener('click', () => {
                 window.open('https://discord.gg/6yNHjbAYF', '_blank', 'noopener');
             });
+
+            const johtoDebugBtn = document.getElementById('btn-johto-debug');
+            if (johtoDebugBtn) {
+                johtoDebugBtn.addEventListener('click', () => {
+                    if (hasLocal && !confirm('This will overwrite your saved game. Continue?')) return;
+                    PT.App.goto('JOHTODEBUG');
+                });
+            }
 
             document.getElementById('btn-sound').addEventListener('click', () => {
                 if (PT.Engine.Audio) {
