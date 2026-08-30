@@ -14,10 +14,7 @@
                     <br><br>A call comes in from Prof. Oak: Congratulations! My colleague would
                     like to meet you. Your journey isn't over yet!
                 </div>
-                <div class="btn-row" style="width: 100%; max-width: 500px; margin-top: 12px;">
-                    <button class="btn flex-1" id="btn-continue-johto">CONTINUE TO JOHTO</button>
-                    <button class="btn flex-1" id="btn-end-run">END RUN HERE</button>
-                </div>
+                <button class="btn btn-wide" id="btn-continue-johto" style="max-width: 500px; margin-top: 12px;">CONTINUE TO JOHTO</button>
             `;
             container.appendChild(div);
 
@@ -26,11 +23,6 @@
                 PT.Engine.GameState.addToLog(state, 'Set off for the Johto region!');
                 PT.Engine.GameState.saveGame(state);
                 PT.App.goto('ELMSTARTER');
-            });
-
-            document.getElementById('btn-end-run').addEventListener('click', () => {
-                state.hasWon = true;
-                PT.App.goto('VICTORY');
             });
         }
     };
