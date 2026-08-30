@@ -745,7 +745,7 @@
             gymLeader: null,
             encounterRate: 0,
             encounterTable: [],
-            eventPool: ["new_bark_elm_lab_visit", "new_bark_rival_intro"],
+            eventPool: ["new_bark_elm_lab_visit", "new_bark_rival_intro", "new_bark_elm_assistant_errand"],
             flavor: "Professor Elm's lab hums with quiet excitement. Your Johto journey starts here."
         },
         {
@@ -761,13 +761,18 @@
             gymLeader: null,
             encounterRate: 45,
             encounterTable: [
-                { pokemonId: 161, weight: 30 }, // Sentret
-                { pokemonId: 163, weight: 25 }, // Hoothoot
-                { pokemonId: 16, weight: 20 },  // Pidgey
-                { pokemonId: 19, weight: 18 },  // Rattata
-                { pokemonId: 21, weight: 7 }    // Spearow
+                { pokemonId: 161, weight: 8 },  // Sentret
+                { pokemonId: 162, weight: 24 }, // Furret
+                { pokemonId: 163, weight: 6 },  // Hoothoot
+                { pokemonId: 164, weight: 20 }, // Noctowl
+                { pokemonId: 16, weight: 5 },   // Pidgey
+                { pokemonId: 18, weight: 16 },  // Pidgeot
+                { pokemonId: 19, weight: 5 },   // Rattata
+                { pokemonId: 20, weight: 14 },  // Raticate
+                { pokemonId: 21, weight: 2 },   // Spearow
+                { pokemonId: 22, weight: 6 }    // Fearow
             ],
-            eventPool: ["route29_general", "route29_rival_encounter", "route29_bird_watcher"],
+            eventPool: ["route29_general", "route29_rival_encounter", "route29_bird_watcher", "route29_silver_taunt"],
             flavor: "Tall grass sways beside the road. Sentret peek out and vanish again."
         },
         {
@@ -783,7 +788,7 @@
             gymLeader: null,
             encounterRate: 0,
             encounterTable: [],
-            eventPool: ["cherrygrove_guide_tour", "cherrygrove_general"],
+            eventPool: ["cherrygrove_guide_tour", "cherrygrove_general", "cherrygrove_town_map_gift"],
             flavor: "A guide offers to show you around town. The sea breeze smells like home."
         },
         {
@@ -799,14 +804,20 @@
             gymLeader: null,
             encounterRate: 45,
             encounterTable: [
-                { pokemonId: 187, weight: 28 }, // Hoppip
-                { pokemonId: 10, weight: 18 },  // Caterpie
-                { pokemonId: 13, weight: 18 },  // Weedle
-                { pokemonId: 16, weight: 16 },  // Pidgey
-                { pokemonId: 165, weight: 12 }, // Ledyba
-                { pokemonId: 69, weight: 8 }    // Bellsprout
+                { pokemonId: 187, weight: 8 },  // Hoppip
+                { pokemonId: 189, weight: 22 }, // Jumpluff
+                { pokemonId: 10, weight: 6 },   // Caterpie
+                { pokemonId: 12, weight: 16 },  // Butterfree
+                { pokemonId: 13, weight: 6 },   // Weedle
+                { pokemonId: 15, weight: 16 },  // Beedrill
+                { pokemonId: 16, weight: 4 },   // Pidgey
+                { pokemonId: 18, weight: 12 },  // Pidgeot
+                { pokemonId: 165, weight: 4 },  // Ledyba
+                { pokemonId: 166, weight: 10 }, // Ledian
+                { pokemonId: 69, weight: 3 },   // Bellsprout
+                { pokemonId: 71, weight: 8 }    // Victreebel
             ],
-            eventPool: ["route30_general", "route30_mr_pokemon_errand", "route30_bug_catcher"],
+            eventPool: ["route30_general", "route30_mr_pokemon_errand", "route30_bug_catcher", "route30_bellsprout_grove"],
             flavor: "Hoppip drift lazily on the breeze. A famous researcher's house sits nearby."
         },
         {
@@ -822,14 +833,21 @@
             gymLeader: null,
             encounterRate: 45,
             encounterTable: [
-                { pokemonId: 41, weight: 24 },  // Zubat
-                { pokemonId: 74, weight: 20 },  // Geodude
-                { pokemonId: 69, weight: 16 },  // Bellsprout
-                { pokemonId: 60, weight: 16 },  // Poliwag
-                { pokemonId: 27, weight: 16 },  // Sandshrew
-                { pokemonId: 179, weight: 8 }   // Mareep
+                { pokemonId: 41, weight: 6 },   // Zubat
+                { pokemonId: 169, weight: 20 }, // Crobat
+                { pokemonId: 74, weight: 5 },   // Geodude
+                { pokemonId: 76, weight: 18 },  // Golem
+                { pokemonId: 69, weight: 4 },   // Bellsprout
+                { pokemonId: 71, weight: 14 },  // Victreebel
+                { pokemonId: 60, weight: 4 },   // Poliwag
+                { pokemonId: 62, weight: 7 },   // Poliwrath
+                { pokemonId: 186, weight: 7 },  // Politoed
+                { pokemonId: 27, weight: 4 },   // Sandshrew
+                { pokemonId: 28, weight: 13 },  // Sandslash
+                { pokemonId: 179, weight: 2 },  // Mareep
+                { pokemonId: 181, weight: 7 }   // Ampharos
             ],
-            eventPool: ["route31_general", "route31_dark_cave_warning", "route31_violet_gate"],
+            eventPool: ["route31_general", "route31_dark_cave_warning", "route31_violet_gate", "route31_dark_cave_explorer"],
             flavor: "Dark Cave yawns off the path. Violet City's tower is visible ahead."
         },
         {
@@ -845,7 +863,7 @@
             gymLeader: "falkner",
             encounterRate: 0,
             encounterTable: [],
-            eventPool: ["violet_city_gym_intro", "violet_city_sprout_tower", "violet_city_falkner_challenge"],
+            eventPool: ["violet_city_gym_intro", "violet_city_sprout_tower", "violet_city_falkner_challenge", "violet_city_sprout_tower_trial"],
             flavor: "Sprout Tower rises above the rooftops. Falkner's gym awaits challengers."
         },
         {
@@ -861,14 +879,22 @@
             gymLeader: null,
             encounterRate: 45,
             encounterTable: [
-                { pokemonId: 19, weight: 20 },  // Rattata
-                { pokemonId: 41, weight: 18 },  // Zubat
-                { pokemonId: 194, weight: 16 }, // Wooper
-                { pokemonId: 79, weight: 14 },  // Slowpoke
-                { pokemonId: 60, weight: 16 },  // Poliwag
-                { pokemonId: 69, weight: 16 }   // Bellsprout
+                { pokemonId: 19, weight: 5 },   // Rattata
+                { pokemonId: 20, weight: 13 },  // Raticate
+                { pokemonId: 41, weight: 5 },   // Zubat
+                { pokemonId: 169, weight: 15 }, // Crobat
+                { pokemonId: 194, weight: 4 },  // Wooper
+                { pokemonId: 195, weight: 13 }, // Quagsire
+                { pokemonId: 79, weight: 4 },   // Slowpoke
+                { pokemonId: 80, weight: 6 },   // Slowbro
+                { pokemonId: 199, weight: 6 },  // Slowking
+                { pokemonId: 60, weight: 4 },   // Poliwag
+                { pokemonId: 62, weight: 6 },   // Poliwrath
+                { pokemonId: 186, weight: 6 },  // Politoed
+                { pokemonId: 69, weight: 4 },   // Bellsprout
+                { pokemonId: 71, weight: 12 }   // Victreebel
             ],
-            eventPool: ["route32_general", "route32_fishing_guru", "route32_union_cave_entrance"],
+            eventPool: ["route32_general", "route32_fishing_guru", "route32_union_cave_entrance", "route32_wilton_fisherman"],
             flavor: "The ground grows soft and muddy. A cave mouth opens up ahead."
         },
         {
@@ -884,14 +910,19 @@
             gymLeader: null,
             encounterRate: 50,
             encounterTable: [
-                { pokemonId: 41, weight: 26 },  // Zubat
-                { pokemonId: 74, weight: 22 },  // Geodude
-                { pokemonId: 194, weight: 18 }, // Wooper
-                { pokemonId: 19, weight: 16 },  // Rattata
+                { pokemonId: 41, weight: 6 },   // Zubat
+                { pokemonId: 169, weight: 22 }, // Crobat
+                { pokemonId: 74, weight: 5 },   // Geodude
+                { pokemonId: 76, weight: 19 },  // Golem
+                { pokemonId: 194, weight: 4 },  // Wooper
+                { pokemonId: 195, weight: 15 }, // Quagsire
+                { pokemonId: 19, weight: 4 },   // Rattata
+                { pokemonId: 20, weight: 13 },  // Raticate
                 { pokemonId: 206, weight: 10 }, // Dunsparce
-                { pokemonId: 95, weight: 8 }    // Onix
+                { pokemonId: 95, weight: 3 },   // Onix
+                { pokemonId: 208, weight: 8 }   // Steelix
             ],
-            eventPool: ["union_cave_general", "union_cave_lost_hiker", "union_cave_onix_rumble"],
+            eventPool: ["union_cave_general", "union_cave_lost_hiker", "union_cave_onix_rumble", "union_cave_fossil_hunter"],
             flavor: "Water drips endlessly. The cave stretches on in every direction."
         },
         {
@@ -907,13 +938,17 @@
             gymLeader: null,
             encounterRate: 42,
             encounterTable: [
-                { pokemonId: 19, weight: 24 },  // Rattata
-                { pokemonId: 163, weight: 22 }, // Hoothoot
-                { pokemonId: 165, weight: 20 }, // Ledyba
-                { pokemonId: 161, weight: 22 }, // Sentret
+                { pokemonId: 19, weight: 5 },   // Rattata
+                { pokemonId: 20, weight: 16 },  // Raticate
+                { pokemonId: 163, weight: 5 },  // Hoothoot
+                { pokemonId: 164, weight: 15 }, // Noctowl
+                { pokemonId: 165, weight: 4 },  // Ledyba
+                { pokemonId: 166, weight: 14 }, // Ledian
+                { pokemonId: 161, weight: 5 },  // Sentret
+                { pokemonId: 162, weight: 15 }, // Furret
                 { pokemonId: 206, weight: 12 }  // Dunsparce
             ],
-            eventPool: ["route33_general", "route33_azalea_approach"],
+            eventPool: ["route33_general", "route33_azalea_approach", "route33_apricorn_gathering"],
             flavor: "The trees thin out. Azalea Town's roofs peek over the hill."
         },
         {
@@ -929,7 +964,7 @@
             gymLeader: "bugsy",
             encounterRate: 0,
             encounterTable: [],
-            eventPool: ["azalea_town_gym_intro", "azalea_town_slowpoke_tail", "azalea_town_bugsy_challenge"],
+            eventPool: ["azalea_town_gym_intro", "azalea_town_slowpoke_tail", "azalea_town_bugsy_challenge", "azalea_town_kurt_apricorn_balls"],
             flavor: "Slowpoke nap in the middle of the road. Bugsy's gym buzzes nearby."
         },
         {
@@ -945,13 +980,20 @@
             gymLeader: null,
             encounterRate: 40,
             encounterTable: [
-                { pokemonId: 79, weight: 32 },  // Slowpoke
-                { pokemonId: 41, weight: 24 },  // Zubat
-                { pokemonId: 60, weight: 20 },  // Poliwag
-                { pokemonId: 74, weight: 14 },  // Geodude
-                { pokemonId: 19, weight: 10 }   // Rattata
+                { pokemonId: 79, weight: 8 },   // Slowpoke
+                { pokemonId: 80, weight: 12 },  // Slowbro
+                { pokemonId: 199, weight: 12 }, // Slowking
+                { pokemonId: 41, weight: 5 },   // Zubat
+                { pokemonId: 169, weight: 18 }, // Crobat
+                { pokemonId: 60, weight: 4 },   // Poliwag
+                { pokemonId: 62, weight: 8 },   // Poliwrath
+                { pokemonId: 186, weight: 8 },  // Politoed
+                { pokemonId: 74, weight: 3 },   // Geodude
+                { pokemonId: 76, weight: 11 },  // Golem
+                { pokemonId: 19, weight: 3 },   // Rattata
+                { pokemonId: 20, weight: 8 }    // Raticate
             ],
-            eventPool: ["slowpoke_well_general", "slowpoke_well_team_rocket"],
+            eventPool: ["slowpoke_well_general", "slowpoke_well_team_rocket", "slowpoke_well_aftermath"],
             flavor: "Slowpoke tails drip into the dark water below. Something feels wrong down here."
         },
         {
@@ -967,14 +1009,19 @@
             gymLeader: null,
             encounterRate: 48,
             encounterTable: [
-                { pokemonId: 165, weight: 24 }, // Ledyba
-                { pokemonId: 167, weight: 20 }, // Spinarak
-                { pokemonId: 96, weight: 18 },  // Drowzee
-                { pokemonId: 63, weight: 14 },  // Abra
+                { pokemonId: 165, weight: 5 },  // Ledyba
+                { pokemonId: 166, weight: 18 }, // Ledian
+                { pokemonId: 167, weight: 4 },  // Spinarak
+                { pokemonId: 168, weight: 15 }, // Ariados
+                { pokemonId: 96, weight: 4 },   // Drowzee
+                { pokemonId: 97, weight: 13 },  // Hypno
+                { pokemonId: 63, weight: 3 },   // Abra
+                { pokemonId: 65, weight: 10 },  // Alakazam
                 { pokemonId: 202, weight: 16 }, // Wobbuffet
-                { pokemonId: 113, weight: 8 }   // Chansey
+                { pokemonId: 113, weight: 3 },  // Chansey
+                { pokemonId: 242, weight: 9 }   // Blissey
             ],
-            eventPool: ["route34_general", "route34_daycare_couple", "route34_goldenrod_approach"],
+            eventPool: ["route34_general", "route34_daycare_couple", "route34_goldenrod_approach", "route34_marys_cousin"],
             flavor: "A Day Care sits along the road. Goldenrod's skyline glows in the distance."
         },
         {
@@ -990,7 +1037,7 @@
             gymLeader: "whitney",
             encounterRate: 0,
             encounterTable: [],
-            eventPool: ["goldenrod_city_department_store", "goldenrod_city_game_corner", "goldenrod_city_whitney_challenge", "goldenrod_city_bike_shop"],
+            eventPool: ["goldenrod_city_department_store", "goldenrod_city_game_corner", "goldenrod_city_whitney_challenge", "goldenrod_city_bike_shop", "goldenrod_city_radio_tower_rocket", "goldenrod_city_underground_path"],
             flavor: "Escalators hum inside the department store. Whitney's gym is packed with fans."
         },
         {
@@ -1006,14 +1053,19 @@
             gymLeader: null,
             encounterRate: 45,
             encounterTable: [
-                { pokemonId: 191, weight: 26 }, // Sunkern
-                { pokemonId: 187, weight: 22 }, // Hoppip
-                { pokemonId: 43, weight: 18 },  // Oddish
+                { pokemonId: 191, weight: 5 },  // Sunkern
+                { pokemonId: 192, weight: 19 }, // Sunflora
+                { pokemonId: 187, weight: 5 },  // Hoppip
+                { pokemonId: 189, weight: 16 }, // Jumpluff
+                { pokemonId: 43, weight: 4 },   // Oddish
+                { pokemonId: 45, weight: 7 },   // Vileplume
+                { pokemonId: 182, weight: 7 },  // Bellossom
                 { pokemonId: 193, weight: 16 }, // Yanma
                 { pokemonId: 190, weight: 12 }, // Aipom
-                { pokemonId: 123, weight: 6 }   // Scyther
+                { pokemonId: 123, weight: 4 },  // Scyther
+                { pokemonId: 212, weight: 5 }   // Scizor
             ],
-            eventPool: ["national_park_bug_catching_contest", "national_park_general", "national_park_flower_show"],
+            eventPool: ["national_park_bug_catching_contest", "national_park_general", "national_park_flower_show", "national_park_sudowoodo_copycat"],
             flavor: "Manicured flowerbeds line the path. Bug catchers compare nets and jars."
         },
         {
@@ -1029,14 +1081,16 @@
             gymLeader: null,
             encounterRate: 48,
             encounterTable: [
-                { pokemonId: 163, weight: 24 }, // Hoothoot
-                { pokemonId: 204, weight: 20 }, // Pineco
+                { pokemonId: 163, weight: 5 },  // Hoothoot
+                { pokemonId: 164, weight: 18 }, // Noctowl
+                { pokemonId: 204, weight: 5 },  // Pineco
+                { pokemonId: 205, weight: 15 }, // Forretress
                 { pokemonId: 203, weight: 16 }, // Girafarig
                 { pokemonId: 198, weight: 18 }, // Murkrow (night)
                 { pokemonId: 234, weight: 14 }, // Stantler
-                { pokemonId: 214, weight: 8 }   // Heracross
+                { pokemonId: 214, weight: 9 }   // Heracross
             ],
-            eventPool: ["route36_37_general", "sudowoodo_event", "route36_37_ecruteak_legend"],
+            eventPool: ["route36_37_general", "sudowoodo_event", "route36_37_ecruteak_legend", "route36_37_stantler_illusion"],
             flavor: "A strange tree stands motionless at the roadside, oddly still even in the wind."
         },
         {
@@ -1052,7 +1106,7 @@
             gymLeader: "morty",
             encounterRate: 0,
             encounterTable: [],
-            eventPool: ["ecruteak_city_burned_tower", "ecruteak_city_bell_tower", "ecruteak_city_morty_challenge"],
+            eventPool: ["ecruteak_city_burned_tower", "ecruteak_city_bell_tower", "ecruteak_city_morty_challenge", "ecruteak_city_kimono_girls", "ecruteak_city_eusine_suicune"],
             flavor: "The Burned Tower's charred beams still stand. Morty reads the fog like a book."
         },
         {
@@ -1070,11 +1124,14 @@
             encounterTable: [
                 { pokemonId: 241, weight: 26 }, // Miltank (farm)
                 { pokemonId: 128, weight: 22 }, // Tauros
-                { pokemonId: 81, weight: 20 },  // Magnemite
-                { pokemonId: 209, weight: 22 }, // Snubbull
-                { pokemonId: 113, weight: 10 }  // Chansey
+                { pokemonId: 81, weight: 5 },   // Magnemite
+                { pokemonId: 82, weight: 15 },  // Magneton
+                { pokemonId: 209, weight: 5 },  // Snubbull
+                { pokemonId: 210, weight: 17 }, // Granbull
+                { pokemonId: 113, weight: 3 },  // Chansey
+                { pokemonId: 242, weight: 7 }   // Blissey
             ],
-            eventPool: ["route38_39_moomoo_farm", "route38_39_general"],
+            eventPool: ["route38_39_moomoo_farm", "route38_39_general", "route38_39_runaway_miltank"],
             flavor: "Miltank low contentedly in the pasture. The road smells of fresh hay."
         },
         {
@@ -1106,14 +1163,20 @@
             gymLeader: null,
             encounterRate: 45,
             encounterTable: [
-                { pokemonId: 72, weight: 26 },  // Tentacool
-                { pokemonId: 98, weight: 18 },  // Krabby
-                { pokemonId: 116, weight: 18 }, // Horsea
-                { pokemonId: 170, weight: 16 }, // Chinchou
-                { pokemonId: 223, weight: 16 }, // Remoraid
+                { pokemonId: 72, weight: 6 },   // Tentacool
+                { pokemonId: 73, weight: 20 },  // Tentacruel
+                { pokemonId: 98, weight: 4 },   // Krabby
+                { pokemonId: 99, weight: 14 },  // Kingler
+                { pokemonId: 116, weight: 6 },  // Horsea
+                { pokemonId: 117, weight: 10 }, // Seadra
+                { pokemonId: 230, weight: 4 },  // Kingdra
+                { pokemonId: 170, weight: 4 },  // Chinchou
+                { pokemonId: 171, weight: 12 }, // Lanturn
+                { pokemonId: 223, weight: 4 },  // Remoraid
+                { pokemonId: 224, weight: 12 }, // Octillery
                 { pokemonId: 211, weight: 6 }   // Qwilfish
             ],
-            eventPool: ["route40_41_ferry_crossing", "route40_41_general", "route40_41_mantine_sighting"],
+            eventPool: ["route40_41_ferry_crossing", "route40_41_general", "route40_41_mantine_sighting", "route40_41_jasmine_errand"],
             flavor: "Salt spray coats the deck. Something large glides beneath the waves."
         },
         {
@@ -1129,7 +1192,7 @@
             gymLeader: "chuck",
             encounterRate: 0,
             encounterTable: [],
-            eventPool: ["cianwood_city_pharmacy", "cianwood_city_chuck_challenge"],
+            eventPool: ["cianwood_city_pharmacy", "cianwood_city_chuck_challenge", "cianwood_city_rough_crossing"],
             flavor: "Waves crash against the cliffs. Chuck trains alone on the beach at dawn."
         },
         {
@@ -1145,14 +1208,20 @@
             gymLeader: null,
             encounterRate: 50,
             encounterTable: [
-                { pokemonId: 66, weight: 20 },  // Machop
-                { pokemonId: 74, weight: 20 },  // Geodude
-                { pokemonId: 183, weight: 18 }, // Marill
-                { pokemonId: 216, weight: 16 }, // Teddiursa
-                { pokemonId: 218, weight: 16 }, // Slugma
-                { pokemonId: 95, weight: 10 }   // Onix
+                { pokemonId: 66, weight: 4 },   // Machop
+                { pokemonId: 68, weight: 16 },  // Machamp
+                { pokemonId: 74, weight: 4 },   // Geodude
+                { pokemonId: 76, weight: 16 },  // Golem
+                { pokemonId: 183, weight: 4 },  // Marill
+                { pokemonId: 184, weight: 14 }, // Azumarill
+                { pokemonId: 216, weight: 4 },  // Teddiursa
+                { pokemonId: 217, weight: 12 }, // Ursaring
+                { pokemonId: 218, weight: 4 },  // Slugma
+                { pokemonId: 219, weight: 12 }, // Magcargo
+                { pokemonId: 95, weight: 3 },   // Onix
+                { pokemonId: 208, weight: 9 }   // Steelix
             ],
-            eventPool: ["mt_mortar_general", "mt_mortar_hermit_master", "mt_mortar_waterfall_training"],
+            eventPool: ["mt_mortar_general", "mt_mortar_hermit_master", "mt_mortar_waterfall_training", "mt_mortar_hot_spring_healing"],
             flavor: "Steam rises from hidden hot springs. Somewhere above, a waterfall roars."
         },
         {
@@ -1168,7 +1237,7 @@
             gymLeader: "pryce",
             encounterRate: 0,
             encounterTable: [],
-            eventPool: ["mahogany_town_team_rocket_hideout", "mahogany_town_pryce_challenge"],
+            eventPool: ["mahogany_town_team_rocket_hideout", "mahogany_town_pryce_challenge", "mahogany_town_vending_machine_scam"],
             flavor: "A chill hangs in the air. Something suspicious hides beneath the town."
         },
         {
@@ -1184,14 +1253,19 @@
             gymLeader: null,
             encounterRate: 45,
             encounterTable: [
-                { pokemonId: 129, weight: 30 }, // Magikarp
-                { pokemonId: 118, weight: 20 }, // Goldeen
-                { pokemonId: 60, weight: 18 },  // Poliwag
-                { pokemonId: 61, weight: 14 },  // Poliwhirl
-                { pokemonId: 98, weight: 16 },  // Krabby
-                { pokemonId: 130, weight: 2, shiny: true, hpOverride: 6 } // Gyarados - Shiny Gyarados (flagged, §10.4)
+                { pokemonId: 129, weight: 6 },  // Magikarp
+                { pokemonId: 130, weight: 22 }, // Gyarados
+                { pokemonId: 118, weight: 4 },  // Goldeen
+                { pokemonId: 119, weight: 16 }, // Seaking
+                { pokemonId: 60, weight: 4 },   // Poliwag
+                { pokemonId: 61, weight: 6 },   // Poliwhirl
+                { pokemonId: 62, weight: 6 },   // Poliwrath
+                { pokemonId: 186, weight: 6 },  // Politoed
+                { pokemonId: 98, weight: 4 },   // Krabby
+                { pokemonId: 99, weight: 12 },  // Kingler
+                { pokemonId: 130, weight: 8, shiny: true, hpOverride: 6 } // Gyarados - Shiny Gyarados (flagged, §10.4) — quadrupled from weight 2 (2.3% -> 8.5% of table) per user request, a Lake of Rage staple
             ],
-            eventPool: ["lake_of_rage_red_gyarados_rumor", "lake_of_rage_general", "lake_of_rage_team_rocket_scheme"],
+            eventPool: ["lake_of_rage_red_gyarados_rumor", "lake_of_rage_general", "lake_of_rage_team_rocket_scheme", "lake_of_rage_magikarp_salesman"],
             flavor: "Fog clings to the water's surface. Fishermen speak in hushed tones of a red Gyarados."
         },
         {
@@ -1207,14 +1281,18 @@
             gymLeader: null,
             encounterRate: 50,
             encounterTable: [
-                { pokemonId: 220, weight: 30 }, // Swinub
-                { pokemonId: 86, weight: 28 },  // Seel
-                { pokemonId: 216, weight: 18 }, // Teddiursa
+                { pokemonId: 220, weight: 6 },  // Swinub
+                { pokemonId: 221, weight: 22 }, // Piloswine
+                { pokemonId: 86, weight: 6 },   // Seel
+                { pokemonId: 87, weight: 20 },  // Dewgong
+                { pokemonId: 216, weight: 4 },  // Teddiursa
+                { pokemonId: 217, weight: 12 }, // Ursaring
                 { pokemonId: 215, weight: 8 },  // Sneasel
                 { pokemonId: 225, weight: 8 },  // Delibird
-                { pokemonId: 246, weight: 8 }   // Larvitar
+                { pokemonId: 246, weight: 5 },  // Larvitar
+                { pokemonId: 247, weight: 9 }   // Pupitar
             ],
-            eventPool: ["ice_path_general", "ice_path_slippery_puzzle", "ice_path_frozen_hiker"],
+            eventPool: ["ice_path_general", "ice_path_slippery_puzzle", "ice_path_frozen_hiker", "ice_path_delibird_gift"],
             flavor: "Your footing slides with every step. Ice groans deep beneath the frozen floor."
         },
         {
@@ -1230,7 +1308,7 @@
             gymLeader: "clair",
             encounterRate: 0,
             encounterTable: [],
-            eventPool: ["blackthorn_city_dragons_den_gate", "blackthorn_city_clair_challenge"],
+            eventPool: ["blackthorn_city_dragons_den_gate", "blackthorn_city_clair_challenge", "blackthorn_city_dragon_tamer_rival"],
             flavor: "Snow dusts the rooftops. Clair's gym looms at the base of the mountains."
         },
         {
@@ -1246,13 +1324,16 @@
             gymLeader: null,
             encounterRate: 45,
             encounterTable: [
-                { pokemonId: 147, weight: 26 }, // Dratini
-                { pokemonId: 116, weight: 24 }, // Horsea
-                { pokemonId: 129, weight: 24 }, // Magikarp
-                { pokemonId: 148, weight: 14 }, // Dragonair
-                { pokemonId: 117, weight: 12 }  // Seadra
+                { pokemonId: 147, weight: 8 },  // Dratini
+                { pokemonId: 148, weight: 22 }, // Dragonair
+                { pokemonId: 149, weight: 4 },  // Dragonite (rare capstone cameo)
+                { pokemonId: 116, weight: 6 },  // Horsea
+                { pokemonId: 117, weight: 16 }, // Seadra
+                { pokemonId: 230, weight: 4 },  // Kingdra
+                { pokemonId: 129, weight: 8 },  // Magikarp
+                { pokemonId: 130, weight: 12 }  // Gyarados
             ],
-            eventPool: ["dragons_den_elder_trial", "dragons_den_general"],
+            eventPool: ["dragons_den_elder_trial", "dragons_den_general", "dragons_den_ceremonial_dance"],
             flavor: "Water tumbles over ancient stone. The air itself feels watched."
         },
         {
@@ -1268,14 +1349,19 @@
             gymLeader: null,
             encounterRate: 50,
             encounterTable: [
-                { pokemonId: 95, weight: 24 },  // Onix
-                { pokemonId: 67, weight: 22 },  // Machoke
-                { pokemonId: 228, weight: 18 }, // Houndour
+                { pokemonId: 95, weight: 4 },   // Onix
+                { pokemonId: 208, weight: 18 }, // Steelix
+                { pokemonId: 67, weight: 4 },   // Machoke
+                { pokemonId: 68, weight: 16 },  // Machamp
+                { pokemonId: 228, weight: 6 },  // Houndour
+                { pokemonId: 229, weight: 14 }, // Houndoom
                 { pokemonId: 207, weight: 14 }, // Gligar
-                { pokemonId: 246, weight: 12 }, // Larvitar
+                { pokemonId: 246, weight: 4 },  // Larvitar
+                { pokemonId: 247, weight: 8 },  // Pupitar
+                { pokemonId: 248, weight: 4 },  // Tyranitar
                 { pokemonId: 227, weight: 10 }  // Skarmory
             ],
-            eventPool: ["victory_road_johto_general", "victory_road_johto_fallen_trainer", "victory_road_johto_veteran_gauntlet"],
+            eventPool: ["victory_road_johto_general", "victory_road_johto_fallen_trainer", "victory_road_johto_veteran_gauntlet", "victory_road_johto_league_hopefuls"],
             flavor: "The longest, darkest cave in Johto. The ultimate test, once again."
         },
         {
@@ -1291,7 +1377,7 @@
             gymLeader: null,
             encounterRate: 0,
             encounterTable: [],
-            eventPool: ["indigo_plateau_johto_nurse_joy", "indigo_plateau_johto_e4_rematch_intro"],
+            eventPool: ["indigo_plateau_johto_nurse_joy", "indigo_plateau_johto_e4_rematch_intro", "indigo_plateau_johto_red_rumor"],
             flavor: "The Johto Elite Four await a rematch. Stock up here — Mt. Silver shows no mercy."
         },
         {
@@ -1307,16 +1393,20 @@
             gymLeader: null,
             encounterRate: 45,
             encounterTable: [
-                { pokemonId: 19, weight: 22 },  // Rattata
-                { pokemonId: 41, weight: 20 },  // Zubat
-                { pokemonId: 74, weight: 18 },  // Geodude
+                { pokemonId: 19, weight: 4 },   // Rattata
+                { pokemonId: 20, weight: 16 },  // Raticate
+                { pokemonId: 41, weight: 4 },   // Zubat
+                { pokemonId: 169, weight: 16 }, // Crobat
+                { pokemonId: 74, weight: 4 },   // Geodude
+                { pokemonId: 76, weight: 14 },  // Golem
                 { pokemonId: 217, weight: 14 }, // Ursaring
                 { pokemonId: 215, weight: 10 }, // Sneasel
-                { pokemonId: 246, weight: 8 },  // Larvitar
-                { pokemonId: 227, weight: 6 },  // Skarmory
-                { pokemonId: 248, weight: 2 }   // Tyranitar
+                { pokemonId: 246, weight: 3 },  // Larvitar
+                { pokemonId: 247, weight: 5 },  // Pupitar
+                { pokemonId: 248, weight: 8 },  // Tyranitar
+                { pokemonId: 227, weight: 6 }   // Skarmory
             ],
-            eventPool: ["mt_silver_general", "mt_silver_red_encounter", "mt_silver_veteran_hermit"],
+            eventPool: ["mt_silver_general", "mt_silver_red_encounter", "mt_silver_veteran_hermit", "mt_silver_strange_behavior"],
             flavor: "The peak vanishes into cloud. Somewhere up there, a legend waits in silence."
         }
     ];

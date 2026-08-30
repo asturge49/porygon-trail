@@ -39,12 +39,12 @@
     // Roaming legendary beasts (§8.5) — active from the moment the run enters
     // Johto, independent of any route's encounterTable. A small per-day chance
     // per uncaught beast, checked alongside the normal encounter roll.
-    // Calibrated to match Kanto's own legendary rate: Zapdos's event (weight 3
-    // against ~1400 total competing event weight, gated behind the ~25% daily
-    // event roll) fires roughly 0.05%/day in practice — about 5% cumulative
-    // over a full run. This was 4 (80x too high) until a playtest turned up
-    // all three beasts, plus a Raikou sighting, well before the first gym.
-    const ROAM_CHANCE_PER_BEAST = 0.05;
+    // Re-calibrated off a 900-run sim at the old 0.05 value: only 23 runs
+    // (~2.6%) ever saw a dog, well under the intended "close to 1 in 10
+    // runs" target. Scaling linearly off that observed rate (rare-event
+    // probabilities scale ~linearly with the per-day chance) needs roughly
+    // a 4x bump, not a 2x one, to actually land near 10% — 0.2 targets that.
+    const ROAM_CHANCE_PER_BEAST = 0.2;
 
     function rollRoamEncounter(state) {
         if (state.region !== 'johto') return null;

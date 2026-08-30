@@ -79,7 +79,7 @@
                     ${PT.Engine.GameState.getAliveParty(state).map((p, i) => {
                         const hasAdvantage = p.types.some(t => typeChart.weakTo.includes(t));
                         const hasDisadvantage = p.types.some(t => typeChart.strongTo.includes(t));
-                        let label = `${p.name} (${p.types.join('/')})`;
+                        let label = `${p.name} (${p.types.join('/')}) | HP:${p.hp}/${p.maxHp}`;
                         if (p.battleStars > 0) label += ` ${'★'.repeat(p.battleStars)}`;
                         if (hasAdvantage) label += ' [SE!]';
                         if (hasDisadvantage) label += ' [NVE]';
@@ -460,7 +460,7 @@
                 ${PT.Engine.GameState.getAliveParty(state).map((p, i) => {
                     const hasAdvantage = p.types.some(t => typeChart.weakTo.includes(t));
                     const hasDisadvantage = p.types.some(t => typeChart.strongTo.includes(t));
-                    let label = `${p.name} (${p.types.join('/')})`;
+                    let label = `${p.name} (${p.types.join('/')}) | HP:${p.hp}/${p.maxHp}`;
                     if (p.battleStars > 0) label += ` ${'★'.repeat(p.battleStars)}`;
                     if (hasAdvantage) label += ' [SE!]';
                     if (hasDisadvantage) label += ' [NVE]';
@@ -616,7 +616,13 @@
         // the player send in another against this SAME opponent. Only a full
         // party wipe ends the gauntlet (and the run).
         if (PT.Engine.Audio) PT.Engine.Audio.gymDefeat();
-        const deathChance = isAce ? 60 : 30;
+        // Johto gauntlet ace death chance was matched to Kanto's single-battle
+        // 60% — but every Johto gym mon is now an ace (every mon is ace across
+        // both regions), and stacked across a 3-on-3 gauntlet that compounds
+        // into near-guaranteed deaths. Dialed back to 45% for Johto only —
+        // still meant to hurt, not a near-certain kill. Kanto's single-battle
+        // ace rate (line ~295, resolveGymBattle) is untouched.
+        const deathChance = isAce ? 45 : 30;
         const gymIndex = PT.Data.GymOrder.indexOf(leaderId);
         const isLateGym = gymIndex >= 4;
         const baseDamage = isLateGym ? 3 : 2;

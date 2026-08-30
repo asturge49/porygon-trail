@@ -832,8 +832,13 @@
     function showMapOverlay(state) {
         const routes = PT.Data.Routes;
         const currentIdx = state.currentLocationIndex;
+        // Show only the current region's routes (§ map fix) — the overlay
+        // used to list all 58 Kanto+Johto locations under a hardcoded
+        // "KANTO MAP" title even once the player had moved into Johto.
+        const regionRoutes = routes.filter(r => (r.region || 'kanto') === state.region);
 
-        const rows = routes.map((r, i) => {
+        const rows = regionRoutes.map((r) => {
+            const i = routes.indexOf(r);
             const isCurrent = i === currentIdx;
             const isVisited = i < currentIdx;
             const isFuture = i > currentIdx;
@@ -872,7 +877,7 @@
         overlay.className = 'day-recap-overlay';
         overlay.innerHTML = `
             <div class="day-recap-popup" style="max-height:80vh;overflow-y:auto;min-width:260px;">
-                <div class="day-recap-title">🗺️ KANTO MAP</div>
+                <div class="day-recap-title">🗺️ ${state.region === 'johto' ? 'JOHTO' : 'KANTO'} MAP</div>
                 <div style="font-size:7px;text-align:center;margin-bottom:4px;color:var(--gb-dark);">
                     🏥 Center &nbsp; 🛒 Mart &nbsp; ⚔️ Gym
                 </div>

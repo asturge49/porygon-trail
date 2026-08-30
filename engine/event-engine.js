@@ -212,6 +212,13 @@
             battleBonuses.push(`${'★'.repeat(chosen.battleStars || 0)} +${starBonus.winChanceBonus}%`);
         }
 
+        // Johto event battles hit back harder — matches the flee-chance,
+        // wild-encounter, and gym-loss regional bumps applied elsewhere.
+        if (state.region === 'johto') {
+            chance -= 10;
+            battleBonuses.push('🌩️ JOHTO -10%');
+        }
+
         const preClampChance = chance;
         chance = Math.max(15, Math.min(85, chance));
         const maxed = preClampChance !== chance;
@@ -219,7 +226,19 @@
 
         const won = state.rng.chance(chance);
         const opponentHp = PT.Engine.GameState.getMaxHpForPokemon(opponent);
-        const lossDamage = Math.max(1, opponentHp - 1);
+        // Base loss damage scales off the *opponent's* own HP stat, which stays
+        // tiny for weak grunt Pokemon (Meowth, Rattata, ...) no matter how far
+        // into the run the fight happens — a Team Rocket shakedown in
+        // Blackthorn was hitting for 1 damage against a low-HP grunt even
+        // though the player's whole party was down to single-digit HP by then.
+        // Add a Johto progression component so late-game event battles carry
+        // real stakes regardless of which opponent Pokemon got picked.
+        let lossDamage = Math.max(1, opponentHp - 1);
+        if (state.region === 'johto') {
+            const badgeCount = state.badges.filter(b => b !== 'champion').length;
+            const johtoBadges = Math.max(0, badgeCount - 8);
+            lossDamage += 2 + johtoBadges;
+        }
 
         return { won, chance, opponent, lossDamage, battleBonuses, hasAdvantage, hasDisadvantage, maxed };
     }

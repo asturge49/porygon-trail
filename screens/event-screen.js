@@ -623,7 +623,7 @@
     }
 
     function showEventSwapOptions(state, pokemonData, pendingQueue, choicesDiv, narrative) {
-        const spriteUrl = PT.Engine.GameState.getSpriteUrl(pokemonData.id);
+        const spriteUrl = PT.Engine.GameState.getSpriteUrl(pokemonData.id, state.region);
         const foodAmount = PT.Engine.GameState.pokemonToFood(pokemonData.rarity);
 
         choicesDiv.innerHTML = `

@@ -11,8 +11,8 @@
             badge: "Boulder Badge",
             spriteUrl: "assets/gym-leaders/brock.png",
             pokemon: [
-                { id: 74, name: "Geodude" },
-                { id: 41, name: "Zubat" },
+                { id: 74, name: "Geodude", ace: true },
+                { id: 41, name: "Zubat", ace: true },
                 { id: 95, name: "Onix", ace: true }
             ],
             challengeText: "Brock stands firm, arms crossed. \"You think you have what it takes? Show me a Pokemon that can withstand my rock-hard defense!\"",
@@ -30,8 +30,8 @@
             badge: "Cascade Badge",
             spriteUrl: "assets/gym-leaders/misty.png",
             pokemon: [
-                { id: 54, name: "Psyduck" },
-                { id: 118, name: "Goldeen" },
+                { id: 54, name: "Psyduck", ace: true },
+                { id: 118, name: "Goldeen", ace: true },
                 { id: 121, name: "Starmie", ace: true }
             ],
             challengeText: "Misty flips her hair confidently. \"My water Pokemon will wash away your hopes! Can your team handle the current?\"",
@@ -49,8 +49,8 @@
             badge: "Thunder Badge",
             spriteUrl: "assets/gym-leaders/surge.png",
             pokemon: [
-                { id: 81, name: "Magnemite" },
-                { id: 100, name: "Voltorb" },
+                { id: 81, name: "Magnemite", ace: true },
+                { id: 100, name: "Voltorb", ace: true },
                 { id: 26, name: "Raichu", ace: true }
             ],
             challengeText: "Lt. Surge laughs thunderously. \"I've fought in wars, kid! Your little Pokemon don't scare me. Let's see if you can handle the voltage!\"",
@@ -68,8 +68,8 @@
             badge: "Rainbow Badge",
             spriteUrl: "assets/gym-leaders/erika.png",
             pokemon: [
-                { id: 114, name: "Tangela" },
-                { id: 71, name: "Victreebel" },
+                { id: 114, name: "Tangela", ace: true },
+                { id: 71, name: "Victreebel", ace: true },
                 { id: 45, name: "Vileplume", ace: true }
             ],
             challengeText: "Erika smiles gently. \"How lovely that you've come to challenge me. Let us see if your team can bloom under pressure.\"",
@@ -87,8 +87,8 @@
             badge: "Soul Badge",
             spriteUrl: "assets/gym-leaders/koga.png",
             pokemon: [
-                { id: 110, name: "Weezing" },
-                { id: 49, name: "Venomoth" },
+                { id: 110, name: "Weezing", ace: true },
+                { id: 49, name: "Venomoth", ace: true },
                 { id: 89, name: "Muk", ace: true }
             ],
             challengeText: "Koga appears from the shadows. \"A ninja does not fight fair. My Pokemon will poison your team's resolve. Can you see through my illusions?\"",
@@ -106,8 +106,8 @@
             badge: "Marsh Badge",
             spriteUrl: "assets/gym-leaders/sabrina.png",
             pokemon: [
-                { id: 122, name: "Mr. Mime" },
-                { id: 64, name: "Kadabra" },
+                { id: 122, name: "Mr. Mime", ace: true },
+                { id: 64, name: "Kadabra", ace: true },
                 { id: 65, name: "Alakazam", ace: true }
             ],
             challengeText: "Sabrina stares with unblinking eyes. \"I foresaw your arrival. My psychic Pokemon already know your strategy. Can you defy fate?\"",
@@ -125,8 +125,8 @@
             badge: "Volcano Badge",
             spriteUrl: "assets/gym-leaders/blaine.png",
             pokemon: [
-                { id: 126, name: "Magmar" },
-                { id: 78, name: "Rapidash" },
+                { id: 126, name: "Magmar", ace: true },
+                { id: 78, name: "Rapidash", ace: true },
                 { id: 59, name: "Arcanine", ace: true }
             ],
             challengeText: "Blaine adjusts his sunglasses. \"Hah! Answer me this: Can your Pokemon survive the heat of Cinnabar's volcano? Let's find out!\"",
@@ -144,8 +144,8 @@
             badge: "Earth Badge",
             spriteUrl: "assets/gym-leaders/giovanni.png",
             pokemon: [
-                { id: 53, name: "Persian" },
-                { id: 112, name: "Rhydon" },
+                { id: 53, name: "Persian", ace: true },
+                { id: 112, name: "Rhydon", ace: true },
                 { id: 31, name: "Nidoqueen", ace: true }
             ],
             challengeText: "Giovanni smirks from behind his desk. \"So you've made it this far. Team Rocket's boss also happens to be the final gym leader. Prepare to be crushed.\"",
@@ -165,8 +165,8 @@
             badge: "Zephyr Badge",
             spriteUrl: "assets/gym-leaders/falkner.png",
             pokemon: [
-                { id: 164, name: "Noctowl" },
-                { id: 169, name: "Crobat" },
+                { id: 164, name: "Noctowl", ace: true },
+                { id: 169, name: "Crobat", ace: true },
                 { id: 18, name: "Pidgeot", ace: true }
             ],
             challengeText: "Falkner spreads his arms like wings. \"My father passed his pride down to me. Let's see if your Pokemon can keep up in the sky!\"",
@@ -184,8 +184,8 @@
             badge: "Hive Badge",
             spriteUrl: "assets/gym-leaders/bugsy.png",
             pokemon: [
-                { id: 166, name: "Ledian" },
-                { id: 168, name: "Ariados" },
+                { id: 166, name: "Ledian", ace: true },
+                { id: 168, name: "Ariados", ace: true },
                 { id: 123, name: "Scyther", ace: true }
             ],
             challengeText: "Bugsy adjusts his cap. \"I've studied bugs my whole life. Nothing you throw at me will be a surprise!\"",
@@ -203,8 +203,8 @@
             badge: "Plain Badge",
             spriteUrl: "assets/gym-leaders/whitney.png",
             pokemon: [
-                { id: 35, name: "Clefairy" },
-                { id: 234, name: "Stantler" },
+                { id: 35, name: "Clefairy", ace: true },
+                { id: 234, name: "Stantler", ace: true },
                 { id: 241, name: "Miltank", ace: true }
             ],
             challengeText: "Whitney twirls a pigtail. \"Hee hee, betcha didn't expect a gym leader like me! But I won't go easy on you!\"",
@@ -222,8 +222,8 @@
             badge: "Fog Badge",
             spriteUrl: "assets/gym-leaders/morty.png",
             pokemon: [
-                { id: 198, name: "Murkrow" },
-                { id: 200, name: "Misdreavus" },
+                { id: 198, name: "Murkrow", ace: true },
+                { id: 200, name: "Misdreavus", ace: true },
                 { id: 94, name: "Gengar", ace: true }
             ],
             challengeText: "Morty's eyes gleam in the tower's gloom. \"I can see what others cannot. I foresee... your defeat.\"",
@@ -241,8 +241,8 @@
             badge: "Mineral Badge",
             spriteUrl: "assets/gym-leaders/jasmine.png",
             pokemon: [
-                { id: 82, name: "Magneton" },
-                { id: 227, name: "Skarmory" },
+                { id: 82, name: "Magneton", ace: true },
+                { id: 227, name: "Skarmory", ace: true },
                 { id: 208, name: "Steelix", ace: true }
             ],
             challengeText: "Jasmine speaks softly but firmly. \"I nursed my Pokemon back to full strength myself. They won't fall easily now.\"",
@@ -260,8 +260,8 @@
             badge: "Storm Badge",
             spriteUrl: "assets/gym-leaders/chuck.png",
             pokemon: [
-                { id: 57, name: "Primeape" },
-                { id: 237, name: "Hitmontop" },
+                { id: 57, name: "Primeape", ace: true },
+                { id: 237, name: "Hitmontop", ace: true },
                 { id: 62, name: "Poliwrath", ace: true }
             ],
             challengeText: "Chuck bursts out laughing. \"HAHAHA! I train under a waterfall to build my spirit! Show me yours!\"",
@@ -279,8 +279,8 @@
             badge: "Glacier Badge",
             spriteUrl: "assets/gym-leaders/pryce.png",
             pokemon: [
-                { id: 87, name: "Dewgong" },
-                { id: 124, name: "Jynx" },
+                { id: 87, name: "Dewgong", ace: true },
+                { id: 124, name: "Jynx", ace: true },
                 { id: 221, name: "Piloswine", ace: true }
             ],
             challengeText: "Pryce's expression is unreadable as stone. \"I have seen decades of trainers pass through this gym. Show me you belong among them.\"",
@@ -298,8 +298,8 @@
             badge: "Rising Badge",
             spriteUrl: "assets/gym-leaders/clair.png",
             pokemon: [
-                { id: 149, name: "Dragonite" },
-                { id: 130, name: "Gyarados" },
+                { id: 149, name: "Dragonite", ace: true },
+                { id: 130, name: "Gyarados", ace: true },
                 { id: 230, name: "Kingdra", ace: true }
             ],
             challengeText: "Clair's gaze is ice-cold. \"I am the finest Dragon-type trainer alive. You will need more than luck to beat my clan's power.\"",

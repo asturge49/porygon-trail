@@ -458,7 +458,7 @@
         const typeChart = getWildTypeWeaknesses(opponentTypes);
 
         // Calculate win chance — wild battles are easier than gyms
-        let chance = 55;
+        let chance = 50;
         let battleBonuses = [];
 
         // Type advantage
@@ -470,6 +470,18 @@
         // Rarity of wild Pokemon affects difficulty
         if (pokemon.rarity === 'legendary') chance -= 15;
         if (pokemon.rarity === 'rare') chance -= 5;
+
+        // Progressive scaling — mirrors the gym-battle formula (gym-screen.js)
+        // so wild encounters stop being trivial farming fodder as the run goes
+        // on. Scales from 0 (no badges) to -18% across all 16 badges (Kanto +
+        // Johto), so late-game grinding on early low-rarity routes still carries risk.
+        const totalBadgeCount = state.badges.filter(b => b !== 'champion').length;
+        const wildScaling = Math.floor((totalBadgeCount / 16) * 18);
+        if (wildScaling > 0) chance -= wildScaling;
+
+        // Johto wild Pokemon hit back harder — matches the flee-chance and
+        // gym-loss-damage regional bump already applied elsewhere.
+        if (state.region === 'johto') chance -= 10;
 
         // Win Rate buff (Muscle Band stacks)
         const winRateBonus = PT.Engine.GameState.getWinRateBonus(state);
