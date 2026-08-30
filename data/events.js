@@ -6744,6 +6744,38 @@
             ]
         },
 
+        // ===== EARLY-ROUTE SHARED EVENTS =====
+        // Referenced by name in routes.js since the original route-restructure
+        // commit (015ad74) but never actually authored until now.
+        {
+            id: "mysterious_package",
+            type: "discovery",
+            name: "The Mysterious Package",
+            description: "A plain brown package sits abandoned at the edge of the path, no name or return address in sight. Something inside shifts when you nudge it with your foot.",
+            weight: 6,
+            oneTime: true,
+            locationIds: ["route_1", "viridian_city", "route_5", "route_6", "route_8", "route_8_celadon"],
+            choices: [
+                {
+                    text: "Open it",
+                    outcomes: [
+                        { weight: 30, narration: "Packing peanuts, a delivery slip addressed to a \"Silph Co. Warehouse,\" and a fat stack of Poke Dollars someone clearly wasn't supposed to ship this way. Finders keepers.", effects: { money: 800 } },
+                        { weight: 25, narration: "A crate of Poke Balls, still sealed. A logistics mix-up you're happy to benefit from.", effects: { pokeballs: 6 } },
+                        { weight: 20, narration: "The box lurches and a Voltorb rolls out, thoroughly unhappy about being shipped in a cardboard box. It's not looking for a fight, just an apology, but it takes a shot at you on the way out.", effects: { catchPokemon: 100, partyDamageAll: 1 } },
+                        { weight: 15, narration: "A single, slightly squished Rare Candy, rattling around in a box ten times too big for it. Someone's shipping department has a lot to answer for.", effects: { rareCandy: 1 } },
+                        { weight: 10, narration: "It's a Team Rocket recruitment pamphlet and a whoopee cushion. You've been pranked by an organization with genuinely nothing better to do.", effects: {} }
+                    ]
+                },
+                {
+                    text: "Leave it — could be a trap",
+                    outcomes: [
+                        { weight: 60, narration: "You give it a wide berth. A Pokemon Center clerk radios ahead about the report; you keep walking.", effects: {} },
+                        { weight: 40, narration: "Good instincts — moments later, two Team Rocket grunts jog up arguing about \"the shipment\" and start frantically searching the bushes. You're long gone before they spot you.", effects: { food: 2 } }
+                    ]
+                }
+            ]
+        },
+
         // ===== ROUTE 1 EVENTS =====
         {
             id: "joey_rattata",

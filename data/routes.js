@@ -66,7 +66,7 @@
                 { pokemonId: 29, weight: 5 },   // Nidoran F
                 { pokemonId: 32, weight: 5 }    // Nidoran M
             ],
-            eventPool: ["nurse_joy", "old_man_tutorial", "mysterious_package", "old_man_last_lesson", "viridian_pikachu_chase"],
+            eventPool: ["nurse_joy", "mysterious_package", "old_man_last_lesson", "viridian_pikachu_chase"],
             flavor: "Viridian Forest looms to the north. The local shop has basic supplies."
         },
         {
@@ -90,7 +90,7 @@
                 { pokemonId: 25, weight: 5 },   // Pikachu
                 { pokemonId: 46, weight: 10 }   // Paras
             ],
-            eventPool: ["team_rocket_ambush", "bug_catcher_gauntlet", "forest_samurai"],
+            eventPool: ["team_rocket_ambush", "forest_samurai"],
             flavor: "Trees block the sunlight. Bug catchers lurk behind every bush."
         },
         {
@@ -113,7 +113,7 @@
                 { pokemonId: 56, weight: 12 },  // Mankey
                 { pokemonId: 39, weight: 8 }    // Jigglypuff
             ],
-            eventPool: ["museum_visit", "brock_roadblock", "fossil_merchant", "pewter_museum_heist", "brock_secret_breeder"],
+            eventPool: ["pewter_museum_heist", "brock_secret_breeder"],
             flavor: "The Pewter Museum stands tall. Brock's Gym awaits challengers."
         },
         {
@@ -163,7 +163,7 @@
                 { pokemonId: 79, weight: 10 },  // Slowpoke
                 { pokemonId: 98, weight: 8 }    // Krabby
             ],
-            eventPool: ["nugget_bridge", "team_rocket_ambush", "misty_fishing", "bill_event", "nugget_bridge_gauntlet", "power_plant_overload"],
+            eventPool: ["team_rocket_ambush", "nugget_bridge_gauntlet", "power_plant_overload"],
             flavor: "The sound of flowing water fills the air. Nugget Bridge stretches north."
         },
         {
@@ -240,7 +240,7 @@
                 { pokemonId: 125, weight: 4 },  // Electabuzz
                 { pokemonId: 84, weight: 3 }    // Doduo
             ],
-            eventPool: ["ss_anne_event", "lt_surge_trash_cans", "diglett_cave_shortcut", "magikarp_salesman", "surge_minefield"],
+            eventPool: ["ss_anne_event", "magikarp_salesman", "surge_minefield"],
             flavor: "The S.S. Anne docks at the harbor. Lt. Surge's gym crackles with electricity."
         },
         {
@@ -313,7 +313,7 @@
                 { pokemonId: 96, weight: 10 },  // Drowzee
                 { pokemonId: 48, weight: 10 }   // Venonat
             ],
-            eventPool: ["ghost_encounter", "pokemon_tower", "channeler_curse", "mr_fuji_rescue", "cubone_mother", "drowzee_dream", "mr_fuji_blessing", "ghost_rival_past"],
+            eventPool: ["ghost_encounter", "cubone_mother", "drowzee_dream", "mr_fuji_blessing", "ghost_rival_past"],
             flavor: "An eerie melody plays somewhere. The Pokemon Tower looms overhead."
         },
         {
@@ -365,7 +365,7 @@
                 { pokemonId: 108, weight: 4 },  // Lickitung
                 { pokemonId: 84, weight: 8 }    // Doduo
             ],
-            eventPool: ["game_corner", "team_rocket_hideout", "dept_store_sale", "eevee_gift", "game_corner_porygon", "eevee_rooftop", "rocket_shakedown"],
+            eventPool: ["team_rocket_hideout", "game_corner_porygon", "eevee_rooftop", "rocket_shakedown"],
             flavor: "Neon lights and the scent of perfume. The Game Corner beckons."
         },
         {
@@ -395,7 +395,7 @@
                 { pokemonId: 124, weight: 4 },  // Jynx
                 { pokemonId: 108, weight: 5 }   // Lickitung
             ],
-            eventPool: ["silph_co_siege", "team_rocket_ambush", "fighting_dojo", "lapras_gift", "copycat_ditto"],
+            eventPool: ["silph_co_siege", "team_rocket_ambush", "copycat_ditto"],
             flavor: "Silph Co. towers over everything. Something sinister is happening inside."
         },
         {
@@ -420,7 +420,7 @@
                 { pokemonId: 100, weight: 10 }, // Voltorb
                 { pokemonId: 56, weight: 9 }    // Mankey
             ],
-            eventPool: ["team_rocket_ambush", "biker_gang_standoff", "cycling_road_bikers", "cycling_road_downhill"],
+            eventPool: ["team_rocket_ambush", "cycling_road_bikers", "cycling_road_downhill"],
             flavor: "The wind whips past as bikers race downhill. No brakes."
         },
         {
@@ -452,7 +452,7 @@
                 { pokemonId: 108, weight: 4 },  // Lickitung
                 { pokemonId: 79, weight: 3 }    // Slowpoke
             ],
-            eventPool: ["safari_zone", "koga_invisible_walls", "warden_teeth", "rare_pokemon_sighting", "warden_gold_teeth", "koga_invisible_trial"],
+            eventPool: ["safari_zone", "warden_gold_teeth", "koga_invisible_trial"],
             flavor: "The Safari Zone gates stand open. Koga's gym is full of invisible walls."
         },
         {
@@ -530,7 +530,7 @@
                 { pokemonId: 79, weight: 5 },   // Slowpoke
                 { pokemonId: 98, weight: 4 }    // Krabby
             ],
-            eventPool: ["articuno_encounter", "ice_cave_puzzle", "strong_current", "frozen_trainer", "seafoam_frozen_trainer", "seafoam_current_sacrifice"],
+            eventPool: ["articuno_encounter", "strong_current", "seafoam_frozen_trainer", "seafoam_current_sacrifice"],
             flavor: "Ice crystals shimmer in the dark. The cave grows colder with each step."
         },
         {
@@ -558,7 +558,7 @@
                 { pokemonId: 142, weight: 3 },  // Aerodactyl
                 { pokemonId: 0, weight: 1 }     // MissingNo.
             ],
-            eventPool: ["pokemon_mansion", "mewtwo_journal", "fossil_revival", "blaine_quiz", "cinnabar_experiment", "cinnabar_missingno"],
+            eventPool: ["cinnabar_experiment", "cinnabar_missingno"],
             flavor: "Volcanic heat rises from the ground. The abandoned Pokemon Mansion hides secrets."
         },
         {
@@ -612,7 +612,7 @@
                 { pokemonId: 145, weight: 2 },  // Zapdos
                 { pokemonId: 53, weight: 3 }    // Persian
             ],
-            eventPool: ["giovanni_reveal", "team_rocket_final", "gary_final_rival", "giovanni_final_offer", "gary_last_stand"],
+            eventPool: ["team_rocket_final", "giovanni_final_offer", "gary_last_stand"],
             flavor: "You've come full circle. The gym that was once locked now opens its doors."
         },
         {
@@ -639,7 +639,7 @@
                 { pokemonId: 85, weight: 5 },   // Dodrio
                 { pokemonId: 47, weight: 7 }    // Parasect
             ],
-            eventPool: ["gary_final_rival", "gary_last_stand", "route22_rival_ambush", "route22_nidoran_pair"],
+            eventPool: ["gary_last_stand", "route22_rival_ambush", "route22_nidoran_pair"],
             flavor: "The road west of Viridian. Your rival's presence lingers."
         },
         {
@@ -667,7 +667,7 @@
                 { pokemonId: 75, weight: 7 },   // Graveler
                 { pokemonId: 105, weight: 5 }   // Marowak
             ],
-            eventPool: ["gary_final_rival", "route23_badge_gates", "route23_veteran_advice"],
+            eventPool: ["route23_badge_gates", "route23_veteran_advice"],
             flavor: "Badge check gates loom ahead. Only the worthy may pass."
         },
         {
@@ -697,7 +697,7 @@
                 { pokemonId: 148, weight: 7 },  // Dragonair
                 { pokemonId: 18, weight: 5 }    // Pidgeot
             ],
-            eventPool: ["victory_road_cave", "champion_battle", "mewtwo_cave", "victory_road_guardian", "champion_ghost", "vr_fallen_trainer", "vr_underground_stream", "vr_rival_campfire", "vr_cave_in", "vr_veteran_trainer", "vr_fossil_cache", "vr_moltres_shadow", "vr_darkness_maze", "vr_last_chance_merchant"],
+            eventPool: ["victory_road_cave", "mewtwo_cave", "victory_road_guardian", "champion_ghost", "vr_fallen_trainer", "vr_underground_stream", "vr_rival_campfire", "vr_cave_in", "vr_veteran_trainer", "vr_fossil_cache", "vr_moltres_shadow", "vr_darkness_maze", "vr_last_chance_merchant"],
             flavor: "The longest, darkest cave in Kanto. Many trainers never emerge."
         },
         {
