@@ -11,9 +11,8 @@
                 <div class="victory-title">CHAMPION!</div>
                 <div class="text-box text-center" style="font-size: 8px;">
                     ${state.trainerName} has defeated the Kanto Elite Four and become Champion!
-                    <br><br>A call comes in from Prof. Elm in New Bark Town — a new region,
-                    Johto, has opened up to trainers who've proven themselves in Kanto.
-                    <br><br>Continue the journey, or end it here in the Hall of Fame?
+                    <br><br>A call comes in from Prof. Oak: Congratulations! My colleague would
+                    like to meet you. Your journey isn't over yet!
                 </div>
                 <div class="btn-row" style="width: 100%; max-width: 500px; margin-top: 12px;">
                     <button class="btn flex-1" id="btn-continue-johto">CONTINUE TO JOHTO</button>
