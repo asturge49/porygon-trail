@@ -8,9 +8,7 @@
     function getSellPrice(key, state) {
         const item = PT.Data.Items[key];
         if (!item) return 0;
-        // Food sells per 10 rations (same as buy unit). Uses the
-        // region-aware price so Johto's pricier balls/potions/repels also
-        // sell back for more (§12 — money scarcity in Johto).
+        // Food sells per 10 rations (same as buy unit).
         return Math.floor(PT.Data.getItemPrice(key, state) / 2);
     }
 
@@ -41,7 +39,6 @@
 
             function renderShop() {
                 const sellable = getSellableItems(state);
-                const inJohto = state.region === 'johto';
 
                 div.innerHTML = `
                     <div class="panel-header text-center">${route.name} POKE MART</div>
@@ -56,14 +53,13 @@
                                 const item = items[key];
                                 const price = PT.Data.getItemPrice(key, state);
                                 const canAfford = state.resources.money >= price;
-                                const priceHiked = inJohto && price > item.price;
                                 return `
                                     <div class="shop-item">
                                         <div class="shop-item-info">
                                             <div class="shop-item-name">${item.name}</div>
                                             <div class="shop-item-desc">${item.desc} | Have: ${state.resources[key] || 0}</div>
                                         </div>
-                                        <div class="shop-item-price"${priceHiked ? ' style="color:#c54;" title="Johto prices run higher"' : ''}>$${price}</div>
+                                        <div class="shop-item-price">$${price}</div>
                                         <button class="btn btn-small buy-btn" data-item="${key}" ${canAfford ? '' : 'disabled'}>BUY</button>
                                         <button class="btn btn-small buy-5-btn" data-item="${key}" ${state.resources.money >= price * 5 ? '' : 'disabled'}>x5</button>
                                     </div>
@@ -90,7 +86,7 @@
                         </div>
                     `}
                     <div class="text-box" id="shop-message" style="min-height: 30px; font-size: 7px;">
-                        ${currentTab === 'buy' ? (inJohto ? 'Welcome! Prices run higher out here in Johto.' : 'Welcome! What would you like to buy?') : 'Sell items for half their buy price.'}
+                        ${currentTab === 'buy' ? 'Welcome! What would you like to buy?' : 'Sell items for half their buy price.'}
                     </div>
                     <button class="btn btn-wide" id="btn-back">LEAVE SHOP</button>
                 `;

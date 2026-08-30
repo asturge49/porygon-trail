@@ -17,21 +17,34 @@
         const levelVariance = state.rng.randInt(-2, 3);
         const level = Math.max(2, pokemonData.baseLevel + levelVariance);
 
+        // Flagged encounter-table override (§10.4) — e.g. the Lake of Rage
+        // Shiny Gyarados: same species/dex id, cosmetic shiny palette plus a
+        // bumped HP tier, not a new Pokedex entry.
+        const shiny = !!entry.shiny;
+        const displayName = shiny ? `Shiny ${pokemonData.name}` : pokemonData.name;
+
         return {
             id: pokemonData.id,
-            name: pokemonData.name,
+            name: displayName,
             types: pokemonData.types,
             rarity: pokemonData.rarity,
             level: level,
             travelAbility: pokemonData.travelAbility,
-            spriteUrl: PT.Engine.GameState.getSpriteUrl(pokemonData.id, state.region)
+            spriteUrl: PT.Engine.GameState.getSpriteUrl(pokemonData.id, state.region, shiny),
+            shiny: shiny,
+            hpOverride: entry.hpOverride
         };
     }
 
     // Roaming legendary beasts (§8.5) — active from the moment the run enters
     // Johto, independent of any route's encounterTable. A small per-day chance
     // per uncaught beast, checked alongside the normal encounter roll.
-    const ROAM_CHANCE_PER_BEAST = 4;
+    // Calibrated to match Kanto's own legendary rate: Zapdos's event (weight 3
+    // against ~1400 total competing event weight, gated behind the ~25% daily
+    // event roll) fires roughly 0.05%/day in practice — about 5% cumulative
+    // over a full run. This was 4 (80x too high) until a playtest turned up
+    // all three beasts, plus a Raikou sighting, well before the first gym.
+    const ROAM_CHANCE_PER_BEAST = 0.05;
 
     function rollRoamEncounter(state) {
         if (state.region !== 'johto') return null;
@@ -150,7 +163,10 @@
         // Add to party if space
         if (state.party.length < 6) {
             const pokemonData = PT.Data.Pokemon.find(p => p.id === pokemon.id);
-            const partyMember = PT.Engine.GameState.createPartyPokemon(pokemonData, state);
+            const overrides = pokemon.shiny
+                ? { shiny: true, name: pokemon.name, hp: pokemon.hpOverride, maxHp: pokemon.hpOverride }
+                : undefined;
+            const partyMember = PT.Engine.GameState.createPartyPokemon(pokemonData, state, overrides);
             state.party.push(partyMember);
             return { added: true, message: `${pokemon.name} joined your team!` };
         } else {

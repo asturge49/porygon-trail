@@ -342,6 +342,7 @@
         // never re-derived — a mon caught in Kanto keeps Gen I art forever,
         // even if it later evolves or the run crosses into Johto (§4.1).
         const spriteGen = (state && state.region) || 'kanto';
+        const shiny = !!(overrides && overrides.shiny);
         const pokemon = {
             id: data.id,
             name: data.name,
@@ -352,7 +353,7 @@
             status: 'healthy',
             travelAbility: data.travelAbility,
             spriteGen: spriteGen,
-            spriteUrl: getSpriteUrl(data.id, spriteGen),
+            spriteUrl: getSpriteUrl(data.id, spriteGen, shiny),
             battleWins: 0,
             battleStars: 0,
             hpBonus: 0,  // permanent HP Up stacks — survives evolution, see evolvePokemon
@@ -368,9 +369,15 @@
     // `source` is the sprite generation to render, keyed off catch-region —
     // 'johto' gets Crystal art, everything else (including undefined, for
     // legacy callers) keeps the original Gen I Red/Blue/Gray art.
-    function getSpriteUrl(id, source) {
+    function getSpriteUrl(id, source, shiny) {
         if (id === 0) {
             return 'https://archives.bulbagarden.net/media/upload/9/98/Missingno_RB.png';
+        }
+        // Shiny art only exists in the Crystal sprite set (Gen I had no shiny
+        // mechanic at all) — the Lake of Rage Shiny Gyarados (§10.4) always
+        // uses this path regardless of catch-region/id.
+        if (shiny) {
+            return `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-ii/crystal/shiny/${id}.png`;
         }
         // Gen II species (dex 152+) have no Gen I sprite sheet at all — Crystal
         // art applies regardless of catch-region, since there's no "Kanto art"
@@ -645,7 +652,7 @@
         partyMon.types = evoData.types;
         partyMon.rarity = evoData.rarity;
         partyMon.travelAbility = evoData.travelAbility;
-        partyMon.spriteUrl = getSpriteUrl(evoData.id, partyMon.spriteGen || 'kanto');
+        partyMon.spriteUrl = getSpriteUrl(evoData.id, partyMon.spriteGen || 'kanto', partyMon.shiny);
         // Set new maxHp — use override if exists, otherwise +1 capped at 6.
         // HP Up bonus is tracked separately so it survives being reset by
         // the species-based evolution jump below, then re-added on top.
@@ -876,7 +883,7 @@
             // Rebuild sprite URLs (they aren't stored but party refs need them) —
             // each mon's own spriteGen (frozen at catch time) picks its art.
             data.party.forEach(p => {
-                p.spriteUrl = getSpriteUrl(p.id, p.spriteGen || 'kanto');
+                p.spriteUrl = getSpriteUrl(p.id, p.spriteGen || 'kanto', p.shiny);
             });
             // Older saves predate the buffs schema — default it in
             if (!data.buffs) data.buffs = createDefaultBuffs();
@@ -942,7 +949,7 @@
             saveData.rng.setState(saveData._rngState);
             delete saveData._rngSeed;
             delete saveData._rngState;
-            (saveData.party || []).forEach(p => { p.spriteUrl = getSpriteUrl(p.id, p.spriteGen || 'kanto'); });
+            (saveData.party || []).forEach(p => { p.spriteUrl = getSpriteUrl(p.id, p.spriteGen || 'kanto', p.shiny); });
             if (!saveData.buffs) saveData.buffs = createDefaultBuffs();
             if (saveData.region === undefined) saveData.region = 'kanto';
             if (!saveData.completedRegions) saveData.completedRegions = [];

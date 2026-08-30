@@ -387,7 +387,7 @@
     // random `pokemon` entry per trainer per run via state.rng.pick().
     PT.Data.JohtoEliteFour = [
         {
-            name: "Lorelei", title: "Ice Master (Rematch)", type: "ice",
+            name: "Lorelei", title: "Ice Master", type: "ice",
             introText: "Lorelei's glasses catch the light. \"You again! I've had a long time to sharpen my team since Kanto. Let's see if you've grown too.\"",
             defeatText: "\"Impressive... you're a different trainer than the one I remember.\"",
             pokemon: [
@@ -398,7 +398,7 @@
             ]
         },
         {
-            name: "Bruno", title: "Fighting Elite (Rematch)", type: "fighting",
+            name: "Bruno", title: "Fighting Elite", type: "fighting",
             introText: "Bruno cracks his knuckles. \"Still training in the mountains, still pushing past my limits. Show me how far you've come!\"",
             defeatText: "\"Hah! Good! A rematch should feel like that. Go — the others are waiting.\"",
             pokemon: [
@@ -410,7 +410,7 @@
             ]
         },
         {
-            name: "Agatha", title: "Ghost Specialist (Rematch)", type: "ghost",
+            name: "Agatha", title: "Ghost Specialist", type: "ghost",
             introText: "Agatha's cackle echoes off the league walls. \"Back for more nightmares? My ghosts have gotten meaner with age!\"",
             defeatText: "\"Ohoho! You've got some fight in you still. But the worst is yet to come...\"",
             pokemon: [
@@ -421,7 +421,7 @@
             ]
         },
         {
-            name: "Lance", title: "Dragon Master (Rematch)", type: "dragon",
+            name: "Lance", title: "Dragon Master", type: "dragon",
             introText: "Lance's cape billows once more. \"I told you my dragons never lose. Let's find out if that's still true.\"",
             defeatText: "\"...Unbelievable. Go face the Champion — you've earned it twice over.\"",
             pokemon: [
@@ -432,7 +432,7 @@
             ]
         },
         {
-            name: "Blue", title: "Pokemon Champion (Rematch)", type: "mixed",
+            name: "Blue", title: "Pokemon Champion", type: "mixed",
             introText: "Blue leans against the throne, arms crossed. \"Didn't think I'd let the title go that easily, did you? I've been training nonstop since Kanto.\"",
             defeatText: "\"...Ha. HA! Unbelievable! You've done it again. You're still the Champion!\"",
             // Deliberately avoids duplicating Lance's dragon lean (§9.2) —

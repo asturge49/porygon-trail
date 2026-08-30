@@ -96,7 +96,7 @@
             <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin: 8px 0;">
                 ${pool.map((trainer, i) => `
                     <div style="text-align: center; font-size: 7px; min-width: 55px;">
-                        <img src="${PT.Engine.GameState.getSpriteUrl(opponents[i].id)}"
+                        <img src="${PT.Engine.GameState.getSpriteUrl(opponents[i].id, isJohto ? 'johto' : undefined)}"
                              style="width: 40px; height: 40px; image-rendering: pixelated;"
                              onerror="this.style.display='none'">
                         <div style="font-weight: bold;">${trainer.name}</div>
@@ -127,7 +127,7 @@
         const { e4Index, opponents } = params;
         const trainer = pool[e4Index];
         const opponent = opponents[e4Index];
-        const opponentSprite = PT.Engine.GameState.getSpriteUrl(opponent.id);
+        const opponentSprite = PT.Engine.GameState.getSpriteUrl(opponent.id, state.region === 'johto' ? 'johto' : undefined);
 
         // Get opponent types
         const opponentData = PT.Data.Pokemon.find(p => p.id === opponent.id);
@@ -193,7 +193,7 @@
         pool = pool || getPool(state);
         const { e4Index, opponents } = params;
         const opponent = opponents[e4Index];
-        const opponentSprite = PT.Engine.GameState.getSpriteUrl(opponent.id);
+        const opponentSprite = PT.Engine.GameState.getSpriteUrl(opponent.id, state.region === 'johto' ? 'johto' : undefined);
 
         // Get opponent types for battle calc
         const opponentData = PT.Data.Pokemon.find(p => p.id === opponent.id);
@@ -334,12 +334,13 @@
                     // so a Johto win can never fall through to the old
                     // straight-to-Hall-of-Fame behavior.
                     if (state.region === 'johto') {
-                        // §9.4: Johto E4 clear money reward — bigger than
-                        // Kanto's ($5000) and bigger than any mid-run Johto
-                        // gym reward (up to $3200), sized to matter at the
-                        // Indigo Plateau (Johto) restock stop (§9.5) before
-                        // the ~100-distance Mt. Silver stretch.
-                        const JOHTO_E4_MONEY_REWARD = 7000;
+                        // §9.4: Johto E4 clear money reward — matches Kanto's
+                        // ($5000), still bigger than any mid-run Johto gym
+                        // reward (up to $3200), sized to matter at the Indigo
+                        // Plateau (Johto) restock stop (§9.5) before the
+                        // ~100-distance Mt. Silver stretch, without stacking
+                        // on top of Kanto's reward to feel excessive.
+                        const JOHTO_E4_MONEY_REWARD = 5000;
                         const e4MoneyReward = PT.Engine.GameState.applyPayDay(state, JOHTO_E4_MONEY_REWARD);
                         state.resources.money += e4MoneyReward;
                         state.johtoE4Cleared = true;

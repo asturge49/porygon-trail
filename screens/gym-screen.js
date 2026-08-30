@@ -393,12 +393,12 @@
             <div class="text-box text-center" style="font-size: 8px;">
                 ${leader.name} battles the full team — beat all three Pokemon
                 back-to-back to earn the ${leader.badge}.
-                <br><strong>Losing any single battle ends the attempt.</strong>
+                <br><strong>A loss costs you that Pokemon, but the gauntlet continues — you'll need alive Pokemon left to keep going.</strong>
             </div>
             <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin: 8px 0;">
                 ${leader.pokemon.map(mon => `
                     <div style="text-align: center; font-size: 7px; min-width: 55px;">
-                        <img src="${PT.Engine.GameState.getSpriteUrl(mon.id)}" alt="${mon.name}"
+                        <img src="${PT.Engine.GameState.getSpriteUrl(mon.id, 'johto')}" alt="${mon.name}"
                              style="width: 40px; height: 40px; image-rendering: pixelated;"
                              onerror="this.style.display='none'">
                         <div style="font-weight: bold;">${mon.name}${mon.ace ? ' ⭐' : ''}</div>
@@ -420,7 +420,7 @@
 
     function renderGauntletBattleSelect(container, state, leader, leaderId, round) {
         const opponent = leader.pokemon[round];
-        const opponentSprite = PT.Engine.GameState.getSpriteUrl(opponent.id);
+        const opponentSprite = PT.Engine.GameState.getSpriteUrl(opponent.id, 'johto');
         const isAce = !!opponent.ace;
 
         const opponentData = PT.Data.Pokemon.find(p => p.id === opponent.id);
@@ -482,7 +482,10 @@
 
     function resolveGauntletBattle(pokemon, leader, leaderId, state, container, opponent, round) {
         const isAce = !!opponent.ace;
-        const opponentSprite = PT.Engine.GameState.getSpriteUrl(opponent.id);
+        // Johto gym rosters mix in Kanto-origin species (Clefairy, Magneton,
+        // Dragonite, ...) — always render them with Crystal art here so the
+        // whole gauntlet reads as Johto, not just the Gen II-only members.
+        const opponentSprite = PT.Engine.GameState.getSpriteUrl(opponent.id, 'johto');
         const opponentData = PT.Data.Pokemon.find(p => p.id === opponent.id);
         const opponentTypes = opponentData ? opponentData.types : [leader.type];
         const typeChart = getTypeWeaknesses(opponentTypes);
@@ -535,6 +538,7 @@
         div.className = 'screen gym-screen';
 
         if (won) {
+            if (PT.Engine.Audio) PT.Engine.Audio.gymVictory();
             const evoResult = PT.Engine.GameState.evolvePokemon(pokemon, state);
             let evoLine = '';
             if (evoResult.evolved) {
@@ -561,7 +565,6 @@
                 gymMoneyReward = PT.Engine.GameState.applyPayDay(state, leader.reward.money);
                 state.resources.money += gymMoneyReward;
                 PT.Engine.GameState.addToLog(state, `Swept ${leader.name}'s gym! Got ${leader.badge}!`);
-                if (PT.Engine.Audio) PT.Engine.Audio.gymVictory();
                 PT.Engine.Telemetry.logEvent('johto_gym_cleared', {
                     leader_id: leaderId, badge: leader.badge, pokemon_id: pokemon.id,
                     win_chance: chance, party_size: state.party.length,
@@ -607,9 +610,11 @@
             return;
         }
 
-        // Loss — same death/damage mechanic as Kanto's single battle, but
-        // ends the whole gauntlet attempt rather than offering an immediate
-        // retry; the player has to walk back in and start over from Pokemon 1.
+        // Loss — same death/damage mechanic as Kanto's single battle. Unlike
+        // the old reset-to-round-0 behavior, this mirrors the Elite Four:
+        // losing doesn't end the attempt, it just costs a Pokemon and lets
+        // the player send in another against this SAME opponent. Only a full
+        // party wipe ends the gauntlet (and the run).
         if (PT.Engine.Audio) PT.Engine.Audio.gymDefeat();
         const deathChance = isAce ? 60 : 30;
         const gymIndex = PT.Data.GymOrder.indexOf(leaderId);
@@ -647,10 +652,13 @@
 
         const died = gymKilled || gymFainted;
         if (died) {
-            PT.Engine.GameState.addToLog(state, `Lost the gauntlet to ${leader.name}'s ${opponent.name}. ${pokemon.name} was killed! 💀`);
+            PT.Engine.GameState.addToLog(state, `Lost to ${leader.name}'s ${opponent.name}. ${pokemon.name} was killed! 💀`);
         } else {
-            PT.Engine.GameState.addToLog(state, `Lost the gauntlet to ${leader.name}'s ${opponent.name}. ${pokemon.name} was badly hurt.`);
+            PT.Engine.GameState.addToLog(state, `Lost to ${leader.name}'s ${opponent.name}. ${pokemon.name} was badly hurt.`);
         }
+
+        const aliveAfter = PT.Engine.GameState.getAliveParty(state);
+        const partyWiped = aliveAfter.length === 0;
 
         div.innerHTML = `
             <div class="event-title">DEFEAT...</div>
@@ -671,22 +679,25 @@
                         : `${pokemon.name} takes ${damage} damage from ${opponent.name}!`}
                     ${focusBandSaved ? `<br>🎒 FOCUS BAND: ${pokemon.name} held on through what should've been a finishing blow!` : ''}
                     ${isAce ? '<br><span style="font-size: 6px;">⚠️ Ace Pokemon ignore Battle Star protection!</span>' : ''}
-                    <br><span style="font-size: 6px;">The gauntlet resets — you'll need to beat all ${leader.pokemon.length} again from the start.</span>
                     <br><span style="font-size: 6px;">Win chance was ${chance}%${battleBonuses.length > 0 ? ' (' + battleBonuses.join(', ') + ')' : ''}</span>
+                    ${partyWiped
+                        ? '<br><strong>All your Pokemon have fallen...</strong>'
+                        : `<br>You must defeat ${leader.name}'s ${opponent.name} to advance.`}
                 </div>
             </div>
-            <button class="btn btn-wide" id="btn-gauntlet-continue">CONTINUE</button>
+            <button class="btn btn-wide" id="btn-gauntlet-continue">${partyWiped ? 'GAME OVER' : 'CHOOSE ANOTHER POKEMON'}</button>
         `;
         container.appendChild(div);
         PT.Engine.GameState.saveGame(state);
 
         document.getElementById('btn-gauntlet-continue').addEventListener('click', () => {
-            if (state.isGameOver || state.party.length === 0) {
+            if (partyWiped) {
                 state.isGameOver = true;
                 if (!state.gameOverReason) state.gameOverReason = 'party_wiped';
                 PT.App.goto('GAMEOVER');
             } else {
-                PT.App.goto('TRAVEL');
+                // Same opponent, same round — pick another alive Pokemon.
+                PT.App.goto('GYM', { gymLeader: leaderId, gymRound: round });
             }
         });
     }
