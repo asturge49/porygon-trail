@@ -430,10 +430,7 @@
                 } else if (results.event) {
                     nextAction = () => PT.App.goto('EVENT', { event: results.event });
                 } else if (results.arrivedAtLocation) {
-                    nextAction = () => {
-                        state._gymWarningShown = null;
-                        handleArrival(state);
-                    };
+                    nextAction = () => handleArrival(state);
                 } else {
                     nextAction = () => PT.App.goto('TRAVEL');
                 }
@@ -582,12 +579,15 @@
                     return;
                 }
 
-                // Gym departure warning — only trigger when this CONTINUE would cause departure
+                // Gym departure warning — fires every time a CONTINUE could cause
+                // departure with the local gym unbeaten, not just the first time
+                // (e.g. losing a gym battle and then absent-mindedly hitting
+                // CONTINUE again should still warn before walking out of town).
                 const gymLeaderData = route.hasGym ? PT.Data.GymLeaders[route.gymLeader] : null;
                 const hasUnbeatenGym = gymLeaderData && !state.badges.includes(gymLeaderData.badge);
                 const wouldProgress = state.pace !== 'explore';
 
-                if (hasUnbeatenGym && wouldProgress && state._gymWarningShown !== route.id) {
+                if (hasUnbeatenGym && wouldProgress) {
                     // Estimate if this step would cause arrival
                     const paceConfig = PT.Engine.TravelEngine.PACE_CONFIG[state.pace] || PT.Engine.TravelEngine.PACE_CONFIG.steady;
                     const remaining = route.distanceToNext - state.distanceTraveled;
@@ -596,7 +596,6 @@
 
                     if (remaining <= maxPossibleTravel) {
                         // This continue could be the last — show gym warning
-                        state._gymWarningShown = route.id;
                         // Show gym warning as overlay popup
                         const gymOverlay = document.createElement('div');
                         gymOverlay.className = 'day-recap-overlay';

@@ -54,7 +54,7 @@
                 pokedexCount: state.pokedexCaught.length,
                 pokedexIds: state.pokedexCaught,
                 legendaryIds: PT.Engine.Scoring.getLegendaryIds(state),
-                badges: state.badges.length,
+                badges: state.badges.filter(b => b !== 'champion').length,
                 daysElapsed: state.daysElapsed,
                 date: new Date().toLocaleDateString(),
                 won: true,
