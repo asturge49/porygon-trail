@@ -1337,6 +1337,14 @@ body {
     flex-shrink: 0;
 }
 
+/* This recolor filter exists to tint Gen I's naturally monochrome sprites
+   into the game's palette — Johto/Crystal sprites are already in full
+   color, so applying it there just muddies them toward grayscale. */
+.travel-party-sprite.johto-sprite,
+.trail-pokemon-sprite.johto-sprite {
+    filter: none;
+}
+
 .travel-party-info {
     flex: 1;
     min-width: 0;

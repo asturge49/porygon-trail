@@ -9,7 +9,7 @@
         const isChampion = dex.champions.includes(p.id);
         return `
             <div class="travel-party-member ${p.hp <= 1 ? 'critical' : ''} ${isChampion ? 'champion' : ''}" data-party-idx="${idx}" style="cursor:pointer;" title="${isChampion ? 'Champion Pokemon' : ''}">
-                <img class="travel-party-sprite" src="${p.spriteUrl}" alt="${p.name}" onerror="this.style.display='none'">
+                <img class="travel-party-sprite${p.spriteGen === 'johto' ? ' johto-sprite' : ''}" src="${p.spriteUrl}" alt="${p.name}" onerror="this.style.display='none'">
                 <div class="travel-party-info">
                     <div class="travel-party-name">${isChampion ? '&#9733; ' : ''}${p.name}</div>
                     <div class="travel-hp-bar">
@@ -272,10 +272,13 @@
             // Party Pokemon sprites — all alive members walk in a line, sized by actual Pokemon size
             const aliveParty = state.party.filter(p => p.status !== 'fainted' && p.hp > 0);
             const partySprites = aliveParty.map((p, i) => {
-                const spriteUrl = PT.Engine.GameState.getSpriteUrl(p.id);
+                // Use the mon's own cached spriteUrl (frozen at catch time, §4.1)
+                // rather than recomputing — recomputing with no source arg always
+                // defaults to Gen I art, which is wrong for a Johto catch.
                 const delay = (i + 1) * 0.15; // stagger the bounce, +1 to offset from trainer
                 const sizeClass = getPokemonSizeClass(p.id);
-                return `<img class="trail-pokemon-sprite ${sizeClass}" src="${spriteUrl}" alt="${p.name}" style="animation-delay:${delay}s;" onerror="this.style.display='none'">`;
+                const johtoClass = p.spriteGen === 'johto' ? ' johto-sprite' : '';
+                return `<img class="trail-pokemon-sprite ${sizeClass}${johtoClass}" src="${p.spriteUrl}" alt="${p.name}" style="animation-delay:${delay}s;" onerror="this.style.display='none'">`;
             }).join('');
             const trainerHtml = trainerSprite + partySprites;
 

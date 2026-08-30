@@ -381,11 +381,13 @@
 
     function showTradeUI(state, incomingData, target, choicesDiv, narrative) {
         const newPokemon = PT.Engine.GameState.createPartyPokemon(incomingData, state);
-        const inSprite = PT.Engine.GameState.getSpriteUrl(incomingData.id);
+        // newPokemon.spriteUrl is already correctly computed (region-aware) by
+        // createPartyPokemon — reuse it rather than recomputing with no source.
+        const inSprite = newPokemon.spriteUrl;
 
         // If we have a specific target, show the direct trade proposal
         if (target) {
-            const targetSprite = PT.Engine.GameState.getSpriteUrl(target.id);
+            const targetSprite = target.spriteUrl;
             choicesDiv.innerHTML = `
                 <div style="text-align:center;margin-bottom:6px;">
                     <div style="font-size:9px;font-weight:bold;margin-bottom:6px;">TRADE PROPOSAL</div>
@@ -445,11 +447,14 @@
     }
 
     function showTradePartyView(state, incomingData, newPokemon, target, choicesDiv, narrative) {
-        const inSprite = PT.Engine.GameState.getSpriteUrl(incomingData.id);
-        const targetSprite = PT.Engine.GameState.getSpriteUrl(target.id);
+        const inSprite = newPokemon.spriteUrl;
+        const targetSprite = target.spriteUrl;
 
         const partyRows = state.party.map(p => {
-            const sprite = PT.Engine.GameState.getSpriteUrl(p.id);
+            // Use the mon's own cached spriteUrl (frozen at catch time, §4.1)
+            // rather than recomputing with no source — that always defaults to
+            // Gen I art, which is wrong for a Johto catch.
+            const sprite = p.spriteUrl;
             const isTarget = p === target;
             return `<div style="display:flex;align-items:center;gap:6px;padding:3px 4px;font-size:8px;${isTarget ? 'background:var(--gb-light);border:1px solid var(--gb-darkest);' : 'border-bottom:1px solid var(--gb-light);'}">
                 <img src="${sprite}" style="width:24px;height:24px;image-rendering:pixelated;" onerror="this.style.display='none'">
