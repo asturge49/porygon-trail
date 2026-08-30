@@ -8493,7 +8493,3439 @@
                     ]
                 }
             ]
+        },
+
+        // ===================================================================
+        // ===== JOHTO: NEW BARK TOWN -> GOLDENROD CITY (Events agent A) =====
+        // ===================================================================
+
+        // ----- New Bark Town -----
+        {
+            id: "new_bark_elm_lab_visit",
+            type: "story",
+            name: "Elm's Lab, Again",
+            description: "Professor Elm waves you over from his cluttered lab. \"Oh, good, you're still here! I promise I'm not going to hand you another Pokemon. I just — well, I might have some spare supplies. For the road.\" Behind him, an Aide is quietly re-alphabetizing a bookshelf that does not need it.",
+            weight: 10,
+            oneTime: false,
+            maxTriggers: 2,
+            minDay: 0,
+            locationIds: ["new_bark_town"],
+            choices: [
+                {
+                    text: "Take the supplies",
+                    outcomes: [
+                        { weight: 55, narration: "Elm loads you up with Pokeballs and traveling snacks. \"Route 29's not bad, but don't dawdle — Mr. Pokemon's expecting a visit from someone eventually, and it might as well be you.\"", effects: { pokeballs: 5, food: 10 } },
+                        { weight: 30, narration: "\"Here — a couple of Potions. Untested on Sentret, but they worked fine on my terrarium worms.\" You elect not to ask.", effects: { potions: 2 } },
+                        { weight: 15, narration: "Elm accidentally hands you a stack of grant paperwork instead of supplies, realizes his mistake, and swaps it for a Rare Candy with an embarrassed laugh.", effects: { rareCandy: 1 } }
+                    ]
+                },
+                {
+                    text: "\"I should get going.\"",
+                    outcomes: [
+                        { weight: 100, narration: "\"Right, right! Good luck out there.\" Elm returns to his bookshelf crisis.", effects: {} }
+                    ]
+                }
+            ]
+        },
+        {
+            id: "new_bark_rival_intro",
+            type: "story",
+            name: "A Kid in Elm's Doorway",
+            description: "A kid with red hair leans against the lab's doorframe, watching you with an expression that has already decided you're not interesting. \"You're the one Elm keeps talking about.\" He says it like an accusation. \"Whatever. I'm not here for you.\" He doesn't leave.",
+            weight: 12,
+            oneTime: true,
+            locationIds: ["new_bark_town"],
+            choices: [
+                {
+                    text: "\"Something wrong?\"",
+                    outcomes: [
+                        { weight: 60, narration: "\"Nothing you'd understand.\" He pushes off the doorframe and walks past you without another word — but not before sizing up your party, unimpressed and making sure you saw it.", effects: {} },
+                        { weight: 40, narration: "He doesn't answer. He just looks at your party, snorts once, and leaves. You get the distinct feeling this won't be the last you see of him.", effects: {} }
+                    ]
+                },
+                {
+                    text: "Ignore him",
+                    outcomes: [
+                        { weight: 100, narration: "You walk past. He watches you go, silent, all the way down the path. Somehow that's worse.", effects: {} }
+                    ]
+                }
+            ]
+        },
+
+        // ----- Route 29 -----
+        {
+            id: "route29_general",
+            type: "story",
+            name: "Route 29",
+            description: "Low grass, wooden fences, and a lot of Sentret standing up on their hind legs to check you out before diving back into the brush. Johto's first road is gentler than Kanto's, and everyone you pass seems to know it.",
+            weight: 9,
+            oneTime: false,
+            locationIds: ["route_29"],
+            choices: [
+                {
+                    text: "Keep walking",
+                    outcomes: [
+                        { weight: 45, narration: "A quiet stretch. A Hoothoot hoots exactly once, on the hour, like clockwork. You're almost sad to leave it behind.", effects: {} },
+                        { weight: 30, narration: "A farmer waves you down and hands you some vegetables. \"Try growing your own next time you settle down,\" she says, as if that's an option.", effects: { food: 8 } },
+                        { weight: 25, narration: "You find a Pokeball caught in a fence post, abandoned and empty. Still usable, probably.", effects: { pokeballs: 2 } }
+                    ]
+                }
+            ]
+        },
+        {
+            id: "route29_rival_encounter",
+            type: "combat",
+            name: "The Kid Again",
+            description: "The red-haired kid from New Bark Town is standing in the middle of the road like he's been waiting. Maybe he has. \"Figured you'd be slow. Let's see what Elm gave you.\"",
+            weight: 10,
+            oneTime: true,
+            minDay: 1,
+            locationIds: ["route_29"],
+            requiresEventOccurred: "new_bark_rival_intro",
+            choices: [
+                {
+                    text: "Accept the battle",
+                    eventBattle: {
+                        pool: "trainer",
+                        difficulty: "easy",
+                        trainerName: "??? (Rival)",
+                        winNarration: "You win, barely. He stares at his Pokemon like it personally betrayed him. \"...Fine. This time.\" He walks off without another word.",
+                        lossNarration: "He doesn't gloat. He doesn't even look satisfied. He just turns and walks away like the outcome was never in question.",
+                        winEffects: { money: 300 },
+                        lossEffects: { food: -5 }
+                    }
+                },
+                {
+                    text: "\"Not right now.\"",
+                    outcomes: [
+                        { weight: 100, narration: "\"Whatever. Didn't want to waste the time anyway.\" He's gone before you finish the sentence.", effects: {} }
+                    ]
+                }
+            ]
+        },
+        {
+            id: "route29_bird_watcher",
+            type: "story",
+            name: "Bird Watcher",
+            description: "A Bird Watcher lies flat in the grass, binoculars trained skyward, utterly still. \"Shh. Pidgey. No — Spearow. No — okay, it's gone. You scared it.\"",
+            weight: 7,
+            oneTime: false,
+            minDay: 1,
+            locationIds: ["route_29"],
+            choices: [
+                {
+                    text: "Apologize and chat",
+                    outcomes: [
+                        { weight: 55, narration: "\"It's fine, it's fine. Here — take this, for the trouble.\" She hands you a Potion without looking away from the sky.", effects: { potions: 1 } },
+                        { weight: 30, narration: "She talks your ear off about Hoothoot migration patterns for a solid twenty minutes. You learn nothing you'll ever use, but she seems happy.", effects: {} },
+                        { weight: 15, narration: "\"You know what, since you're here — help me spot something.\" You do, and between the two of you, you flush out a Sentret hiding in the reeds. It's friendly enough to follow you.", effects: { catchPokemon: 161 } }
+                    ]
+                },
+                {
+                    text: "Sneak past quietly",
+                    outcomes: [
+                        { weight: 100, narration: "You tiptoe by without incident. She never even notices.", effects: {} }
+                    ]
+                }
+            ]
+        },
+
+        // ----- Cherrygrove City -----
+        {
+            id: "cherrygrove_guide_tour",
+            type: "story",
+            name: "The Guide's Grand Tour",
+            description: "An older man in hiking gear intercepts you the second you set foot in Cherrygrove. \"First time in town? Wonderful! Let me show you around — the Pokemon Center, the Mart, this bench I'm quite fond of...\"",
+            weight: 10,
+            oneTime: true,
+            locationIds: ["cherrygrove_city"],
+            choices: [
+                {
+                    text: "Take the tour",
+                    outcomes: [
+                        { weight: 60, narration: "He walks you past every landmark Cherrygrove has, narrating each one with real enthusiasm. At the end he presses a hand-drawn map into your hands. \"For the road! I made copies. I have a lot of free time.\"", effects: { food: 5, pokeballs: 2 } },
+                        { weight: 40, narration: "The tour runs long — he insists on showing you the \"good\" bench a second time — but he sends you off with snacks and genuine warmth.", effects: { food: 10, daysLost: 1 } }
+                    ]
+                },
+                {
+                    text: "\"I know where a Pokemon Center is.\"",
+                    outcomes: [
+                        { weight: 100, narration: "His face falls for exactly one second before he recovers. \"Ah — of course! Well. Safe travels!\"", effects: {} }
+                    ]
+                }
+            ]
+        },
+        {
+            id: "cherrygrove_general",
+            type: "healing",
+            name: "Cherrygrove's Pokemon Center",
+            description: "A small, tidy Pokemon Center overlooking the water. The nurse here hums while she works, like she's never once had a bad day.",
+            weight: 9,
+            oneTime: false,
+            locationIds: ["cherrygrove_city"],
+            choices: [
+                {
+                    text: "Heal up and rest",
+                    outcomes: [
+                        { weight: 100, narration: "Your team is patched up, fed, and thoroughly fussed over. \"Come back anytime,\" the nurse says, and you believe her.", effects: { healAll: true, food: 5, daysLost: 1 } }
+                    ]
+                },
+                {
+                    text: "Quick heal, keep moving",
+                    outcomes: [
+                        { weight: 100, narration: "In and out in a few minutes. Everyone's healthy again.", effects: { healAll: true } }
+                    ]
+                }
+            ]
+        },
+
+        // ----- Route 30 -----
+        {
+            id: "route30_general",
+            type: "story",
+            name: "Route 30",
+            description: "Hoppip drift sideways across the path whenever the wind picks up, and there's a lot of wind. Somewhere off in the tall grass, a Bellsprout is having a very loud disagreement with a Caterpie.",
+            weight: 9,
+            oneTime: false,
+            locationIds: ["route_30"],
+            choices: [
+                {
+                    text: "Push onward",
+                    outcomes: [
+                        { weight: 40, narration: "A gust sends a whole cloud of Hoppip tumbling past you. It's oddly peaceful.", effects: {} },
+                        { weight: 30, narration: "You find a berry bush that hasn't been picked over yet. Small win.", effects: { food: 6 } },
+                        { weight: 30, narration: "The Bellsprout/Caterpie feud spills into your path. You step over both of them and keep going. Neither notices you.", effects: {} }
+                    ]
+                }
+            ]
+        },
+        {
+            id: "route30_mr_pokemon_errand",
+            type: "story",
+            name: "An Errand for Mr. Pokemon",
+            description: "A courier flags you down, out of breath. \"You're headed toward Cherrygrove way, right? Mr. Pokemon's expecting a delivery and I'm — \" he gestures at his own exhaustion \" — very much not going to make it today. Would you mind?\"",
+            weight: 8,
+            oneTime: true,
+            minDay: 2,
+            locationIds: ["route_30"],
+            choices: [
+                {
+                    text: "Run the errand",
+                    outcomes: [
+                        { weight: 50, narration: "Mr. Pokemon turns out to live in a cluttered little house full of half-finished inventions. He's delighted by the delivery and even more delighted to have a visitor. \"Oh, take these, take these — I have far too many.\"", effects: { pokeballs: 3, potions: 2, money: 300 } },
+                        { weight: 30, narration: "You find the house, but Mr. Pokemon isn't home — just a note on the door: \"Left the package's contents with the neighbor, sorry!\" The neighbor, bewildered, hands over a small reward anyway.", effects: { money: 400 } },
+                        { weight: 20, narration: "Mr. Pokemon is thrilled beyond reason by the delivery. \"You know, I've been meaning to thank whoever finally did this properly.\" He hands you a Rare Candy from an unlabeled drawer. You choose not to ask how old it is.", effects: { rareCandy: 1 } }
+                    ]
+                },
+                {
+                    text: "\"Sorry, not today.\"",
+                    outcomes: [
+                        { weight: 100, narration: "The courier sighs and trudges on to find someone less busy. You feel a little bad about it.", effects: {} }
+                    ]
+                }
+            ]
+        },
+        {
+            id: "route30_bug_catcher",
+            type: "combat",
+            name: "Route 30 Bug Catcher",
+            description: "A kid in a wide-brimmed hat blocks the path, net raised like a jousting lance. \"This is MY route! Bug Pokemon only, and I know all of them! Battle me!\"",
+            weight: 9,
+            oneTime: false,
+            minDay: 1,
+            locationIds: ["route_30"],
+            choices: [
+                {
+                    text: "Battle him",
+                    eventBattle: {
+                        pool: "trainer",
+                        difficulty: "easy",
+                        trainerName: "Bug Catcher",
+                        winNarration: "His Caterpie faints mid-String-Shot. \"Nooo! Okay, okay, you win. This time.\"",
+                        lossNarration: "Somehow his Weedle's Poison Sting does real work. He cheers like he's just won a championship.",
+                        winEffects: { money: 250 },
+                        lossEffects: { food: -3 }
+                    }
+                },
+                {
+                    text: "\"Maybe later.\"",
+                    outcomes: [
+                        { weight: 100, narration: "\"Chicken!\" he yells, but lets you pass.", effects: {} }
+                    ]
+                }
+            ]
+        },
+
+        // ----- Route 31 -----
+        {
+            id: "route31_general",
+            type: "story",
+            name: "Route 31",
+            description: "Rocky and cramped, Route 31 threads between boulders and shallow ponds where Poliwag drift in lazy circles. A Zubat colony somewhere overhead makes its presence known in short, unpleasant bursts.",
+            weight: 9,
+            oneTime: false,
+            locationIds: ["route_31"],
+            choices: [
+                {
+                    text: "Continue on",
+                    outcomes: [
+                        { weight: 40, narration: "A Sandshrew crosses your path, entirely unbothered by your existence, and vanishes into a burrow.", effects: {} },
+                        { weight: 30, narration: "You wade through a shallow pond crossing. Cold, but nothing worse than that.", effects: {} },
+                        { weight: 30, narration: "A Geodude was sitting in the path the whole time and you only just now notice it's not a rock. It grumbles and rolls off.", effects: { food: -2 } }
+                    ]
+                }
+            ]
+        },
+        {
+            id: "route31_dark_cave_warning",
+            type: "hazard",
+            name: "The Unlit Cave",
+            description: "A side passage yawns off the main path — pitch black, no torches, no signage. A weathered trail marker reads: DARK CAVE. TURN BACK IF UNPREPARED. Someone has scratched underneath it: \"seriously.\"",
+            weight: 7,
+            oneTime: false,
+            minDay: 3,
+            locationIds: ["route_31"],
+            choices: [
+                {
+                    text: "Push in without light",
+                    bonusAbility: "flash",
+                    outcomes: [
+                        { weight: 25, narration: "You feel your way along the wall for what might be an hour or might be four. Something skitters past your ankle. You do not investigate.", effects: { daysLost: 1, partyDamageAll: 1 } },
+                        { weight: 35, narration: "You get turned around twice and emerge from the exact entrance you started at. A wasted afternoon.", effects: { food: -5 } },
+                        { weight: 40, narration: "Blind luck — you find a shortcut through and pop out the far side, scraped up but faster for it.", effects: { partyDamageAll: 1 } }
+                    ],
+                    bonusOutcome: { weight: 100, narration: "Your Flash-capable Pokemon lights the cave up like a lantern. You cross without a single wrong turn.", effects: {} }
+                },
+                {
+                    text: "Heed the sign, stay on the main path",
+                    outcomes: [
+                        { weight: 100, narration: "You take the long way around. The marker was clearly written by someone who's learned this lesson personally.", effects: { daysLost: 1 } }
+                    ]
+                }
+            ]
+        },
+        {
+            id: "route31_violet_gate",
+            type: "story",
+            name: "Violet City Gate",
+            description: "The road narrows and climbs, and Violet City's watchtowers come into view above the treeline — spires topped with what look like enormous, ancient bells. A gatekeeper nods you through without much ceremony.",
+            weight: 8,
+            oneTime: true,
+            locationIds: ["route_31"],
+            minDay: 2,
+            choices: [
+                {
+                    text: "Approach the gate",
+                    outcomes: [
+                        { weight: 60, narration: "\"Here for the Gym, I bet,\" the gatekeeper says, not really asking. \"Falkner's tough. Good luck.\" He waves you through.", effects: {} },
+                        { weight: 40, narration: "\"Watch yourself in Sprout Tower if you go in — the monks take their training very, very seriously.\" A fair warning, delivered flatly.", effects: { food: 5 } }
+                    ]
+                }
+            ]
+        },
+
+        // ----- Violet City -----
+        {
+            id: "violet_city_gym_intro",
+            type: "story",
+            name: "Talk of the Gym",
+            description: "Violet City hums with quiet gym-town energy — trainers comparing notes outside the Pokemon Center, a kid loudly insisting his Pidgey is \"basically already a Pidgeot.\" Above it all, Falkner's Gym sits under a weathervane shaped like a bird in flight.",
+            weight: 9,
+            oneTime: false,
+            locationIds: ["violet_city"],
+            choices: [
+                {
+                    text: "Listen in",
+                    outcomes: [
+                        { weight: 45, narration: "\"Falkner doesn't mess around,\" one trainer says. \"Inherited the gym from his dad and got better than him inside a year.\" Everyone nods like this is common knowledge.", effects: {} },
+                        { weight: 35, narration: "An old-timer tells you Falkner's Pidgeot has never lost a Gym match. You choose to believe this is an exaggeration.", effects: {} },
+                        { weight: 20, narration: "A trainer offers unsolicited advice: \"Ground types. Or just get lucky.\" She walks off before you can ask which she used.", effects: { food: 3 } }
+                    ]
+                }
+            ]
+        },
+        {
+            id: "violet_city_sprout_tower",
+            type: "discovery",
+            name: "Sprout Tower",
+            description: "A wooden tower leans, quite deliberately, at an angle steep enough to be alarming. Inside, robed monks train Bellsprout-topped canes and offer to test your resolve, whatever that means in practice.",
+            weight: 8,
+            oneTime: true,
+            locationIds: ["violet_city"],
+            choices: [
+                {
+                    text: "Climb to the top",
+                    outcomes: [
+                        { weight: 40, narration: "Floor after floor of monks testing your patience more than your Pokemon. At the top, the eldest monk nods approvingly and hands you a small charm. \"Balance,\" he says, as if that explains anything.", effects: { rareCandy: 1 } },
+                        { weight: 35, narration: "You lose your footing on the tilted floorboards more than once. The monks find this hilarious. You make it to the top anyway, a little bruised.", effects: { partyDamageAll: 1, food: 5 } },
+                        { weight: 25, narration: "One monk challenges your party's steadiest Pokemon to a staring contest against his cane. Somehow your Pokemon wins. The monk seems genuinely rattled by this.", effects: {} }
+                    ]
+                },
+                {
+                    text: "Admire it from outside",
+                    outcomes: [
+                        { weight: 100, narration: "It really is an impressive lean. You decide not to test your luck on those stairs.", effects: {} }
+                    ]
+                }
+            ]
+        },
+        {
+            id: "violet_city_falkner_challenge",
+            type: "story",
+            name: "The Line for the Gym",
+            description: "A short line of hopeful trainers waits outside Falkner's Gym, each rehearsing their opening move under their breath. The kid at the front looks like he might throw up.",
+            weight: 8,
+            oneTime: false,
+            minDay: 2,
+            locationIds: ["violet_city"],
+            choices: [
+                {
+                    text: "Wait your turn and chat",
+                    outcomes: [
+                        { weight: 50, narration: "The nervous kid ahead of you loses badly, storms out red-faced, and mutters \"good luck\" on his way past — sincerely, somehow.", effects: {} },
+                        { weight: 30, narration: "A trainer who's already lost twice gives you a genuinely useful tip about Falkner's Pidgeot before shuffling off to reconsider his life choices.", effects: { food: 4 } },
+                        { weight: 20, narration: "Someone in line offers to trade battle stories while you wait. Forty-five minutes vanish. Worth it, mostly.", effects: { daysLost: 1 } }
+                    ]
+                },
+                {
+                    text: "Skip the line, come back later",
+                    outcomes: [
+                        { weight: 100, narration: "You'll challenge the Gym when you're good and ready — not on a schedule set by a line of nervous ten-year-olds.", effects: {} }
+                    ]
+                }
+            ]
+        },
+
+        // ----- Route 32 -----
+        {
+            id: "route32_general",
+            type: "story",
+            name: "Route 32",
+            description: "The path south of Violet City runs muddy and slow along a riverbank, thick with Slowpoke sunning themselves on rocks like they've never had a single worry in their lives.",
+            weight: 9,
+            oneTime: false,
+            locationIds: ["route_32"],
+            choices: [
+                {
+                    text: "Continue along the river",
+                    outcomes: [
+                        { weight: 40, narration: "A Slowpoke watches you pass without moving a single muscle. You respect the commitment.", effects: {} },
+                        { weight: 30, narration: "The mud slows you down more than expected. Someone's boot nearly stays behind forever.", effects: { food: -3 } },
+                        { weight: 30, narration: "You spot a cluster of Wooper poking their heads out of a puddle in perfect unison. Genuinely delightful.", effects: {} }
+                    ]
+                }
+            ]
+        },
+        {
+            id: "route32_fishing_guru",
+            type: "story",
+            name: "The Fishing Guru",
+            description: "An old angler sits on the riverbank with three rods planted in the mud beside him, none of them currently in use. \"Fishing's not about catching,\" he tells you, unprompted. \"It's about the wait.\" He has clearly been waiting a very long time.",
+            weight: 7,
+            oneTime: false,
+            minDay: 2,
+            locationIds: ["route_32"],
+            choices: [
+                {
+                    text: "Sit and learn",
+                    outcomes: [
+                        { weight: 55, narration: "He talks technique for an hour without a single bite. You leave having learned nothing practical but feeling strangely calm about it.", effects: { daysLost: 1 } },
+                        { weight: 30, narration: "\"Here — take a rod. Mine, obviously, since you clearly don't have the patience for this.\" Fair, but useful.", effects: { potions: 2 } },
+                        { weight: 15, narration: "As if summoned by the conversation, a Poliwag finally bites — his line, not yours, but he's so pleased he insists you take it.", effects: { catchPokemon: 60 } }
+                    ]
+                },
+                {
+                    text: "Keep moving",
+                    outcomes: [
+                        { weight: 100, narration: "\"Suit yourself,\" he says, to the river, not to you.", effects: {} }
+                    ]
+                }
+            ]
+        },
+        {
+            id: "route32_union_cave_entrance",
+            type: "story",
+            name: "Union Cave's Mouth",
+            description: "The route ends at a wide, dark cave entrance, cool air spilling out of it even in daylight. A hand-painted sign reads UNION CAVE — WATCH YOUR STEP, with a second, smaller sign beneath it that just says AND YOUR HEAD.",
+            weight: 8,
+            oneTime: true,
+            locationIds: ["route_32"],
+            choices: [
+                {
+                    text: "Head inside",
+                    outcomes: [
+                        { weight: 60, narration: "The cave swallows the daylight almost immediately. Somewhere deep inside, something large shifts against stone.", effects: {} },
+                        { weight: 40, narration: "A pair of hikers coming the other way give you a once-over. \"Bring food. It's longer than it looks.\" Ominous, but appreciated.", effects: { food: 5 } }
+                    ]
+                }
+            ]
+        },
+
+        // ----- Union Cave -----
+        {
+            id: "union_cave_general",
+            type: "story",
+            name: "Union Cave",
+            description: "A long, damp cave that locals swear connects all the way out to the coast, though nobody you've met has actually walked it end to end. Your footsteps echo further than they should.",
+            weight: 9,
+            oneTime: false,
+            locationIds: ["union_cave"],
+            choices: [
+                {
+                    text: "Press on",
+                    outcomes: [
+                        { weight: 40, narration: "A colony of Zubat stirs somewhere above, decides you're not worth the effort, and settles back down.", effects: {} },
+                        { weight: 30, narration: "You find a dry alcove someone's clearly used as a rest stop before — old wrappers, a burnt-out torch, no other trace.", effects: { food: 4 } },
+                        { weight: 30, narration: "The tunnel splits three ways with no markings. You pick one at random and, against all odds, it's the right one.", effects: {} }
+                    ]
+                }
+            ]
+        },
+        {
+            id: "union_cave_lost_hiker",
+            type: "story",
+            name: "A Very Lost Hiker",
+            description: "A hiker sits against the cave wall, headlamp dimming, surrounded by three different hand-drawn maps that all disagree with each other. \"Please tell me you know the way out.\"",
+            weight: 8,
+            oneTime: false,
+            minDay: 3,
+            locationIds: ["union_cave"],
+            choices: [
+                {
+                    text: "Help him find the exit",
+                    outcomes: [
+                        { weight: 50, narration: "Between your combined wrong turns, you eventually stumble onto a route that actually works. He's so relieved he empties half his pack into your arms.", effects: { potions: 2, pokeballs: 2 } },
+                        { weight: 35, narration: "You get just as lost as he was, for a good while, but company makes it bearable. Eventually daylight. Eventually.", effects: { daysLost: 1, food: -3 } },
+                        { weight: 15, narration: "He turns out to know the cave better than he let on — he was just testing you. \"Passed,\" he says, and hands over a Rare Candy like a diploma.", effects: { rareCandy: 1 } }
+                    ]
+                },
+                {
+                    text: "\"Sorry, I'm lost too.\"",
+                    outcomes: [
+                        { weight: 100, narration: "\"...Fair enough.\" He goes back to arguing with his own maps.", effects: {} }
+                    ]
+                }
+            ]
+        },
+        {
+            id: "union_cave_onix_rumble",
+            type: "discovery",
+            name: "Something Big Is Moving",
+            description: "A low rumble rolls through the tunnel, deep enough to feel in your teeth. Small rocks patter down from the ceiling. Whatever's causing it is close, large, and entirely unbothered by your presence.",
+            weight: 7,
+            oneTime: false,
+            minDay: 4,
+            locationIds: ["union_cave"],
+            choices: [
+                {
+                    text: "Follow the rumbling",
+                    outcomes: [
+                        { weight: 30, narration: "You round a bend and come face to face with an Onix mid-burrow, easily twice as long as the tunnel is wide. It regards you, decides you're not a threat, and keeps tunneling. You give it a very wide berth.", effects: {} },
+                        { weight: 30, narration: "The Onix has already moved on by the time you catch up — but it leaves behind a trail of loosened rock, and something glints in the rubble.", effects: { pokeballs: 3 } },
+                        { weight: 25, narration: "The tunnel shakes hard enough to knock dust and pebbles down on your party. Nothing serious, just startling.", effects: { partyDamageAll: 1 } },
+                        { weight: 15, narration: "The Onix surfaces right in front of you, more curious than hostile. It's gone again before you can react — but not before you get a good, lasting look at exactly what lives down here.", effects: { food: 3 } }
+                    ]
+                },
+                {
+                    text: "Stay well away from it",
+                    outcomes: [
+                        { weight: 100, narration: "You take the long way around, giving the rumbling a very respectful distance. Sensible.", effects: {} }
+                    ]
+                }
+            ]
+        },
+
+        // ----- Route 33 -----
+        {
+            id: "route33_general",
+            type: "story",
+            name: "Route 33",
+            description: "A short, dry stretch between Union Cave and Azalea Town, dotted with Dunsparce burrows and the occasional confused Hoothoot blinking in broad daylight.",
+            weight: 9,
+            oneTime: false,
+            locationIds: ["route_33"],
+            choices: [
+                {
+                    text: "Push through",
+                    outcomes: [
+                        { weight: 45, narration: "A Sentret stands sentry on a fence post, watches you the entire length of the route, then vanishes the instant you look back.", effects: {} },
+                        { weight: 30, narration: "You nearly step in a Dunsparce burrow. It pokes its head out, unamused, and disappears again.", effects: {} },
+                        { weight: 25, narration: "A patch of wild berries, untouched. Small blessings.", effects: { food: 7 } }
+                    ]
+                }
+            ]
+        },
+        {
+            id: "route33_azalea_approach",
+            type: "story",
+            name: "Approaching Azalea",
+            description: "The trees thicken as the route bends toward Azalea Town, and the air takes on the specific, sweet smell of an apricorn orchard somewhere nearby.",
+            weight: 7,
+            oneTime: true,
+            locationIds: ["route_33"],
+            minDay: 3,
+            choices: [
+                {
+                    text: "Follow the smell",
+                    outcomes: [
+                        { weight: 55, narration: "You find the orchard — rows of trees hung with apricorns in half a dozen colors. The grower, delighted by the visit, gives you a handful for free.", effects: { food: 6 } },
+                        { weight: 45, narration: "\"Azalea's just past the trees. Small town, but the Slowpoke Well's worth a look if you've got time.\" The grower says it casually, like it's not at all ominous. It is a little ominous.", effects: {} }
+                    ]
+                }
+            ]
+        },
+
+        // ----- Azalea Town -----
+        {
+            id: "azalea_town_gym_intro",
+            type: "story",
+            name: "Azalea's Bug Gym",
+            description: "Azalea Town is small and quiet except for a steady buzz of activity around a gym shaped, somewhat alarmingly, like a giant beehive. Bugsy's reputation apparently precedes him even here.",
+            weight: 9,
+            oneTime: false,
+            locationIds: ["azalea_town"],
+            choices: [
+                {
+                    text: "Ask around about Bugsy",
+                    outcomes: [
+                        { weight: 45, narration: "\"Kid's obsessed. Knows more about Bug types than the professors do,\" a shopkeeper says, half-impressed, half-exasperated.", effects: {} },
+                        { weight: 35, narration: "\"His Scyther's the real deal. Caught it himself, trained it himself. Don't underestimate it.\" Everyone here seems to say this exact sentence with the exact same reverence.", effects: {} },
+                        { weight: 20, narration: "A kid outside the Gym offers you a \"pro tip\" for a small fee. You decline. He shrugs and offers the same tip to the next person for free.", effects: {} }
+                    ]
+                }
+            ]
+        },
+        {
+            id: "azalea_town_slowpoke_tail",
+            type: "dilemma",
+            name: "The Tail Trade",
+            description: "A shifty man near the town's edge unwraps a paper bundle to reveal something pink, fleshy, and unmistakably a Slowpoke's tail. \"Fresh cut. Good money in these, if you know where to sell 'em. Interested?\" He doesn't say where the tail came from. You have a bad feeling you already know.",
+            weight: 8,
+            oneTime: true,
+            locationIds: ["azalea_town"],
+            choices: [
+                {
+                    text: "\"Where did you get that?\"",
+                    outcomes: [
+                        { weight: 60, narration: "He clams up immediately, wraps the tail back up, and hurries off toward — you clock it now — the direction of the Slowpoke Well. Whatever's happening down there, it isn't good.", effects: {} },
+                        { weight: 40, narration: "He mutters something about \"the boss\" and \"the well\" before catching himself and bolting. That's more than enough to go on.", effects: {} }
+                    ]
+                },
+                {
+                    text: "Report it to the Gym",
+                    outcomes: [
+                        { weight: 70, narration: "Bugsy's face goes hard the second you describe it. \"Slowpoke Well. Should've known. Thanks — I'll pass this along.\" He looks like he means it.", effects: { money: 200 } },
+                        { weight: 30, narration: "Bugsy's already heard rumors. \"You just confirmed it. This isn't good.\" He presses some money into your hand for the trouble of asking around.", effects: { money: 300 } }
+                    ]
+                }
+            ]
+        },
+        {
+            id: "azalea_town_bugsy_challenge",
+            type: "story",
+            name: "Before the Gym Doors",
+            description: "A trainer limps out of the Gym, half his party visibly exhausted, muttering about how \"nobody warns you about the Scyther.\" A small crowd of onlookers murmurs sympathetically.",
+            weight: 8,
+            oneTime: false,
+            minDay: 3,
+            locationIds: ["azalea_town"],
+            choices: [
+                {
+                    text: "Ask him what to expect",
+                    outcomes: [
+                        { weight: 55, narration: "\"Fast. Everything he's got is fast. Don't get comfortable.\" He hands you a Potion on his way to the Pokemon Center. \"Good luck. You'll need speed of your own.\"", effects: { potions: 1 } },
+                        { weight: 45, narration: "He's too deflated to say much beyond a resigned thumbs-up. You take the hint anyway.", effects: {} }
+                    ]
+                },
+                {
+                    text: "Head straight in",
+                    outcomes: [
+                        { weight: 100, narration: "No sense delaying. You march past the crowd toward the Gym doors.", effects: {} }
+                    ]
+                }
+            ]
+        },
+
+        // ----- Slowpoke Well -----
+        {
+            id: "slowpoke_well_general",
+            type: "story",
+            name: "Down the Well",
+            description: "A stone well at the edge of town, wide enough to climb down into, leads to a network of damp tunnels beneath Azalea. Slowpoke are supposed to live down here in droves. The silence is not reassuring.",
+            weight: 8,
+            oneTime: false,
+            locationIds: ["slowpoke_well"],
+            choices: [
+                {
+                    text: "Climb further down",
+                    outcomes: [
+                        { weight: 40, narration: "Empty tunnel after empty tunnel. Slowpoke usually pack these passages shoulder to shoulder. Where did they all go?", effects: {} },
+                        { weight: 30, narration: "You find claw marks on the walls, fresh, and a discarded crate stamped with a red \"R\" you don't recognize but instantly distrust.", effects: {} },
+                        { weight: 30, narration: "A single, terrified Slowpoke bolts past you in the dark, faster than you'd have thought possible for the species. That alone tells you something's very wrong down here.", effects: {} }
+                    ]
+                }
+            ]
+        },
+        {
+            id: "slowpoke_well_team_rocket",
+            type: "combat",
+            name: "Rocket Grunts in the Well",
+            description: "Deep in the well, you find them: a cluster of grunts in matching uniforms, a makeshift camp, and a pen of terrified Slowpoke waiting to have their tails harvested for the black market. One grunt spots you. \"Well, well. A witness.\"",
+            weight: 10,
+            oneTime: true,
+            minDay: 4,
+            locationIds: ["slowpoke_well"],
+            requiresEventOccurred: "azalea_town_slowpoke_tail",
+            choices: [
+                {
+                    text: "Fight them and free the Slowpoke",
+                    eventBattle: {
+                        pool: "rocket_grunt",
+                        difficulty: "medium",
+                        trainerName: "Rocket Grunt",
+                        winNarration: "The grunt goes down hard. You throw open the pen and the Slowpoke scatter into the tunnels, safe. One lingers just long enough to follow you back up into the daylight, grateful in its own slow way.",
+                        lossNarration: "The grunt overpowers you and you're forced to retreat up the well shaft — but not before you get a good look at the operation, and a mental note to tell Bugsy everything.",
+                        winEffects: { catchPokemon: 79, money: 500 },
+                        lossEffects: { partyDamageAll: 1, food: -5 }
+                    }
+                },
+                {
+                    text: "Retreat and report it",
+                    outcomes: [
+                        { weight: 100, narration: "You climb back up to the surface and go straight to the Gym. Bugsy's expression sours instantly. \"That settles it. I'm sending word to Goldenrod.\" Team Rocket's Slowpoke Well operation won't stay secret much longer.", effects: { money: 300 } }
+                    ]
+                }
+            ]
+        },
+
+        // ----- Route 34 -----
+        {
+            id: "route34_general",
+            type: "story",
+            name: "Route 34",
+            description: "A wide, well-kept stretch of farmland and low fences leading toward Goldenrod's skyline in the distance. It's the closest thing to suburbs you've seen since leaving New Bark Town.",
+            weight: 9,
+            oneTime: false,
+            locationIds: ["route_34"],
+            choices: [
+                {
+                    text: "Continue on",
+                    outcomes: [
+                        { weight: 40, narration: "A Spinarak's web stretches unbroken across an entire fence gap. You duck under it rather than ruin someone's hard work.", effects: {} },
+                        { weight: 30, narration: "A Chansey trots across the road, entirely unhurried, and disappears into a hedge. Good omen, probably.", effects: {} },
+                        { weight: 30, narration: "You pass a Wobbuffet just standing perfectly still in a field, staring at nothing. It's still staring when you're out of sight.", effects: { food: 4 } }
+                    ]
+                }
+            ]
+        },
+        {
+            id: "route34_daycare_couple",
+            type: "story",
+            name: "The Route 34 Day Care",
+            description: "A tidy little house with a big, fenced yard sits just off the road, a hand-painted sign reading POKEMON DAY CARE swinging gently above the gate. An elderly couple wave you over from the porch.",
+            weight: 8,
+            oneTime: false,
+            minDay: 4,
+            locationIds: ["route_34"],
+            choices: [
+                {
+                    text: "Leave a Pokemon to rest and train",
+                    requiresPartySize: 2,
+                    outcomes: [
+                        { weight: 55, narration: "\"We'll take good care of it,\" the woman says, already leading your Pokemon toward the yard full of others playing together. A day later you pick it up, rested and noticeably stronger.", effects: { daysLost: 1, healAll: true } },
+                        { weight: 30, narration: "The couple dotes on your whole party while you rest up on their porch swing. \"Don't get this kind of quiet in Goldenrod,\" the man says wistfully.", effects: { daysLost: 1, healAll: true, food: 5 } },
+                        { weight: 15, narration: "\"We noticed something odd in your Pokemon's behavior,\" the woman says carefully. \"Might be nothing. Might be an egg on the way one of these days.\" She winks and won't elaborate further.", effects: { daysLost: 1, healAll: true } }
+                    ]
+                },
+                {
+                    text: "Just say hello",
+                    outcomes: [
+                        { weight: 100, narration: "They chat with you for a few minutes about the Pokemon currently in their care — a Wobbuffet that refuses to stop staring at the fence, mostly. Charming, in its way.", effects: {} }
+                    ]
+                }
+            ]
+        },
+        {
+            id: "route34_goldenrod_approach",
+            type: "story",
+            name: "Goldenrod on the Horizon",
+            description: "The farmland gives way to pavement, then to buildings, then to a skyline dense enough to make Cherrygrove look like a hamlet. Goldenrod City — Johto's biggest — sprawls out ahead of you.",
+            weight: 7,
+            oneTime: true,
+            locationIds: ["route_34"],
+            minDay: 5,
+            choices: [
+                {
+                    text: "Head into the city",
+                    outcomes: [
+                        { weight: 60, narration: "The noise hits first — trains, crowds, a radio tower blasting some jingle you'll have stuck in your head for days. It's a lot, after all those quiet routes.", effects: {} },
+                        { weight: 40, narration: "A street vendor near the gate is practically giving away snacks to anyone who looks like they've walked in from Route 34. You qualify.", effects: { food: 8 } }
+                    ]
+                }
+            ]
+        },
+
+        // ----- Goldenrod City -----
+        {
+            id: "goldenrod_city_department_store",
+            type: "special",
+            name: "The Goldenrod Department Store",
+            description: "Six floors of everything a trainer could want, stacked on top of each other and staffed by relentlessly cheerful clerks. A jingle plays on a loop somewhere near the escalators. You will remember this jingle for the rest of your life.",
+            weight: 10,
+            oneTime: false,
+            locationIds: ["goldenrod_city"],
+            choices: [
+                {
+                    text: "Browse the sale floor",
+                    requiresMoney: 300,
+                    outcomes: [
+                        { weight: 45, narration: "A clearance rack yields more than you paid for. Not bad for impulse shopping.", effects: { money: -300, potions: 3, pokeballs: 3 } },
+                        { weight: 30, narration: "The top floor has a \"lucky customer\" giveaway. You are, apparently, lucky.", effects: { money: -300, rareCandy: 1 } },
+                        { weight: 25, narration: "You get lost between floors for a solid hour looking for the exit. The jingle plays four more times.", effects: { money: -300, daysLost: 1 } }
+                    ]
+                },
+                {
+                    text: "Just window shop",
+                    outcomes: [
+                        { weight: 100, narration: "Six floors is a lot to look at without buying anything. You leave with your wallet intact and the jingle stuck in your head anyway.", effects: {} }
+                    ]
+                }
+            ]
+        },
+        {
+            id: "goldenrod_city_game_corner",
+            type: "special",
+            name: "The Game Corner",
+            description: "Neon lights, ringing slot machines, and a staff that's just a little too eager to point out the prize counter. It has the unmistakable feel of a place that's not entirely what it claims to be.",
+            weight: 9,
+            oneTime: false,
+            minDay: 3,
+            locationIds: ["goldenrod_city"],
+            choices: [
+                {
+                    text: "Try your luck (costs 200)",
+                    requiresMoney: 200,
+                    outcomes: [
+                        { weight: 20, narration: "Jackpot! Coins spill everywhere and an attendant, looking faintly annoyed, counts out your winnings.", effects: { money: -200, rareCandy: 1 } },
+                        { weight: 45, narration: "You come out about even, cash in your coins for a couple of small prizes, and call it a wash.", effects: { money: -200, potions: 2 } },
+                        { weight: 35, narration: "The machines eat your money with cheerful, mechanical indifference. Standard.", effects: { money: -200 } }
+                    ]
+                },
+                {
+                    text: "Watch the staff instead of playing",
+                    outcomes: [
+                        { weight: 60, narration: "You notice the same few employees keep glancing toward a locked door in the back, a little too often to be casual. Worth remembering.", effects: {} },
+                        { weight: 40, narration: "Nothing obviously wrong, but the whole place has a rehearsed quality to it, like everyone's reciting lines. You decide not to linger.", effects: {} }
+                    ]
+                }
+            ]
+        },
+        {
+            id: "goldenrod_city_whitney_challenge",
+            type: "story",
+            name: "Whitney's Reputation",
+            description: "You ask around about the Gym Leader and get the same reaction from three different people: a wince. \"She's sweet. Really. Until the Miltank shows up.\" Nobody elaborates further. Nobody has to.",
+            weight: 9,
+            oneTime: false,
+            locationIds: ["goldenrod_city"],
+            choices: [
+                {
+                    text: "Press for details",
+                    outcomes: [
+                        { weight: 50, narration: "\"Rollout. It's always Rollout. Gets faster every turn. I don't want to talk about it,\" says a trainer with the thousand-yard stare of someone still processing.", effects: {} },
+                        { weight: 30, narration: "\"She cries if she loses a Pokemon in battle. Doesn't stop her Miltank from steamrolling you, though.\" Somehow this makes it worse.", effects: {} },
+                        { weight: 20, narration: "A more upbeat trainer just shrugs. \"Honestly? Just don't panic. It only feels unstoppable.\" You choose to find this reassuring.", effects: { food: 3 } }
+                    ]
+                },
+                {
+                    text: "Head to the Gym regardless",
+                    outcomes: [
+                        { weight: 100, narration: "Reputation or not, badges don't earn themselves.", effects: {} }
+                    ]
+                }
+            ]
+        },
+        {
+            id: "goldenrod_city_bike_shop",
+            type: "story",
+            name: "The Bike Shop",
+            description: "A cramped little storefront wedged between the Department Store and a noodle stand, wall-to-wall with gleaming bicycles nobody seems to be buying. The owner looks up hopefully the second the bell over the door rings.",
+            weight: 8,
+            oneTime: false,
+            minDay: 4,
+            locationIds: ["goldenrod_city"],
+            choices: [
+                {
+                    text: "Browse the shop",
+                    outcomes: [
+                        { weight: 45, narration: "\"Business has been slow,\" the owner admits, and throws in some travel snacks just for stopping by and looking interested. \"Word of mouth, you know?\"", effects: { food: 6 } },
+                        { weight: 30, narration: "He talks your ear off about gear ratios for twenty straight minutes. You nod along, understanding none of it, and leave with a small discount voucher you'll probably lose.", effects: { money: 200 } },
+                        { weight: 25, narration: "A kid test-riding a bike out front wipes out spectacularly into a display rack. Nobody's hurt, but the owner's day gets visibly worse. You quietly excuse yourself.", effects: {} }
+                    ]
+                },
+                {
+                    text: "Not today",
+                    outcomes: [
+                        { weight: 100, narration: "The owner's face falls, just briefly, before the professional smile snaps back into place. \"Come back anytime!\"", effects: {} }
+                    ]
+                }
+            ]
+        },
+
+        // ===================================================================
+        // ===== JOHTO GLOBAL EVENTS (fire broadly once in Johto) ===========
+        // ===================================================================
+
+        {
+            id: "johto_rocket_scout",
+            type: "combat",
+            name: "Rocket Scout",
+            description: "A single Team Rocket grunt, poorly disguised in a trench coat several sizes too big, tries to \"casually\" tail you down the road. He is not good at this.",
+            weight: 9,
+            oneTime: false,
+            minLocation: 29,
+            minDay: 3,
+            choices: [
+                {
+                    text: "Confront him",
+                    eventBattle: {
+                        pool: "rocket_grunt",
+                        difficulty: "easy",
+                        trainerName: "Rocket Scout",
+                        winNarration: "\"You weren't supposed to notice!\" He flees, dropping half his supplies in the process.",
+                        lossNarration: "He gets the drop on you after all, grabs what he can, and sprints off cackling.",
+                        winEffects: { money: 300, pokeballs: 2 },
+                        lossEffects: { pokeballs: -2, food: -3 }
+                    }
+                },
+                {
+                    text: "Pretend not to notice",
+                    outcomes: [
+                        { weight: 100, narration: "You let him think his terrible disguise is working. He eventually gives up and wanders off, defeated by his own incompetence.", effects: {} }
+                    ]
+                }
+            ]
+        },
+        {
+            id: "johto_rocket_radio_tip",
+            type: "story",
+            name: "A Rocket-Coded Radio Broadcast",
+            description: "Static crackles from a passing trainer's radio, then a strange, sing-song jingle plays that sounds almost — but not quite — like an advertisement. \"...meeting tonight, usual place, bring the Slowpoke tails...\" Then it cuts back to normal programming like nothing happened.",
+            weight: 6,
+            oneTime: false,
+            maxTriggers: 2,
+            minLocation: 29,
+            minDay: 5,
+            choices: [
+                {
+                    text: "Take note of it",
+                    outcomes: [
+                        { weight: 100, narration: "You're fairly sure that wasn't meant for civilian ears. Worth remembering, even if you're not sure what to do with it yet.", effects: {} }
+                    ]
+                }
+            ]
+        },
+        {
+            id: "johto_travelling_trainer",
+            type: "combat",
+            name: "Travelling Trainer",
+            description: "A trainer with a well-worn backpack and the confident stride of someone who's crossed this region several times already looks you over. \"New to Johto? Let's see what you've got.\"",
+            weight: 10,
+            oneTime: false,
+            minLocation: 29,
+            minDay: 2,
+            choices: [
+                {
+                    text: "Battle",
+                    eventBattle: {
+                        pool: "trainer",
+                        difficulty: "medium",
+                        trainerName: "Travelling Trainer",
+                        winNarration: "\"Not bad. You'll do fine out here.\" She nods once, almost respectfully, and continues on her way.",
+                        lossNarration: "\"Come back when you've got more experience.\" Not unkind, just blunt.",
+                        winEffects: { money: 400 },
+                        lossEffects: { food: -5 }
+                    }
+                },
+                {
+                    text: "\"Not right now.\"",
+                    outcomes: [
+                        { weight: 100, narration: "\"Suit yourself.\" She's unbothered either way.", effects: {} }
+                    ]
+                }
+            ]
+        },
+        {
+            id: "johto_rainy_season",
+            type: "weather",
+            name: "Johto's Rainy Season",
+            description: "The sky opens up without warning, the kind of steady, region-wide rain that locals say lasts for days once it starts. Everything smells like wet grass and Wooper.",
+            weight: 9,
+            oneTime: false,
+            minLocation: 29,
+            minDay: 2,
+            choices: [
+                {
+                    text: "Keep travelling through it",
+                    bonusAbility: "surf",
+                    outcomes: [
+                        { weight: 40, narration: "You slog through ankle-deep puddles for hours. Miserable, but you make progress.", effects: { partyDamageAll: 1 } },
+                        { weight: 35, narration: "The rain ruins some of your supplies before you can get them under cover.", effects: { food: -6 } },
+                        { weight: 25, narration: "A Water-type in your party seems to be having the best day of its life out here.", effects: {} }
+                    ],
+                    bonusOutcome: { weight: 100, narration: "Your Water-type practically herds the party through the downpour, unbothered and efficient.", effects: {} }
+                },
+                {
+                    text: "Find shelter and wait it out",
+                    outcomes: [
+                        { weight: 100, narration: "You duck under an awning and wait for a break in the clouds. It costs you time, but everyone stays dry.", effects: { daysLost: 1 } }
+                    ]
+                }
+            ]
+        },
+        {
+            id: "johto_flood_swollen_stream",
+            type: "hazard",
+            name: "Swollen Stream Crossing",
+            description: "A normally shallow stream is running high and fast after recent rain, the usual stepping-stones fully submerged. It's crossable, but it won't be pleasant.",
+            weight: 7,
+            oneTime: false,
+            minLocation: 29,
+            minDay: 4,
+            choices: [
+                {
+                    text: "Wade across",
+                    bonusAbility: "surf",
+                    outcomes: [
+                        { weight: 35, narration: "The current is stronger than it looked. Everyone makes it across, soaked and rattled.", effects: { partyDamageAll: 1 } },
+                        { weight: 35, narration: "A rough crossing costs you some supplies swept downstream before you can grab them.", effects: { food: -6, pokeballs: -1 } },
+                        { weight: 30, narration: "Slower than expected, but you get everyone across without incident.", effects: { daysLost: 1 } }
+                    ],
+                    bonusOutcome: { weight: 100, narration: "Your Water-type ferries the whole party across without anyone so much as getting their shoes wet.", effects: {} }
+                },
+                {
+                    text: "Look for another way around",
+                    outcomes: [
+                        { weight: 100, narration: "It takes longer, but you find a drier crossing further upstream.", effects: { daysLost: 1 } }
+                    ]
+                }
+            ]
+        },
+        {
+            id: "johto_hoothoot_chorus",
+            type: "discovery",
+            name: "The Hoothoot Chorus",
+            description: "Dozens of Hoothoot, perched in a long unbroken line along the roadside wires, all hoot in perfect unison exactly once. Then silence. It's the kind of thing you'll swear happened even if nobody believes you later.",
+            weight: 6,
+            oneTime: false,
+            minLocation: 29,
+            minDay: 1,
+            choices: [
+                {
+                    text: "Stop and watch",
+                    outcomes: [
+                        { weight: 50, narration: "Just a strange, quiet moment. You're not sure why it feels important, but it does.", effects: {} },
+                        { weight: 30, narration: "One Hoothoot breaks formation and drops something small and shiny at your feet before rejoining the line.", effects: { pokeballs: 2 } },
+                        { weight: 20, narration: "The chorus seems to time itself to something — later, you'll realize it was exactly sunset, to the minute, every single day.", effects: { food: 3 } }
+                    ]
+                },
+                {
+                    text: "Keep walking",
+                    outcomes: [
+                        { weight: 100, narration: "You've got somewhere to be. The Hoothoot don't seem to mind either way.", effects: {} }
+                    ]
+                }
+            ]
+        },
+        {
+            id: "johto_apricorn_seller",
+            type: "trade",
+            name: "Apricorn Seller",
+            description: "A cart loaded with apricorns in six different colors sits by the roadside, tended by a vendor who insists each color \"does something different, probably\" for Pokeballs, though she can't quite explain how.",
+            weight: 6,
+            oneTime: false,
+            minLocation: 29,
+            minDay: 3,
+            requiresMoney: 150,
+            choices: [
+                {
+                    text: "Buy a bundle (150)",
+                    outcomes: [
+                        { weight: 60, narration: "You're not totally sure what you just bought does, but the vendor seems confident, and the price was fair.", effects: { money: -150, pokeballs: 4 } },
+                        { weight: 40, narration: "Turns out one of the colors is genuinely useful. The vendor looks delighted that you got a good one.", effects: { money: -150, greatballs: 2 } }
+                    ]
+                },
+                {
+                    text: "Pass",
+                    outcomes: [
+                        { weight: 100, narration: "\"Your loss,\" she says cheerfully, already flagging down the next passerby.", effects: {} }
+                    ]
+                }
+            ]
+        },
+        {
+            id: "johto_egg_courier",
+            type: "story",
+            name: "Nervous Egg Courier",
+            description: "A courier cradles a padded box like it might hatch mid-sentence, which — given the circumstances — is a real possibility. \"Breeder in the next town needs this moved carefully. You look careful.\"",
+            weight: 5,
+            oneTime: false,
+            maxTriggers: 2,
+            minLocation: 29,
+            minDay: 5,
+            choices: [
+                {
+                    text: "Carry the box carefully",
+                    outcomes: [
+                        { weight: 60, narration: "Careful, slow travel the whole way. Nothing hatches, nothing breaks. The breeder is enormously relieved and pays well for your trouble.", effects: { money: 400, daysLost: 1 } },
+                        { weight: 40, narration: "You take a rough patch of trail a little too fast and hear an alarming crack from inside the box. It turns out to just be the packaging. Still, your heart rate takes a while to recover.", effects: { money: 250 } }
+                    ]
+                },
+                {
+                    text: "\"I'm not equipped for that responsibility.\"",
+                    outcomes: [
+                        { weight: 100, narration: "Wise. He nods and flags down someone else instead.", effects: {} }
+                    ]
+                }
+            ]
+        },
+        {
+            id: "johto_league_scout",
+            type: "story",
+            name: "League Talent Scout",
+            description: "A sharply dressed stranger with a clipboard sizes up your party with unsettling professionalism. \"Indigo League scouting division. Just tracking prospects. Mind if I ask a few questions?\"",
+            weight: 6,
+            oneTime: true,
+            minLocation: 29,
+            minDay: 6,
+            choices: [
+                {
+                    text: "Answer the questions",
+                    outcomes: [
+                        { weight: 60, narration: "The questions are oddly specific — badge count, party composition, how many Pokemon you've lost. He thanks you, makes a note, and vanishes into the crowd before you can ask why any of that matters.", effects: {} },
+                        { weight: 40, narration: "\"You've got potential,\" he says, unprompted, and hands you a small League-branded case before walking off. Inside: a few Great Balls and absolutely no explanation.", effects: { greatballs: 3 } }
+                    ]
+                },
+                {
+                    text: "Decline",
+                    outcomes: [
+                        { weight: 100, narration: "\"Your choice,\" he says, already looking past you at someone else.", effects: {} }
+                    ]
+                }
+            ]
+        },
+        {
+            id: "johto_wild_pokemon_stampede",
+            type: "hazard",
+            name: "Startled Stampede",
+            description: "Something spooks a whole cluster of wild Pokemon at once — you never quite see what — and suddenly the road is full of Sentret, Rattata, and one very confused Hoothoot all sprinting in the same direction. Directly at you.",
+            weight: 8,
+            oneTime: false,
+            minLocation: 29,
+            minDay: 3,
+            choices: [
+                {
+                    text: "Stand your ground",
+                    outcomes: [
+                        { weight: 35, narration: "You get jostled pretty thoroughly by the herd, but nothing serious.", effects: { partyDamageAll: 1 } },
+                        { weight: 35, narration: "You brace and let them flow around you. A minor miracle nobody gets trampled.", effects: {} },
+                        { weight: 30, narration: "One straggler, too panicked to swerve, practically runs straight into your party — and just kind of stays there afterward, badly shaken and grateful for the company.", effects: { catchPokemon: 19 } }
+                    ]
+                },
+                {
+                    text: "Dive out of the way",
+                    outcomes: [
+                        { weight: 100, narration: "You scramble off the path just in time. The stampede thunders past and is gone as suddenly as it started.", effects: { food: -2 } }
+                    ]
+                }
+            ]
+        },
+        {
+            id: "johto_pokeathlon_flyer",
+            type: "story",
+            name: "A Curious Flyer",
+            description: "Someone has stapled a hand-lettered flyer to a fence post advertising something called a \"Pokeathlon,\" complete with a crude drawing of Pokemon running an obstacle course. It's not happening anywhere near here, or apparently anywhere yet.",
+            weight: 4,
+            oneTime: false,
+            minLocation: 29,
+            minDay: 2,
+            choices: [
+                {
+                    text: "Read it anyway",
+                    outcomes: [
+                        { weight: 100, narration: "Whatever a Pokeathlon is, it sounds like a lot of running for very little reward. You leave the flyer for the next curious passerby.", effects: {} }
+                    ]
+                }
+            ]
+        },
+        {
+            id: "johto_traveling_merchant",
+            type: "trade",
+            name: "Traveling Merchant",
+            description: "A merchant's cart, wheels caked in mud from routes you haven't even reached yet, rattles to a stop beside you. \"Fresh stock, good prices, no questions about where any of it came from.\"",
+            weight: 7,
+            oneTime: false,
+            minLocation: 29,
+            minDay: 4,
+            requiresMoney: 250,
+            choices: [
+                {
+                    text: "Buy a mystery bundle (250)",
+                    outcomes: [
+                        { weight: 30, narration: "Mostly Pokeballs, a couple of Potions. Solid, unglamorous value.", effects: { money: -250, pokeballs: 4, potions: 1 } },
+                        { weight: 30, narration: "A Rare Candy turns up in the bundle, wrapped in newspaper like it's contraband. Given the merchant, it might be.", effects: { money: -250, rareCandy: 1 } },
+                        { weight: 25, narration: "Mostly food, but good food — real cooking, not trail rations.", effects: { money: -250, food: 15 } },
+                        { weight: 15, narration: "The bundle turns out to be mostly padding. You got a little played.", effects: { money: -250, pokeballs: 1 } }
+                    ]
+                },
+                {
+                    text: "Pass",
+                    outcomes: [
+                        { weight: 100, narration: "The cart rattles onward without you. \"Suit yourself,\" the merchant calls back, already fading into the distance.", effects: {} }
+                    ]
+                }
+            ]
+        },
+        {
+            id: "johto_dilemma_shared_camp",
+            type: "dilemma",
+            name: "The Shared Campsite",
+            description: "Another trainer is already set up at the only good campsite for miles, fire going, tent pitched. She waves you over. \"Plenty of room, if you don't mind company. Or I can point you toward another spot — it's just further, and it's getting dark.\"",
+            weight: 7,
+            oneTime: false,
+            minLocation: 29,
+            minDay: 5,
+            choices: [
+                {
+                    text: "Share the camp",
+                    outcomes: [
+                        { weight: 50, narration: "A good night, actually — swapped stories, split the cooking, both parties rested well.", effects: { healAll: true, daysLost: 1 } },
+                        { weight: 30, narration: "She's a light sleeper and wakes you twice convinced she heard something in the bushes. Nothing was ever there. Restless night regardless.", effects: { daysLost: 1 } },
+                        { weight: 20, narration: "She turns out to be a trainer of real skill and spends the evening giving your party pointers you'll actually use.", effects: { daysLost: 1, healAll: true, food: 5 } }
+                    ]
+                },
+                {
+                    text: "Push on to the other spot",
+                    outcomes: [
+                        { weight: 60, narration: "You find the other spot in the dark, barely. Not as comfortable, but you keep your solitude.", effects: { daysLost: 1 } },
+                        { weight: 40, narration: "You never quite find the other spot and end up camping rough on the trail itself. Could've been worse.", effects: { daysLost: 1, food: -3 } }
+                    ]
+                }
+            ]
+        },
+        {
+            id: "johto_pickpocket",
+            type: "hazard",
+            name: "Quick Hands",
+            description: "You feel it before you see it — a light tug at your bag, and by the time you turn around, whoever it was is already gone, along with a little of your food supply.",
+            weight: 7,
+            oneTime: false,
+            minLocation: 29,
+            minDay: 3,
+            choices: [
+                {
+                    text: "Chase them down",
+                    outcomes: [
+                        { weight: 40, narration: "You catch them a block later — a kid, more scared than sneaky, who hands everything back immediately and bolts.", effects: {} },
+                        { weight: 35, narration: "They're faster than they look. You lose them in a crowd, and your food along with them.", effects: { food: -8 } },
+                        { weight: 25, narration: "You corner them, and it turns out to be a genuine misunderstanding — they thought your bag was theirs. Awkward, but resolved, plus an apology gift.", effects: { potions: 1 } }
+                    ]
+                },
+                {
+                    text: "Let it go",
+                    outcomes: [
+                        { weight: 100, narration: "Not worth the chase. You adjust your pack straps and keep moving, a little lighter than before.", effects: { food: -5 } }
+                    ]
+                }
+            ]
+        },
+        {
+            id: "johto_glowing_moss",
+            type: "discovery",
+            name: "Faintly Glowing Moss",
+            description: "A patch of moss along the trail gives off a soft, unmistakable glow after dusk. It doesn't seem dangerous. It doesn't seem entirely natural either.",
+            weight: 5,
+            oneTime: false,
+            minLocation: 29,
+            minDay: 6,
+            choices: [
+                {
+                    text: "Collect a sample",
+                    outcomes: [
+                        { weight: 55, narration: "It stops glowing the moment you pick it up, which feels like it's making a point. Still, probably worth something to someone.", effects: { money: 200 } },
+                        { weight: 30, narration: "It's warm to the touch, faintly, and your party seems oddly at ease near it. You pocket some anyway.", effects: { healOne: true } },
+                        { weight: 15, narration: "It crumbles to ordinary dust the second it leaves the ground. Some mysteries aren't meant to be pocketed.", effects: {} }
+                    ]
+                },
+                {
+                    text: "Leave it be",
+                    outcomes: [
+                        { weight: 100, narration: "Some things are better left unexplained. You walk on, the faint glow fading behind you.", effects: {} }
+                    ]
+                }
+            ]
+        },
+        {
+            id: "johto_ledyba_swarm",
+            type: "discovery",
+            name: "Ledyba Swarm",
+            description: "A cloud of red-spotted Ledyba lifts off from a hedge all at once, swirling overhead in a loose, chaotic formation before scattering back into the brush.",
+            weight: 6,
+            oneTime: false,
+            minLocation: 29,
+            minDay: 2,
+            choices: [
+                {
+                    text: "Watch the swarm",
+                    outcomes: [
+                        { weight: 60, narration: "Harmless and oddly beautiful. A few land curiously on your party's shoulders before rejoining the swarm.", effects: {} },
+                        { weight: 40, narration: "One straggler, separated from the group, lands on you and just... stays, tagging along as you continue on.", effects: { catchPokemon: 165 } }
+                    ]
+                },
+                {
+                    text: "Keep moving",
+                    outcomes: [
+                        { weight: 100, narration: "You duck through the swarm and out the other side without much fuss.", effects: {} }
+                    ]
+                }
+            ]
+        },
+        {
+            id: "johto_geodude_toll",
+            type: "hazard",
+            name: "A Boulder That Isn't",
+            description: "A large rock sitting square in the middle of a narrow cave passage turns out, on closer inspection — and after you've already bumped into it — to be a very annoyed Geodude.",
+            weight: 6,
+            oneTime: false,
+            terrainTypes: ["cave", "mountain"],
+            minLocation: 29,
+            minDay: 2,
+            choices: [
+                {
+                    text: "Apologize and squeeze past",
+                    outcomes: [
+                        { weight: 60, narration: "It grumbles but rolls aside just enough to let you through, radiating quiet judgment the whole time.", effects: {} },
+                        { weight: 40, narration: "It's not in a forgiving mood. A rough shove sends your lead Pokemon stumbling.", effects: { partyDamageAll: 1 } }
+                    ]
+                },
+                {
+                    text: "Find another way around",
+                    outcomes: [
+                        { weight: 100, narration: "You backtrack and find a wider gap further down the passage. Slower, but drama-free.", effects: { daysLost: 1 } }
+                    ]
+                }
+            ]
+        },
+        {
+            id: "johto_cave_echo_navigator",
+            type: "hazard",
+            name: "Echoes in the Dark",
+            description: "The tunnel forks in a way that all sounds identical from where you're standing — same drip of water, same faint draft, no way to tell which path actually leads anywhere.",
+            weight: 6,
+            oneTime: false,
+            terrainTypes: ["cave"],
+            minLocation: 29,
+            minDay: 3,
+            choices: [
+                {
+                    text: "Pick a direction and commit",
+                    outcomes: [
+                        { weight: 40, narration: "Right the first try. You'll take the win.", effects: {} },
+                        { weight: 35, narration: "Wrong turn. You backtrack and lose some time finding the actual path.", effects: { daysLost: 1 } },
+                        { weight: 25, narration: "The wrong tunnel dead-ends at a small pocket of old supplies, left behind by some long-gone explorer.", effects: { potions: 2, daysLost: 1 } }
+                    ]
+                },
+                {
+                    text: "Listen carefully for a draft",
+                    bonusAbility: "flash",
+                    outcomes: [
+                        { weight: 50, narration: "You catch the faint pull of moving air and follow it to the right passage, mostly by feel.", effects: {} },
+                        { weight: 50, narration: "The draft is fainter than you hoped and you end up guessing anyway. It works out.", effects: {} }
+                    ],
+                    bonusOutcome: { weight: 100, narration: "With actual light to work with, the correct passage is obvious in seconds.", effects: {} }
+                }
+            ]
+        },
+        {
+            id: "johto_bellsprout_ambush",
+            type: "combat",
+            name: "Bellsprout Ambush",
+            description: "A patch of what you assumed were ordinary Bellsprout turns out to be considerably more coordinated than expected, whipping vines out from the grass in a surprisingly organized pincer.",
+            weight: 7,
+            oneTime: false,
+            terrainTypes: ["route"],
+            minLocation: 29,
+            minDay: 2,
+            choices: [
+                {
+                    text: "Fight through",
+                    eventBattle: {
+                        pool: "trainer",
+                        difficulty: "easy",
+                        trainerName: "Wild Bellsprout Patch",
+                        winNarration: "The patch scatters and burrows back into the grass, thoroughly outmatched.",
+                        lossNarration: "Vines everywhere. You retreat, a little worse for wear, while the Bellsprout return to looking innocuous.",
+                        winEffects: { food: 5 },
+                        lossEffects: { partyDamageAll: 1 }
+                    }
+                },
+                {
+                    text: "Retreat and go around",
+                    outcomes: [
+                        { weight: 100, narration: "You give the patch a wide berth. It goes back to looking like an ordinary field.", effects: { daysLost: 1 } }
+                    ]
+                }
+            ]
+        },
+        {
+            id: "johto_kind_stranger",
+            type: "story",
+            name: "A Kind Stranger",
+            description: "Someone you've never met and will likely never see again strikes up a friendly conversation at a rest stop, shares their lunch without being asked, and wishes you well on your journey before continuing on their own.",
+            weight: 8,
+            oneTime: false,
+            minLocation: 29,
+            minDay: 1,
+            choices: [
+                {
+                    text: "Enjoy the moment",
+                    outcomes: [
+                        { weight: 100, narration: "Small kindnesses add up. You continue on in a noticeably better mood.", effects: { food: 6, healOne: true } }
+                    ]
+                }
+            ]
+        },
+        {
+            id: "johto_pack_of_growlithe",
+            type: "hazard",
+            name: "Territorial Growlithe Pack",
+            description: "A small pack of wild Growlithe fans out across the road, hackles up, clearly protecting something behind them — a den, a meal, or just principle.",
+            weight: 6,
+            oneTime: false,
+            terrainTypes: ["route", "mountain"],
+            minLocation: 29,
+            minDay: 4,
+            choices: [
+                {
+                    text: "Stand firm and back away slowly",
+                    outcomes: [
+                        { weight: 60, narration: "You retreat at a measured pace. The pack watches you go without escalating.", effects: {} },
+                        { weight: 40, narration: "One gets a nip in before you're clear. Nothing serious.", effects: { partyDamageAll: 1 } }
+                    ]
+                },
+                {
+                    text: "Try to push past",
+                    outcomes: [
+                        { weight: 35, narration: "They decide you're not worth the fight and let you through, grumbling the whole way.", effects: {} },
+                        { weight: 65, narration: "Bad call. The pack drives you back the way you came, thoroughly and loudly.", effects: { partyDamageAll: 1, daysLost: 1 } }
+                    ]
+                }
+            ]
+        },
+        {
+            id: "johto_supply_cache",
+            type: "discovery",
+            name: "Buried Supply Cache",
+            description: "A weatherproof box, half-buried and clearly forgotten by whoever stashed it, turns up under a loose stone off the main path.",
+            weight: 7,
+            oneTime: false,
+            minLocation: 29,
+            minDay: 2,
+            choices: [
+                {
+                    text: "Dig it up",
+                    outcomes: [
+                        { weight: 30, narration: "Old but usable Pokeballs, still sealed.", effects: { pokeballs: 4 } },
+                        { weight: 25, narration: "A stash of preserved food, still good.", effects: { food: 12 } },
+                        { weight: 20, narration: "A little cash, tucked in an old sock for some reason.", effects: { money: 400 } },
+                        { weight: 15, narration: "A single Rare Candy, alone in an otherwise empty box.", effects: { rareCandy: 1 } },
+                        { weight: 10, narration: "Just rocks. Someone's idea of a joke, or a very confused hiding spot.", effects: {} }
+                    ]
+                },
+                {
+                    text: "Leave it — not yours",
+                    outcomes: [
+                        { weight: 100, narration: "You rebury it and move on. Somewhere, a very confused former owner might come back for it.", effects: {} }
+                    ]
+                }
+            ]
+        },
+        {
+            id: "johto_beast_rumor",
+            type: "legendary",
+            name: "A Rumor on the Wind",
+            description: "A shaken trainer describes something that tore past her at incredible speed minutes ago — a blur of fur and lightning, or fire, or mist, she genuinely can't say which. \"It didn't even look at me. Just — gone.\" Whatever it was, it's already long past you too.",
+            weight: 4,
+            oneTime: false,
+            maxTriggers: 3,
+            minLocation: 29,
+            minDay: 3,
+            choices: [
+                {
+                    text: "Ask her to describe it further",
+                    outcomes: [
+                        { weight: 100, narration: "She struggles to pin down details beyond \"fast\" and \"gone.\" Whatever roams these routes, it isn't interested in being seen twice.", effects: {} }
+                    ]
+                }
+            ]
+        },
+
+        // ===== JOHTO: NATIONAL PARK -> MT. SILVER (back half, Events agent B) =====
+
+        // ----- Route 35 / National Park -----
+        {
+            id: "national_park_bug_catching_contest",
+            type: "special",
+            name: "Bug-Catching Contest!",
+            description: "A park official with a clipboard waves you over. \"Contest's starting! Thirty minutes, one Bug-type, biggest catch wins a prize. You in?\"",
+            weight: 10,
+            oneTime: false,
+            maxTriggers: 3,
+            locationIds: ["route_35_national_park"],
+            choices: [
+                {
+                    text: "Enter the contest",
+                    outcomes: [
+                        { weight: 15, narration: "A Yanma the size of your forearm buzzes into your net at the last second. First place! The official hands over the grand prize and the Yanma itself, since nobody else wants to carry it home.", effects: { catchPokemon: 193, money: 300 } },
+                        { weight: 20, narration: "You wrangle a surprisingly feisty Aipom out of a tree. Second place, but the judges are impressed enough to let you keep it.", effects: { catchPokemon: 190 } },
+                        { weight: 35, narration: "Respectable showing — third place. Not bad for thirty minutes of chasing bugs through a manicured hedge maze.", effects: { money: 200 } },
+                        { weight: 30, narration: "Everything you net wriggles free before the whistle blows. You place dead last, out of breath, holding an empty jar.", effects: { food: -3 } }
+                    ]
+                },
+                {
+                    text: "Just watch",
+                    outcomes: [
+                        { weight: 100, narration: "You lean on the fence and watch kids sprint after Caterpie. Wholesome, low-stakes, free entertainment.", effects: {} }
+                    ]
+                }
+            ]
+        },
+        {
+            id: "national_park_general",
+            type: "story",
+            name: "An Afternoon in the Park",
+            description: "National Park is quiet outside contest hours — gardeners trimming hedges, a couple picnicking, sprinklers hissing over the flowerbeds.",
+            weight: 9,
+            oneTime: false,
+            locationIds: ["route_35_national_park"],
+            choices: [
+                {
+                    text: "Rest on a park bench",
+                    outcomes: [
+                        { weight: 60, narration: "You sit a while and let your team stretch their legs on the grass. Nobody's in a hurry.", effects: { food: 4, daysLost: 0 } },
+                        { weight: 40, narration: "A gardener recognizes a well-trained Pokemon when she sees one and slips you a few berries from her cart.", effects: { food: 8 } }
+                    ]
+                },
+                {
+                    text: "Keep walking",
+                    outcomes: [
+                        { weight: 100, narration: "You cut through the park without stopping. It's a nice park. You'll see it again someday, probably.", effects: {} }
+                    ]
+                }
+            ]
+        },
+        {
+            id: "national_park_flower_show",
+            type: "story",
+            name: "The Flower Show",
+            description: "A judge in a wide-brimmed hat is scoring flowerbeds with theatrical seriousness. \"You there! Trainer! I need a second opinion — which bloom radiates more... vitality?\"",
+            weight: 8,
+            oneTime: true,
+            locationIds: ["route_35_national_park"],
+            choices: [
+                {
+                    text: "Play along and judge the flowers",
+                    outcomes: [
+                        { weight: 70, narration: "You point at a bed of sunflowers with real conviction. The judge gasps. \"YES. Vitality. Exactly.\" She rewards your discerning eye with prize money from the show's purse.", effects: { money: 250 } },
+                        { weight: 30, narration: "You point at literally the nearest flower. The judge stares at you for a long moment, then nods slowly. \"...Bold choice.\" You still get paid.", effects: { money: 150, food: 5 } }
+                    ]
+                },
+                {
+                    text: "\"I don't know anything about flowers.\"",
+                    outcomes: [
+                        { weight: 100, narration: "\"An honest trainer! Rarer than a decent bloom.\" She hands you a small ribbon for your candor. It's not worth anything, but it's nice.", effects: {} }
+                    ]
+                }
+            ]
+        },
+
+        // ----- Route 36 / 37 -----
+        {
+            id: "route36_37_general",
+            type: "story",
+            name: "The Hills Toward Ecruteak",
+            description: "Route 36/37 rolls over grassy hills, Girafarig grazing in loose herds and Hoothoot watching from the treeline, unblinking.",
+            weight: 9,
+            oneTime: false,
+            locationIds: ["route_36_37"],
+            choices: [
+                {
+                    text: "Push on through the hills",
+                    outcomes: [
+                        { weight: 55, narration: "An uneventful hike. The Hoothoot never stop staring. You get used to it after the third hill.", effects: {} },
+                        { weight: 45, narration: "You find a patch of wild berries the Girafarig haven't gotten to yet. Small win.", effects: { food: 6 } }
+                    ]
+                },
+                {
+                    text: "Make camp for the night",
+                    outcomes: [
+                        { weight: 100, narration: "You pitch camp under watchful Hoothoot eyes. Unsettling, but they don't bother you. Your team sleeps fine.", effects: { daysLost: 1, healAll: true } }
+                    ]
+                }
+            ]
+        },
+        {
+            id: "sudowoodo_event",
+            type: "discovery",
+            name: "The Fake Tree",
+            description: "A lone tree stands at the roadside — bare, gray, motionless even as the wind bends everything else around it. It's been in exactly the same position since you first noticed it. Trees don't usually pose.",
+            weight: 10,
+            oneTime: true,
+            locationIds: ["route_36_37"],
+            choices: [
+                {
+                    text: "Splash it with a Water-type move",
+                    bonusAbility: "surf",
+                    bonusOutcome: { narration: "Your Water-type Pokemon soaks the \"tree\" without hesitation. It shrieks, flails, and reveals itself as a very panicked Sudowoodo — allergic to water, apparently, and now too exhausted to keep pretending. You scoop it up.", effects: { catchPokemon: 185 } },
+                    outcomes: [
+                        { weight: 40, narration: "You poke it. You wait. You poke it again. Forty-five minutes later, the \"tree\" finally loses patience, bolts three feet, trips over a root, and gives up the act entirely. It's a Sudowoodo, and it's yours.", effects: { catchPokemon: 185 } },
+                        { weight: 35, narration: "It holds perfectly still the entire time you're watching. The second you look away, you hear frantic little footsteps. By the time you turn back, the tree is gone and there's a Sudowoodo-shaped dust cloud receding into the hills.", effects: {} },
+                        { weight: 25, narration: "You lean in for a closer look and it Low Kicks you without warning — surprisingly strong for something made of bark. Then it sprints off, still technically pretending to be a tree while running at full speed.", effects: { partyDamageAll: 1 } }
+                    ]
+                },
+                {
+                    text: "Leave the tree alone",
+                    outcomes: [
+                        { weight: 100, narration: "You decide not to interrogate the local flora and keep walking. The \"tree\" does not relax until you're well out of sight.", effects: {} }
+                    ]
+                }
+            ]
+        },
+        {
+            id: "route36_37_ecruteak_legend",
+            type: "story",
+            name: "The Old Man's Story",
+            description: "An old man rests against a milestone marker, watching the smoke-colored clouds gather over Ecruteak in the distance. \"You headed for the city? Careful there. Three beasts walked out of a burning tower once, and folks say they never really stopped walking.\"",
+            weight: 8,
+            oneTime: false,
+            locationIds: ["route_36_37"],
+            choices: [
+                {
+                    text: "Ask him to tell the whole story",
+                    outcomes: [
+                        { weight: 60, narration: "He tells it slow, with all the pauses of someone who's told it a hundred times — a tower, a fire, three Pokemon born from the ash and grief. \"Been seeing strange shapes on the routes since. Keep your eyes open, trainer.\" Worth the ten minutes.", effects: { food: 4 } },
+                        { weight: 40, narration: "\"Ah, you probably think it's just a story.\" He shrugs and lets it go. \"Suit yourself. But if you ever see something fast and strange on the road at dusk — that's not nothing.\" He returns to watching the clouds.", effects: {} }
+                    ]
+                },
+                {
+                    text: "\"I don't have time for legends.\"",
+                    outcomes: [
+                        { weight: 100, narration: "\"None of you kids do.\" He waves you off without looking away from the smoke on the horizon.", effects: {} }
+                    ]
+                }
+            ]
+        },
+
+        // ----- Ecruteak City -----
+        {
+            id: "ecruteak_city_burned_tower",
+            type: "story",
+            name: "The Burned Tower",
+            description: "Blackened support beams rise out of a scorched foundation — all that's left of a tower that burned decades ago. The ash is cold now, but the air inside still smells faintly of smoke.",
+            weight: 10,
+            oneTime: true,
+            locationIds: ["ecruteak_city"],
+            choices: [
+                {
+                    text: "Search the ruins",
+                    outcomes: [
+                        { weight: 45, narration: "You pick through the charred timber and find a scorched but intact offering box tucked in a stone alcove. Whoever left it never came back for it.", effects: { money: 300 } },
+                        { weight: 35, narration: "The floor gives slightly under a rotted beam and you're covered in decades-old soot for your trouble. Nothing else down here but ash.", effects: { partyDamageAll: 1 } },
+                        { weight: 20, narration: "Deep in the ruins you find claw marks scored into a support pillar — three overlapping sets, none of them small. Whatever left them is long gone. You don't linger.", effects: {} }
+                    ]
+                },
+                {
+                    text: "Pay respects and move on",
+                    outcomes: [
+                        { weight: 100, narration: "You stand quietly for a moment out of respect for whatever happened here, then head for the gym. Some places aren't meant to be dug through.", effects: {} }
+                    ]
+                }
+            ]
+        },
+        {
+            id: "ecruteak_city_bell_tower",
+            type: "discovery",
+            name: "Bell Tower",
+            description: "The Bell Tower creaks in the wind, ancient and impossibly still standing. A rope hangs from the great bell at the top, worn smooth by centuries of hands.",
+            weight: 8,
+            oneTime: true,
+            locationIds: ["ecruteak_city"],
+            choices: [
+                {
+                    text: "Ring the bell",
+                    outcomes: [
+                        { weight: 20, narration: "The bell tolls low and long. Somewhere in the rafters, something shifts — and a Misdreavus drifts down through the beams, curious rather than hostile. It seems to like the sound.", effects: { catchPokemon: 200 } },
+                        { weight: 50, narration: "The bell's tone rolls out over the whole city, and for a moment every bird in Ecruteak goes silent at once. Then it's just wind and creaking wood again.", effects: {} },
+                        { weight: 30, narration: "Behind a loose floorboard near the bell rope, you find a small offering box left by a previous pilgrim.", effects: { money: 200 } }
+                    ]
+                },
+                {
+                    text: "Climb quietly without ringing it",
+                    outcomes: [
+                        { weight: 100, narration: "You climb to the top and take in the view over Ecruteak without disturbing anything. Some things are better left un-rung.", effects: {} }
+                    ]
+                }
+            ]
+        },
+        {
+            id: "ecruteak_city_morty_challenge",
+            type: "story",
+            name: "Gym Trainer Talk",
+            description: "A Ghost-type trainer loiters outside the gym, clearly hoping someone will ask about Morty. You do not have to ask twice. \"He reads the fog, you know. Actually reads it. Nobody believes it 'til they've lost to it.\"",
+            weight: 10,
+            oneTime: false,
+            locationIds: ["ecruteak_city"],
+            choices: [
+                {
+                    text: "Ask for tips before challenging Morty",
+                    outcomes: [
+                        { weight: 60, narration: "\"Ghost types don't care about your type chart as much as you'd think. Just don't panic when your attacks pass right through.\" Actionable, if unsettling. She tosses you a couple of Potions for the road.", effects: { potions: 2 } },
+                        { weight: 40, narration: "\"Honestly? Just believe in your Pokemon. That's the whole tip. I'm not being cryptic, that's genuinely it.\" Not the most useful advice, but she means well.", effects: {} }
+                    ]
+                },
+                {
+                    text: "Head straight for the gym",
+                    outcomes: [
+                        { weight: 100, narration: "You skip the small talk. The trainer shrugs and goes back to staring meaningfully at the fog.", effects: {} }
+                    ]
+                }
+            ]
+        },
+
+        // ----- Route 38 / 39 -----
+        {
+            id: "route38_39_moomoo_farm",
+            type: "story",
+            name: "Moomoo Farm",
+            description: "Rows of Miltank low contentedly behind a low fence. A farmer waves you over, a bucket of fresh milk in hand. \"Best in Johto. Cures just about anything short of a broken heart.\"",
+            weight: 10,
+            oneTime: false,
+            maxTriggers: 2,
+            locationIds: ["route_38_39"],
+            choices: [
+                {
+                    text: "Buy a bucket of Moomoo Milk ($400)",
+                    requiresMoney: 400,
+                    outcomes: [
+                        { weight: 100, narration: "The milk works exactly as advertised. Your whole team perks up immediately — color back in their cheeks, energy back in their step.", effects: { money: -400, healAll: true } }
+                    ]
+                },
+                {
+                    text: "Help herd the Miltank",
+                    outcomes: [
+                        { weight: 55, narration: "You spend an hour chasing surprisingly fast cattle-Pokemon around a field. The farmer pays you in milk and cash for the help.", effects: { food: 10, money: 200 } },
+                        { weight: 45, narration: "One Miltank takes exception to being herded and lands a solid Rollout on your lead Pokemon before the farmer intervenes.", effects: { partyDamageAll: 1, money: 150 } }
+                    ]
+                }
+            ]
+        },
+        {
+            id: "route38_39_general",
+            type: "story",
+            name: "The Pastoral Road",
+            description: "Route 38/39 smells like fresh hay and rain-softened dirt. Snubbull nap in patches of sun; a Tauros herd thunders across a distant field for no reason anyone can explain.",
+            weight: 9,
+            oneTime: false,
+            locationIds: ["route_38_39"],
+            choices: [
+                {
+                    text: "Continue toward Olivine",
+                    outcomes: [
+                        { weight: 60, narration: "A pleasant walk. The Tauros herd eventually stops running, apparently satisfied with whatever point it was making.", effects: {} },
+                        { weight: 40, narration: "You step around a napping Snubbull and it doesn't even wake up. Some things really do sleep like the dead.", effects: { food: 5 } }
+                    ]
+                },
+                {
+                    text: "Rest at a roadside gazebo",
+                    outcomes: [
+                        { weight: 100, narration: "The gazebo's a popular trainer rest stop — clean water, shade, someone's forgotten guidebook. You take the break.", effects: { daysLost: 1, healAll: true } }
+                    ]
+                }
+            ]
+        },
+
+        // ----- Olivine City -----
+        {
+            id: "olivine_city_lighthouse",
+            type: "story",
+            name: "The Glass Lighthouse",
+            description: "Olivine's lighthouse rises pale and glassy over the harbor. Inside, the keeper tends to a large, listless Ampharos that's clearly not feeling well.",
+            weight: 10,
+            oneTime: true,
+            locationIds: ["olivine_city"],
+            choices: [
+                {
+                    text: "Offer to help care for it",
+                    outcomes: [
+                        { weight: 60, narration: "You spend the afternoon helping the keeper — fresh water, quiet, a few gentle words. The Ampharos brightens, literally, its tail glowing a little steadier by the time you leave. The keeper is grateful.", effects: { money: 300, food: 5 } },
+                        { weight: 40, narration: "There's not much you can actually do besides keep the keeper company while she worries. She appreciates it anyway and sends you off with supplies.", effects: { potions: 2 } }
+                    ]
+                },
+                {
+                    text: "Just enjoy the view from the top",
+                    outcomes: [
+                        { weight: 100, narration: "You climb to the top of the lighthouse and watch the ferries come in. Olivine looks small and orderly from up here.", effects: {} }
+                    ]
+                }
+            ]
+        },
+        {
+            id: "olivine_city_ferry_dock",
+            type: "discovery",
+            name: "The Ferry Dock",
+            description: "Sailors load crates onto a ferry bound for Vermilion, back in Kanto. One of them recognizes the region badges pinned to your bag. \"Long way from home, huh?\"",
+            weight: 8,
+            oneTime: false,
+            locationIds: ["olivine_city"],
+            choices: [
+                {
+                    text: "Trade stories with the crew",
+                    outcomes: [
+                        { weight: 60, narration: "They're starved for news from Kanto and happy to share sailor gossip in return, some of which is even true. One presses a few supplies into your hands as thanks for the company.", effects: { food: 8, pokeballs: 2 } },
+                        { weight: 40, narration: "\"You made it all the way from Kanto on foot? Rough.\" They're impressed enough to comp you a hot meal before you move on.", effects: { food: 12 } }
+                    ]
+                },
+                {
+                    text: "Watch the harbor and keep moving",
+                    outcomes: [
+                        { weight: 100, narration: "You watch the ferry pull out toward the horizon and think, briefly, about home. Then you turn back toward the gym.", effects: {} }
+                    ]
+                }
+            ]
+        },
+        {
+            id: "olivine_city_jasmine_challenge",
+            type: "story",
+            name: "Word on Jasmine",
+            description: "A trainer nursing a bruised ego outside the gym doors mutters, \"Steel types. Everyone underestimates Steel types. Then they meet her Steelix.\"",
+            weight: 10,
+            oneTime: false,
+            locationIds: ["olivine_city"],
+            choices: [
+                {
+                    text: "Ask what happened to him",
+                    outcomes: [
+                        { weight: 55, narration: "\"Brought a full team of Fighting types. Learned the hard way that Steel resists Fighting too. Bring something with actual Fire or Ground power.\" Genuinely useful, if bitter, advice.", effects: {} },
+                        { weight: 45, narration: "He's too demoralized to give real advice, but he does hand off his half-eaten trail mix. \"Don't need it where I'm going. Which is home. To think.\"", effects: { food: 6 } }
+                    ]
+                },
+                {
+                    text: "Leave him to his sulking",
+                    outcomes: [
+                        { weight: 100, narration: "You leave him to process his loss in peace and head for the gym doors yourself.", effects: {} }
+                    ]
+                }
+            ]
+        },
+
+        // ----- Route 40 / 41 (ferry) -----
+        {
+            id: "route40_41_ferry_crossing",
+            type: "story",
+            name: "The Long Crossing",
+            description: "The ferry churns out into open water, Olivine shrinking behind you. It's a long way to Cianwood — nothing but waves, gulls, and the occasional splash of something large beneath the surface.",
+            weight: 9,
+            oneTime: false,
+            locationIds: ["route_40_41"],
+            choices: [
+                {
+                    text: "Stay on deck and watch the water",
+                    outcomes: [
+                        { weight: 55, narration: "You spend the crossing leaning on the rail, watching Tentacool drift past in loose clouds. Peaceful, if a little dull.", effects: {} },
+                        { weight: 45, narration: "A pod of Chinchou lights up the water alongside the ferry for a few minutes before diving. Worth the trip alone.", effects: { food: 4 } }
+                    ]
+                },
+                {
+                    text: "Rest below deck",
+                    outcomes: [
+                        { weight: 100, narration: "You and your team nap through most of the crossing. You wake up in Cianwood waters feeling considerably better rested.", effects: { daysLost: 1, healAll: true } }
+                    ]
+                }
+            ]
+        },
+        {
+            id: "route40_41_general",
+            type: "hazard",
+            name: "Rough Water",
+            description: "The sea turns choppy without warning, spray coming up over the rail in cold sheets. Somewhere below, something big enough to rock the boat swims past.",
+            weight: 10,
+            oneTime: false,
+            locationIds: ["route_40_41"],
+            choices: [
+                {
+                    text: "Hold on and ride it out",
+                    outcomes: [
+                        { weight: 50, narration: "The swells pass after a rough few minutes. Everyone's a little green but otherwise fine.", effects: {} },
+                        { weight: 30, narration: "A wave catches your team off balance and knocks a few Pokemon around the deck.", effects: { partyDamageAll: 1 } },
+                        { weight: 20, narration: "The water calms as suddenly as it churned. Whatever passed underneath is long gone, and it left behind a scattering of items washed up against the hull.", effects: { pokeballs: 3, money: 100 } }
+                    ]
+                }
+            ]
+        },
+        {
+            id: "route40_41_mantine_sighting",
+            type: "discovery",
+            name: "Something in the Waves",
+            description: "A shadow the size of a small boat glides beneath the surface, keeping pace with the ferry for a while before breaking the water in a slow, graceful leap.",
+            weight: 8,
+            oneTime: true,
+            locationIds: ["route_40_41"],
+            choices: [
+                {
+                    text: "Try to get its attention",
+                    outcomes: [
+                        { weight: 15, narration: "It surfaces right alongside the ferry, curious rather than skittish, and lets you approach. A Mantine — enormous, gentle, and apparently in the mood to be caught.", effects: { catchPokemon: 226 } },
+                        { weight: 85, narration: "It dips back under the surface the moment you lean over the rail, leaving nothing but ripples. Whatever it was, it's not interested in company today.", effects: {} }
+                    ]
+                },
+                {
+                    text: "Leave it be",
+                    outcomes: [
+                        { weight: 100, narration: "You let it swim on undisturbed. It's nice, sometimes, to just watch something be enormous and unbothered.", effects: {} }
+                    ]
+                }
+            ]
+        },
+
+        // ----- Cianwood City -----
+        {
+            id: "cianwood_city_pharmacy",
+            type: "story",
+            name: "The Old Pharmacy",
+            description: "A tiny pharmacy sits wedged between the docks and the cliffside, run by a pharmacist who's clearly been isolated on this island a long time. Shelves are stacked with unlabeled bottles that smell faintly of medicine and salt air.",
+            weight: 10,
+            oneTime: true,
+            locationIds: ["cianwood_city"],
+            choices: [
+                {
+                    text: "Buy the \"secret blend\" tonic ($800)",
+                    requiresMoney: 800,
+                    outcomes: [
+                        { weight: 70, narration: "\"Family recipe. Don't ask what's in it.\" You don't. It works remarkably well regardless.", effects: { money: -800, superPotions: 3 } },
+                        { weight: 30, narration: "\"Family recipe. Don't ask what's in it.\" You don't ask, and it turns out to be extremely strong. Your team is fully healed and mildly disoriented.", effects: { money: -800, healAll: true } }
+                    ]
+                },
+                {
+                    text: "Just browse",
+                    outcomes: [
+                        { weight: 100, narration: "You browse politely and leave with your wallet intact. The pharmacist doesn't seem to mind — she's used to it, being the only pharmacy on an island reachable only by boat.", effects: {} }
+                    ]
+                }
+            ]
+        },
+        {
+            id: "cianwood_city_chuck_challenge",
+            type: "story",
+            name: "Training on the Beach",
+            description: "Chuck is visible from the road, shirtless and doing push-ups on the sand at what has to be an uncomfortable time of day. A local shrugs at your expression. \"Every morning. Rain, shine, doesn't matter.\"",
+            weight: 10,
+            oneTime: false,
+            locationIds: ["cianwood_city"],
+            choices: [
+                {
+                    text: "Ask the local for gym tips",
+                    outcomes: [
+                        { weight: 55, narration: "\"He hits hard and he hits fast. Bring something that can take a Fighting-type combo without folding immediately.\" Blunt, but fair warning.", effects: {} },
+                        { weight: 45, narration: "\"Honestly, just watching him train is intimidating enough.\" She hands you a bottle of water she was clearly saving for herself. \"You'll need it more than me.\"", effects: { food: 5 } }
+                    ]
+                },
+                {
+                    text: "Watch him train for a bit",
+                    outcomes: [
+                        { weight: 100, narration: "You watch Chuck do push-ups for longer than is strictly necessary. He notices you eventually, grins, and waves you toward the gym.", effects: {} }
+                    ]
+                }
+            ]
+        },
+
+        // ----- Route 42 / Mt. Mortar -----
+        {
+            id: "mt_mortar_general",
+            type: "hazard",
+            name: "The Steaming Caves",
+            description: "Hot spring steam rolls through the tunnels of Mt. Mortar in slow, disorienting waves. Somewhere above, water thunders over rock — the waterfall the mountain is named for.",
+            weight: 10,
+            oneTime: false,
+            locationIds: ["route_42_mt_mortar"],
+            choices: [
+                {
+                    text: "Push through the steam",
+                    outcomes: [
+                        { weight: 45, narration: "You navigate the steam-choked tunnels mostly by feel. Disorienting, but you make it through without incident.", effects: {} },
+                        { weight: 30, narration: "You lose your footing on slick, heated stone and take a hard tumble before catching yourself.", effects: { partyDamageAll: 1 } },
+                        { weight: 25, narration: "The steam clears just long enough to reveal a hidden alcove — someone's cached supplies, long abandoned.", effects: { potions: 2, money: 150 } }
+                    ]
+                }
+            ]
+        },
+        {
+            id: "mt_mortar_hermit_master",
+            type: "special",
+            name: "The Cave Hermit",
+            description: "Deep in Mt. Mortar, an old man in torn training clothes sits cross-legged by a hot spring. \"You want to pass? Prove your Pokemon's spirit is stronger than mine.\"",
+            weight: 10,
+            oneTime: true,
+            locationIds: ["route_42_mt_mortar"],
+            choices: [
+                {
+                    text: "Accept his challenge",
+                    eventBattle: {
+                        pool: "trainer",
+                        difficulty: "hard",
+                        trainerName: "Mountain Hermit",
+                        winNarration: "Your Pokemon holds firm through the exchange. The hermit closes his eyes, nods once, and says nothing else — but something about the way your Pokemon carries itself afterward feels different. Sharper.",
+                        lossNarration: "The hermit's Pokemon barely seems to move and still wins. \"Spirit takes years, not days,\" he says, not unkindly, as he helps your team back onto its feet.",
+                        winEffects: { grantStar: true },
+                        lossEffects: { partyDamageAll: 2 }
+                    }
+                },
+                {
+                    text: "\"I'll pass, thanks.\"",
+                    outcomes: [
+                        { weight: 100, narration: "\"Wise, or afraid. Time will tell which.\" He returns to his meditation and lets you by without further comment.", effects: {} }
+                    ]
+                }
+            ]
+        },
+        {
+            id: "mt_mortar_waterfall_training",
+            type: "dilemma",
+            name: "The Waterfall",
+            description: "A thundering waterfall splits the cave in two. Local trainers say standing under it builds resilience. It also looks like it would hurt considerably.",
+            weight: 8,
+            oneTime: false,
+            locationIds: ["route_42_mt_mortar"],
+            choices: [
+                {
+                    text: "Train under the waterfall",
+                    bonusAbility: "strength",
+                    bonusOutcome: { narration: "Your Strength Pokemon plants itself under the full force of the falls and doesn't budge an inch. When it finally steps out, it's visibly tougher for the ordeal.", effects: { boostPokemonMaxHp: 1 } },
+                    outcomes: [
+                        { weight: 40, narration: "You brace your lead Pokemon under the falls. It grits through the pounding water and comes out the other side noticeably hardier.", effects: { boostPokemonMaxHp: 1, partyDamageAll: 1 } },
+                        { weight: 35, narration: "The force of the water is worse than it looked. Your Pokemon gets knocked flat almost immediately and you call it off.", effects: { partyDamageAll: 1 } },
+                        { weight: 25, narration: "You decide against it halfway through, watching a Geodude get literally launched by the current. Good instincts.", effects: {} }
+                    ]
+                },
+                {
+                    text: "Walk around it",
+                    outcomes: [
+                        { weight: 100, narration: "You take the dry path around. Resilience can wait for a day that doesn't involve getting concussed by a waterfall.", effects: {} }
+                    ]
+                }
+            ]
+        },
+
+        // ----- Mahogany Town -----
+        {
+            id: "mahogany_town_team_rocket_hideout",
+            type: "combat",
+            name: "The Hideout Under Mahogany",
+            description: "A false wall in the back room of the local Pokemon Center's basement hides a stairwell reeking of machine oil. Team Rocket never really left Kanto — they just found new radio equipment. Somewhere below, a jammer is broadcasting something over Slowpoke Well's old frequency, and cash registers are ringing for reasons that don't bear thinking about too hard.",
+            weight: 14,
+            oneTime: true,
+            locationIds: ["mahogany_town"],
+            choices: [
+                {
+                    text: "Storm the hideout",
+                    eventBattle: {
+                        pool: "rocket_grunt",
+                        difficulty: "hard",
+                        trainerName: "Rocket Radio Technician",
+                        winNarration: "You smash the jamming rig and the grunts scatter through the tunnels. The broadcast dies mid-static. Whatever they were doing to those Slowpoke, it stops today.",
+                        lossNarration: "The technician's Pokemon corners you against the transmitter racks. You retreat back up the stairwell, the jamming signal still humming behind you.",
+                        winEffects: { money: 1200, pokeballs: 5 },
+                        lossEffects: { partyDamageAll: 2, money: -200 }
+                    }
+                },
+                {
+                    text: "Sneak through the vents",
+                    outcomes: [
+                        { weight: 40, narration: "You worm through a maintenance duct and drop into the supply room unseen. You grab what you can and slip back out before anyone notices the missing crates.", effects: { money: 500, potions: 2 } },
+                        { weight: 35, narration: "The duct dumps you directly into a storage closet three feet from a very surprised grunt. You bolt before he can shout, but not before he gets a grip on your bag.", effects: { pokeballs: -3 } },
+                        { weight: 25, narration: "You get turned around in the ductwork and end up back where you started, covered in dust, having accomplished nothing except learning the hideout's floor plan by feel.", effects: { food: -3 } }
+                    ]
+                },
+                {
+                    text: "Report it and let the authorities handle it",
+                    outcomes: [
+                        { weight: 100, narration: "You tip off the local officer and keep moving. Whatever happens down there next isn't really your problem — you've got a gym to challenge. The jamming signal cuts out sometime overnight; you never do find out exactly how.", effects: {} }
+                    ]
+                }
+            ]
+        },
+        {
+            id: "mahogany_town_pryce_challenge",
+            type: "story",
+            name: "Rumors About Pryce",
+            description: "An old trainer at the Pokemon Center warms his hands on a mug of tea. \"Pryce has been running that gym since before I was your age. Ice types, patience, and absolutely no mercy. In that order.\"",
+            weight: 10,
+            oneTime: false,
+            locationIds: ["mahogany_town"],
+            choices: [
+                {
+                    text: "Ask about his strategy",
+                    outcomes: [
+                        { weight: 55, narration: "\"He waits. Lets you overextend, then punishes it. Don't rush him — rushing is exactly what he wants.\" A cup of tea and solid advice, free of charge.", effects: {} },
+                        { weight: 45, narration: "\"I've watched a hundred trainers lose to that man. Still don't fully understand how.\" Not much help, but he does share his tea and a sandwich.", effects: { food: 6 } }
+                    ]
+                },
+                {
+                    text: "Thank him and move on",
+                    outcomes: [
+                        { weight: 100, narration: "You thank him for the company and head off toward the gym, mentally filing away \"don't rush him.\"", effects: {} }
+                    ]
+                }
+            ]
+        },
+
+        // ----- Lake of Rage -----
+        {
+            id: "lake_of_rage_red_gyarados_rumor",
+            type: "story",
+            name: "Talk of a Red Gyarados",
+            description: "Fishermen along the shore keep their voices low, the way people do when they half-believe their own story. \"Saw it again last week. Big Gyarados, red as a sunset, madder than anything I've hooked in thirty years of fishing this lake.\"",
+            weight: 12,
+            oneTime: false,
+            locationIds: ["lake_of_rage"],
+            choices: [
+                {
+                    text: "Ask them to describe it",
+                    outcomes: [
+                        { weight: 55, narration: "\"Came up out of nowhere, thrashing something awful, color like nothing I've seen on a Gyarados before. Gone again before anyone got a real look.\" You file the story away and keep your eyes on the water, just in case.", effects: {} },
+                        { weight: 45, narration: "\"My cousin swears it capsized his boat. I think he just can't swim.\" Whatever the truth is, half the town has a version of this story by now.", effects: { food: 3 } }
+                    ]
+                },
+                {
+                    text: "\"Sounds like a fish tale.\"",
+                    outcomes: [
+                        { weight: 100, narration: "\"Maybe.\" The old fisherman doesn't look convinced by his own doubt. \"Lake's been strange lately, is all I'll say.\"", effects: {} }
+                    ]
+                }
+            ]
+        },
+        {
+            id: "lake_of_rage_general",
+            type: "story",
+            name: "Mist on the Lake",
+            description: "Fog sits low over the water at Lake of Rage, thick enough that the far shore disappears entirely. Fishing lines dip into water you can't see the bottom of.",
+            weight: 9,
+            oneTime: false,
+            locationIds: ["lake_of_rage"],
+            choices: [
+                {
+                    text: "Fish along the shore",
+                    outcomes: [
+                        { weight: 60, narration: "You while away an hour fishing. Mostly Magikarp, as expected — this lake is famous for very little else, officially.", effects: { food: 6 } },
+                        { weight: 40, narration: "Something tugs hard on the line, hard enough to nearly pull you in, then snaps it clean and vanishes into the fog. You decide not to think too hard about what that was.", effects: {} }
+                    ]
+                },
+                {
+                    text: "Keep to the path",
+                    outcomes: [
+                        { weight: 100, narration: "You stick to solid ground and let the lake keep its secrets. Probably wise.", effects: {} }
+                    ]
+                }
+            ]
+        },
+        {
+            id: "lake_of_rage_team_rocket_scheme",
+            type: "combat",
+            name: "Something in the Water",
+            description: "A cluster of Team Rocket grunts crouch at the water's edge with what looks like homemade lab equipment, muttering about \"accelerated evolution\" and \"the boss's new pet project.\" This can't be good for the local Magikarp.",
+            weight: 10,
+            oneTime: true,
+            locationIds: ["lake_of_rage"],
+            choices: [
+                {
+                    text: "Confront them",
+                    eventBattle: {
+                        pool: "rocket_grunt",
+                        difficulty: "medium",
+                        trainerName: "Rocket Grunt",
+                        winNarration: "You scatter the grunts and their equipment goes into the lake with a satisfying splash. Whatever they were doing to the local Magikarp, it stops here.",
+                        lossNarration: "The grunt's Pokemon holds you off long enough for the others to pack up and vanish into the fog with their equipment intact.",
+                        winEffects: { money: 600 },
+                        lossEffects: { partyDamageAll: 1 }
+                    }
+                },
+                {
+                    text: "Watch from a distance",
+                    outcomes: [
+                        { weight: 70, narration: "You keep your distance and watch them work. Eventually they pack up and leave, apparently unsatisfied with whatever readings they were taking. You catch snippets about \"the big one\" not cooperating.", effects: {} },
+                        { weight: 30, narration: "One of them spots you watching and the whole crew bolts, leaving a dropped supply case behind.", effects: { pokeballs: 3, money: 200 } }
+                    ]
+                }
+            ]
+        },
+
+        // ----- Route 44 / Ice Path -----
+        {
+            id: "ice_path_general",
+            type: "hazard",
+            name: "The Frozen Tunnels",
+            description: "Ice Path lives up to its name — floor, walls, ceiling, all of it slick and glittering. Every step is a small negotiation with gravity.",
+            weight: 10,
+            oneTime: false,
+            locationIds: ["route_44_ice_path"],
+            choices: [
+                {
+                    text: "Move carefully",
+                    outcomes: [
+                        { weight: 50, narration: "Slow and steady gets you through without incident. Your team's better at this than you are, frankly.", effects: {} },
+                        { weight: 30, narration: "Someone goes down hard on the ice. Everyone's fine, but there's a bruise or two now.", effects: { partyDamageAll: 1 } },
+                        { weight: 20, narration: "You spot a frozen-over supply cache trapped in the ice — someone's emergency kit, abandoned mid-crossing.", effects: { potions: 2, food: 8 } }
+                    ]
+                }
+            ]
+        },
+        {
+            id: "ice_path_slippery_puzzle",
+            type: "dilemma",
+            name: "The Sliding Floor",
+            description: "A section of Ice Path is one continuous sheet of ice — step on it and you slide until you hit a wall. There's no obvious safe way across, just a lot of ways to end up somewhere you didn't intend.",
+            weight: 8,
+            oneTime: false,
+            locationIds: ["route_44_ice_path"],
+            choices: [
+                {
+                    text: "Slide across and hope for the best",
+                    outcomes: [
+                        { weight: 40, narration: "You slide clean across and stick the landing, mostly by luck. Your team looks vaguely impressed.", effects: {} },
+                        { weight: 35, narration: "You slide into the far wall harder than planned. Everyone's a little dazed but upright.", effects: { partyDamageAll: 1 } },
+                        { weight: 25, narration: "You slide past the far wall entirely into a side passage and stumble on a small stash someone left wedged in an ice crevice.", effects: { rareCandy: 1 } }
+                    ]
+                },
+                {
+                    text: "Find a way around",
+                    outcomes: [
+                        { weight: 100, narration: "It takes longer, but you pick your way around the ice sheet on solid rock instead. Slower, but nobody ends up on the floor.", effects: { daysLost: 1 } }
+                    ]
+                }
+            ]
+        },
+        {
+            id: "ice_path_frozen_hiker",
+            type: "story",
+            name: "The Stranded Hiker",
+            description: "A hiker sits against the tunnel wall, one leg wedged awkwardly under a chunk of fallen ice, breath visible in ragged clouds. \"Been stuck here since yesterday. Didn't think anyone else would be crazy enough to come through.\"",
+            weight: 8,
+            oneTime: true,
+            locationIds: ["route_44_ice_path"],
+            choices: [
+                {
+                    text: "Help free him",
+                    outcomes: [
+                        { weight: 70, narration: "Between your Pokemon and some careful leverage, you get the ice off his leg. He's badly bruised but grateful beyond words, and insists on giving you what's left of his climbing supplies.", effects: { pokeballs: 4, money: 300 } },
+                        { weight: 30, narration: "The ice won't budge easily, but between the two of you — and one very patient Pokemon — you manage it eventually. He limps off toward Blackthorn, thanking you the whole way.", effects: { daysLost: 1, food: -4 } }
+                    ]
+                },
+                {
+                    text: "Go get help from Blackthorn instead",
+                    outcomes: [
+                        { weight: 100, narration: "You promise to send someone back for him and press on. You do send help — eventually. He's fine. Mostly.", effects: {} }
+                    ]
+                }
+            ]
+        },
+
+        // ----- Blackthorn City -----
+        {
+            id: "blackthorn_city_dragons_den_gate",
+            type: "story",
+            name: "The Den's Gatekeeper",
+            description: "An old woman guards a modest wooden gate at the edge of town, behind which a narrow path winds toward the sound of falling water. \"The Den doesn't open for everyone. Prove yourself at the gym first — Clair will know if you haven't.\"",
+            weight: 10,
+            oneTime: true,
+            locationIds: ["blackthorn_city"],
+            choices: [
+                {
+                    text: "Ask about Dragon's Den",
+                    outcomes: [
+                        { weight: 60, narration: "\"It's sacred ground. Dragonair have called it home since before this town had a name. Show it respect and it'll show you something in return.\" Cryptic, in the way gatekeepers tend to be.", effects: {} },
+                        { weight: 40, narration: "She softens slightly at your interest and shares a story about the elder who still tends the shrine deep in the Den — the same elder who's tested trainers there for decades.", effects: { food: 4 } }
+                    ]
+                },
+                {
+                    text: "Head straight for the gym",
+                    outcomes: [
+                        { weight: 100, narration: "\"Gym's that way,\" she says, unbothered, and returns to her post at the gate.", effects: {} }
+                    ]
+                }
+            ]
+        },
+        {
+            id: "blackthorn_city_clair_challenge",
+            type: "story",
+            name: "Talk of the Dragon Master",
+            description: "A trainer nursing a bandaged arm outside the Pokemon Center winces at the mention of Clair's name. \"She doesn't just battle you. She tests you. There's a difference, apparently.\"",
+            weight: 10,
+            oneTime: false,
+            locationIds: ["blackthorn_city"],
+            choices: [
+                {
+                    text: "Ask what that means",
+                    outcomes: [
+                        { weight: 55, narration: "\"She expects you to have proven yourself at the Den first. Skip that and she'll know — and she'll make the gym battle twice as hard out of spite.\" Noted.", effects: {} },
+                        { weight: 45, narration: "\"Kingdra. Just — Kingdra. That's the whole warning.\" He shudders and says nothing more.", effects: { food: 5 } }
+                    ]
+                },
+                {
+                    text: "\"I can handle it.\"",
+                    outcomes: [
+                        { weight: 100, narration: "\"That's what I said too,\" he mutters, gesturing at his arm.", effects: {} }
+                    ]
+                }
+            ]
+        },
+
+        // ----- Dragon's Den -----
+        {
+            id: "dragons_den_elder_trial",
+            type: "special",
+            name: "The Elder's Trial",
+            description: "An elder in ceremonial robes waits beside the shrine at the heart of Dragon's Den, water tumbling over stone behind him in an endless, patient roar. \"Dragon's Den does not test strength. It tests understanding. Show me you understand your Pokemon, and the Den will show you something worth the walk.\"",
+            weight: 12,
+            oneTime: true,
+            locationIds: ["dragons_den"],
+            choices: [
+                {
+                    text: "Undergo the trial",
+                    outcomes: [
+                        { weight: 30, narration: "The elder watches you interact with your team in silence for a long while, then nods once, slowly. \"You understand more than most who come here.\" From the shallows behind the shrine, a young Dratini surfaces and approaches you on its own — a gift from the Den itself, apparently.", effects: { catchPokemon: 147 } },
+                        { weight: 45, narration: "The elder studies your team, and you, for a long time. \"Understanding is a practice, not a destination. Come back when you've practiced more.\" He does send you off with a blessing of sorts — supplies from the shrine's stores.", effects: { potions: 2, money: 200 } },
+                        { weight: 25, narration: "\"You care for your Pokemon. That much is clear, even if the rest still needs work.\" Not a pass, exactly, but not a failure either. He offers quiet encouragement and little else.", effects: {} }
+                    ]
+                },
+                {
+                    text: "Decline respectfully",
+                    outcomes: [
+                        { weight: 100, narration: "\"Then the Den will wait,\" he says, unbothered, and returns to his meditation by the shrine.", effects: {} }
+                    ]
+                }
+            ]
+        },
+        {
+            id: "dragons_den_general",
+            type: "discovery",
+            name: "The Sacred Waterfall",
+            description: "Water thunders down through Dragon's Den in wide, cascading sheets, catching light in a way that feels less like physics and more like a deliberate performance for anyone watching.",
+            weight: 9,
+            oneTime: false,
+            locationIds: ["dragons_den"],
+            choices: [
+                {
+                    text: "Explore behind the waterfall",
+                    outcomes: [
+                        { weight: 45, narration: "A hidden alcove behind the falls holds an old shrine offering, untouched for what looks like years.", effects: { money: 300 } },
+                        { weight: 30, narration: "The spray soaks your whole team instantly. Cold, but at least it's clean water.", effects: { food: 4 } },
+                        { weight: 25, narration: "A Horsea watches you from a shallow pool the whole time, entirely unbothered by your presence, before drifting back into deeper water.", effects: {} }
+                    ]
+                },
+                {
+                    text: "Watch the water from a distance",
+                    outcomes: [
+                        { weight: 100, narration: "You watch the falls for a while. It's the kind of place that makes you understand why people build shrines next to waterfalls.", effects: {} }
+                    ]
+                }
+            ]
+        },
+
+        // ----- Victory Road (Johto) -----
+        {
+            id: "victory_road_johto_general",
+            type: "hazard",
+            name: "The Ultimate Test, Again",
+            description: "Victory Road's second helping is no gentler than the first — narrow ledges, unstable rockfall, and a darkness that swallows your flashlight beam after a few feet.",
+            weight: 10,
+            oneTime: false,
+            locationIds: ["victory_road_johto"],
+            choices: [
+                {
+                    text: "Press onward carefully",
+                    outcomes: [
+                        { weight: 40, narration: "Slow, deliberate progress through the dark. You make it through this stretch without losing anyone.", effects: {} },
+                        { weight: 35, narration: "A section of ceiling gives way behind you, close enough to rattle everyone's nerves and a few ribs.", effects: { partyDamageAll: 2 } },
+                        { weight: 25, narration: "You find a cache wedged into a rock crevice — a previous trainer's emergency supplies, never claimed.", effects: { superPotions: 2, pokeballs: 4 } }
+                    ]
+                }
+            ]
+        },
+        {
+            id: "victory_road_johto_fallen_trainer",
+            type: "story",
+            name: "A Trainer's Last Notes",
+            description: "A weatherbeaten journal lies half-buried in cave dust, wedged against a boulder. The handwriting inside gets shakier toward the end — someone who didn't make it through, or maybe just gave up and went home. Hard to tell which from a journal.",
+            weight: 8,
+            oneTime: true,
+            locationIds: ["victory_road_johto"],
+            choices: [
+                {
+                    text: "Read it",
+                    outcomes: [
+                        { weight: 60, narration: "The final entries are route notes — safe paths, dangerous ledges, where the air gets thin. Whoever wrote this mapped out most of the cave before their trail goes cold. You pocket the notes; they'll help.", effects: { food: 6, pokeballs: 3 } },
+                        { weight: 40, narration: "The last legible page just says \"turned back, no shame in it, tell my mom I'm fine.\" You hope they made it out. You leave the journal where you found it and press on.", effects: {} }
+                    ]
+                },
+                {
+                    text: "Leave it undisturbed",
+                    outcomes: [
+                        { weight: 100, narration: "You leave it be. Some things aren't yours to read.", effects: {} }
+                    ]
+                }
+            ]
+        },
+        {
+            id: "victory_road_johto_veteran_gauntlet",
+            type: "combat",
+            name: "Veteran's Gauntlet",
+            description: "A grizzled veteran trainer blocks the narrow passage, arms crossed. \"Second Victory Road, huh? Figures someone would come back for more. Prove you belong here.\"",
+            weight: 10,
+            oneTime: false,
+            locationIds: ["victory_road_johto"],
+            choices: [
+                {
+                    text: "Accept the gauntlet",
+                    eventBattle: {
+                        pool: "trainer",
+                        difficulty: "hard",
+                        trainerName: "Veteran Trainer",
+                        winNarration: "A hard-fought win. The veteran actually cracks a smile. \"Yeah. You belong here.\" He steps aside without another word.",
+                        lossNarration: "The veteran's experience shows. \"Not yet,\" is all he says, helping you gather your team off the cave floor.",
+                        winEffects: { money: 700, trainPokemon: true },
+                        lossEffects: { partyDamageAll: 2 }
+                    }
+                },
+                {
+                    text: "Try to talk your way past",
+                    outcomes: [
+                        { weight: 30, narration: "\"...Fine. You've got the look of someone who's earned it already.\" He steps aside, somewhat reluctantly.", effects: {} },
+                        { weight: 70, narration: "\"Nice try.\" He doesn't budge an inch. You end up battling him anyway, whether you meant to or not.", effects: { partyDamageAll: 1 } }
+                    ]
+                }
+            ]
+        },
+
+        // ----- Indigo Plateau (Johto) -----
+        {
+            id: "indigo_plateau_johto_nurse_joy",
+            type: "healing",
+            name: "The Plateau's Pokemon Center",
+            description: "Nurse Joy greets you at the Johto Indigo Plateau's Pokemon Center with the same warm, tireless smile as every Nurse Joy you've ever met. \"You made it back! Let's get your team ready for the Elite Four.\"",
+            weight: 12,
+            oneTime: false,
+            locationIds: ["indigo_plateau_johto"],
+            choices: [
+                {
+                    text: "Heal all Pokemon",
+                    outcomes: [
+                        { weight: 100, narration: "Every Pokemon on your team is restored to full health. \"Good luck out there,\" she says, and she sounds like she means it every single time.", effects: { healAll: true } }
+                    ]
+                },
+                {
+                    text: "Heal and rest before the rematch (lose 1 day)",
+                    outcomes: [
+                        { weight: 100, narration: "You take the extra day. Full rest, full health, one last quiet night before the Elite Four rematch begins.", effects: { healAll: true, food: 5, daysLost: 1 } }
+                    ]
+                }
+            ]
+        },
+        {
+            id: "indigo_plateau_johto_e4_rematch_intro",
+            type: "story",
+            name: "Familiar Halls",
+            description: "The Indigo Plateau looks almost exactly like you remember it — same worn stone, same nervous hush in the corridor before the Elite Four's chamber. It doesn't feel the same, though. You're not the same trainer who walked in here the first time.",
+            weight: 14,
+            oneTime: true,
+            locationIds: ["indigo_plateau_johto"],
+            choices: [
+                {
+                    text: "Take a moment before going in",
+                    outcomes: [
+                        { weight: 55, narration: "A familiar face passes in the hallway — someone you battled here once, now working plateau security. \"Back again? Guess Kanto wasn't enough for you.\" They wish you luck and mean it. You take a breath, steady your team, and get ready.", effects: { healAll: true } },
+                        { weight: 45, narration: "You stand in the corridor a while, remembering the first time you did this — how much smaller your team was, how much less you knew. Whatever happens in there, you're walking in ready this time.", effects: { food: 5 } }
+                    ]
+                },
+                {
+                    text: "Walk straight in",
+                    outcomes: [
+                        { weight: 100, narration: "No hesitation this time. You've done this before. You know what's coming — mostly.", effects: {} }
+                    ]
+                }
+            ]
+        },
+
+        // ----- Route 28 / Mt. Silver -----
+        {
+            id: "mt_silver_general",
+            type: "hazard",
+            name: "The Longest Climb",
+            description: "Mt. Silver doesn't ease you in. The wind alone is enough to stagger a grown adult, and the path up is longer than anything you've walked since you started this whole journey.",
+            weight: 10,
+            oneTime: false,
+            locationIds: ["route_28_mt_silver"],
+            choices: [
+                {
+                    text: "Push through the wind and altitude",
+                    outcomes: [
+                        { weight: 40, narration: "Slow going, but steady. You gain ground against the wind one exhausted step at a time.", effects: {} },
+                        { weight: 35, narration: "A gust nearly takes someone off the path entirely. Everyone grips a little tighter after that.", effects: { partyDamageAll: 1, food: -4 } },
+                        { weight: 25, narration: "You find a windbreak carved into the rock by some previous climber, and with it, a stash of supplies left for whoever needed them next. You do.", effects: { food: 10, potions: 2 } }
+                    ]
+                }
+            ]
+        },
+        {
+            id: "mt_silver_red_encounter",
+            type: "special",
+            name: "Something Ahead",
+            description: "Fresh footprints cut through the snow ahead of you — deep, deliberate, heading exactly where you're headed. Whoever left them isn't in any hurry, and isn't trying to hide.",
+            weight: 10,
+            oneTime: false,
+            maxTriggers: 2,
+            locationIds: ["route_28_mt_silver"],
+            choices: [
+                {
+                    text: "Follow the footprints",
+                    outcomes: [
+                        { weight: 45, narration: "The trail leads to a rocky outcrop and just... stops. Below, at the very edge of visibility through the blowing snow, a motionless figure stands facing the summit, unmoving, unbothered by the cold. You don't get close enough to see more before the wind picks up and the shape is gone.", effects: {} },
+                        { weight: 35, narration: "A distant silhouette on a ridgeline above you — a figure and, beside it, something enormous and still, both facing away, neither moving. Your team goes quiet without being told to. You keep climbing.", effects: {} },
+                        { weight: 20, narration: "The footprints just... end, mid-stride, like whoever made them stopped existing between one step and the next. There's no explanation for it. You decide not to look for one.", effects: {} }
+                    ]
+                },
+                {
+                    text: "Keep your distance and stay on your own path",
+                    outcomes: [
+                        { weight: 100, narration: "Whatever — whoever — that is, you're not ready. Not yet. You give the footprints a wide berth and keep climbing.", effects: {} }
+                    ]
+                }
+            ]
+        },
+        {
+            id: "mt_silver_veteran_hermit",
+            type: "story",
+            name: "The Mountain Hermit",
+            description: "A weathered old trainer has made some kind of permanent camp partway up Mt. Silver, tarp strung between rocks, a small fire somehow holding against the wind. \"Not many climb this far. Fewer climb higher. You planning to?\"",
+            weight: 8,
+            oneTime: true,
+            locationIds: ["route_28_mt_silver"],
+            choices: [
+                {
+                    text: "Ask him about what's at the summit",
+                    outcomes: [
+                        { weight: 55, narration: "\"Someone's up there. Been up there for years, way I hear it. Doesn't come down, doesn't want visitors — except the ones strong enough to earn a fight.\" He pours you tea from a battered kettle. \"You look like you might be one of those.\"", effects: { food: 8, potions: 2 } },
+                        { weight: 45, narration: "\"Kid, if I knew exactly what's up there, I'd have gone and found out myself by now instead of camping halfway up for six years.\" Fair point. He shares his fire and his rations anyway.", effects: { food: 10 } }
+                    ]
+                },
+                {
+                    text: "Thank him and keep climbing",
+                    outcomes: [
+                        { weight: 100, narration: "\"Good luck up there,\" he calls after you, already turning back to his fire like he's said it a hundred times before to a hundred other trainers.", effects: {} }
+                    ]
+                }
+            ]
+        },
+
+        // ===== JOHTO (BACK HALF): GLOBAL EVENTS — fire on any back-half Johto route by terrain =====
+
+        {
+            id: "johto_sudden_hailstorm",
+            type: "weather",
+            name: "Sudden Hailstorm",
+            description: "The sky darkens fast and hail starts hammering down without warning, stinging and relentless.",
+            weight: 9,
+            minLocation: 42,
+            terrainTypes: ["route", "mountain"],
+            choices: [
+                {
+                    text: "Take shelter and wait it out",
+                    outcomes: [
+                        { weight: 60, narration: "You huddle under an outcropping until it passes. Cold, but nobody's hurt.", effects: { daysLost: 1 } },
+                        { weight: 40, narration: "Shelter's thin and the hail finds a way in anyway. Everyone takes a few hits before it clears.", effects: { partyDamageAll: 1, daysLost: 1 } }
+                    ]
+                },
+                {
+                    text: "Push through it",
+                    outcomes: [
+                        { weight: 50, narration: "You grit through the hailstorm and keep moving. Miserable, but no time lost.", effects: { partyDamageAll: 1 } },
+                        { weight: 50, narration: "The hail is worse than it looked. You make it through but everyone's rattled.", effects: { partyDamageAll: 2 } }
+                    ]
+                }
+            ]
+        },
+        {
+            id: "johto_thick_fog",
+            type: "weather",
+            name: "Thick Fog",
+            description: "Fog rolls in so dense you can barely see your own Pokemon walking beside you.",
+            weight: 9,
+            minLocation: 42,
+            terrainTypes: ["route", "water", "cave"],
+            choices: [
+                {
+                    text: "Wait for it to clear",
+                    outcomes: [
+                        { weight: 100, narration: "You sit tight until visibility returns. Uneventful, if a little eerie.", effects: { daysLost: 1 } }
+                    ]
+                },
+                {
+                    text: "Navigate through it carefully",
+                    outcomes: [
+                        { weight: 55, narration: "Slow going, but you find your way through without incident.", effects: {} },
+                        { weight: 45, narration: "You take a wrong turn in the fog and backtrack for a while before finding the path again.", effects: { food: -3 } }
+                    ]
+                }
+            ]
+        },
+        {
+            id: "johto_early_snowfall",
+            type: "weather",
+            name: "Early Snowfall",
+            description: "Snow starts falling well ahead of schedule, blanketing the path in unfamiliar white.",
+            weight: 7,
+            minLocation: 42,
+            terrainTypes: ["mountain", "cave", "route"],
+            choices: [
+                {
+                    text: "Keep moving",
+                    outcomes: [
+                        { weight: 60, narration: "The snow is pretty, if inconvenient. You push on through it.", effects: {} },
+                        { weight: 40, narration: "The snow hides a patch of loose scree. Someone slips before you spot it.", effects: { partyDamageAll: 1 } }
+                    ]
+                }
+            ]
+        },
+        {
+            id: "johto_gale_force_wind",
+            type: "weather",
+            name: "Gale-Force Wind",
+            description: "A sudden gale tears across the open path, strong enough to knock small Pokemon off their feet.",
+            weight: 7,
+            minLocation: 42,
+            terrainTypes: ["route", "water"],
+            choices: [
+                {
+                    text: "Brace and continue",
+                    outcomes: [
+                        { weight: 55, narration: "You lean into the wind and push through. Exhausting, but manageable.", effects: { food: -3 } },
+                        { weight: 45, narration: "The wind knocks over your pack, scattering a few items before you can grab them.", effects: { pokeballs: -2 } }
+                    ]
+                }
+            ]
+        },
+        {
+            id: "johto_apricorn_tree",
+            type: "discovery",
+            name: "An Apricorn Tree",
+            description: "A tree heavy with colorful Apricorns grows just off the path — the kind of tree Johto's ball-crafters are always looking for.",
+            weight: 9,
+            minLocation: 42,
+            terrainTypes: ["route", "town"],
+            choices: [
+                {
+                    text: "Gather Apricorns",
+                    outcomes: [
+                        { weight: 55, narration: "You gather a decent haul. A crafter in the next town will trade well for these — or you just hand them off for ready-made balls.", effects: { greatballs: 3 } },
+                        { weight: 45, narration: "You gather what you can reach and call it a day. Not a huge haul, but free is free.", effects: { pokeballs: 4 } }
+                    ]
+                },
+                {
+                    text: "Leave the tree alone",
+                    outcomes: [
+                        { weight: 100, narration: "You leave the Apricorns for someone who actually needs them and keep walking.", effects: {} }
+                    ]
+                }
+            ]
+        },
+        {
+            id: "johto_hidden_hot_spring",
+            type: "discovery",
+            name: "A Hidden Hot Spring",
+            description: "Tucked behind a rock outcropping, a small hot spring steams quietly, untouched by anyone in a long while.",
+            weight: 7,
+            minLocation: 42,
+            terrainTypes: ["cave", "mountain"],
+            choices: [
+                {
+                    text: "Let your team soak",
+                    outcomes: [
+                        { weight: 100, narration: "Your team soaks gratefully. Aches fade, spirits lift. Small mercies on a long haul.", effects: { healAll: true, daysLost: 1 } }
+                    ]
+                },
+                {
+                    text: "Keep moving",
+                    outcomes: [
+                        { weight: 100, narration: "Tempting, but you've got ground to cover. You note the spring's location and press on.", effects: {} }
+                    ]
+                }
+            ]
+        },
+        {
+            id: "johto_backhalf_pokeathlon_flyer",
+            type: "discovery",
+            name: "A Pokeathlon Flyer",
+            description: "A crumpled flyer advertises an upcoming Pokeathlon event — agility courses, obstacle relays, the works. Not today, unfortunately.",
+            weight: 6,
+            minLocation: 42,
+            terrainTypes: ["town", "city"],
+            choices: [
+                {
+                    text: "Read it over",
+                    outcomes: [
+                        { weight: 100, narration: "Sounds like a fun event you'll definitely miss, given the timeline you're on. You pocket the flyer anyway.", effects: {} }
+                    ]
+                }
+            ]
+        },
+        {
+            id: "johto_backhalf_glowing_moss",
+            type: "discovery",
+            name: "Glowing Cave Moss",
+            description: "Patches of faintly luminous moss line a stretch of tunnel, casting everything in soft blue-green light.",
+            weight: 7,
+            minLocation: 42,
+            terrainTypes: ["cave"],
+            choices: [
+                {
+                    text: "Investigate the moss",
+                    outcomes: [
+                        { weight: 50, narration: "It's just bioluminescent moss, harmless and strangely beautiful. You take a minute to appreciate it.", effects: {} },
+                        { weight: 50, narration: "Something small and startled darts out from under the moss and knocks loose a few items in its scramble to escape.", effects: { pokeballs: 2 } }
+                    ]
+                }
+            ]
+        },
+        {
+            id: "johto_gs_ball_rumor",
+            type: "discovery",
+            name: "Talk of a Strange Ball",
+            description: "A collector in town won't stop talking about a mysterious ball, gold and silver, said to hold something that hasn't been seen in Johto for centuries. \"Nobody's figured out how to open it. Might be nothing. Might be everything.\"",
+            weight: 6,
+            oneTime: true,
+            minLocation: 42,
+            terrainTypes: ["city", "town"],
+            choices: [
+                {
+                    text: "Ask to see it",
+                    outcomes: [
+                        { weight: 100, narration: "\"Don't have it on me — it's somewhere safer than my pocket, trust me.\" He describes it in loving detail anyway: gold cap, silver base, a lock nobody's cracked. Interesting story. Not much else you can do with it.", effects: {} }
+                    ]
+                },
+                {
+                    text: "\"Sounds like a legend, not a ball.\"",
+                    outcomes: [
+                        { weight: 100, narration: "\"Maybe. Legends usually start somewhere real, though.\" He goes back to his notes, unbothered by your skepticism.", effects: {} }
+                    ]
+                }
+            ]
+        },
+        {
+            id: "johto_pokewalker_relic",
+            type: "discovery",
+            name: "A Buried Trinket",
+            description: "Something small and metallic glints half-buried in the dirt beside the path — an old pedometer-like device, long dead, clearly well-loved once.",
+            weight: 6,
+            minLocation: 42,
+            terrainTypes: ["route", "town"],
+            choices: [
+                {
+                    text: "Dig it out",
+                    outcomes: [
+                        { weight: 55, narration: "It's broken beyond repair, but whoever owned it clearly walked a lot of miles with it. You pocket it anyway, out of respect, and find a few coins nearby.", effects: { money: 150 } },
+                        { weight: 45, narration: "Just old junk, it turns out. You leave it where you found it.", effects: {} }
+                    ]
+                }
+            ]
+        },
+        {
+            id: "johto_rockslide",
+            type: "hazard",
+            name: "Rockslide",
+            description: "Rocks tumble down from above without warning, clattering across the path in a shower of dust and gravel.",
+            weight: 9,
+            minLocation: 42,
+            terrainTypes: ["mountain", "cave"],
+            choices: [
+                {
+                    text: "Scramble clear",
+                    outcomes: [
+                        { weight: 55, narration: "Everyone gets clear in time. Close, but no harm done.", effects: {} },
+                        { weight: 45, narration: "Not everyone moves fast enough. A few Pokemon take glancing hits from falling debris.", effects: { partyDamageAll: 1 } }
+                    ]
+                }
+            ]
+        },
+        {
+            id: "johto_landslide_bridge_out",
+            type: "hazard",
+            name: "Washed-Out Path",
+            description: "A section of trail has simply given way, leaving a gap where solid ground used to be.",
+            weight: 8,
+            minLocation: 42,
+            terrainTypes: ["route"],
+            choices: [
+                {
+                    text: "Find a way around",
+                    outcomes: [
+                        { weight: 60, narration: "A longer route around the gap costs you time but keeps everyone safe.", effects: { daysLost: 1 } },
+                        { weight: 40, narration: "The detour is rougher than expected, and someone takes a tumble down a loose slope before you're clear.", effects: { partyDamageAll: 1, daysLost: 1 } }
+                    ]
+                }
+            ]
+        },
+        {
+            id: "johto_whirlpool_current",
+            type: "hazard",
+            name: "Whirlpool",
+            description: "A whirlpool churns up suddenly in open water, dragging debris — and anything else nearby — toward its center.",
+            weight: 8,
+            minLocation: 42,
+            terrainTypes: ["water"],
+            choices: [
+                {
+                    text: "Fight the current",
+                    outcomes: [
+                        { weight: 50, narration: "You power through and clear the pull without much trouble.", effects: {} },
+                        { weight: 50, narration: "The current drags you around longer than expected before releasing you, exhausted, on the far side.", effects: { partyDamageAll: 1, food: -3 } }
+                    ]
+                }
+            ]
+        },
+        {
+            id: "johto_avalanche_warning",
+            type: "hazard",
+            name: "Distant Rumble",
+            description: "A low rumble echoes down from higher up the slope — the unmistakable sound of snow deciding to relocate itself.",
+            weight: 7,
+            minLocation: 42,
+            terrainTypes: ["mountain"],
+            choices: [
+                {
+                    text: "Move away from the slope fast",
+                    outcomes: [
+                        { weight: 65, narration: "You clear the area well before anything reaches you. The rumble fades into nothing.", effects: {} },
+                        { weight: 35, narration: "A light dusting of snow reaches you before you're fully clear, nothing serious, just cold and unpleasant.", effects: { food: -3 } }
+                    ]
+                }
+            ]
+        },
+        {
+            id: "johto_falling_icicles",
+            type: "hazard",
+            name: "Falling Icicles",
+            description: "Massive icicles hang from the cave ceiling, and one just came loose without any warning at all.",
+            weight: 7,
+            minLocation: 42,
+            terrainTypes: ["cave"],
+            choices: [
+                {
+                    text: "Watch your footing and keep moving",
+                    outcomes: [
+                        { weight: 60, narration: "You keep to the edges of the tunnel where the ceiling's more stable. No further incidents.", effects: {} },
+                        { weight: 40, narration: "Another icicle lets go just as you pass underneath. Nobody's seriously hurt, but it's a close call.", effects: { partyDamageAll: 1 } }
+                    ]
+                }
+            ]
+        },
+        {
+            id: "johto_swarm_of_spinarak",
+            type: "hazard",
+            name: "Spinarak Swarm",
+            description: "A whole colony of Spinarak drops from overhead webbing at once, startled by your approach and instantly aggressive about it.",
+            weight: 8,
+            minLocation: 42,
+            terrainTypes: ["route"],
+            choices: [
+                {
+                    text: "Push through the swarm",
+                    outcomes: [
+                        { weight: 50, narration: "You duck and weave through the falling spiders without too much trouble.", effects: {} },
+                        { weight: 50, narration: "A few Spinarak get their String Shots in before you clear the webbing entirely.", effects: { partyDamageAll: 1 } }
+                    ]
+                }
+            ]
+        },
+        {
+            id: "johto_ursaring_charge",
+            type: "hazard",
+            name: "Territorial Ursaring",
+            description: "A large Ursaring rises up out of the underbrush, clearly convinced you're trespassing on something important.",
+            weight: 8,
+            minLocation: 42,
+            terrainTypes: ["mountain", "cave"],
+            choices: [
+                {
+                    text: "Back away slowly",
+                    outcomes: [
+                        { weight: 65, narration: "It watches you retreat, satisfied once you're a respectful distance away, then goes back to whatever it was doing.", effects: {} },
+                        { weight: 35, narration: "It charges a few steps anyway just to make its point clear before letting you go. Message received.", effects: { partyDamageAll: 1 } }
+                    ]
+                }
+            ]
+        },
+        {
+            id: "johto_slick_cave_floor",
+            type: "hazard",
+            name: "Slick Floor",
+            description: "Water seeping through the rock has left the cave floor treacherously slick underfoot.",
+            weight: 7,
+            minLocation: 42,
+            terrainTypes: ["cave"],
+            choices: [
+                {
+                    text: "Cross carefully",
+                    outcomes: [
+                        { weight: 60, narration: "You make it across without anyone going down. Small victories.", effects: {} },
+                        { weight: 40, narration: "Someone loses their footing halfway across. A hard landing, but nothing broken.", effects: { partyDamageAll: 1 } }
+                    ]
+                }
+            ]
+        },
+        {
+            id: "johto_backhalf_traveling_merchant",
+            type: "story",
+            name: "A Traveling Merchant",
+            description: "A merchant's cart, piled high with goods from all over Johto, is parked at the roadside. \"Best prices this side of Goldenrod! Well — probably.\"",
+            weight: 9,
+            minLocation: 42,
+            terrainTypes: ["route", "town", "city"],
+            choices: [
+                {
+                    text: "Buy some supplies ($500)",
+                    requiresMoney: 500,
+                    outcomes: [
+                        { weight: 60, narration: "Decent prices, decent goods. You restock without getting swindled, which feels like a win.", effects: { money: -500, potions: 3, pokeballs: 3 } },
+                        { weight: 40, narration: "\"Special today only!\" He throws in an extra item to close the deal. Suspiciously generous, but you'll take it.", effects: { money: -500, superPotions: 1, pokeballs: 3 } }
+                    ]
+                },
+                {
+                    text: "Browse without buying",
+                    outcomes: [
+                        { weight: 100, narration: "You look over his wares politely and move on empty-handed. He doesn't seem offended — he's used to browsers.", effects: {} }
+                    ]
+                }
+            ]
+        },
+        {
+            id: "johto_breeder_couple",
+            type: "story",
+            name: "A Breeder Couple",
+            description: "A couple travels the road with a small pack of Pokemon in tow, clearly experienced breeders swapping notes on temperament and diet.",
+            weight: 8,
+            minLocation: 42,
+            terrainTypes: ["route", "town"],
+            choices: [
+                {
+                    text: "Ask for advice on your team",
+                    outcomes: [
+                        { weight: 55, narration: "They look over your party with genuine interest and offer a few practical pointers on care and diet. Small things, but they help.", effects: { food: 6 } },
+                        { weight: 45, narration: "\"Honestly, you're doing fine. Better than fine.\" A rare compliment from professionals, and they mean it.", effects: {} }
+                    ]
+                },
+                {
+                    text: "Exchange pleasantries and move on",
+                    outcomes: [
+                        { weight: 100, narration: "A friendly, brief exchange. They wish you luck and keep walking their own road.", effects: {} }
+                    ]
+                }
+            ]
+        },
+        {
+            id: "johto_pokeathlete_runner",
+            type: "story",
+            name: "A Runner in Training",
+            description: "A trainer jogs past at a brutal pace, a Sentret sprinting alongside on all fours to keep up. \"Can't stop — training for the circuit! Good luck out there!\"",
+            weight: 8,
+            minLocation: 42,
+            terrainTypes: ["route"],
+            choices: [
+                {
+                    text: "Try to keep pace for a bit",
+                    outcomes: [
+                        { weight: 50, narration: "You jog alongside for a stretch, more out of curiosity than fitness. Good for morale, if nothing else.", effects: { food: -2 } },
+                        { weight: 50, narration: "You give up after about thirty seconds. Respect, but that's not a pace you're built for.", effects: {} }
+                    ]
+                },
+                {
+                    text: "Let them pass",
+                    outcomes: [
+                        { weight: 100, narration: "You step aside and watch them disappear down the road at a pace you have no interest in matching.", effects: {} }
+                    ]
+                }
+            ]
+        },
+        {
+            id: "johto_radio_tower_broadcast",
+            type: "story",
+            name: "A Radio Broadcast",
+            description: "A tinny radio in a shopfront window plays the day's Johto news — mostly local weather and gym battle recaps, with the occasional static-laced interruption nobody seems to notice but you.",
+            weight: 7,
+            minLocation: 42,
+            terrainTypes: ["city", "town"],
+            choices: [
+                {
+                    text: "Listen for a while",
+                    outcomes: [
+                        { weight: 60, narration: "Mostly harmless local news. The static keeps cutting in at odd intervals, though — probably just old equipment.", effects: {} },
+                        { weight: 40, narration: "A gym battle recap catches your attention, and a passerby strikes up a conversation about it. Pleasant, if unremarkable.", effects: { food: 3 } }
+                    ]
+                }
+            ]
+        },
+        {
+            id: "johto_kimono_dancer",
+            type: "story",
+            name: "The Kimono Dancer",
+            description: "A dancer in an elaborate kimono practices slow, deliberate movements in a quiet courtyard, a small Ledyba fluttering in careful sync above her.",
+            weight: 6,
+            oneTime: true,
+            minLocation: 42,
+            terrainTypes: ["city"],
+            choices: [
+                {
+                    text: "Watch the performance",
+                    outcomes: [
+                        { weight: 100, narration: "You watch quietly until she finishes. She bows, unbothered by the audience, and offers a small blessing for your journey before returning to her practice.", effects: { healAll: true } }
+                    ]
+                },
+                {
+                    text: "Continue on your way",
+                    outcomes: [
+                        { weight: 100, narration: "You don't want to intrude on something so deliberate. You continue on quietly.", effects: {} }
+                    ]
+                }
+            ]
+        },
+        {
+            id: "johto_pokemon_watcher",
+            type: "story",
+            name: "The Pokemon Watcher",
+            description: "A person crouches motionless in the brush, binoculars trained on nothing you can see. \"Shh. Girafarig herd. Been tracking this one for three days.\"",
+            weight: 8,
+            minLocation: 42,
+            terrainTypes: ["route", "mountain"],
+            choices: [
+                {
+                    text: "Crouch and watch with them",
+                    outcomes: [
+                        { weight: 55, narration: "You wait in companionable silence until the herd moves on. The watcher thanks you for not spooking it and shares some field notes.", effects: {} },
+                        { weight: 45, narration: "Your patience pays off with a genuinely rare sighting — a behavior the watcher's never documented before. They're thrilled and share their trail rations out of gratitude.", effects: { food: 6 } }
+                    ]
+                },
+                {
+                    text: "Keep moving quietly",
+                    outcomes: [
+                        { weight: 100, narration: "You give them space and continue on, careful not to spook whatever they're watching.", effects: {} }
+                    ]
+                }
+            ]
+        },
+        {
+            id: "johto_veteran_camp",
+            type: "story",
+            name: "A Veteran's Camp",
+            description: "A small, well-organized campsite sits just off the trail — the setup of someone who's clearly done this a hundred times before.",
+            weight: 8,
+            minLocation: 42,
+            terrainTypes: ["route", "cave", "mountain"],
+            choices: [
+                {
+                    text: "Rest at the camp",
+                    outcomes: [
+                        { weight: 100, narration: "The veteran camper doesn't mind the company and shares a fire and a meal. Good conversation, better rest.", effects: { daysLost: 1, healAll: true, food: 5 } }
+                    ]
+                },
+                {
+                    text: "Keep moving",
+                    outcomes: [
+                        { weight: 100, narration: "You wave and keep walking. No time to stop today.", effects: {} }
+                    ]
+                }
+            ]
+        },
+        {
+            id: "johto_daycare_couple",
+            type: "story",
+            name: "The Daycare Couple",
+            description: "An older couple runs a small Pokemon daycare out of a converted farmhouse, half a dozen young Pokemon playing in the yard behind them.",
+            weight: 8,
+            minLocation: 42,
+            terrainTypes: ["town", "city"],
+            choices: [
+                {
+                    text: "Chat with them",
+                    outcomes: [
+                        { weight: 60, narration: "They're happy to talk shop and share a bit of homemade food. Warm people, warm house.", effects: { food: 8 } },
+                        { weight: 40, narration: "They notice how well-kept your team is and compliment you on it — high praise from professionals.", effects: {} }
+                    ]
+                },
+                {
+                    text: "Keep to your schedule",
+                    outcomes: [
+                        { weight: 100, narration: "You wave politely and keep moving. Nice people, but you're on a timeline.", effects: {} }
+                    ]
+                }
+            ]
+        },
+        {
+            id: "johto_ace_trainer_duel",
+            type: "combat",
+            name: "Ace Trainer Duel",
+            description: "An Ace Trainer steps into your path, unbothered and confident. \"You've got the look of someone who's beaten a few gyms. Let's see if the reputation holds up.\"",
+            weight: 10,
+            minLocation: 42,
+            terrainTypes: ["route"],
+            choices: [
+                {
+                    text: "Accept the duel",
+                    eventBattle: {
+                        pool: "trainer",
+                        difficulty: "medium",
+                        trainerName: "Ace Trainer",
+                        winNarration: "A clean, hard-fought win. \"Reputation holds up,\" she admits, and means it as a compliment.",
+                        lossNarration: "\"Reputation's a little inflated, maybe.\" She's gracious about it, at least, and helps you regroup.",
+                        winEffects: { money: 400 },
+                        lossEffects: { partyDamageAll: 1 }
+                    }
+                },
+                {
+                    text: "Decline",
+                    outcomes: [
+                        { weight: 100, narration: "\"Your loss.\" She shrugs and lets you pass without further comment.", effects: {} }
+                    ]
+                }
+            ]
+        },
+        {
+            id: "johto_rocket_stragglers",
+            type: "combat",
+            name: "Rocket Stragglers",
+            description: "A couple of Team Rocket grunts, clearly separated from whatever unit they belong to, try to shake you down out of habit more than conviction.",
+            weight: 8,
+            minLocation: 42,
+            terrainTypes: ["route", "cave"],
+            choices: [
+                {
+                    text: "Fight them off",
+                    eventBattle: {
+                        pool: "rocket_grunt",
+                        difficulty: "medium",
+                        trainerName: "Rocket Straggler",
+                        winNarration: "They fold quicker than you expected — this crew's clearly lost some morale since Mahogany. They scatter into the brush.",
+                        lossNarration: "Even a disorganized Rocket grunt is still a Rocket grunt. They get away with some of your supplies.",
+                        winEffects: { money: 300 },
+                        lossEffects: { pokeballs: -2, food: -3 }
+                    }
+                },
+                {
+                    text: "Just walk past them",
+                    outcomes: [
+                        { weight: 60, narration: "They don't even try to stop you, muttering about being reassigned to \"the worst region in the company.\"", effects: {} },
+                        { weight: 40, narration: "One makes a halfhearted grab for your bag. You dodge it easily and keep walking.", effects: {} }
+                    ]
+                }
+            ]
+        },
+        {
+            id: "johto_mountain_hiker_challenge",
+            type: "combat",
+            name: "A Hiker's Challenge",
+            description: "A hiker built like the mountain itself blocks the narrow path, arms folded. \"Only room for one on this ledge. Battle for it.\"",
+            weight: 8,
+            minLocation: 42,
+            terrainTypes: ["mountain", "cave"],
+            choices: [
+                {
+                    text: "Battle for the path",
+                    eventBattle: {
+                        pool: "trainer",
+                        difficulty: "medium",
+                        trainerName: "Hiker",
+                        winNarration: "You win the ledge fair and square. The hiker steps aside without complaint, genuinely satisfied by the fight.",
+                        lossNarration: "The hiker wins the standoff and, gracious in victory, lets you by anyway once you've both calmed down.",
+                        winEffects: { money: 250 },
+                        lossEffects: { partyDamageAll: 1 }
+                    }
+                },
+                {
+                    text: "Find another way around",
+                    outcomes: [
+                        { weight: 100, narration: "You backtrack and find a longer, battle-free route around. Slower, but nobody gets hurt over ledge rights.", effects: { daysLost: 1 } }
+                    ]
+                }
+            ]
+        },
+        {
+            id: "johto_distant_thunderclap",
+            type: "legendary",
+            name: "Thunder Without Clouds",
+            description: "Lightning cracks somewhere close, sharp and sudden — but the sky overhead is clear. A moment later, a low electric hum passes through the ground and fades just as fast.",
+            weight: 6,
+            minLocation: 42,
+            terrainTypes: ["route", "mountain"],
+            choices: [
+                {
+                    text: "Look for the source",
+                    outcomes: [
+                        { weight: 100, narration: "There's nothing to find — just scorched grass in a line leading off into the distance, already fading. Whatever caused it moved on fast. Faster than anything should be able to move.", effects: {} }
+                    ]
+                },
+                {
+                    text: "Keep your team close and move on",
+                    outcomes: [
+                        { weight: 100, narration: "You don't go looking for trouble that fast. You keep moving, senses a little more alert than before.", effects: {} }
+                    ]
+                }
+            ]
+        },
+        {
+            id: "johto_smoke_on_the_wind",
+            type: "legendary",
+            name: "Smoke on the Wind",
+            description: "A faint smell of smoke drifts across the path, though there's no fire in sight and nothing around you looks burnt. It's gone as quickly as it came.",
+            weight: 6,
+            minLocation: 42,
+            terrainTypes: ["route", "mountain"],
+            choices: [
+                {
+                    text: "Follow the smell",
+                    outcomes: [
+                        { weight: 100, narration: "It leads to a patch of scorched earth, still warm, in the rough shape of enormous paw prints. Whatever left them is long gone by the time you get there.", effects: {} }
+                    ]
+                },
+                {
+                    text: "Ignore it and continue",
+                    outcomes: [
+                        { weight: 100, narration: "You've got enough to worry about without chasing phantom campfires. You keep walking.", effects: {} }
+                    ]
+                }
+            ]
+        },
+        {
+            id: "johto_ripple_on_still_water",
+            type: "legendary",
+            name: "A Ripple on Still Water",
+            description: "The water beside the path is perfectly still — until a single ripple spreads outward from the center, for no reason you can identify. There's no wind. Nothing surfaces.",
+            weight: 6,
+            minLocation: 42,
+            terrainTypes: ["route", "water"],
+            choices: [
+                {
+                    text: "Wait and watch",
+                    outcomes: [
+                        { weight: 100, narration: "The water goes still again and stays that way, no matter how long you wait. Whatever caused it isn't in a hurry to be found.", effects: {} }
+                    ]
+                },
+                {
+                    text: "Keep walking",
+                    outcomes: [
+                        { weight: 100, narration: "You decide the water's business is the water's business and keep to the path.", effects: {} }
+                    ]
+                }
+            ]
+        },
+        {
+            id: "johto_apricorn_ball_crafter",
+            type: "special",
+            name: "The Apricorn Craftsman",
+            description: "An old craftsman works a small stall, carving Apricorns into surprisingly effective Poke Balls with tools that look older than the town around him.",
+            weight: 8,
+            minLocation: 42,
+            terrainTypes: ["town"],
+            choices: [
+                {
+                    text: "Commission some balls ($600)",
+                    requiresMoney: 600,
+                    outcomes: [
+                        { weight: 60, narration: "He hands over a set of hand-carved balls, sturdier than anything from a factory line. Worth every coin.", effects: { money: -600, greatballs: 4 } },
+                        { weight: 40, narration: "\"Special batch, this one.\" He slips in something a little fancier than what you paid for. Craftsmen have their moods.", effects: { money: -600, ultraballs: 1, greatballs: 2 } }
+                    ]
+                },
+                {
+                    text: "Just admire the craftsmanship",
+                    outcomes: [
+                        { weight: 100, narration: "He's happy to talk shop even without a sale. Genuine passion for a genuinely dying craft.", effects: {} }
+                    ]
+                }
+            ]
+        },
+        {
+            id: "johto_battle_tent_challenge",
+            type: "special",
+            name: "The Battle Tent",
+            description: "A striped tent has been set up in the town square, a hand-lettered sign promising quick battles for quick cash. \"Step right up! Three battles, one prize pool!\"",
+            weight: 8,
+            minLocation: 42,
+            terrainTypes: ["city", "town"],
+            choices: [
+                {
+                    text: "Enter the tent ($200 entry)",
+                    requiresMoney: 200,
+                    outcomes: [
+                        { weight: 30, narration: "You clean house. Three quick, decisive wins and the prize pool is yours.", effects: { money: 600 } },
+                        { weight: 40, narration: "You take two out of three. Respectable payout for a Tuesday afternoon.", effects: { money: 200 } },
+                        { weight: 30, narration: "Rough day. You lose more than you win and walk away with your entry fee gone and pride slightly dented.", effects: { money: -200, partyDamageAll: 1 } }
+                    ]
+                },
+                {
+                    text: "Skip it",
+                    outcomes: [
+                        { weight: 100, narration: "Not worth the risk today. You keep your money and your dignity intact.", effects: {} }
+                    ]
+                }
+            ]
+        },
+        {
+            id: "johto_lucky_egg_find",
+            type: "special",
+            name: "A Lucky Find",
+            description: "Something small and shiny catches your eye, half-buried at the edge of the path.",
+            weight: 6,
+            minLocation: 42,
+            terrainTypes: ["route", "cave"],
+            choices: [
+                {
+                    text: "Dig it up",
+                    outcomes: [
+                        { weight: 30, narration: "A Rare Candy, somehow untouched despite clearly having been sitting there a while. Small miracle.", effects: { rareCandy: 1 } },
+                        { weight: 70, narration: "Just a smooth, shiny rock. Pretty, at least, if not exactly valuable.", effects: { money: 100 } }
+                    ]
+                }
+            ]
+        },
+        {
+            id: "johto_fork_shortcut_or_safe",
+            type: "dilemma",
+            name: "Two Paths",
+            description: "The trail splits — one route hugs the marked path, longer but predictable; the other cuts through unmarked terrain, faster but anyone's guess what's in there.",
+            weight: 8,
+            minLocation: 42,
+            terrainTypes: ["route", "mountain"],
+            choices: [
+                {
+                    text: "Take the marked path",
+                    outcomes: [
+                        { weight: 70, narration: "Unremarkable and safe. You make steady, boring progress.", effects: { daysLost: 1 } },
+                        { weight: 30, narration: "The marked path is safe, and also a little longer than the sign suggested. Still, no surprises.", effects: { daysLost: 2 } }
+                    ]
+                },
+                {
+                    text: "Cut through unmarked terrain",
+                    outcomes: [
+                        { weight: 40, narration: "It pays off — you save real time and stumble on a small cache someone left behind.", effects: { food: 6, pokeballs: 3 } },
+                        { weight: 35, narration: "Rough, unmarked ground takes its toll. Someone twists an ankle on the uneven terrain.", effects: { partyDamageAll: 1 } },
+                        { weight: 25, narration: "You get turned around and end up right back where you started, having wasted more time than the marked path would've cost.", effects: { daysLost: 1, food: -4 } }
+                    ]
+                }
+            ]
+        },
+        {
+            id: "johto_debt_collector",
+            type: "dilemma",
+            name: "A Persistent Debt Collector",
+            description: "A tired-looking man with a clipboard insists you owe money for \"regional Pokemon League processing fees\" that definitely don't exist. He seems to genuinely believe it, though.",
+            weight: 7,
+            minLocation: 42,
+            terrainTypes: ["town", "city"],
+            choices: [
+                {
+                    text: "Pay him to make him go away ($300)",
+                    requiresMoney: 300,
+                    outcomes: [
+                        { weight: 100, narration: "He takes the money, looking almost surprised it worked, and wanders off to bother someone else with the same nonexistent fee.", effects: { money: -300 } }
+                    ]
+                },
+                {
+                    text: "Refuse and walk away",
+                    outcomes: [
+                        { weight: 70, narration: "He grumbles but doesn't actually chase you. Turns out persistence has limits, even for scammers.", effects: {} },
+                        { weight: 30, narration: "He follows you for an uncomfortably long stretch of road before finally giving up, muttering about quotas.", effects: { food: -2 } }
+                    ]
+                }
+            ]
+        },
+        {
+            id: "johto_flooded_underpass",
+            type: "dilemma",
+            name: "The Flooded Underpass",
+            description: "Recent rain has turned a low stretch of path into a shin-deep wade, current stronger than it looks from the bank.",
+            weight: 7,
+            minLocation: 42,
+            terrainTypes: ["route", "water"],
+            choices: [
+                {
+                    text: "Wade through",
+                    outcomes: [
+                        { weight: 55, narration: "Cold and unpleasant, but you make it across without losing anything.", effects: { food: -2 } },
+                        { weight: 45, narration: "The current is stronger than expected and knocks a few items loose before you reach dry ground.", effects: { pokeballs: -2, food: -2 } }
+                    ]
+                },
+                {
+                    text: "Find a way around",
+                    outcomes: [
+                        { weight: 100, narration: "A longer, drier route around the flooding costs you some time but keeps your bag intact.", effects: { daysLost: 1 } }
+                    ]
+                }
+            ]
+        },
+        {
+            id: "johto_collector_wants_common",
+            type: "trade",
+            name: "The Collector's Odd Request",
+            description: "A collector examines your party with unusual interest. \"I've got a Wobbuffet that's more trouble than it's worth — all it does is stand there. I'll trade it for pretty much anything else you've got.\"",
+            weight: 6,
+            oneTime: true,
+            minLocation: 42,
+            requiresPartySize: 2,
+            terrainTypes: ["town", "city"],
+            choices: [
+                {
+                    text: "Trade for the Wobbuffet",
+                    outcomes: [
+                        { weight: 100, narration: "The collector hands over the Poke Ball almost too eagerly. The Wobbuffet just... stands there, exactly as advertised. You get the feeling it's going to be extremely good at exactly one thing.", effects: { pokemonTrade: 202 } }
+                    ]
+                },
+                {
+                    text: "\"I'll pass.\"",
+                    outcomes: [
+                        { weight: 100, narration: "\"Can't blame you.\" He goes back to trying to convince someone else.", effects: {} }
+                    ]
+                }
+            ]
+        },
+        {
+            id: "johto_fisherman_trade",
+            type: "trade",
+            name: "A Fisherman's Offer",
+            description: "A fisherman nursing a cooler full of Corsola looks at your team with the calculating eye of someone who's been trading Pokemon at this dock for decades. \"Trade me for one? I've got more Corsola than I know what to do with.\"",
+            weight: 6,
+            oneTime: true,
+            minLocation: 42,
+            requiresPartySize: 2,
+            terrainTypes: ["water"],
+            choices: [
+                {
+                    text: "Trade for the Corsola",
+                    outcomes: [
+                        { weight: 100, narration: "The Corsola changes hands with a splash. \"Good luck with her — she's got opinions about being out of the water.\" You've been warned.", effects: { pokemonTrade: 222 } }
+                    ]
+                },
+                {
+                    text: "\"Not today.\"",
+                    outcomes: [
+                        { weight: 100, narration: "\"Suit yourself.\" He goes back to sorting his cooler, unbothered.", effects: {} }
+                    ]
+                }
+            ]
         }
     ];
 })();
-

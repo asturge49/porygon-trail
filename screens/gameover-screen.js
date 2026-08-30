@@ -33,8 +33,23 @@
                 legendary_caught: state.pokedexCaught.filter(id => _legendaryIds.has(id)).length
             });
 
+            // Telemetry (§13.3) — johto_run_ended: where do runs actually end,
+            // in aggregate? Only meaningful for a run that reached Johto.
+            if (state.region === 'johto') {
+                PT.Engine.Telemetry.logEvent('johto_run_ended', {
+                    result: 'lost',
+                    location: route.name,
+                    reason: state.gameOverReason,
+                    days_elapsed: state.daysElapsed,
+                    score: score,
+                    badges: state.badges.filter(b => b !== 'champion').length,
+                    pokedex_count: state.pokedexCaught.length,
+                    party_ids: state.party.map(p => p.id)
+                });
+            }
+
             // Save score
-            PT.Engine.Scoring.saveToLeaderboard({
+            PT.Engine.Scoring.saveToLeaderboard(Object.assign({
                 runId: state.runId,
                 name: state.trainerName,
                 score: score,
@@ -46,7 +61,7 @@
                 date: new Date().toLocaleDateString(),
                 won: false,
                 legendaryCount: PT.Engine.Scoring.countLegendaries(state)
-            });
+            }, PT.Engine.Scoring.getJohtoLeaderboardFields(state, score, true)));
 
             // Update records
             PT.Engine.Records.updateRecords(state, score);
@@ -109,6 +124,7 @@
                     <div>Badges: ${badgeList.length}/8</div>
                     <div>Gym Battles Won: ${state.gymBattlesWon}</div>
                     <div>Team Rocket Defeated: ${state.teamRocketDefeated}x</div>
+                    ${state.redMonsDefeated ? `<div>Red's Team Defeated: ${state.redMonsDefeated}/6 (+${breakdown.redCapstone})</div>` : ''}
                     <div class="score-total">FINAL SCORE: ${score.toLocaleString()}</div>
                 </div>
 

@@ -13,6 +13,18 @@
                 state.pokedexSeen.push(pokemon.id);
             }
 
+            // Telemetry (§13.3) — is the §8.5 roaming mechanic actually being
+            // encountered at a reasonable rate?
+            if (pokemon.roaming) {
+                const _route = PT.Engine.GameState.getCurrentRoute(state);
+                PT.Engine.Telemetry.logEvent('legendary_roam_encountered', {
+                    beast_id: pokemon.id,
+                    beast_name: pokemon.name,
+                    route: _route ? _route.name : null,
+                    day: state.daysElapsed
+                });
+            }
+
             const totalBalls = state.resources.pokeballs + state.resources.greatballs + state.resources.ultraballs;
 
             const dex = PT.Engine.Scoring.getGlobalPokedex();
@@ -190,7 +202,7 @@
                     messageBox.textContent = result.message + " Try again!";
                     // Wild Pokemon attacks
                     const victim = state.rng.pick(PT.Engine.GameState.getAliveParty(state));
-                    if (victim && state.rng.chance(40)) {
+                    if (victim && state.rng.chance(result.hitChance || 40)) {
                         const fainted = PT.Engine.GameState.damagePokemon(victim, 1, state);
                         messageBox.textContent += fainted
                             ? ` ${pokemon.name} killed ${victim.name}! 💀`
@@ -229,7 +241,7 @@
     function showPartyFullOptions(state, pokemon, addResult, msgEl, actionsDiv) {
         const pokemonData = addResult.pokemonData;
         const foodAmount = PT.Engine.GameState.pokemonToFood(pokemon.rarity);
-        const spriteUrl = PT.Engine.GameState.getSpriteUrl(pokemon.id);
+        const spriteUrl = PT.Engine.GameState.getSpriteUrl(pokemon.id, state.region);
 
         msgEl.innerHTML = `
             <div style="text-align: center; margin-bottom: 4px;">
@@ -338,6 +350,17 @@
                     if (A) A.catchSuccess();
                     if (sprite) sprite.classList.add('catch-sparkle');
 
+                    // Telemetry (§13.3) — roaming-beast catch rate.
+                    if (pokemon.roaming) {
+                        const _route = PT.Engine.GameState.getCurrentRoute(state);
+                        PT.Engine.Telemetry.logEvent('legendary_roam_caught', {
+                            beast_id: pokemon.id,
+                            beast_name: pokemon.name,
+                            route: _route ? _route.name : null,
+                            day: state.daysElapsed
+                        });
+                    }
+
                     if (addResult.partyFull) {
                         // Party full — show swap/food/release options
                         showPartyFullOptions(state, pokemon, addResult, msgEl, actionsDiv);
@@ -378,8 +401,10 @@
                         infoDiv.querySelector('span').textContent = `Balls: ${newTotal}`;
                     }
 
-                    // Pokemon might flee
-                    if (state.rng.chance(30)) {
+                    // Pokemon might flee — roaming legendaries (§8.5) are
+                    // notably more likely to bolt on a failed catch, since
+                    // "roaming" means hard to pin down, not just rare.
+                    if (state.rng.chance(pokemon.roaming ? 65 : 30)) {
                         PT.Engine.GameState.addToLog(state, `${pokemon.name} fled after breaking free.`);
                         showResult(`${pokemon.name} broke free and fled!`);
                     }
@@ -406,6 +431,8 @@
             rock:     { weakTo: ['water', 'grass', 'fighting', 'ground'], resistedBy: ['normal', 'fire', 'poison', 'flying'] },
             ghost:    { weakTo: ['ghost'], resistedBy: ['poison', 'bug'], immuneBy: ['normal', 'fighting'] },
             dragon:   { weakTo: ['ice', 'dragon'], resistedBy: ['fire', 'water', 'electric', 'grass'] },
+            steel:    { weakTo: ['fire', 'fighting', 'ground'], resistedBy: ['normal', 'grass', 'ice', 'flying', 'psychic', 'bug', 'rock', 'dragon', 'steel'], immuneBy: ['poison'] },
+            dark:     { weakTo: ['bug', 'fighting'], resistedBy: ['ghost', 'dark'], immuneBy: ['psychic'] },
             bird:     { weakTo: ['electric', 'ice', 'rock'], resistedBy: ['grass', 'fighting', 'bug'] }
         };
 

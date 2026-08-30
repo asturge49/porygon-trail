@@ -117,6 +117,11 @@
             seed: seed,
             rng: PT.Engine.RNG.createRNG(seed),
 
+            // Region — 'kanto' until the post-Elite-Four choice moves it to
+            // 'johto'. completedRegions records the Hall-of-Fame-worthy clears.
+            region: 'kanto',
+            completedRegions: [],
+
             // Travel
             currentLocationIndex: 0,
             distanceTraveled: 0,
@@ -245,7 +250,85 @@
         118: 2,                  // Goldeen
         120: 2,                  // Staryu
         // Ultra weak → 1 HP
-        129: 1                   // Magikarp
+        129: 1,                  // Magikarp
+
+        // ===== Johto (Gen II) overrides — HP tiers from JOHTO_EXPANSION_SCOPE.md §8.1 =====
+        // Legendaries / roaming beasts → 8-9 HP
+        243: 8, 244: 8, 245: 8,  // Raikou, Entei, Suicune
+        249: 9, 250: 9,          // Lugia, Ho-Oh
+        // Pseudo-legendary-tier finals → 6-8 HP
+        154: 6,                  // Meganium
+        157: 6,                  // Typhlosion
+        160: 6,                  // Feraligatr
+        181: 6,                  // Ampharos
+        196: 6,                  // Espeon
+        197: 6,                  // Umbreon
+        199: 6,                  // Slowking
+        208: 7,                  // Steelix
+        212: 6,                  // Scizor
+        214: 6,                  // Heracross
+        217: 6,                  // Ursaring
+        229: 6,                  // Houndoom
+        230: 7,                  // Kingdra
+        232: 6,                  // Donphan
+        242: 7,                  // Blissey
+        248: 8,                  // Tyranitar
+        // Mid-tier evolutions/finals → 5 HP
+        153: 5,                  // Bayleef
+        156: 5,                  // Quilava
+        159: 5,                  // Croconaw
+        169: 5,                  // Crobat
+        182: 5,                  // Bellossom
+        186: 5,                  // Politoed
+        195: 5,                  // Quagsire
+        202: 5,                  // Wobbuffet
+        210: 5,                  // Granbull
+        219: 5,                  // Magcargo
+        221: 5,                  // Piloswine
+        227: 5,                  // Skarmory
+        233: 5,                  // Porygon2
+        237: 5,                  // Hitmontop
+        241: 5,                  // Miltank
+        247: 5,                  // Pupitar
+        // Tough uncommons/rares → 4 HP
+        164: 4,                  // Noctowl
+        171: 4,                  // Lanturn
+        176: 4,                  // Togetic (rare default already 4, kept explicit for clarity)
+        178: 4,                  // Xatu
+        180: 4,                  // Flaaffy
+        184: 4,                  // Azumarill
+        192: 4,                  // Sunflora
+        203: 4,                  // Girafarig
+        205: 4,                  // Forretress
+        207: 4,                  // Gligar
+        224: 4,                  // Octillery
+        234: 4,                  // Stantler (rare default already 4, kept explicit for clarity)
+        // Downgraded to 3 HP
+        175: 3,                  // Togepi
+        213: 3,                  // Shuckle
+        225: 3,                  // Delibird
+        236: 3,                  // Tyrogue
+        238: 3,                  // Smoochum
+        239: 3,                  // Elekid
+        240: 3,                  // Magby
+        // Weak base forms → 2 HP
+        161: 2,                  // Sentret
+        163: 2,                  // Hoothoot
+        165: 2,                  // Ledyba
+        167: 2,                  // Spinarak
+        172: 2,                  // Pichu
+        173: 2,                  // Cleffa
+        174: 2,                  // Igglybuff
+        177: 2,                  // Natu
+        183: 2,                  // Marill
+        188: 2,                  // Skiploom
+        201: 2,                  // Unown
+        204: 2,                  // Pineco
+        223: 2,                  // Remoraid
+        235: 2,                  // Smeargle
+        // Ultra weak → 1 HP
+        187: 1,                  // Hoppip
+        191: 1                   // Sunkern
     };
 
     // `overrides` lets rare events hand back a customized individual (e.g. a
@@ -255,6 +338,10 @@
                        data.rarity === 'rare' ? 4 : 3;
         const maxHp = HP_OVERRIDES[data.id] !== undefined ? HP_OVERRIDES[data.id] : baseHp;
         const route = state ? getCurrentRoute(state) : null;
+        // Sprite generation is fixed at catch time from the current region and
+        // never re-derived — a mon caught in Kanto keeps Gen I art forever,
+        // even if it later evolves or the run crosses into Johto (§4.1).
+        const spriteGen = (state && state.region) || 'kanto';
         const pokemon = {
             id: data.id,
             name: data.name,
@@ -264,7 +351,8 @@
             maxHp: maxHp,
             status: 'healthy',
             travelAbility: data.travelAbility,
-            spriteUrl: getSpriteUrl(data.id),
+            spriteGen: spriteGen,
+            spriteUrl: getSpriteUrl(data.id, spriteGen),
             battleWins: 0,
             battleStars: 0,
             hpBonus: 0,  // permanent HP Up stacks — survives evolution, see evolvePokemon
@@ -277,9 +365,15 @@
         return pokemon;
     }
 
-    function getSpriteUrl(id) {
+    // `source` is the sprite generation to render, keyed off catch-region —
+    // 'johto' gets Crystal art, everything else (including undefined, for
+    // legacy callers) keeps the original Gen I Red/Blue/Gray art.
+    function getSpriteUrl(id, source) {
         if (id === 0) {
             return 'https://archives.bulbagarden.net/media/upload/9/98/Missingno_RB.png';
+        }
+        if (source === 'johto') {
+            return `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-ii/crystal/${id}.png`;
         }
         return `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-i/red-blue/gray/${id}.png`;
     }
@@ -518,13 +612,27 @@
         if (currentLoc >= 0 && partyMon.lastEvoLocation === currentLoc) {
             return { evolved: false, reason: 'location_limit' }; // already evolved here
         }
-        // Support branching evolution (e.g. Eevee -> [Vaporeon, Jolteon, Flareon])
-        let evoId = data.evolvesTo;
-        if (Array.isArray(evoId)) {
-            evoId = evoId[Math.floor(Math.random() * evoId.length)];
+        // Support branching evolution (e.g. Eevee -> [Vaporeon, Jolteon, Flareon]).
+        // In Johto, Eevee's pool widens to include Espeon/Umbreon (§8.3) — done
+        // here rather than in the data file so Kanto keeps the original 3-way
+        // split even once Espeon/Umbreon exist in the Pokedex.
+        let evoPool = Array.isArray(data.evolvesTo) ? data.evolvesTo : [data.evolvesTo];
+        if (data.id === 133 && state && state.region === 'johto') {
+            const johtoEeveelutions = [196, 197].filter(id => PT.Data.Pokemon.some(p => p.id === id));
+            evoPool = evoPool.concat(johtoEeveelutions);
         }
+        const evoId = evoPool.length > 1 ? evoPool[Math.floor(Math.random() * evoPool.length)] : evoPool[0];
         const evoData = PT.Data.Pokemon.find(p => p.id === evoId);
         if (!evoData) return { evolved: false };
+
+        // Region-gated evolutions (§8.2): any evolution whose target species is
+        // Gen II (national dex 152-251) can't fire until the run has reached
+        // Johto — regardless of what item/trade/friendship the original games
+        // required, since this engine only has one abstracted evolution trigger.
+        const targetIsGenTwo = evoData.id >= 152 && evoData.id <= 251;
+        if (targetIsGenTwo && (!state || state.region !== 'johto')) {
+            return { evolved: false, reason: 'region_locked' };
+        }
 
         const oldName = partyMon.name;
         partyMon.id = evoData.id;
@@ -532,7 +640,7 @@
         partyMon.types = evoData.types;
         partyMon.rarity = evoData.rarity;
         partyMon.travelAbility = evoData.travelAbility;
-        partyMon.spriteUrl = getSpriteUrl(evoData.id);
+        partyMon.spriteUrl = getSpriteUrl(evoData.id, partyMon.spriteGen || 'kanto');
         // Set new maxHp — use override if exists, otherwise +1 capped at 6.
         // HP Up bonus is tracked separately so it survives being reset by
         // the species-based evolution jump below, then re-added on top.
@@ -742,12 +850,17 @@
             data.rng.setState(data._rngState);
             delete data._rngSeed;
             delete data._rngState;
-            // Rebuild sprite URLs (they aren't stored but party refs need them)
+            // Rebuild sprite URLs (they aren't stored but party refs need them) —
+            // each mon's own spriteGen (frozen at catch time) picks its art.
             data.party.forEach(p => {
-                p.spriteUrl = getSpriteUrl(p.id);
+                p.spriteUrl = getSpriteUrl(p.id, p.spriteGen || 'kanto');
             });
             // Older saves predate the buffs schema — default it in
             if (!data.buffs) data.buffs = createDefaultBuffs();
+            // Older saves predate the region/Johto schema — default them to a
+            // legacy in-progress Kanto run, ahead of any Johto-aware code (§6.2).
+            if (data.region === undefined) data.region = 'kanto';
+            if (!data.completedRegions) data.completedRegions = [];
             return data;
         } catch (e) {
             console.warn('Could not load save:', e);
@@ -806,8 +919,10 @@
             saveData.rng.setState(saveData._rngState);
             delete saveData._rngSeed;
             delete saveData._rngState;
-            (saveData.party || []).forEach(p => { p.spriteUrl = getSpriteUrl(p.id); });
+            (saveData.party || []).forEach(p => { p.spriteUrl = getSpriteUrl(p.id, p.spriteGen || 'kanto'); });
             if (!saveData.buffs) saveData.buffs = createDefaultBuffs();
+            if (saveData.region === undefined) saveData.region = 'kanto';
+            if (!saveData.completedRegions) saveData.completedRegions = [];
             return saveData;
         } catch (e) {
             console.warn('Cloud load failed:', e);

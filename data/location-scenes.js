@@ -110,6 +110,18 @@
     // (pagoda/crypt silhouette) — Pokemon Tower
     const POKEMON_TOWER_SHAPE = PT.Engine.PixelArt.civicBuilding({ width: 11, floors: 5, roof: 'flat', windowStyle: 'center' });
 
+    // --- Johto-only landmark shapes ---
+    // Ecruteak's Bell Tower — taller pagoda than Kanto's Pokemon Tower
+    const BELL_TOWER_SHAPE = PT.Engine.PixelArt.civicBuilding({ width: 11, floors: 7, roof: 'flat', windowStyle: 'center' });
+    // Violet City's Sprout Tower — shorter, squatter pagoda
+    const SPROUT_TOWER_SHAPE = PT.Engine.PixelArt.civicBuilding({ width: 13, floors: 3, roof: 'flat', windowStyle: 'center' });
+    // Goldenrod's Radio Tower — antenna, mid-height
+    const RADIO_TOWER_SHAPE = PT.Engine.PixelArt.civicBuilding({ width: 9, floors: 5, roof: 'flat', antenna: true, windowStyle: 'center' });
+    // Olivine's Lighthouse (Glitter Lighthouse) — narrow and very tall
+    const LIGHTHOUSE_SHAPE = PT.Engine.PixelArt.civicBuilding({ width: 7, floors: 8, roof: 'flat', antenna: true, windowStyle: 'center' });
+    // Blackthorn's Dragon's Den shrine — squat, peaked-roof shrine
+    const DRAGON_SHRINE_SHAPE = PT.Engine.PixelArt.civicBuilding({ width: 13, floors: 2, roof: 'peak', doorWidth: 5 });
+
     function landmark(shape, style) {
         return PT.Engine.PixelArt.buildingDiv(shape, BUILDING_COLORS, style);
     }
@@ -327,6 +339,338 @@
                 <div class="pixel-mountain" style="left:85%;font-size:10px;">/\\<br>/&nbsp;&nbsp;\\</div>
                 <div class="pixel-torch" style="left:48%;bottom:25px;">*</div>
                 <div class="pixel-torch" style="left:72%;bottom:25px;">*</div>
+            </div>`
+        },
+
+        // ===== JOHTO (GSC palette shift — see .johto-scene in style.css) =====
+
+        // New Bark Town — Elm's Lab, two houses, the "town that time forgot"
+        new_bark_town: {
+            sky: 'var(--gsc-light)', ground: 'var(--gsc-dark)',
+            art: `<div class="pixel-scene johto-scene town-scene">
+                <div class="pixel-cloud" style="top:10px;left:20%;">~~~</div>
+                <div class="pixel-cloud" style="top:18px;left:68%;">~~</div>
+                ${landmark(LAB_SHAPE, 'left:12%;bottom:5px;')}
+                <div class="pixel-house" style="left:50%;font-size:9px;">_[]_<br>|__|</div>
+                <div class="pixel-tree" style="left:66%;">&Delta;<br>|</div>
+                <div class="pixel-grass" style="left:80%;bottom:5px;">vvv</div>
+                <div class="pixel-grass" style="left:90%;bottom:8px;">vv</div>
+                <div class="pixel-fence" style="left:5%;bottom:2px;">--.--.--.--</div>
+                <div class="pixel-npc" style="left:45%;bottom:8px;">.</div>
+            </div>`
+        },
+
+        // Cherrygrove City — flower beds, Guide Gent gate, first Center/Mart
+        cherrygrove_city: {
+            sky: 'var(--gsc-light)', ground: 'var(--gsc-dark)',
+            art: `<div class="pixel-scene johto-scene town-scene">
+                <div class="pixel-cloud" style="top:8px;left:45%;">~~~</div>
+                ${landmark(CENTER_SHAPE, 'left:10%;bottom:5px;')}
+                ${landmark(MART_SHAPE, 'left:32%;bottom:5px;')}
+                <div class="pixel-gate" style="left:55%;bottom:5px;font-size:6px;">|&nbsp;WELCOME&nbsp;|<br>|==||==|</div>
+                <div class="pixel-flower" style="left:75%;bottom:5px;font-size:6px;">*</div>
+                <div class="pixel-flower" style="left:80%;bottom:8px;font-size:6px;">*</div>
+                <div class="pixel-flower" style="left:85%;bottom:5px;font-size:6px;">*</div>
+                <div class="pixel-tree" style="left:92%;">&Delta;<br>|</div>
+            </div>`
+        },
+
+        // Violet City — Sprout Tower, Falkner's Gym, hilltop overlook
+        violet_city: {
+            sky: 'var(--gsc-lightest)', ground: 'var(--gsc-dark)',
+            art: `<div class="pixel-scene johto-scene city-scene">
+                <div class="pixel-cloud" style="top:5px;left:30%;">~~</div>
+                <div class="pixel-bird" style="top:12px;left:60%;font-size:7px;">&gt;</div>
+                ${landmark(SPROUT_TOWER_SHAPE, 'left:8%;bottom:5px;')}
+                ${landmark(GYM_SHAPE, 'left:45%;bottom:5px;')}
+                ${landmark(CENTER_SHAPE, 'left:78%;bottom:5px;')}
+                <div class="pixel-mountain" style="left:0%;top:2px;font-size:8px;">/\\</div>
+            </div>`
+        },
+
+        // Union Cave — long damp cave, dripping water, Onix territory
+        union_cave: {
+            sky: 'var(--gsc-darkest)', ground: 'var(--gsc-darkest)',
+            art: `<div class="pixel-scene johto-scene cave-scene">
+                <div class="pixel-stalactite" style="left:8%;">V V</div>
+                <div class="pixel-stalactite" style="left:30%;">V</div>
+                <div class="pixel-stalactite" style="left:52%;">V V V</div>
+                <div class="pixel-stalactite" style="left:80%;">V V</div>
+                <div class="pixel-glow" style="left:40%;top:22%;font-size:14px;">(*)</div>
+                <div class="pixel-rock" style="left:12%;bottom:5px;">^^</div>
+                <div class="pixel-rock" style="left:35%;bottom:8px;">^</div>
+                <div class="pixel-waterfall" style="left:60%;bottom:14px;font-size:6px;">|<br>|<br>~</div>
+                <div class="pixel-rock" style="left:70%;bottom:5px;">^^</div>
+                <div class="pixel-rock" style="left:88%;bottom:5px;">^</div>
+                <div class="pixel-fossil" style="left:22%;bottom:10px;font-size:7px;">@</div>
+            </div>`
+        },
+
+        // Azalea Town — Kurt's shop, Bugsy's Gym, the well nearby
+        azalea_town: {
+            sky: 'var(--gsc-light)', ground: 'var(--gsc-dark)',
+            art: `<div class="pixel-scene johto-scene city-scene">
+                <div class="pixel-cloud" style="top:8px;left:55%;">~~</div>
+                ${landmark(GYM_SHAPE, 'left:8%;bottom:5px;')}
+                ${landmark(SHOP_SHAPE, 'left:40%;bottom:5px;')}
+                <div class="pixel-gate" style="left:62%;bottom:3px;font-size:6px;">o&nbsp;WELL&nbsp;o<br>|===|</div>
+                <div class="pixel-tree" style="left:80%;">&Delta;<br>|</div>
+                <div class="pixel-tree" style="left:90%;">&Delta;<br>|</div>
+            </div>`
+        },
+
+        // Slowpoke Well — shallow cave shaft, sleepy Slowpoke, Team Rocket graffiti
+        slowpoke_well: {
+            sky: 'var(--gsc-darkest)', ground: 'var(--gsc-darkest)',
+            art: `<div class="pixel-scene johto-scene cave-scene">
+                <div class="pixel-stalactite" style="left:20%;">V</div>
+                <div class="pixel-stalactite" style="left:65%;">V V</div>
+                <div class="pixel-glow" style="left:50%;top:30%;font-size:12px;">(*)</div>
+                <div class="pixel-rock" style="left:15%;bottom:5px;">^</div>
+                <div class="pixel-rock" style="left:75%;bottom:8px;">^^</div>
+                <div class="pixel-npc" style="left:40%;bottom:5px;font-size:9px;">o</div>
+                <div class="pixel-npc" style="left:55%;bottom:6px;font-size:9px;">o</div>
+                <div class="pixel-waterfall" style="left:30%;bottom:12px;font-size:6px;">|<br>~</div>
+            </div>`
+        },
+
+        // Goldenrod City — the region's biggest hub: Dept. Store, Radio Tower, Whitney's Gym
+        goldenrod_city: {
+            sky: 'var(--gsc-lightest)', ground: 'var(--gsc-dark)',
+            art: `<div class="pixel-scene johto-scene city-scene">
+                <div class="pixel-cloud" style="top:6px;left:60%;">~~~</div>
+                ${landmark(DEPT_STORE_SHAPE, 'left:4%;bottom:5px;')}
+                ${landmark(RADIO_TOWER_SHAPE, 'left:28%;bottom:5px;')}
+                ${landmark(GYM_SHAPE, 'left:44%;bottom:5px;')}
+                ${landmark(CENTER_SHAPE, 'left:68%;bottom:5px;')}
+                ${landmark(MART_SHAPE, 'left:85%;bottom:5px;')}
+            </div>`
+        },
+
+        // Route 35 / National Park — flowerbeds, bug-catching-contest grasses
+        route_35_national_park: {
+            sky: 'var(--gsc-light)', ground: 'var(--gsc-dark)',
+            art: `<div class="pixel-scene johto-scene route-scene">
+                <div class="pixel-cloud" style="top:10px;left:25%;">~~</div>
+                <div class="pixel-tree" style="left:8%;">&Delta;<br>|</div>
+                <div class="pixel-tree" style="left:20%;">&Delta;<br>|</div>
+                <div class="pixel-flower" style="left:35%;bottom:5px;font-size:6px;">*</div>
+                <div class="pixel-flower" style="left:40%;bottom:8px;font-size:6px;">*</div>
+                <div class="pixel-flower" style="left:45%;bottom:5px;font-size:6px;">*</div>
+                <div class="pixel-grass" style="left:55%;bottom:5px;">vVvVv</div>
+                <div class="pixel-bird" style="top:20px;left:65%;font-size:7px;">&gt;&gt;</div>
+                <div class="pixel-grass" style="left:75%;bottom:8px;">VvV</div>
+                <div class="pixel-tree" style="left:90%;">&Delta;<br>|</div>
+            </div>`
+        },
+
+        // Route 36/37 — quiet forest path toward Ecruteak; Sudowoodo's fake tree lurks
+        route_36_37: {
+            sky: 'var(--gsc-dark)', ground: 'var(--gsc-darkest)',
+            art: `<div class="pixel-scene johto-scene route-scene">
+                <div class="pixel-tree" style="left:10%;">&Delta;<br>|</div>
+                <div class="pixel-tree" style="left:22%;">&Delta;<br>|</div>
+                <div class="pixel-tree" style="left:60%;font-size:12px;animation:none;color:var(--gb-darkest);">&Delta;<br>|</div>
+                <div class="pixel-rock" style="left:38%;bottom:5px;">^^</div>
+                <div class="pixel-rock" style="left:75%;bottom:8px;">^</div>
+                <div class="pixel-ghost" style="left:82%;top:15px;font-size:7px;">o</div>
+                <div class="pixel-fog"></div>
+            </div>`
+        },
+
+        // Ecruteak City — Bell Tower, Tin Tower silhouette, Morty's Gym, ghost mist
+        ecruteak_city: {
+            sky: 'var(--gsc-dark)', ground: 'var(--gsc-darkest)',
+            art: `<div class="pixel-scene johto-scene city-scene">
+                ${landmark(BELL_TOWER_SHAPE, 'left:8%;bottom:5px;')}
+                <div class="pixel-mountain" style="left:34%;top:4px;font-size:9px;">/\\<br>/&nbsp;&nbsp;\\</div>
+                ${landmark(GYM_SHAPE, 'left:52%;bottom:5px;')}
+                ${landmark(CENTER_SHAPE, 'left:80%;bottom:5px;')}
+                <div class="pixel-ghost" style="left:20%;top:25px;">o<br>~</div>
+                <div class="pixel-fog"></div>
+            </div>`
+        },
+
+        // Olivine City — Glitter Lighthouse, harbor, Jasmine's Gym
+        olivine_city: {
+            sky: 'var(--gsc-light)', ground: 'var(--gsc-dark)',
+            art: `<div class="pixel-scene johto-scene city-scene">
+                <div class="pixel-seagull" style="top:10px;left:55%;">&gt;</div>
+                ${landmark(LIGHTHOUSE_SHAPE, 'left:8%;bottom:5px;')}
+                <div class="pixel-glow" style="left:11%;bottom:60px;font-size:10px;">*</div>
+                ${landmark(GYM_SHAPE, 'left:30%;bottom:5px;')}
+                ${landmark(CENTER_SHAPE, 'left:58%;bottom:5px;')}
+                <div class="pixel-wave" style="bottom:5px;font-size:6px;">~~~~~~~~~~~~~~~~~~~~~</div>
+                <div class="pixel-dock" style="left:75%;bottom:2px;font-size:6px;">|||&nbsp;|||</div>
+                <div class="pixel-ship" style="left:80%;bottom:8px;font-size:6px;">__|===|__<br>&nbsp;&nbsp;|_T_|</div>
+            </div>`
+        },
+
+        // Route 40/41 — open sea ferry crossing to Cianwood
+        route_40_41: {
+            sky: 'var(--gsc-lightest)', ground: 'var(--gsc-bg)',
+            art: `<div class="pixel-scene johto-scene water-scene">
+                <div class="pixel-cloud" style="top:8px;left:20%;">~~~</div>
+                <div class="pixel-seagull" style="top:14px;left:40%;">&gt;</div>
+                <div class="pixel-seagull" style="top:20px;left:65%;">&gt;</div>
+                <div class="pixel-ship" style="left:45%;bottom:20px;font-size:7px;">__|===|__<br>&nbsp;&nbsp;|_T_|</div>
+                <div class="pixel-wave" style="bottom:55px;">~~~~~~~~~~~~~~~~~~~~~</div>
+                <div class="pixel-wave" style="bottom:45px;">~~~~~~~~~~~~~~~~~~~</div>
+                <div class="pixel-wave" style="bottom:35px;">~~~~~~~~~~~~~~~~~~~~~</div>
+                <div class="pixel-wave" style="bottom:25px;">~~~~~~~~~~~~~~~~~~~</div>
+            </div>`
+        },
+
+        // Cianwood City — remote island city, Chuck's Gym, seaside cliffs
+        cianwood_city: {
+            sky: 'var(--gsc-lightest)', ground: 'var(--gsc-dark)',
+            art: `<div class="pixel-scene johto-scene city-scene">
+                <div class="pixel-cloud" style="top:8px;left:35%;">~~</div>
+                <div class="pixel-rock" style="left:5%;bottom:5px;">^^</div>
+                ${landmark(GYM_SHAPE, 'left:20%;bottom:5px;')}
+                ${landmark(CENTER_SHAPE, 'left:55%;bottom:5px;')}
+                <div class="pixel-tree" style="left:82%;font-size:11px;">&Delta;<br>|</div>
+                <div class="pixel-wave" style="bottom:5px;font-size:6px;">~~~~~~~~~~~~~~~~~~~~~</div>
+            </div>`
+        },
+
+        // Route 42 / Mt. Mortar — steep cave-mountain, hot spring glow
+        route_42_mt_mortar: {
+            sky: 'var(--gsc-darkest)', ground: 'var(--gsc-darkest)',
+            art: `<div class="pixel-scene johto-scene cave-scene">
+                <div class="pixel-mountain" style="left:5%;top:0;font-size:10px;">/\\<br>/&nbsp;&nbsp;\\</div>
+                <div class="pixel-stalactite" style="left:30%;">V V</div>
+                <div class="pixel-stalactite" style="left:55%;">V</div>
+                <div class="pixel-rock" style="left:20%;bottom:5px;">^^</div>
+                <div class="pixel-rock" style="left:68%;bottom:8px;">^</div>
+                <div class="pixel-smoke" style="left:45%;top:15px;">~~</div>
+                <div class="pixel-glow" style="left:48%;bottom:10px;font-size:12px;color:var(--gsc-accent);">*</div>
+                <div class="pixel-rock" style="left:82%;bottom:5px;">^^</div>
+            </div>`
+        },
+
+        // Mahogany Town — quiet mountain village, Pryce's Gym, ice country gateway
+        mahogany_town: {
+            sky: 'var(--gsc-light)', ground: 'var(--gsc-dark)',
+            art: `<div class="pixel-scene johto-scene town-scene">
+                <div class="pixel-icicle" style="left:5%;top:2px;">Y</div>
+                ${landmark(GYM_SHAPE, 'left:15%;bottom:5px;')}
+                ${landmark(CENTER_SHAPE, 'left:45%;bottom:5px;')}
+                ${landmark(MART_SHAPE, 'left:68%;bottom:5px;')}
+                <div class="pixel-mountain" style="left:88%;top:2px;font-size:9px;">/\\</div>
+            </div>`
+        },
+
+        // Lake of Rage — wide misty lake, angler NPCs, a rumored red Gyarados
+        lake_of_rage: {
+            sky: 'var(--gsc-dark)', ground: 'var(--gsc-bg)',
+            art: `<div class="pixel-scene johto-scene water-scene">
+                <div class="pixel-cloud" style="top:6px;left:30%;">~~</div>
+                <div class="pixel-npc" style="left:15%;bottom:35px;font-size:7px;">o</div>
+                <div class="pixel-wave" style="bottom:50px;">~~~~~~~~~~~~~~~~~~~~~</div>
+                <div class="pixel-wave" style="bottom:40px;">~~~~~~~~~~~~~~~~~~~</div>
+                <div class="pixel-glow" style="left:65%;bottom:32px;font-size:12px;color:var(--gsc-danger);">*</div>
+                <div class="pixel-wave" style="bottom:30px;">~~~~~~~~~~~~~~~~~~~~~</div>
+                <div class="pixel-wave" style="bottom:20px;">~~~~~~~~~~~~~~~~~~~</div>
+            </div>`
+        },
+
+        // Route 44 / Ice Path — frozen cave, sheer ice walls, whistling wind
+        route_44_ice_path: {
+            sky: 'var(--gsc-darkest)', ground: 'var(--gsc-darkest)',
+            art: `<div class="pixel-scene johto-scene cave-scene">
+                <div class="pixel-icicle" style="left:8%;top:0;">Y Y</div>
+                <div class="pixel-icicle" style="left:32%;top:0;">Y</div>
+                <div class="pixel-icicle" style="left:55%;top:0;">Y Y Y</div>
+                <div class="pixel-icicle" style="left:82%;top:0;">Y Y</div>
+                <div class="pixel-ice" style="left:20%;bottom:14px;font-size:8px;">&lt;&gt;</div>
+                <div class="pixel-ice" style="left:48%;bottom:18px;font-size:8px;">{}</div>
+                <div class="pixel-glow" style="left:65%;top:30%;font-size:10px;">*</div>
+                <div class="pixel-snow-particle"></div>
+            </div>`
+        },
+
+        // Blackthorn City — mountain-ringed dragon capital, Clair's Gym
+        blackthorn_city: {
+            sky: 'var(--gsc-light)', ground: 'var(--gsc-dark)',
+            art: `<div class="pixel-scene johto-scene city-scene">
+                <div class="pixel-mountain" style="left:0%;top:2px;font-size:10px;">/\\<br>/&nbsp;&nbsp;\\</div>
+                ${landmark(GYM_SHAPE, 'left:18%;bottom:5px;')}
+                ${landmark(DRAGON_SHRINE_SHAPE, 'left:48%;bottom:5px;')}
+                ${landmark(CENTER_SHAPE, 'left:70%;bottom:5px;')}
+                <div class="pixel-mountain" style="left:90%;top:4px;font-size:9px;">/\\</div>
+            </div>`
+        },
+
+        // Dragon's Den — sacred cave shrine, waterfall pool, dragon spirits
+        dragons_den: {
+            sky: 'var(--gsc-darkest)', ground: 'var(--gsc-darkest)',
+            art: `<div class="pixel-scene johto-scene cave-scene">
+                <div class="pixel-stalactite" style="left:12%;">V</div>
+                <div class="pixel-stalactite" style="left:70%;">V V</div>
+                <div class="pixel-waterfall" style="left:35%;bottom:10px;font-size:7px;">|<br>|<br>~</div>
+                <div class="pixel-glow" style="left:55%;top:25%;font-size:14px;color:var(--gsc-accent);">(*)</div>
+                <div class="pixel-rock" style="left:20%;bottom:5px;">^^</div>
+                <div class="pixel-rock" style="left:80%;bottom:5px;">^</div>
+                <div class="pixel-wave" style="bottom:5px;font-size:6px;">~~~~~~~~~~~~~~~~~~~~~</div>
+            </div>`
+        },
+
+        // Indigo Plateau (Johto) — rematch league HQ, with a mandatory restock stop
+        indigo_plateau_johto: {
+            sky: 'var(--gsc-lightest)', ground: 'var(--gsc-dark)',
+            art: `<div class="pixel-scene johto-scene mountain-scene">
+                <div class="pixel-cloud" style="top:3px;left:15%;">~~</div>
+                <div class="pixel-mountain" style="left:0%;font-size:10px;">/\\<br>/&nbsp;&nbsp;\\</div>
+                ${landmark(LEAGUE_SHAPE, 'left:32%;bottom:5px;')}
+                ${landmark(CENTER_SHAPE, 'left:62%;bottom:5px;')}
+                ${landmark(MART_SHAPE, 'left:80%;bottom:5px;')}
+                <div class="pixel-torch" style="left:30%;bottom:25px;">*</div>
+                <div class="pixel-torch" style="left:58%;bottom:25px;">*</div>
+                <div class="pixel-mountain" style="left:93%;font-size:9px;">/\\</div>
+            </div>`
+        },
+
+        // Route 28 / Mt. Silver — the longest, harshest stretch in the game;
+        // deliberately the densest, most imposing scene of the whole run
+        route_28_mt_silver: {
+            sky: 'var(--gsc-shadow)', ground: 'var(--gsc-darkest)',
+            art: `<div class="pixel-scene johto-scene mountain-scene">
+                <div class="pixel-fog"></div>
+                <div class="pixel-mountain" style="left:0%;top:0px;font-size:14px;">/\\<br>/&nbsp;&nbsp;\\<br>/&nbsp;&nbsp;&nbsp;&nbsp;\\</div>
+                <div class="pixel-mountain" style="left:18%;top:6px;font-size:10px;">/\\<br>/&nbsp;&nbsp;\\</div>
+                <div class="pixel-mountain" style="left:38%;top:-2px;font-size:16px;">/\\<br>/&nbsp;&nbsp;\\<br>/&nbsp;&nbsp;&nbsp;&nbsp;\\<br>/&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\\</div>
+                <div class="pixel-mountain" style="left:62%;top:4px;font-size:11px;">/\\<br>/&nbsp;&nbsp;\\</div>
+                <div class="pixel-mountain" style="left:80%;top:0px;font-size:14px;">/\\<br>/&nbsp;&nbsp;\\<br>/&nbsp;&nbsp;&nbsp;&nbsp;\\</div>
+                <div class="pixel-icicle" style="left:10%;top:30px;">Y</div>
+                <div class="pixel-icicle" style="left:70%;top:35px;">Y Y</div>
+                <div class="pixel-rock" style="left:25%;bottom:5px;">^^</div>
+                <div class="pixel-rock" style="left:50%;bottom:8px;">^</div>
+                <div class="pixel-rock" style="left:75%;bottom:5px;">^^</div>
+                <div class="pixel-npc" style="left:85%;bottom:10px;font-size:8px;">o</div>
+                <div class="pixel-snow-particle"></div>
+            </div>`
+        },
+
+        // Victory Road (Johto) — a deliberate callback to Kanto's Victory Road
+        // cave: plain --gb-* palette (no .johto-scene shift), same dense
+        // stalactite/rock/glow "ultimate test" cave layout as the Kanto cave art.
+        victory_road_johto: {
+            sky: '#0f380f', ground: '#0f380f',
+            art: `<div class="pixel-scene cave-scene">
+                <div class="pixel-stalactite" style="left:6%;">V V</div>
+                <div class="pixel-stalactite" style="left:24%;">V</div>
+                <div class="pixel-stalactite" style="left:42%;">V V V</div>
+                <div class="pixel-stalactite" style="left:60%;">V</div>
+                <div class="pixel-stalactite" style="left:78%;">V V</div>
+                <div class="pixel-glow" style="left:48%;top:22%;font-size:16px;">(*)</div>
+                <div class="pixel-rock" style="left:10%;bottom:5px;">^^</div>
+                <div class="pixel-rock" style="left:30%;bottom:8px;">^</div>
+                <div class="pixel-rock" style="left:55%;bottom:5px;">^^</div>
+                <div class="pixel-rock" style="left:72%;bottom:8px;">^</div>
+                <div class="pixel-rock" style="left:88%;bottom:5px;">^^</div>
+                <div class="pixel-fossil" style="left:20%;bottom:12px;font-size:7px;">@</div>
+                <div class="pixel-npc" style="left:50%;bottom:18px;font-size:6px;">o</div>
             </div>`
         }
     };

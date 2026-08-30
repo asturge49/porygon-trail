@@ -39,12 +39,32 @@ create table if not exists public.pt_leaderboard (
     legendary_count integer default 0,
     pokedex_ids integer[] default '{}',
     legendary_ids integer[] default '{}',
-    champion_ids integer[] default '{}'
+    champion_ids integer[] default '{}',
+    -- Johto expansion (§13.1-13.2 of JOHTO_EXPANSION_SCOPE.md): one row per run,
+    -- existing columns above unchanged/Kanto-scoped. johto_completed is the
+    -- boolean-style region flag; the johto_* stat columns stay null until a run
+    -- actually continues into Johto (state.region becomes 'johto'), so a
+    -- Kanto-only run never populates them. Apply via the Supabase SQL editor
+    -- against the STAGING project only (see CLAUDE.md) — never prod.
+    johto_completed boolean not null default false,
+    johto_badges integer,
+    johto_days_elapsed integer,
+    johto_score integer,
+    johto_pokedex_count integer
 );
 alter table public.pt_leaderboard enable row level security;
 create policy "Public read" on public.pt_leaderboard for select using (true);
 create policy "Auth insert" on public.pt_leaderboard for insert with check (auth.uid() = user_id);
 create policy "Users can update their own leaderboard rows" on public.pt_leaderboard for update using (auth.uid() = user_id) with check (auth.uid() = user_id);
+
+-- Johto migration for an EXISTING pt_leaderboard table (this file's `create table
+-- if not exists` won't add columns to a table that already exists) — run once,
+-- by hand, against the STAGING project's SQL editor:
+--   alter table public.pt_leaderboard add column if not exists johto_completed boolean not null default false;
+--   alter table public.pt_leaderboard add column if not exists johto_badges integer;
+--   alter table public.pt_leaderboard add column if not exists johto_days_elapsed integer;
+--   alter table public.pt_leaderboard add column if not exists johto_score integer;
+--   alter table public.pt_leaderboard add column if not exists johto_pokedex_count integer;
 
 create table if not exists public.pt_pokedex (
     user_id uuid primary key,

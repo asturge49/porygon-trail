@@ -15,17 +15,34 @@
 
     let currentMode = 'runs';
 
+    // §13.2 leaderboard toggle — only these row-based tabs are per-run and thus
+    // have a meaningful Johto view (johto_score/johto_badges/johto_days_elapsed/
+    // johto_pokedex_count, all nullable on a Kanto-only run — see
+    // supabase/schema.sql and engine/leaderboard-api.js). The lifetime/RPC-based
+    // tabs (pokedex %, legendaries, champions) aggregate across ALL of a
+    // trainer's runs and don't have a region split in the schema, so the toggle
+    // doesn't apply to them.
+    const REGION_TOGGLE_TABS = ['runs', 'trainers', 'catches', 'fastest'];
+    let currentRegion = 'kanto';
+
     function totalDexCount() {
         return PT.Data.Pokemon.length;
     }
 
-    function statLine(entry, mode) {
+    // Region-aware field pickers — fall back to the Kanto field name when not
+    // in the Johto view, so callers don't need an if/else at every call site.
+    function fieldFor(entry, region, kantoKey, johtoKey) {
+        return region === 'johto' ? entry[johtoKey] : entry[kantoKey];
+    }
+
+    function statLine(entry, mode, region) {
         if (mode === 'pokedex') {
             const pct = Math.round((entry.pokedexCount / totalDexCount()) * 100);
             return `${pct}% (${entry.pokedexCount}/${totalDexCount()}) lifetime`;
         }
         if (mode === 'catches') {
-            return `${entry.pokedexCount} caught | Day ${entry.daysElapsed}`;
+            const caught = fieldFor(entry, region, 'pokedexCount', 'johtoPokedexCount');
+            return `${caught} caught | Day ${entry.daysElapsed}`;
         }
         if (mode === 'legendary') {
             return `${entry.legendaryCount} legendaries lifetime`;
@@ -34,21 +51,24 @@
             return `${entry.championCount} champions lifetime`;
         }
         if (mode === 'fastest') {
-            return `Day ${entry.daysElapsed} | ${entry.pokedexCount} caught`;
+            const days = fieldFor(entry, region, 'daysElapsed', 'johtoDaysElapsed');
+            const caught = fieldFor(entry, region, 'pokedexCount', 'johtoPokedexCount');
+            return `Day ${days} | ${caught} caught`;
         }
-        return `${entry.pokedexCount} caught | Day ${entry.daysElapsed}`;
+        const caught = fieldFor(entry, region, 'pokedexCount', 'johtoPokedexCount');
+        return `${caught} caught | Day ${entry.daysElapsed}`;
     }
 
-    function mainValue(entry, mode) {
+    function mainValue(entry, mode, region) {
         if (mode === 'pokedex') return Math.round((entry.pokedexCount / totalDexCount()) * 100) + '%';
-        if (mode === 'catches') return entry.pokedexCount;
+        if (mode === 'catches') return fieldFor(entry, region, 'pokedexCount', 'johtoPokedexCount');
         if (mode === 'legendary') return entry.legendaryCount;
         if (mode === 'champions') return entry.championCount;
-        if (mode === 'fastest') return entry.daysElapsed + 'd';
-        return entry.score.toLocaleString();
+        if (mode === 'fastest') return fieldFor(entry, region, 'daysElapsed', 'johtoDaysElapsed') + 'd';
+        return (fieldFor(entry, region, 'score', 'johtoScore') || 0).toLocaleString();
     }
 
-    function renderTable(entries, emptyMsg, mode, hideBadges) {
+    function renderTable(entries, emptyMsg, mode, hideBadges, region) {
         if (!entries || entries.length === 0) {
             return `<div style="text-align: center; padding: 40px; font-size: 8px; color: var(--gb-dark);">
                 ${emptyMsg}
@@ -62,10 +82,10 @@
                 <span>${i + 1}</span>
                 <span>
                     <span>${entry.name}</span>${entry.won ? ' ★' : entry.inProgress ? ' ⏳' : ''}
-                    <br><span style="font-size: 6px; color: var(--gb-dark);">${statLine(entry, mode)} | ${entry.inProgress ? 'IN PROGRESS' : entry.date}</span>
+                    <br><span style="font-size: 6px; color: var(--gb-dark);">${statLine(entry, mode, region)} | ${entry.inProgress ? 'IN PROGRESS' : entry.date}</span>
                 </span>
-                <span>${mainValue(entry, mode)}</span>
-                ${hideBadges ? '' : `<span>${entry.badges || 0}</span>`}
+                <span>${mainValue(entry, mode, region)}</span>
+                ${hideBadges ? '' : `<span>${(region === 'johto' ? entry.johtoBadges : entry.badges) || 0}</span>`}
             </div>
         `).join('');
     }
@@ -74,6 +94,7 @@
         const API = PT.Engine.LeaderboardAPI;
         const globalAvailable = API.isGlobalEnabled();
         const activeTab = TABS.find(t => t.key === currentMode);
+        const regionToggleApplies = REGION_TOGGLE_TABS.includes(currentMode);
 
         const div = document.createElement('div');
         div.className = 'screen leaderboard-screen';
@@ -87,6 +108,12 @@
             <div style="font-size: 6px; color: var(--gb-dark); text-align: center; margin-bottom: 4px;">
                 ${activeTab.sub}
             </div>
+            ${regionToggleApplies ? `
+            <div class="leaderboard-region-toggle">
+                <button class="leaderboard-tab ${currentRegion === 'kanto' ? 'active' : ''}" data-region="kanto">KANTO</button>
+                <button class="leaderboard-tab ${currentRegion === 'johto' ? 'active' : ''}" data-region="johto">JOHTO</button>
+            </div>
+            ` : ''}
             ` : ''}
 
             <div class="leaderboard-table">
@@ -103,6 +130,7 @@
 
             <div style="font-size: 6px; color: var(--gb-dark); padding: 4px; text-align: center;">
                 ★ = Reached Indigo Plateau &nbsp;|&nbsp; ⏳ = Run still in progress
+                ${regionToggleApplies ? '<br>JOHTO view only shows runs that reached Johto' : ''}
             </div>
             <div class="btn-row">
                 <button class="btn flex-1" id="btn-back">BACK</button>
@@ -131,12 +159,14 @@
                 return;
             }
 
+            // Only the row-based tabs (REGION_TOGGLE_TABS) take a region arg —
+            // the lifetime/RPC-based ones ignore any extra argument.
             const fetchers = {
-                runs: () => API.getGlobalLeaderboard(),
-                trainers: () => API.getTopTrainers(),
+                runs: () => API.getGlobalLeaderboard(currentRegion),
+                trainers: () => API.getTopTrainers(currentRegion),
                 pokedex: () => API.getDexCompletionLeaderboard(),
-                catches: () => API.getMostCatchesLeaderboard(),
-                fastest: () => API.getFastestWinLeaderboard(),
+                catches: () => API.getMostCatchesLeaderboard(currentRegion),
+                fastest: () => API.getFastestWinLeaderboard(currentRegion),
                 legendary: () => API.getLegendaryLeaderboard(),
                 champions: () => API.getChampionLeaderboard()
             };
@@ -151,12 +181,13 @@
                 champions: 'No champions yet!<br>Win a run to crown your team!'
             };
 
+            const region = regionToggleApplies ? currentRegion : null;
             fetchers[currentMode]().then(entries => {
                 if (!document.getElementById('leaderboard-body')) return;
                 document.getElementById('leaderboard-body').innerHTML =
                     entries === null
                         ? '<div style="text-align: center; padding: 40px; font-size: 8px; color: var(--gb-dark);">Could not load scores.</div>'
-                        : renderTable(entries, emptyMsgs[currentMode], currentMode, activeTab.hideBadges);
+                        : renderTable(entries, emptyMsgs[currentMode], currentMode, activeTab.hideBadges, region);
                 attachRowClicks();
             }).catch(() => {
                 const b = document.getElementById('leaderboard-body');
@@ -166,10 +197,24 @@
 
         // Tab toggle
         if (globalAvailable) {
-            document.querySelectorAll('.leaderboard-tab').forEach(btn => {
+            document.querySelectorAll('.leaderboard-tab[data-tab]').forEach(btn => {
                 btn.addEventListener('click', () => {
                     if (currentMode === btn.dataset.tab) return;
                     currentMode = btn.dataset.tab;
+                    // Landing on a tab that doesn't support the region toggle
+                    // (pokedex/legendary/champions) always shows Kanto/lifetime
+                    // data — reset so a later return to a toggle-able tab
+                    // doesn't strand the view on Johto silently.
+                    if (!REGION_TOGGLE_TABS.includes(currentMode)) currentRegion = 'kanto';
+                    PT.App.goto('LEADERBOARD');
+                });
+            });
+
+            // Region toggle (§13.2)
+            document.querySelectorAll('.leaderboard-tab[data-region]').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    if (currentRegion === btn.dataset.region) return;
+                    currentRegion = btn.dataset.region;
                     PT.App.goto('LEADERBOARD');
                 });
             });

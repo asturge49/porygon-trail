@@ -17,6 +17,38 @@
     --font-size-md: 10px;
     --font-size-lg: 14px;
     --font-size-xl: 18px;
+
+    /* Johto (GSC / Crystal-style) region palette — cooler, more saturated
+       counterpart to the Kanto --gb-* set above. Not used globally; scoped
+       onto Johto scenes via .johto-scene below so Kanto art and the base
+       --gb-* tokens are untouched. */
+    --gsc-darkest: #131b3d;
+    --gsc-dark: #2d4f82;
+    --gsc-light: #5fa8c9;
+    --gsc-lightest: #a9e2e0;
+    --gsc-bg: #1f3f6e;
+    --gsc-white: #dff2ef;
+    --gsc-shadow: #0a1024;
+    --gsc-danger: #c23b5a;
+    --gsc-danger-light: #ffb84d;
+    --gsc-accent: #e0b84a;
+}
+
+/* Johto palette shift — reassigns the --gb-* tokens locally for any scene
+   subtree tagged .johto-scene, so every pixel-art element (which all read
+   var(--gb-*)) repaints into the cooler GSC palette without needing its
+   own copy of every .pixel-* rule. Victory Road (Johto) deliberately does
+   NOT get this class — it echoes Kanto's cave palette as a callback. */
+.johto-scene {
+    --gb-darkest: var(--gsc-darkest);
+    --gb-dark: var(--gsc-dark);
+    --gb-light: var(--gsc-light);
+    --gb-lightest: var(--gsc-lightest);
+    --gb-bg: var(--gsc-bg);
+    --gb-white: var(--gsc-white);
+    --gb-shadow: var(--gsc-shadow);
+    --gb-danger: var(--gsc-danger);
+    --gb-danger-light: var(--gsc-danger-light);
 }
 
 * {
@@ -2281,6 +2313,25 @@ body {
 
 .leaderboard-tab:hover:not(.active) {
     background: var(--gb-bg);
+}
+
+/* Johto expansion (§13.2) — Kanto/Johto leaderboard toggle. Reuses
+   .leaderboard-tab for the individual buttons but its own 2-column grid,
+   since .leaderboard-tabs above is tuned for a 3-per-row layout. */
+.leaderboard-region-toggle {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    border: 3px solid var(--gb-darkest);
+    border-top: none;
+    margin-bottom: 4px;
+}
+
+.leaderboard-region-toggle .leaderboard-tab {
+    border-bottom: none;
+}
+
+.leaderboard-region-toggle .leaderboard-tab:first-child {
+    border-right: 2px solid var(--gb-darkest);
 }
 
 /* ============================================

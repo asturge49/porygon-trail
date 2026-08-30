@@ -100,7 +100,9 @@
             bug:      { weakTo: ['fire', 'flying', 'rock'], resistedBy: ['grass', 'fighting', 'ground'] },
             rock:     { weakTo: ['water', 'grass', 'fighting', 'ground'], resistedBy: ['normal', 'fire', 'poison', 'flying'] },
             ghost:    { weakTo: ['ghost'], resistedBy: ['poison', 'bug'], immuneBy: ['normal', 'fighting'] },
-            dragon:   { weakTo: ['ice', 'dragon'], resistedBy: ['fire', 'water', 'electric', 'grass'] }
+            dragon:   { weakTo: ['ice', 'dragon'], resistedBy: ['fire', 'water', 'electric', 'grass'] },
+            steel:    { weakTo: ['fire', 'fighting', 'ground'], resistedBy: ['normal', 'grass', 'ice', 'flying', 'psychic', 'bug', 'rock', 'dragon', 'steel'], immuneBy: ['poison'] },
+            dark:     { weakTo: ['bug', 'fighting'], resistedBy: ['ghost', 'dark'], immuneBy: ['psychic'] }
         };
 
         const weakTo = new Set();
@@ -210,6 +212,19 @@
 
             PT.Engine.GameState.addToLog(state, `Defeated ${leader.name}'s ${opponent.name}! Got ${leader.badge}!`);
             if (PT.Engine.Audio) PT.Engine.Audio.gymVictory();
+
+            // Telemetry (§13.3) — Johto gym difficulty/pass-rate curve.
+            if (state.region === 'johto') {
+                PT.Engine.Telemetry.logEvent('johto_gym_cleared', {
+                    leader_id: leaderId,
+                    badge: leader.badge,
+                    pokemon_id: pokemon.id,
+                    win_chance: chance,
+                    party_size: state.party.length,
+                    badge_count: state.badges.filter(b => b !== 'champion').length,
+                    days_elapsed: state.daysElapsed
+                });
+            }
 
             // Try to evolve FIRST
             const evoResult = PT.Engine.GameState.evolvePokemon(pokemon, state);

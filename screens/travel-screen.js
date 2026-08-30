@@ -222,12 +222,44 @@
                 return;
             }
 
+            // Indigo Plateau (Johto) — a real, shoppable restock stop (§9.5),
+            // unlike Kanto's zero-distance pokemon_league. The Johto E4 only
+            // triggers once the player has actually crossed this short leg
+            // (travel-engine.js's canLeaveLocation blocks arrival at Mt.
+            // Silver until state.johtoE4Cleared, so this only fires here).
+            if (route.id === 'indigo_plateau_johto' && !state.johtoE4Cleared &&
+                state.distanceTraveled >= route.distanceToNext) {
+                showE4PokemonCenter(container, state, { johto: true });
+                return;
+            }
+
+            // Route 28/Mt. Silver — the final stretch. Reaching the far end
+            // triggers the Red capstone battle (§9.3) instead of normal
+            // arrival, since this is the last entry in PT.Data.Routes.
+            if (route.id === 'route_28_mt_silver' && state.distanceTraveled >= route.distanceToNext) {
+                if (state.hasWon) {
+                    PT.App.goto('VICTORY');
+                    return;
+                }
+                PT.App.goto('REDCAPSTONE');
+                return;
+            }
+
             const nextRoute = PT.Engine.GameState.getNextRoute(state);
             // Two-tier scene lookup: per-location first, then terrain fallback
             const locationScenes = PT.Data.LocationScenes || {};
             const scene = locationScenes[route.id] || TERRAIN_SCENES[route.terrain] || TERRAIN_SCENES.route;
-            const progress = nextRoute ? Math.min(100, (state.distanceTraveled / route.distanceToNext) * 100) : 100;
-            const isAtDestination = state.currentLocationIndex >= PT.Data.Routes.length - 1;
+            const progress = route.distanceToNext > 0 ? Math.min(100, (state.distanceTraveled / route.distanceToNext) * 100) : 100;
+            // True only once the FINAL route's own distance is exhausted — not
+            // merely upon arriving at it. The final route (e.g. Route 28/Mt.
+            // Silver) is a real ~100-mile leg with its own encounters/events,
+            // not a zero-distance arrival trigger like Kanto's old last stop
+            // was, so it needs normal day-by-day travel first. In practice this
+            // branch is superseded by the route-specific Red capstone hook
+            // above once distance is exhausted, but the condition still needs
+            // to be correct so CONTINUE keeps advancing days until then.
+            const isAtDestination = state.currentLocationIndex >= PT.Data.Routes.length - 1 &&
+                state.distanceTraveled >= route.distanceToNext;
 
             // Dynamic state elements
             const timeOfDay = getTimeOfDay(state.daysElapsed);
@@ -884,7 +916,8 @@
         document.getElementById('btn-menu-close').addEventListener('click', () => overlay.remove());
     }
 
-    function showE4PokemonCenter(container, state) {
+    function showE4PokemonCenter(container, state, options) {
+        const isJohto = options && options.johto;
         // Full heal all alive party members
         PT.Engine.GameState.getAliveParty(state).forEach(p => {
             p.hp = p.maxHp;
@@ -910,6 +943,9 @@
                     <div style="font-size:8px;font-weight:bold;margin-bottom:4px;">All Pokemon fully healed!</div>
                     ${partyHtml}
                 </div>
+                ${isJohto ? `<div style="font-size:7px;color:var(--gb-dark);margin:8px 0;">
+                    The Elite Four remember you. This time, there's Mt. Silver waiting beyond them.
+                </div>` : ''}
                 <div style="font-size:7px;color:var(--gb-dark);margin:8px 0;">
                     ⚠️ There is no turning back. The Elite Four gauntlet begins now.
                 </div>

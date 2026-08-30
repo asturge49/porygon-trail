@@ -14,6 +14,19 @@
         return getLegendaryIds(state).length;
     }
 
+    // §9.3 — Red capstone partial-credit scoring, separate from the binary
+    // victory bonus above. Non-linear on purpose: beating 2 of Red's 6
+    // Pokemon is worth more than proportionally beating 1, so a partial
+    // clear still feels like real, escalating progress rather than a flat
+    // per-mon rate. Triangular-number scaling (1, 3, 6, 10, 15, 21 "units")
+    // times a per-unit value.
+    const RED_CAPSTONE_UNIT = 200;
+    function calculateRedCapstoneBonus(redDefeatedCount) {
+        const n = Math.max(0, Math.min(6, redDefeatedCount || 0));
+        const triangular = (n * (n + 1)) / 2;
+        return Math.floor(triangular * RED_CAPSTONE_UNIT);
+    }
+
     function calculateScore(state) {
         let score = 0;
         const breakdown = {};
@@ -22,6 +35,15 @@
         if (state.hasWon) {
             breakdown.victory = 2000;
             score += 2000;
+        }
+
+        // Red capstone partial-credit bonus (§9.3) — only relevant once a
+        // run has actually engaged the capstone; 0 for runs that never got
+        // there. Kept separate from the flat victory bonus above so even a
+        // partial Red clear registers as a real accomplishment.
+        if (state.redMonsDefeated) {
+            breakdown.redCapstone = calculateRedCapstoneBonus(state.redMonsDefeated);
+            score += breakdown.redCapstone;
         }
 
         // Healthy Pokemon at end
@@ -94,12 +116,42 @@
         return PT.Engine.LeaderboardAPI.saveToLeaderboard(entry);
     }
 
+    // Johto leaderboard fields (§13.1-13.2 of JOHTO_EXPANSION_SCOPE.md) — only
+    // populated once state.region has become 'johto' at some point in the run;
+    // a Kanto-only run gets nulls so the existing Kanto columns/leaderboards are
+    // completely unaffected. Called from screens/victory-screen.js and
+    // screens/gameover-screen.js (isFinal: true — the run/Johto leg is over) and
+    // from saveRunInProgress below (isFinal: false — still mid-Johto).
+    function getJohtoLeaderboardFields(state, score, isFinal) {
+        if (!state || state.region !== 'johto') {
+            return { johtoCompleted: false, johtoBadges: null, johtoDaysElapsed: null, johtoScore: null, johtoPokedexCount: null };
+        }
+        // Kanto always awards exactly 8 gym badges before Johto opens up (see
+        // screens/postvictory-screen.js), so anything beyond that count on a
+        // Johto-region run is a Johto badge.
+        const totalBadges = state.badges.filter(b => b !== 'champion').length;
+        const johtoBadges = Math.max(0, totalBadges - 8);
+        // state.daysElapsedAtJohtoEntry is stamped once, on first entering Johto
+        // (screens/johto-starter-screen.js's enterJohto) — absent on saves that
+        // reached Johto before that stamp existed.
+        const johtoDaysElapsed = (typeof state.daysElapsedAtJohtoEntry === 'number')
+            ? Math.max(0, state.daysElapsed - state.daysElapsedAtJohtoEntry)
+            : null;
+        return {
+            johtoCompleted: !!isFinal,
+            johtoBadges,
+            johtoDaysElapsed,
+            johtoScore: score,
+            johtoPokedexCount: state.pokedexCaught.length
+        };
+    }
+
     // Pushes the current (unfinished) run's score to the global leaderboard,
     // so runs that get abandoned mid-game still show up.
     function saveRunInProgress(state) {
         if (!state || !state.runId) return;
         const { score } = calculateScore(state);
-        PT.Engine.LeaderboardAPI.saveInProgress({
+        PT.Engine.LeaderboardAPI.saveInProgress(Object.assign({
             runId: state.runId,
             name: state.trainerName,
             score: score,
@@ -111,7 +163,7 @@
             date: new Date().toLocaleDateString(),
             won: false,
             legendaryCount: countLegendaries(state)
-        });
+        }, getJohtoLeaderboardFields(state, score, false)));
     }
 
     function getLeaderboard() {
@@ -310,8 +362,8 @@
     }
 
     PT.Engine.Scoring = {
-        calculateScore, saveToLeaderboard, saveRunInProgress, getLeaderboard, clearLeaderboard,
+        calculateScore, calculateRedCapstoneBonus, saveToLeaderboard, saveRunInProgress, getLeaderboard, clearLeaderboard,
         getGlobalPokedex, updateGlobalPokedex, clearGlobalPokedex, countLegendaries, getLegendaryIds,
-        getChampionIds, syncPokedexOnLogin
+        getChampionIds, syncPokedexOnLogin, getJohtoLeaderboardFields
     };
 })();

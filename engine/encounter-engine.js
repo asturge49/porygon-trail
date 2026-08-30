@@ -24,7 +24,41 @@
             rarity: pokemonData.rarity,
             level: level,
             travelAbility: pokemonData.travelAbility,
-            spriteUrl: PT.Engine.GameState.getSpriteUrl(pokemonData.id)
+            spriteUrl: PT.Engine.GameState.getSpriteUrl(pokemonData.id, state.region)
+        };
+    }
+
+    // Roaming legendary beasts (§8.5) — active from the moment the run enters
+    // Johto, independent of any route's encounterTable. A small per-day chance
+    // per uncaught beast, checked alongside the normal encounter roll.
+    const ROAM_CHANCE_PER_BEAST = 4;
+
+    function rollRoamEncounter(state) {
+        if (state.region !== 'johto') return null;
+        const beasts = PT.Data.Pokemon.filter(p => p.roaming && !state.pokedexCaught.includes(p.id));
+        if (beasts.length === 0) return null;
+        // Silph Scope boosts legendary-sighting odds elsewhere (event-engine.js) —
+        // roaming beasts are exactly that, so the same multiplier applies here.
+        const roamChance = ROAM_CHANCE_PER_BEAST * PT.Engine.GameState.getSilphScopeMultiplier(state);
+        // Roll every uncaught beast independently, then pick among the hits —
+        // Array#find would always check beasts in the same order, biasing
+        // toward whichever one happens to sit first in PT.Data.Pokemon.
+        const hits = beasts.filter(() => state.rng.chance(roamChance));
+        if (hits.length === 0) return null;
+        const roamer = state.rng.pick(hits);
+
+        const levelVariance = state.rng.randInt(-2, 3);
+        const level = Math.max(2, roamer.baseLevel + levelVariance);
+
+        return {
+            id: roamer.id,
+            name: roamer.name,
+            types: roamer.types,
+            rarity: roamer.rarity,
+            level: level,
+            travelAbility: roamer.travelAbility,
+            spriteUrl: PT.Engine.GameState.getSpriteUrl(roamer.id, state.region),
+            roaming: true
         };
     }
 
@@ -85,11 +119,20 @@
         // Rare Pokemon harder to flee from
         if (pokemon.rarity === 'rare') fleeChance -= 10;
 
+        // Johto flee/damage tension (§11): escapes are less reliable, and a
+        // failed one is far more likely to cost HP than back in Kanto — this
+        // punishes over-relying on flee-to-avoid-risk rather than stacking raw
+        // encounter danger. hitChance is read by the caller's existing
+        // failed-flee damage roll (screens/encounter-screen.js).
+        const inJohto = state.region === 'johto';
+        if (inJohto) fleeChance -= 20;
+
         const success = state.rng.chance(fleeChance);
         if (!success) {
             return {
                 success: false,
-                message: `${pokemon.name} blocks your escape!`
+                message: `${pokemon.name} blocks your escape!`,
+                hitChance: inJohto ? 85 : 40
             };
         }
         return { success: true, message: "Got away safely!" };
@@ -118,6 +161,7 @@
 
     PT.Engine.EncounterEngine = {
         rollEncounter,
+        rollRoamEncounter,
         attemptCatch,
         attemptFlee,
         addPokemonToParty

@@ -39,25 +39,10 @@
         return !!(PT.Engine.Auth && PT.Engine.Auth.isConfigured());
     }
 
-    async function getGlobalLeaderboard() {
-        const auth = PT.Engine.Auth;
-        if (!auth || !auth.isConfigured()) return null;
-
-        const client = auth.getClient();
-        if (!client) return null;
-
-        const { data, error } = await client
-            .from('pt_leaderboard')
-            .select(BASE_COLUMNS)
-            .order('score', { ascending: false })
-            .limit(20);
-
-        if (error) {
-            console.warn('Could not fetch global leaderboard:', error);
-            return null;
-        }
-
-        return data.map(rowToEntry);
+    // `region`: 'kanto' (default) or 'johto' (§13.2 leaderboard toggle) — the
+    // Johto view ranks by johto_score and only includes runs that reached Johto.
+    function getGlobalLeaderboard(region) {
+        return fetchOrdered('score', false, false, null, null, region, 'johto_score');
     }
 
     // Columns available since launch. legendary_count requires a schema migration
@@ -65,6 +50,12 @@
     // only requested by the query that actually needs it — otherwise a missing
     // column would 400 every leaderboard tab, not just the Legendaries one.
     const BASE_COLUMNS = 'user_id, username, score, pokedex_count, badges, days_elapsed, won, date, status';
+
+    // Same idea, extended with the Johto columns (§13.1-13.2, supabase/schema.sql).
+    // Only used for a Johto-region fetch, so a staging/prod DB that hasn't had the
+    // migration applied yet keeps every Kanto tab (which uses BASE_COLUMNS) working
+    // — only the Johto toggle degrades (to "Could not load scores") until it has.
+    const JOHTO_COLUMNS = BASE_COLUMNS + ', johto_completed, johto_badges, johto_days_elapsed, johto_score, johto_pokedex_count';
 
     function rowToEntry(row) {
         return {
@@ -77,24 +68,42 @@
             won: row.won,
             date: row.date,
             inProgress: row.status === 'in_progress',
-            legendaryCount: row.legendary_count || 0
+            legendaryCount: row.legendary_count || 0,
+            // Johto view (§13.2) — undefined/null on a Kanto-only run, or on a
+            // DB that hasn't had the Johto migration applied yet.
+            johtoCompleted: !!row.johto_completed,
+            johtoBadges: row.johto_badges,
+            johtoDaysElapsed: row.johto_days_elapsed,
+            johtoScore: row.johto_score,
+            johtoPokedexCount: row.johto_pokedex_count
         };
     }
 
-    // Shared fetch: rows ordered by a column, optionally restricted to completed wins.
-    async function fetchOrdered(column, ascending, wonOnly, limit, columns) {
+    // Shared fetch: rows ordered by a column, optionally restricted to completed
+    // wins. `region` ('kanto' | 'johto') picks which pair of columns to sort/filter
+    // by — the Johto view only shows runs that actually reached Johto (i.e. have a
+    // non-null johtoColumn value), same idea as the existing wonOnly filter.
+    async function fetchOrdered(column, ascending, wonOnly, limit, columns, region, johtoColumn) {
         const auth = PT.Engine.Auth;
         if (!auth || !auth.isConfigured()) return null;
 
         const client = auth.getClient();
         if (!client) return null;
 
+        const isJohto = region === 'johto';
+        const sortColumn = isJohto ? (johtoColumn || column) : column;
+
         let query = client
             .from('pt_leaderboard')
-            .select(columns || BASE_COLUMNS)
-            .order(column, { ascending });
+            .select(columns || (isJohto ? JOHTO_COLUMNS : BASE_COLUMNS))
+            .order(sortColumn, { ascending });
 
-        if (wonOnly) query = query.eq('won', true);
+        if (isJohto) {
+            query = query.not(sortColumn, 'is', null);
+            if (wonOnly) query = query.eq('johto_completed', true);
+        } else if (wonOnly) {
+            query = query.eq('won', true);
+        }
 
         const { data, error } = await query.limit(limit || 20);
 
@@ -106,9 +115,11 @@
         return data.map(rowToEntry);
     }
 
-    // Highest Pokedex count in a single run
-    function getMostCatchesLeaderboard() {
-        return fetchOrdered('pokedex_count', false);
+    // Highest Pokedex count in a single run. `region`: 'kanto' (default) or 'johto'
+    // — the Johto view ranks by johto_pokedex_count and only includes runs that
+    // reached Johto.
+    function getMostCatchesLeaderboard(region) {
+        return fetchOrdered('pokedex_count', false, false, null, null, region, 'johto_pokedex_count');
     }
 
     // Lifetime Pokedex completion — unique Pokemon ever caught across ALL of a
@@ -160,9 +171,11 @@
         }));
     }
 
-    // Fastest win — lowest days_elapsed among completed wins
-    function getFastestWinLeaderboard() {
-        return fetchOrdered('days_elapsed', true, true);
+    // Fastest win — lowest days_elapsed among completed wins. `region`: 'kanto'
+    // (default) or 'johto' — the Johto view ranks by johto_days_elapsed (days spent
+    // in Johto, not total run length) among runs where johto_completed is true.
+    function getFastestWinLeaderboard(region) {
+        return fetchOrdered('days_elapsed', true, true, null, null, region, 'johto_days_elapsed');
     }
 
     // Lifetime legendaries caught — unique legendary Pokemon ever caught across
@@ -263,20 +276,27 @@
         }));
     }
 
-    // Top 10 unique trainers ranked by their personal best run
-    async function getTopTrainers() {
+    // Top 10 unique trainers ranked by their personal best run. `region`: 'kanto'
+    // (default) or 'johto' — the Johto view ranks by johto_score and only
+    // considers runs that reached Johto.
+    async function getTopTrainers(region) {
         const auth = PT.Engine.Auth;
         if (!auth || !auth.isConfigured()) return null;
 
         const client = auth.getClient();
         if (!client) return null;
 
+        const isJohto = region === 'johto';
+        const sortColumn = isJohto ? 'johto_score' : 'score';
+
         // Fetch enough rows to guarantee we find 10 unique users
-        const { data, error } = await client
+        let query = client
             .from('pt_leaderboard')
-            .select(BASE_COLUMNS)
-            .order('score', { ascending: false })
-            .limit(500);
+            .select(isJohto ? JOHTO_COLUMNS : BASE_COLUMNS)
+            .order(sortColumn, { ascending: false });
+        if (isJohto) query = query.not(sortColumn, 'is', null);
+
+        const { data, error } = await query.limit(500);
 
         if (error) {
             console.warn('Could not fetch top trainers:', error);
@@ -323,19 +343,32 @@
             legendary_count: entry.legendaryCount || 0,
             pokedex_ids: entry.pokedexIds || [],
             legendary_ids: entry.legendaryIds || [],
-            champion_ids: entry.championIds || []
+            champion_ids: entry.championIds || [],
+            // Johto columns (§13.1-13.2) — null/false on a Kanto-only run, only
+            // populated once state.region has become 'johto' (see engine/scoring.js
+            // and screens/victory-screen.js / screens/gameover-screen.js).
+            johto_completed: !!entry.johtoCompleted,
+            johto_badges: entry.johtoBadges != null ? entry.johtoBadges : null,
+            johto_days_elapsed: entry.johtoDaysElapsed != null ? entry.johtoDaysElapsed : null,
+            johto_score: entry.johtoScore != null ? entry.johtoScore : null,
+            johto_pokedex_count: entry.johtoPokedexCount != null ? entry.johtoPokedexCount : null
         };
 
         let { error } = await client.from('pt_leaderboard').upsert(row, { onConflict: 'run_id' });
 
-        // legendary_count / pokedex_ids / legendary_ids / champion_ids don't exist
-        // until the pt_leaderboard migration runs — fall back to saving without
-        // them so scores keep saving in the meantime.
+        // legendary_count / pokedex_ids / legendary_ids / champion_ids / johto_*
+        // don't exist until the pt_leaderboard migration runs — fall back to
+        // saving without them so scores keep saving in the meantime.
         if (error && error.code === 'PGRST204') {
             delete row.legendary_count;
             delete row.pokedex_ids;
             delete row.legendary_ids;
             delete row.champion_ids;
+            delete row.johto_completed;
+            delete row.johto_badges;
+            delete row.johto_days_elapsed;
+            delete row.johto_score;
+            delete row.johto_pokedex_count;
             ({ error } = await client.from('pt_leaderboard').upsert(row, { onConflict: 'run_id' }));
         }
 

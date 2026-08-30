@@ -1,10 +1,22 @@
-// Porygon Trail - Elite Four Gauntlet Screen
-// v2 - force redeploy
+// Porygon Trail - Red Capstone Battle Screen (§9.3)
+//
+// The true ending of a Johto run. Reached after clearing the Johto Elite
+// Four rematch (screens/elite-four-screen.js) and walking Route 28/Mt.
+// Silver. Fixed 6-Pokemon roster (all aces), presented in random order
+// each run. Scoring is partial-credit (engine/scoring.js's
+// calculateRedCapstoneBonus), not binary — reaching and engaging Red at
+// all should register as a real accomplishment even on a partial clear.
+// Only defeating all 6 sets state.hasWon and routes to VICTORY; anything
+// else (party wiped, or the player banks their score early) ends the run
+// for real via GAMEOVER, per "only beating Red at the capstone is the
+// real ending."
 (function() {
     const PT = window.PorygonTrail;
     PT.Screens = PT.Screens || {};
 
-    // Gen 1 type chart (duplicated from gym-screen for independence)
+    // Duplicated from gym-screen.js/elite-four-screen.js for independence
+    // (existing convention in this codebase — see elite-four-screen.js's
+    // own comment on this).
     function getTypeWeaknesses(types) {
         const weaknesses = {
             normal:   { weakTo: ['fighting'], resistedBy: ['rock'], immuneBy: ['ghost'] },
@@ -25,82 +37,56 @@
             steel:    { weakTo: ['fire', 'fighting', 'ground'], resistedBy: ['normal', 'grass', 'ice', 'flying', 'psychic', 'bug', 'rock', 'dragon', 'steel'], immuneBy: ['poison'] },
             dark:     { weakTo: ['bug', 'fighting'], resistedBy: ['ghost', 'dark'], immuneBy: ['psychic'] }
         };
-
         const weakTo = new Set();
         const strongTo = new Set();
-
         types.forEach(type => {
             const entry = weaknesses[type.toLowerCase()];
             if (!entry) return;
             entry.weakTo.forEach(t => weakTo.add(t));
             (entry.resistedBy || []).forEach(t => strongTo.add(t));
         });
-
         return {
             weakTo: [...weakTo].filter(t => !strongTo.has(t)),
             strongTo: [...strongTo].filter(t => !weakTo.has(t))
         };
     }
 
-    // Which Elite Four pool is active — the Johto E4 rematch (§9.2) is a
-    // separate diversified pool from Kanto's, selected purely off
-    // state.region so this screen doesn't depend on how the calling route
-    // was wired.
-    function getPool(state) {
-        return state.region === 'johto' ? PT.Data.JohtoEliteFour : PT.Data.EliteFour;
-    }
-
-    PT.Screens.ELITEFOUR = {
+    PT.Screens.REDCAPSTONE = {
         render(container, state, params) {
-            const pool = getPool(state);
+            // Initialize capstone state on first entry
+            if (!params || params.redIndex === undefined) {
+                // Fresh shuffle of Red's roster every run (§9.3: "presented
+                // in random order each run").
+                const order = state.rng.shuffle([...PT.Data.RedCapstone.pokemon]);
+                state.redOrder = order;
+                state.redIndex = 0;
+                state.redMonsDefeated = state.redMonsDefeated || 0;
 
-            // Initialize E4 state on first entry
-            if (!params || params.e4Index === undefined) {
-                // Snapshot the full party before the gauntlet starts
-                state.e4EntryParty = state.party.map(p => ({
-                    name: p.name,
-                    id: p.id,
-                    spriteUrl: p.spriteUrl,
-                    types: p.types ? [...p.types] : ['normal'],
-                    hp: p.hp,
-                    maxHp: p.maxHp,
-                    rarity: p.rarity
-                }));
-
-                // Pre-roll opponents for all trainers in the active pool
-                const opponents = pool.map(trainer =>
-                    state.rng.pick(trainer.pokemon)
-                );
-
-                // Show intro screen
-                renderIntro(container, state, opponents, pool);
+                renderIntro(container, state, order);
                 return;
             }
 
-            // Battle select screen for current E4 member
-            renderBattleSelect(container, state, params, pool);
+            renderBattleSelect(container, state, params);
         }
     };
 
-    function renderIntro(container, state, opponents, pool) {
-        const isJohto = state.region === 'johto';
+    function renderIntro(container, state, order) {
         const div = document.createElement('div');
         div.className = 'screen gym-screen';
         div.innerHTML = `
-            <div class="event-title">${isJohto ? 'THE ELITE FOUR — JOHTO REMATCH' : 'THE ELITE FOUR'}</div>
+            <div class="event-title">MT. SILVER — ???</div>
             <div class="text-box text-center" style="font-size: 8px;">
-                You've reached the Indigo Plateau.<br>
-                ${pool.length} trainers stand between you and ${isJohto ? 'the Johto capstone' : 'the Hall of Fame'}.<br>
-                <strong>Once you enter, there is no turning back.</strong>
+                At the peak of Mt. Silver, a lone trainer in a weathered cap turns to face you.
+                <br>${PT.Data.RedCapstone.introText}
+                <br><br><strong>This is it. No badges, no items — just your team against his.</strong>
             </div>
             <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin: 8px 0;">
-                ${pool.map((trainer, i) => `
+                ${order.map(mon => `
                     <div style="text-align: center; font-size: 7px; min-width: 55px;">
-                        <img src="${PT.Engine.GameState.getSpriteUrl(opponents[i].id)}"
+                        <img src="${PT.Engine.GameState.getSpriteUrl(mon.id)}"
                              style="width: 40px; height: 40px; image-rendering: pixelated;"
                              onerror="this.style.display='none'">
-                        <div style="font-weight: bold;">${trainer.name}</div>
-                        <div>${trainer.title}</div>
+                        <div style="font-weight: bold;">???</div>
                     </div>
                 `).join('')}
             </div>
@@ -109,43 +95,38 @@
                 ${state.party.length} Pokemon ready for battle.
             </div>
             <div class="event-choices">
-                <button class="btn btn-wide" id="btn-begin-e4">BEGIN THE GAUNTLET</button>
+                <button class="btn btn-wide" id="btn-begin-red">CHALLENGE RED</button>
             </div>
         `;
         container.appendChild(div);
 
-        document.getElementById('btn-begin-e4').addEventListener('click', () => {
-            PT.App.goto('ELITEFOUR', {
-                e4Index: 0,
-                opponents: opponents
-            });
+        document.getElementById('btn-begin-red').addEventListener('click', () => {
+            PT.App.goto('REDCAPSTONE', { redIndex: 0 });
         });
     }
 
-    function renderBattleSelect(container, state, params, pool) {
-        pool = pool || getPool(state);
-        const { e4Index, opponents } = params;
-        const trainer = pool[e4Index];
-        const opponent = opponents[e4Index];
+    function renderBattleSelect(container, state, params) {
+        const { redIndex } = params;
+        const order = state.redOrder;
+        const opponent = order[redIndex];
         const opponentSprite = PT.Engine.GameState.getSpriteUrl(opponent.id);
 
-        // Get opponent types
         const opponentData = PT.Data.Pokemon.find(p => p.id === opponent.id);
-        const opponentTypes = opponentData ? opponentData.types : [trainer.type];
+        const opponentTypes = opponentData ? opponentData.types : ['normal'];
         const typeChart = getTypeWeaknesses(opponentTypes);
 
         const alive = PT.Engine.GameState.getAliveParty(state);
+        const defeated = state.redMonsDefeated || 0;
 
         const div = document.createElement('div');
         div.className = 'screen gym-screen';
         div.innerHTML = `
-            <div class="event-title" style="font-size: 10px;">ELITE FOUR — BATTLE ${e4Index + 1} of ${pool.length}</div>
+            <div class="event-title" style="font-size: 10px;">RED — POKEMON ${redIndex + 1} of ${order.length}</div>
             <div class="gym-battle-area">
                 <div class="gym-battle-sprites">
                     <div class="gym-leader-portrait">
-                        <div class="gym-portrait-label">${trainer.name}</div>
-                        <div style="font-size: 6px;">${trainer.title}</div>
-                        <div style="font-size: 7px; margin-top: 2px;">${trainer.type.toUpperCase()} TYPE</div>
+                        <div class="gym-portrait-label">Red</div>
+                        <div style="font-size: 6px;">${PT.Data.RedCapstone.title}</div>
                     </div>
                     <div class="gym-opponent-pokemon">
                         <img src="${opponentSprite}" alt="${opponent.name}"
@@ -153,17 +134,17 @@
                              onerror="this.style.display='none'">
                         <div class="gym-opponent-name" style="font-size: 9px; font-weight: bold;">${opponent.name}</div>
                         <div style="font-size: 6px;">${opponentTypes.join('/').toUpperCase()}</div>
-                        <div style="font-size: 7px; color: var(--gb-darkest);">⭐ ELITE POKEMON</div>
+                        <div style="font-size: 7px; color: var(--gb-darkest);">⭐ RED'S ACE</div>
                     </div>
                 </div>
-                <div class="gym-challenge-text" style="font-size: 7px;">${trainer.introText}</div>
             </div>
             <div class="text-box" style="font-size: 7px;">
-                ${trainer.name} sends out ${opponent.name}! (${opponentTypes.join('/')}-type)
+                Red sends out ${opponent.name}! (${opponentTypes.join('/')}-type)
                 <br>Weak to: ${typeChart.weakTo.join(', ') || 'none'} | Resists: ${typeChart.strongTo.join(', ') || 'none'}
-                <br><span style="font-size: 6px;">⚠️ Battle Stars do NOT protect against E4 kills!</span>
+                <br><span style="font-size: 6px;">⚠️ Battle Stars do NOT protect against Red's Pokemon!</span>
+                ${defeated > 0 ? `<br><span style="font-size: 6px;">Defeated so far: ${defeated}/6</span>` : ''}
             </div>
-            <div class="event-choices" id="e4-choices">
+            <div class="event-choices" id="red-choices">
                 ${alive.map((p, i) => {
                     const hasAdvantage = p.types.some(t => typeChart.weakTo.includes(t));
                     const hasDisadvantage = p.types.some(t => typeChart.strongTo.includes(t));
@@ -174,51 +155,61 @@
                     return `<button class="btn btn-wide" data-index="${i}">${label}</button>`;
                 }).join('')}
             </div>
+            ${defeated > 0 ? `
+            <div class="event-choices">
+                <button class="btn btn-wide" id="btn-red-retreat" style="opacity: 0.85;">RETREAT — BANK YOUR SCORE (${defeated}/6 beaten)</button>
+            </div>` : ''}
         `;
         container.appendChild(div);
-
-        // No leave button — you're committed
 
         document.querySelectorAll('[data-index]').forEach(btn => {
             btn.addEventListener('click', () => {
                 const index = parseInt(btn.dataset.index);
                 const alive = PT.Engine.GameState.getAliveParty(state);
                 const chosen = alive[index];
-                resolveE4Battle(chosen, trainer, state, container, params, pool);
+                resolveRedBattle(chosen, state, container, params);
             });
         });
+
+        const retreatBtn = document.getElementById('btn-red-retreat');
+        if (retreatBtn) {
+            retreatBtn.addEventListener('click', () => {
+                PT.Engine.GameState.addToLog(state, `Retreated from Mt. Silver with ${defeated}/6 of Red's team defeated.`);
+                state.isGameOver = true;
+                state.gameOverReason = 'capstone_retreat';
+                PT.Engine.Telemetry.logCapstoneResult(state, state.redMonsDefeated || 0);
+                PT.App.goto('GAMEOVER');
+            });
+        }
     }
 
-    function resolveE4Battle(pokemon, trainer, state, container, params, pool) {
-        pool = pool || getPool(state);
-        const { e4Index, opponents } = params;
-        const opponent = opponents[e4Index];
+    function resolveRedBattle(pokemon, state, container, params) {
+        const { redIndex } = params;
+        const order = state.redOrder;
+        const opponent = order[redIndex];
         const opponentSprite = PT.Engine.GameState.getSpriteUrl(opponent.id);
 
-        // Get opponent types for battle calc
         const opponentData = PT.Data.Pokemon.find(p => p.id === opponent.id);
-        const opponentTypes = opponentData ? opponentData.types : [trainer.type];
+        const opponentTypes = opponentData ? opponentData.types : ['normal'];
         const typeChart = getTypeWeaknesses(opponentTypes);
 
-        // Calculate success chance — BRUTAL Elite Four
-        let chance = 25; // Base 25% — the elite are ELITE
+        // Calculate success chance — the hardest fight in the game.
+        let chance = 20; // Lower base than the E4's 25% — this is the true final boss
         let battleBonuses = [];
 
-        // Progressive difficulty — each fight is harder than the last
-        const progressionPenalty = e4Index * 3; // 0%, -3%, -6%, -9%, -12%
+        // Progressive difficulty across Red's 6 Pokemon
+        const progressionPenalty = redIndex * 3; // 0%,-3%,-6%,-9%,-12%,-15%
         chance -= progressionPenalty;
-        if (progressionPenalty > 0) battleBonuses.push(`📈 Round ${e4Index + 1} penalty -${progressionPenalty}%`);
+        if (progressionPenalty > 0) battleBonuses.push(`📈 Pokemon ${redIndex + 1} penalty -${progressionPenalty}%`);
 
-        // Type advantage (smaller bonus than gyms)
         const hasAdvantage = pokemon.types.some(t => typeChart.weakTo.includes(t));
         const hasDisadvantage = pokemon.types.some(t => typeChart.strongTo.includes(t));
-        if (hasAdvantage) chance += 25; // SE matchups are your lifeline
-        if (hasDisadvantage) chance -= 25; // NVE is near-suicide
+        if (hasAdvantage) chance += 25;
+        if (hasDisadvantage) chance -= 25;
 
-        // Badge bonus (minimal)
+        // Badge bonus (all badges earned across both regions count)
         chance += state.badges.filter(b => b !== 'champion').length * 1;
 
-        // Poison ability: only applies if the fighting Pokemon has poison (halved in E4)
         if (pokemon.travelAbility === 'poison') {
             const stage = PT.Engine.GameState.getEvoStage(pokemon.id);
             let power = stage === 1 ? 1.0 : stage === 2 ? 1.5 : 2.0;
@@ -228,7 +219,6 @@
             battleBonuses.push(`☠️ POISON +${poisonBonus}%`);
         }
 
-        // Intimidate ability: scales with power (halved in E4)
         const intimidatePower = PT.Engine.GameState.getAbilityPower(state, 'intimidate');
         if (intimidatePower > 0) {
             const intimBonus = Math.max(1, Math.floor(1.5 * intimidatePower));
@@ -236,13 +226,11 @@
             battleBonuses.push(`😤 INTIMIDATE +${intimBonus}%`);
         }
 
-        // Psychic Dominance (Mewtwo) — reduced in E4 (from +50% to +25%)
         if (PT.Engine.GameState.hasAbility(state, 'psychic_dominance')) {
             chance += 25;
             battleBonuses.push(`🧠 PSYCHIC DOMINANCE +25%`);
         }
 
-        // Battle Stars bonus (halved in E4: +1.5% per star instead of +3%)
         const stars = pokemon.battleStars || 0;
         if (stars > 0) {
             const starWinBonus = Math.floor(stars * 1.5);
@@ -250,10 +238,10 @@
             battleBonuses.push(`${'★'.repeat(stars)} +${starWinBonus}%`);
         }
 
-        // Hard ceiling — staggered cap, gets tighter each round
-        const capByRound = [55, 54, 53, 51, 50];
-        const cap = capByRound[e4Index] || 50;
-        chance = Math.max(8, Math.min(cap, chance));
+        // Hard ceiling — tighter than the E4's, and tightens further per Pokemon
+        const capByRound = [50, 49, 47, 45, 43, 40];
+        const cap = capByRound[redIndex] || 40;
+        chance = Math.max(6, Math.min(cap, chance));
 
         const won = state.rng.chance(chance);
 
@@ -262,12 +250,11 @@
         div.className = 'screen gym-screen';
 
         if (won) {
-            // Victory against this E4 member
             if (PT.Engine.Audio) PT.Engine.Audio.gymVictory();
 
-            PT.Engine.GameState.addToLog(state, `Defeated ${trainer.name}'s ${opponent.name} in the Elite Four!`);
+            state.redMonsDefeated = (state.redMonsDefeated || 0) + 1;
+            PT.Engine.GameState.addToLog(state, `Defeated Red's ${opponent.name}! (${state.redMonsDefeated}/6)`);
 
-            // Try evolution FIRST
             const evoResult = PT.Engine.GameState.evolvePokemon(pokemon, state);
             let evoLine = '';
             if (evoResult.evolved) {
@@ -277,7 +264,6 @@
                 evoLine = `<br><span style="font-size: 6px;">(${pokemon.name} already evolved at this location — no further evolution here.)</span>`;
             }
 
-            // Award battle star (evolution win doesn't count)
             const starResult = PT.Engine.GameState.addBattleWin(pokemon, state, evoResult.evolved);
             let starLine = '';
             if (starResult.earned) {
@@ -287,7 +273,7 @@
                 starLine += `<br>🎓 EXP. SHARE: ${starResult.expShareBonus.name} also earned a Battle Star!`;
             }
 
-            const isLastBattle = e4Index >= pool.length - 1;
+            const isLastBattle = redIndex >= order.length - 1;
 
             div.innerHTML = `
                 <div class="event-title">VICTORY!</div>
@@ -300,114 +286,52 @@
                             <div style="font-size: 8px; text-decoration: line-through;">${opponent.name}</div>
                         </div>
                     </div>
-                    <div class="gym-challenge-text" style="font-size: 7px;">${trainer.defeatText}</div>
                     <div style="font-size: 8px; margin-top: 8px;">
-                        ${pokemon.name} defeated ${trainer.name}'s ${opponent.name}!${evoLine}${starLine}
+                        ${pokemon.name} defeated Red's ${opponent.name}!${evoLine}${starLine}
                         <br><span style="font-size: 6px;">Win chance was ${chance}%${battleBonuses.length > 0 ? ' (' + battleBonuses.join(', ') + ')' : ''}</span>
                         ${isLastBattle
-                            ? `<br><strong>You've defeated all ${pool.length}! You are the CHAMPION!</strong>`
-                            : `<br>Next up: ${pool[e4Index + 1].name}...`}
+                            ? `<br><strong>Red's entire team has fallen. You are the true Champion of both regions!</strong>`
+                            : `<br>Red's ${order[redIndex + 1].name} is up next... (${state.redMonsDefeated}/6 beaten)`}
                     </div>
                 </div>
-                <button class="btn btn-wide" id="btn-e4-next">
-                    ${isLastBattle ? 'CONTINUE' : `FACE ${pool[e4Index + 1].name.toUpperCase()}`}
+                <button class="btn btn-wide" id="btn-red-next">
+                    ${isLastBattle ? 'CLAIM VICTORY' : `FACE ${order[redIndex + 1].name.toUpperCase()}`}
                 </button>
             `;
             container.appendChild(div);
             PT.Engine.GameState.saveGame(state);
 
-            document.getElementById('btn-e4-next').addEventListener('click', () => {
+            document.getElementById('btn-red-next').addEventListener('click', () => {
                 if (isLastBattle) {
-                    // Champion!
-                    if (!state.badges.includes('champion')) {
-                        state.badges.push('champion');
+                    // The real ending (§9.3/§6): only a full Red clear sets
+                    // hasWon and ends the run via Hall of Fame.
+                    if (!state.completedRegions.includes('johto')) {
+                        state.completedRegions.push('johto');
                     }
-
-                    // §9's Johto E4 gauntlet is NOT the same event as Kanto's:
-                    // clearing it unlocks the Route 28/Mt. Silver capstone
-                    // stretch, it does not end the run. Only the Red capstone
-                    // battle (screens/red-capstone-screen.js) may ever set
-                    // state.hasWon / route to VICTORY from here on. This
-                    // branch must run BEFORE the region==='kanto' branch below
-                    // so a Johto win can never fall through to the old
-                    // straight-to-Hall-of-Fame behavior.
-                    if (state.region === 'johto') {
-                        // §9.4: Johto E4 clear money reward — bigger than
-                        // Kanto's ($5000) and bigger than any mid-run Johto
-                        // gym reward (up to $3200), sized to matter at the
-                        // Indigo Plateau (Johto) restock stop (§9.5) before
-                        // the ~100-distance Mt. Silver stretch.
-                        const JOHTO_E4_MONEY_REWARD = 7000;
-                        const e4MoneyReward = PT.Engine.GameState.applyPayDay(state, JOHTO_E4_MONEY_REWARD);
-                        state.resources.money += e4MoneyReward;
-                        state.johtoE4Cleared = true;
-                        PT.Engine.GameState.addToLog(state, `Defeated the Johto Elite Four rematch! Earned $${e4MoneyReward} to restock before Mt. Silver.`);
-
-                        // Telemetry (§13.3) — funnel: what fraction of Johto
-                        // entrants reach the second E4?
-                        PT.Engine.Telemetry.logEvent('johto_elite_four_cleared', {
-                            party_size: state.party.length,
-                            party_ids: state.party.map(p => p.id),
-                            badge_count: state.badges.filter(b => b !== 'champion').length,
-                            days_elapsed: state.daysElapsed,
-                            days_elapsed_johto: (typeof state.daysElapsedAtJohtoEntry === 'number')
-                                ? Math.max(0, state.daysElapsed - state.daysElapsedAtJohtoEntry)
-                                : null
-                        });
-                        PT.Engine.GameState.saveGame(state);
-                        // Back to normal travel — the player walks on to
-                        // Route 28/Mt. Silver and the Red capstone battle,
-                        // not straight to Victory.
-                        PT.App.goto('TRAVEL');
-                        return;
-                    }
-
-                    const e4MoneyReward = PT.Engine.GameState.applyPayDay(state, 5000);
-                    state.resources.money += e4MoneyReward;
-                    PT.Engine.GameState.addToLog(state, 'Became the Pokemon Champion!');
-
-                    // Post-victory hook (§6): the first Kanto E4 clear doesn't
-                    // end the run — it offers Johto. Record the region as
-                    // cleared and let the player choose whether to continue.
-                    if (state.region === 'kanto' && !state.completedRegions.includes('kanto')) {
-                        state.completedRegions.push('kanto');
-                        PT.Engine.GameState.saveGame(state);
-                        PT.App.goto('POSTVICTORY');
-                        return;
-                    }
-
                     state.hasWon = true;
+                    PT.Engine.Telemetry.logCapstoneResult(state, 6);
                     PT.App.goto('VICTORY');
                 } else {
-                    // Next E4 battle
-                    PT.App.goto('ELITEFOUR', {
-                        e4Index: e4Index + 1,
-                        opponents: opponents
-                    });
+                    PT.App.goto('REDCAPSTONE', { redIndex: redIndex + 1 });
                 }
             });
 
         } else {
-            // Loss — the fighting Pokemon takes 4 HP damage
             if (PT.Engine.Audio) PT.Engine.Audio.gymDefeat();
 
-            // E4 damage bypasses Battle Star death avoidance
-            const E4_LOSS_DAMAGE = 4;
-            const oldHp = pokemon.hp;
-            pokemon.hp = Math.max(0, pokemon.hp - E4_LOSS_DAMAGE);
+            // Red's Pokemon hit harder than the E4's — this is the final boss.
+            const RED_LOSS_DAMAGE = 5;
+            pokemon.hp = Math.max(0, pokemon.hp - RED_LOSS_DAMAGE);
             const killed = pokemon.hp <= 0;
 
             if (killed) {
-                // Mark fainted first — getAliveParty() (which drives the next
-                // battle's Pokemon picker) filters on this, not array membership,
-                // so this must be set regardless of whether the splice below finds it.
                 pokemon.status = 'fainted';
                 if (!state.graveyard) state.graveyard = [];
                 const route = PT.Engine.GameState.getCurrentRoute(state);
                 state.graveyard.push({
                     name: pokemon.name, id: pokemon.id, spriteUrl: pokemon.spriteUrl,
                     battleStars: pokemon.battleStars || 0,
-                    location: route ? route.name : 'Unknown', day: state.daysElapsed
+                    location: route ? route.name : 'Mt. Silver', day: state.daysElapsed
                 });
                 const idx = state.party.indexOf(pokemon);
                 if (idx !== -1) {
@@ -417,8 +341,8 @@
             }
 
             const dmgMsg = killed
-                ? `${pokemon.name} was killed by ${trainer.name}'s ${opponent.name}! 💀`
-                : `${pokemon.name} took ${E4_LOSS_DAMAGE} damage from ${trainer.name}'s ${opponent.name}! (${pokemon.hp}/${pokemon.maxHp} HP)`;
+                ? `${pokemon.name} was killed by Red's ${opponent.name}! 💀`
+                : `${pokemon.name} took ${RED_LOSS_DAMAGE} damage from Red's ${opponent.name}! (${pokemon.hp}/${pokemon.maxHp} HP)`;
             PT.Engine.GameState.addToLog(state, dmgMsg);
 
             const aliveAfter = PT.Engine.GameState.getAliveParty(state);
@@ -426,7 +350,7 @@
 
             const statusMsg = killed
                 ? `💀 ${pokemon.name} was killed by ${opponent.name}!`
-                : `💥 ${pokemon.name} took ${E4_LOSS_DAMAGE} damage! (${pokemon.hp}/${pokemon.maxHp} HP remaining)`;
+                : `💥 ${pokemon.name} took ${RED_LOSS_DAMAGE} damage! (${pokemon.hp}/${pokemon.maxHp} HP remaining)`;
 
             div.innerHTML = `
                 <div class="event-title">DEFEAT...</div>
@@ -439,34 +363,31 @@
                             <div style="font-size: 8px; font-weight: bold;">${opponent.name} ⭐</div>
                         </div>
                     </div>
-                    <div class="gym-leader-name">${trainer.name} wins</div>
+                    <div class="gym-leader-name">Red wins</div>
                     <div style="font-size: 8px; margin-top: 8px;">
                         ${statusMsg}
                         <br><span style="font-size: 6px;">Win chance was ${chance}%${battleBonuses.length > 0 ? ' (' + battleBonuses.join(', ') + ')' : ''}</span>
-                        <br><span style="font-size: 6px;">⚠️ Elite Four ignores Battle Star protection!</span>
+                        <br><span style="font-size: 6px;">⚠️ Red's Pokemon ignore Battle Star protection!</span>
                         ${partyWiped
-                            ? '<br><strong>All your Pokemon have fallen...</strong>'
-                            : `<br>You must defeat ${trainer.name}'s ${opponent.name} to advance.`}
+                            ? `<br><strong>All your Pokemon have fallen. You defeated ${state.redMonsDefeated || 0}/6 of Red's team.</strong>`
+                            : `<br>You must defeat Red's ${opponent.name} to advance.`}
                     </div>
                 </div>
-                <button class="btn btn-wide" id="btn-e4-continue">
-                    ${partyWiped ? 'GAME OVER' : 'CHOOSE ANOTHER POKEMON'}
+                <button class="btn btn-wide" id="btn-red-continue">
+                    ${partyWiped ? 'END RUN' : 'CHOOSE ANOTHER POKEMON'}
                 </button>
             `;
             container.appendChild(div);
             PT.Engine.GameState.saveGame(state);
 
-            document.getElementById('btn-e4-continue').addEventListener('click', () => {
+            document.getElementById('btn-red-continue').addEventListener('click', () => {
                 if (partyWiped) {
                     state.isGameOver = true;
-                    if (!state.gameOverReason) state.gameOverReason = 'party_wiped';
+                    if (!state.gameOverReason) state.gameOverReason = 'capstone_partial';
+                    PT.Engine.Telemetry.logCapstoneResult(state, state.redMonsDefeated || 0);
                     PT.App.goto('GAMEOVER');
                 } else {
-                    // Re-render battle select for the same trainer
-                    PT.App.goto('ELITEFOUR', {
-                        e4Index: e4Index,
-                        opponents: opponents
-                    });
+                    PT.App.goto('REDCAPSTONE', { redIndex: redIndex });
                 }
             });
         }

@@ -32,8 +32,22 @@
                 legendary_champ_ids: _champIds.filter(id => _legendaryIds.has(id))
             });
 
+            // Telemetry (§13.3) — johto_run_ended: where do runs actually end,
+            // in aggregate? Only meaningful for a run that reached Johto.
+            if (state.region === 'johto') {
+                PT.Engine.Telemetry.logEvent('johto_run_ended', {
+                    result: 'won',
+                    location: null,
+                    days_elapsed: state.daysElapsed,
+                    score: score,
+                    badges: state.badges.filter(b => b !== 'champion').length,
+                    pokedex_count: state.pokedexCaught.length,
+                    party_ids: state.party.map(p => p.id)
+                });
+            }
+
             // Save score
-            PT.Engine.Scoring.saveToLeaderboard({
+            PT.Engine.Scoring.saveToLeaderboard(Object.assign({
                 runId: state.runId,
                 name: state.trainerName,
                 score: score,
@@ -46,7 +60,7 @@
                 won: true,
                 legendaryCount: PT.Engine.Scoring.countLegendaries(state),
                 championIds: PT.Engine.Scoring.getChampionIds(state)
-            });
+            }, PT.Engine.Scoring.getJohtoLeaderboardFields(state, score, true)));
 
             // Update records
             PT.Engine.Records.updateRecords(state, score);
@@ -87,6 +101,7 @@
                     <div>Pokedex (${state.pokedexCaught.length}): +${breakdown.pokedexCaught}</div>
                     <div>Rare Pokemon: +${breakdown.rarePokemon}</div>
                     ${breakdown.legendaryPokemon > 0 ? `<div>Legendary Pokemon: +${breakdown.legendaryPokemon}</div>` : ''}
+                    ${state.redMonsDefeated ? `<div>Red's Team Defeated: ${state.redMonsDefeated}/6 (+${breakdown.redCapstone})</div>` : ''}
                     <div>Gym Badges (${state.badges.filter(b => b !== 'champion').length}): +${breakdown.badges}</div>
                     <div>Team Rocket: +${breakdown.teamRocket}</div>
                     <div>Distance: +${breakdown.distance}</div>

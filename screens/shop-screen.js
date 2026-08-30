@@ -5,11 +5,13 @@
 
     let currentTab = 'buy';
 
-    function getSellPrice(key) {
+    function getSellPrice(key, state) {
         const item = PT.Data.Items[key];
         if (!item) return 0;
-        // Food sells per 10 rations (same as buy unit)
-        return Math.floor(item.price / 2);
+        // Food sells per 10 rations (same as buy unit). Uses the
+        // region-aware price so Johto's pricier balls/potions/repels also
+        // sell back for more (§12 — money scarcity in Johto).
+        return Math.floor(PT.Data.getItemPrice(key, state) / 2);
     }
 
     function getSellableItems(state) {
@@ -39,6 +41,7 @@
 
             function renderShop() {
                 const sellable = getSellableItems(state);
+                const inJohto = state.region === 'johto';
 
                 div.innerHTML = `
                     <div class="panel-header text-center">${route.name} POKE MART</div>
@@ -51,16 +54,18 @@
                         <div class="shop-grid">
                             ${available.map(key => {
                                 const item = items[key];
-                                const canAfford = state.resources.money >= item.price;
+                                const price = PT.Data.getItemPrice(key, state);
+                                const canAfford = state.resources.money >= price;
+                                const priceHiked = inJohto && price > item.price;
                                 return `
                                     <div class="shop-item">
                                         <div class="shop-item-info">
                                             <div class="shop-item-name">${item.name}</div>
                                             <div class="shop-item-desc">${item.desc} | Have: ${state.resources[key] || 0}</div>
                                         </div>
-                                        <div class="shop-item-price">$${item.price}</div>
+                                        <div class="shop-item-price"${priceHiked ? ' style="color:#c54;" title="Johto prices run higher"' : ''}>$${price}</div>
                                         <button class="btn btn-small buy-btn" data-item="${key}" ${canAfford ? '' : 'disabled'}>BUY</button>
-                                        <button class="btn btn-small buy-5-btn" data-item="${key}" ${state.resources.money >= item.price * 5 ? '' : 'disabled'}>x5</button>
+                                        <button class="btn btn-small buy-5-btn" data-item="${key}" ${state.resources.money >= price * 5 ? '' : 'disabled'}>x5</button>
                                     </div>
                                 `;
                             }).join('')}
@@ -69,7 +74,7 @@
                         <div class="shop-grid">
                             ${sellable.length > 0 ? sellable.map(s => {
                                 const item = items[s.key];
-                                const sellPrice = getSellPrice(s.key);
+                                const sellPrice = getSellPrice(s.key, state);
                                 return `
                                     <div class="shop-item">
                                         <div class="shop-item-info">
@@ -85,7 +90,7 @@
                         </div>
                     `}
                     <div class="text-box" id="shop-message" style="min-height: 30px; font-size: 7px;">
-                        ${currentTab === 'buy' ? 'Welcome! What would you like to buy?' : 'Sell items for half their buy price.'}
+                        ${currentTab === 'buy' ? (inJohto ? 'Welcome! Prices run higher out here in Johto.' : 'Welcome! What would you like to buy?') : 'Sell items for half their buy price.'}
                     </div>
                     <button class="btn btn-wide" id="btn-back">LEAVE SHOP</button>
                 `;
@@ -105,8 +110,9 @@
                     btn.addEventListener('click', () => {
                         const key = btn.dataset.item;
                         const item = items[key];
-                        if (state.resources.money >= item.price) {
-                            state.resources.money -= item.price;
+                        const price = PT.Data.getItemPrice(key, state);
+                        if (state.resources.money >= price) {
+                            state.resources.money -= price;
                             state.resources[key] = (state.resources[key] || 0) + (key === 'food' ? 10 : 1);
                             msg.textContent = `Bought ${item.name}! ${key === 'food' ? '(+10 rations)' : ''}`;
                             if (PT.Engine.Audio) PT.Engine.Audio.buy();
@@ -120,7 +126,7 @@
                     btn.addEventListener('click', () => {
                         const key = btn.dataset.item;
                         const item = items[key];
-                        const cost = item.price * 5;
+                        const cost = PT.Data.getItemPrice(key, state) * 5;
                         if (state.resources.money >= cost) {
                             state.resources.money -= cost;
                             state.resources[key] = (state.resources[key] || 0) + (key === 'food' ? 50 : 5);
@@ -134,7 +140,7 @@
                 div.querySelectorAll('.sell-btn').forEach(btn => {
                     btn.addEventListener('click', () => {
                         const key = btn.dataset.item;
-                        const sellPrice = getSellPrice(key);
+                        const sellPrice = getSellPrice(key, state);
                         const sellUnit = key === 'food' ? 10 : 1;
                         if ((state.resources[key] || 0) >= sellUnit) {
                             state.resources[key] -= sellUnit;
@@ -150,7 +156,7 @@
                 div.querySelectorAll('.sell-5-btn').forEach(btn => {
                     btn.addEventListener('click', () => {
                         const key = btn.dataset.item;
-                        const sellPrice = getSellPrice(key);
+                        const sellPrice = getSellPrice(key, state);
                         const sellUnit = key === 'food' ? 10 : 1;
                         const totalUnit = sellUnit * 5;
                         if ((state.resources[key] || 0) >= totalUnit) {

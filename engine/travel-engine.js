@@ -9,6 +9,38 @@
         push: { distance: 20, foodMult: 2, encounterMod: 10, eventMod: 15, injuryChance: 20 }
     };
 
+    // Johto's Indigo Plateau rematch stop (§9) gates progress onward to Mt.
+    // Silver behind actually beating the Johto Elite Four — without this,
+    // normal daily travel would silently walk the player past the E4 trigger
+    // (screens/travel-screen.js) the moment distance covers this short leg.
+    function canLeaveLocation(state, route) {
+        if (route.id === 'indigo_plateau_johto' && !state.johtoE4Cleared) return false;
+        return true;
+    }
+
+    // Adds travel distance and, if that crosses the route's finish line,
+    // advances to the next location — but ONLY if a next location exists.
+    // On the last entry in PT.Data.Routes (e.g. Route 28/Mt. Silver),
+    // getNextRoute() returns null; distance still needs to accumulate so a
+    // screen-level trigger (travel-screen.js's Red capstone hook) can detect
+    // "reached the end," it just can't increment past the array's bounds.
+    // Previously this whole distance-accrual path was itself gated on
+    // nextRoute existing, which meant NO distance ever accrued on the final
+    // route at all — a hard softlock once that route stopped being a
+    // zero-distance arrival trigger (as Kanto's old final stop was) and
+    // became a real ~100-mile leg (as Johto's Mt. Silver is).
+    function addTravelDistance(state, route, nextRoute, amount, results) {
+        state.distanceTraveled += amount;
+        if (state.distanceTraveled >= route.distanceToNext && canLeaveLocation(state, route) && nextRoute) {
+            state.currentLocationIndex++;
+            state.distanceTraveled = 0;
+            results.arrivedAtLocation = true;
+            const newRoute = PT.Engine.GameState.getCurrentRoute(state);
+            results.messages.push(`Arrived at ${newRoute.name}!`);
+            PT.Engine.GameState.addToLog(state, `Arrived at ${newRoute.name}!`);
+        }
+    }
+
     // Return the name(s) of alive party members with the given ability
     function abilityHolder(state, ability) {
         const holders = state.party.filter(p => p.status !== 'fainted' && p.travelAbility === ability);
@@ -60,7 +92,7 @@
         const nextRoute = PT.Engine.GameState.getNextRoute(state);
 
         // --- Distance ---
-        if (pace.distance > 0 && nextRoute) {
+        if (pace.distance > 0) {
             const variance = state.rng.randInt(-3, 3);
             let dist = Math.max(0, pace.distance + variance);
 
@@ -70,22 +102,11 @@
                 results.messages.push(`⚡ THUNDERCLAP: Zapdos' lightning speed doubles your travel distance!`);
             }
 
-            state.distanceTraveled += dist;
             results.messages.push(`Traveled ${dist} miles.`);
+            addTravelDistance(state, route, nextRoute, dist, results);
 
-            // Check for arrival
-            if (state.distanceTraveled >= route.distanceToNext) {
-                state.currentLocationIndex++;
-                state.distanceTraveled = 0;
-                results.arrivedAtLocation = true;
-                const newRoute = PT.Engine.GameState.getCurrentRoute(state);
-                results.messages.push(`Arrived at ${newRoute.name}!`);
-                PT.Engine.GameState.addToLog(state, `Arrived at ${newRoute.name}!`);
-
-                // Check for victory
-                if (state.currentLocationIndex >= PT.Data.Routes.length - 1) {
-                    results.messages.push("You've reached the Indigo Plateau!");
-                }
+            if (results.arrivedAtLocation && state.currentLocationIndex >= PT.Data.Routes.length - 1) {
+                results.messages.push("You've reached the Indigo Plateau!");
             }
         }
 
@@ -229,53 +250,28 @@
 
         // --- Bicycle: flat bonus travel distance, no Pokemon required (stacks) ---
         const bicycleBonus = PT.Engine.GameState.getBicycleBonus(state);
-        if (bicycleBonus > 0 && pace.distance > 0 && nextRoute && !results.arrivedAtLocation) {
-            state.distanceTraveled += bicycleBonus;
+        if (bicycleBonus > 0 && pace.distance > 0 && !results.arrivedAtLocation) {
             results.messages.push(`🚲 The Bicycle covers extra ground! (+${bicycleBonus} miles)`);
-            if (state.distanceTraveled >= route.distanceToNext) {
-                state.currentLocationIndex++;
-                state.distanceTraveled = 0;
-                results.arrivedAtLocation = true;
-                const newRoute = PT.Engine.GameState.getCurrentRoute(state);
-                results.messages.push(`Arrived at ${newRoute.name}!`);
-                PT.Engine.GameState.addToLog(state, `Arrived at ${newRoute.name}!`);
-            }
+            addTravelDistance(state, route, nextRoute, bicycleBonus, results);
         }
 
         // --- Fly ability: bonus travel distance (stacks + scales) ---
         const flyPower = PT.Engine.GameState.getAbilityPower(state, 'fly');
-        if (flyPower > 0 && pace.distance > 0 && nextRoute && !results.arrivedAtLocation) {
+        if (flyPower > 0 && pace.distance > 0 && !results.arrivedAtLocation) {
             const flyBonus = Math.max(1, Math.floor(3 * flyPower));
-            state.distanceTraveled += flyBonus;
             const flyName = abilityHolder(state, 'fly');
             results.messages.push(`🦅 ${flyName} scouted a shortcut! (+${flyBonus} miles)`);
-            // Re-check arrival after fly bonus
-            if (state.distanceTraveled >= route.distanceToNext) {
-                state.currentLocationIndex++;
-                state.distanceTraveled = 0;
-                results.arrivedAtLocation = true;
-                const newRoute = PT.Engine.GameState.getCurrentRoute(state);
-                results.messages.push(`Arrived at ${newRoute.name}!`);
-                PT.Engine.GameState.addToLog(state, `Arrived at ${newRoute.name}!`);
-            }
+            addTravelDistance(state, route, nextRoute, flyBonus, results);
         }
 
         // --- Surf ability: faster on water routes (stacks + scales) ---
         const surfPower = PT.Engine.GameState.getAbilityPower(state, 'surf');
-        if (surfPower > 0 && pace.distance > 0 && nextRoute && !results.arrivedAtLocation) {
+        if (surfPower > 0 && pace.distance > 0 && !results.arrivedAtLocation) {
             if (route.terrain === 'water') {
                 const surfBonus = Math.max(1, Math.floor(5 * surfPower));
-                state.distanceTraveled += surfBonus;
                 const surfName = abilityHolder(state, 'surf');
                 results.messages.push(`🌊 ${surfName} surfs ahead on the open water! (+${surfBonus} miles)`);
-                if (state.distanceTraveled >= route.distanceToNext) {
-                    state.currentLocationIndex++;
-                    state.distanceTraveled = 0;
-                    results.arrivedAtLocation = true;
-                    const newRoute = PT.Engine.GameState.getCurrentRoute(state);
-                    results.messages.push(`Arrived at ${newRoute.name}!`);
-                    PT.Engine.GameState.addToLog(state, `Arrived at ${newRoute.name}!`);
-                }
+                addTravelDistance(state, route, nextRoute, surfBonus, results);
             }
         }
 
@@ -309,6 +305,16 @@
                 results.encounter = PT.Engine.EncounterEngine.rollEncounter(state);
                 if (results.encounter) {
                     results.messages.push(`A wild ${results.encounter.name} appeared!`);
+                }
+            }
+
+            // Roaming legendary beast check (§8.5) — a second, beast-specific
+            // roll alongside the normal encounter roll, only while in Johto.
+            if (!results.encounter && state.repelSteps === 0) {
+                const roam = PT.Engine.EncounterEngine.rollRoamEncounter(state);
+                if (roam) {
+                    results.encounter = roam;
+                    results.messages.push(`A wild ${roam.name} is roaming nearby!`);
                 }
             }
         }
@@ -428,18 +434,10 @@
                 else { state.resources.greatballs += 2; results.messages.push(`✨ MIRACLE: Mew creates 2 Great Balls!`); }
             } else if (miracleRoll <= 85) {
                 // Bonus miles
-                if (pace.distance > 0 && nextRoute && !results.arrivedAtLocation) {
+                if (pace.distance > 0 && !results.arrivedAtLocation) {
                     const bonusMiles = state.rng.randInt(5, 15);
-                    state.distanceTraveled += bonusMiles;
                     results.messages.push(`✨ MIRACLE: Mew teleports the party forward ${bonusMiles} miles!`);
-                    if (state.distanceTraveled >= route.distanceToNext) {
-                        state.currentLocationIndex++;
-                        state.distanceTraveled = 0;
-                        results.arrivedAtLocation = true;
-                        const newRoute = PT.Engine.GameState.getCurrentRoute(state);
-                        results.messages.push(`Arrived at ${newRoute.name}!`);
-                        PT.Engine.GameState.addToLog(state, `Arrived at ${newRoute.name}!`);
-                    }
+                    addTravelDistance(state, route, nextRoute, bonusMiles, results);
                 } else {
                     state.resources.food += 10;
                     results.messages.push(`✨ MIRACLE: Mew creates 10 food!`);
