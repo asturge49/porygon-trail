@@ -372,7 +372,12 @@
         if (id === 0) {
             return 'https://archives.bulbagarden.net/media/upload/9/98/Missingno_RB.png';
         }
-        if (source === 'johto') {
+        // Gen II species (dex 152+) have no Gen I sprite sheet at all — Crystal
+        // art applies regardless of catch-region, since there's no "Kanto art"
+        // choice to preserve for a species that never appeared in Gen I. The
+        // catch-region rule (source === 'johto') only has anything to decide
+        // between for dex 1-151, which exist in both sprite sets.
+        if (source === 'johto' || id >= 152) {
             return `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-ii/crystal/${id}.png`;
         }
         return `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-i/red-blue/gray/${id}.png`;
