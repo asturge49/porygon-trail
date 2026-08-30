@@ -155,10 +155,6 @@
                     return `<button class="btn btn-wide" data-index="${i}">${label}</button>`;
                 }).join('')}
             </div>
-            ${defeated > 0 ? `
-            <div class="event-choices">
-                <button class="btn btn-wide" id="btn-red-retreat" style="opacity: 0.85;">RETREAT — BANK YOUR SCORE (${defeated}/6 beaten)</button>
-            </div>` : ''}
         `;
         container.appendChild(div);
 
@@ -170,17 +166,6 @@
                 resolveRedBattle(chosen, state, container, params);
             });
         });
-
-        const retreatBtn = document.getElementById('btn-red-retreat');
-        if (retreatBtn) {
-            retreatBtn.addEventListener('click', () => {
-                PT.Engine.GameState.addToLog(state, `Retreated from Mt. Silver with ${defeated}/6 of Red's team defeated.`);
-                state.isGameOver = true;
-                state.gameOverReason = 'capstone_retreat';
-                PT.Engine.Telemetry.logCapstoneResult(state, state.redMonsDefeated || 0);
-                PT.App.goto('GAMEOVER');
-            });
-        }
     }
 
     function resolveRedBattle(pokemon, state, container, params) {
