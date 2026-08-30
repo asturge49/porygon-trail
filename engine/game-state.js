@@ -260,32 +260,32 @@
         154: 6,                  // Meganium
         157: 6,                  // Typhlosion
         160: 6,                  // Feraligatr
-        181: 6,                  // Ampharos
-        196: 6,                  // Espeon
-        197: 6,                  // Umbreon
-        199: 6,                  // Slowking
-        208: 7,                  // Steelix
-        212: 6,                  // Scizor
-        214: 6,                  // Heracross
-        217: 6,                  // Ursaring
-        229: 6,                  // Houndoom
-        230: 7,                  // Kingdra
-        232: 6,                  // Donphan
-        242: 7,                  // Blissey
-        248: 8,                  // Tyranitar
+        208: 6,                  // Steelix
+        242: 6,                  // Blissey
+        248: 7,                  // Tyranitar
         // Mid-tier evolutions/finals → 5 HP
         153: 5,                  // Bayleef
         156: 5,                  // Quilava
         159: 5,                  // Croconaw
         169: 5,                  // Crobat
+        181: 5,                  // Ampharos
         182: 5,                  // Bellossom
+        185: 5,                  // Sudowoodo
         186: 5,                  // Politoed
         195: 5,                  // Quagsire
+        196: 5,                  // Espeon
+        197: 5,                  // Umbreon
+        199: 5,                  // Slowking
         202: 5,                  // Wobbuffet
-        210: 5,                  // Granbull
+        212: 5,                  // Scizor
+        214: 5,                  // Heracross
+        217: 5,                  // Ursaring
         219: 5,                  // Magcargo
         221: 5,                  // Piloswine
         227: 5,                  // Skarmory
+        229: 5,                  // Houndoom
+        230: 5,                  // Kingdra
+        232: 5,                  // Donphan
         233: 5,                  // Porygon2
         237: 5,                  // Hitmontop
         241: 5,                  // Miltank
@@ -301,6 +301,7 @@
         203: 4,                  // Girafarig
         205: 4,                  // Forretress
         207: 4,                  // Gligar
+        210: 4,                  // Granbull
         224: 4,                  // Octillery
         234: 4,                  // Stantler (rare default already 4, kept explicit for clarity)
         // Downgraded to 3 HP
@@ -322,13 +323,13 @@
         177: 2,                  // Natu
         183: 2,                  // Marill
         188: 2,                  // Skiploom
+        191: 2,                  // Sunkern
         201: 2,                  // Unown
         204: 2,                  // Pineco
         223: 2,                  // Remoraid
         235: 2,                  // Smeargle
         // Ultra weak → 1 HP
-        187: 1,                  // Hoppip
-        191: 1                   // Sunkern
+        187: 1                   // Hoppip
     };
 
     // `overrides` lets rare events hand back a customized individual (e.g. a
