@@ -97,6 +97,8 @@
                 <div class="score-breakdown" style="font-size: 7px;">
                     ${breakdown.kantoVictory ? `<div>Kanto Clear Bonus: +${breakdown.kantoVictory}</div>` : ''}
                     ${breakdown.kantoSpeed ? `<div>Kanto Speed Bonus: +${breakdown.kantoSpeed}</div>` : ''}
+                    ${breakdown.johtoVictory ? `<div>Johto Clear Bonus: +${breakdown.johtoVictory}</div>` : ''}
+                    ${breakdown.johtoSpeed ? `<div>Johto Speed Bonus: +${breakdown.johtoSpeed}</div>` : ''}
                     ${breakdown.victory ? `<div>Victory Bonus: +${breakdown.victory}</div>` : ''}
                     ${breakdown.champion ? `<div>Champion Bonus: +${breakdown.champion}</div>` : ''}
                     <div>Healthy Pokemon: +${breakdown.healthyPokemon}</div>

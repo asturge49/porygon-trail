@@ -15,16 +15,12 @@
     }
 
     // §9.3 — Red capstone partial-credit scoring, separate from the binary
-    // victory bonus above. Non-linear on purpose: beating 2 of Red's 6
-    // Pokemon is worth more than proportionally beating 1, so a partial
-    // clear still feels like real, escalating progress rather than a flat
-    // per-mon rate. Triangular-number scaling (1, 3, 6, 10, 15, 21 "units")
-    // times a per-unit value.
-    const RED_CAPSTONE_UNIT = 200;
+    // victory bonus above. Flat rate per Red Pokemon defeated, so a partial
+    // clear still registers as real, proportional progress even on a loss.
+    const RED_MON_VALUE = 500;
     function calculateRedCapstoneBonus(redDefeatedCount) {
         const n = Math.max(0, Math.min(6, redDefeatedCount || 0));
-        const triangular = (n * (n + 1)) / 2;
-        return Math.floor(triangular * RED_CAPSTONE_UNIT);
+        return n * RED_MON_VALUE;
     }
 
     // Kanto completion snapshot — beating the Kanto E4 used to be the entire
@@ -42,6 +38,23 @@
         return {
             kantoVictoryBonus: 2000,
             kantoSpeedBonus: Math.max(0, (100 - state.daysElapsed) * 50)
+        };
+    }
+
+    // Johto completion snapshot — same shape and reasoning as Kanto's above,
+    // stamped the moment the Johto E4 rematch falls (screens/elite-four-screen.js),
+    // so it survives whatever happens against Red afterward. The speed bonus
+    // uses days spent IN JOHTO specifically (daysElapsed minus
+    // daysElapsedAtJohtoEntry), not the run's total days — Kanto's own ~40-60
+    // days are already spent by the time Johto starts, so measuring against
+    // total daysElapsed would leave almost no room under the 100-day bar.
+    function calculateJohtoSnapshotBonus(state) {
+        const johtoDays = (typeof state.daysElapsedAtJohtoEntry === 'number')
+            ? Math.max(0, state.daysElapsed - state.daysElapsedAtJohtoEntry)
+            : state.daysElapsed;
+        return {
+            johtoVictoryBonus: 2000,
+            johtoSpeedBonus: Math.max(0, (100 - johtoDays) * 50)
         };
     }
 
@@ -64,6 +77,16 @@
             score += breakdown.kantoVictory;
             breakdown.kantoSpeed = state.kantoScoreSnapshot.kantoSpeedBonus;
             score += breakdown.kantoSpeed;
+        }
+
+        // Johto completion snapshot (see calculateJohtoSnapshotBonus above) —
+        // same idea as Kanto's, locked in at Johto E4 time so a later Red loss
+        // (or simply not finishing Red) can't erase it.
+        if (state.johtoScoreSnapshot) {
+            breakdown.johtoVictory = state.johtoScoreSnapshot.johtoVictoryBonus;
+            score += breakdown.johtoVictory;
+            breakdown.johtoSpeed = state.johtoScoreSnapshot.johtoSpeedBonus;
+            score += breakdown.johtoSpeed;
         }
 
         // Red capstone partial-credit bonus (§9.3) — only relevant once a
@@ -369,22 +392,21 @@
             if (!dex.caught.includes(id)) dex.caught.push(id);
         });
 
-        // If won, add surviving party as champions + their pre-evolutions
+        // If won, add the FINAL surviving party as champions + pre-evolutions —
+        // the more complete snapshot when a run goes all the way.
         if (state.hasWon) {
-            const preEvoMap = buildPreEvoMap();
-            state.party.forEach(p => {
-                if (p.hp > 0 && p.status !== 'fainted') {
-                    // Register the champion itself
-                    if (!dex.champions.includes(p.id)) {
-                        dex.champions.push(p.id);
-                    }
-                    // Register all pre-evolutions as champions too
-                    getPreEvolutions(p.id, preEvoMap).forEach(preEvoId => {
-                        if (!dex.champions.includes(preEvoId)) {
-                            dex.champions.push(preEvoId);
-                        }
-                    });
-                }
+            getChampionIdsFromParty(state.party).forEach(id => {
+                if (!dex.champions.includes(id)) dex.champions.push(id);
+            });
+        }
+
+        // Kanto E4 clear snapshot (state.kantoChampionIds, stamped in
+        // screens/elite-four-screen.js) — registers champion credit for a run
+        // that cleared Kanto but never beat Red, independent of hasWon. Runs
+        // through both blocks when hasWon is also true; duplicates are a no-op.
+        if (state.kantoChampionIds) {
+            state.kantoChampionIds.forEach(id => {
+                if (!dex.champions.includes(id)) dex.champions.push(id);
             });
         }
 
@@ -398,13 +420,15 @@
         clearCloudPokedex().catch(() => {});
     }
 
-    // Pokemon that would be tagged "champion" by this run — the surviving party
-    // plus their pre-evolutions, same set updateGlobalPokedex() merges in on a win.
-    function getChampionIds(state) {
-        if (!state.hasWon) return [];
+    // Pokemon tagged "champion" for a given party snapshot — the surviving
+    // members plus their pre-evolutions. Shared by getChampionIds (final party,
+    // Red-win gated) and the Kanto-E4-clear snapshot (screens/elite-four-screen.js),
+    // which calls this directly on state.party at the moment Kanto's E4 falls so
+    // a Kanto-clearing run gets champion credit even without beating Red.
+    function getChampionIdsFromParty(party) {
         const preEvoMap = buildPreEvoMap();
         const ids = new Set();
-        state.party.forEach(p => {
+        (party || []).forEach(p => {
             if (p.hp > 0 && p.status !== 'fainted') {
                 ids.add(p.id);
                 getPreEvolutions(p.id, preEvoMap).forEach(id => ids.add(id));
@@ -413,9 +437,19 @@
         return Array.from(ids);
     }
 
+    // Pokemon that would be tagged "champion" by this run's FINAL party — same
+    // set updateGlobalPokedex() merges in on a full Red win. Only meaningful
+    // once state.hasWon; see getChampionIdsFromParty for the Kanto-E4-time
+    // equivalent (screens/gameover-screen.js uses state.kantoChampionIds).
+    function getChampionIds(state) {
+        if (!state.hasWon) return [];
+        return getChampionIdsFromParty(state.party);
+    }
+
     PT.Engine.Scoring = {
-        calculateScore, calculateRedCapstoneBonus, calculateKantoSnapshotBonus, saveToLeaderboard, saveRunInProgress, getLeaderboard, clearLeaderboard,
+        calculateScore, calculateRedCapstoneBonus, calculateKantoSnapshotBonus, calculateJohtoSnapshotBonus,
+        saveToLeaderboard, saveRunInProgress, getLeaderboard, clearLeaderboard,
         getGlobalPokedex, updateGlobalPokedex, clearGlobalPokedex, countLegendaries, getLegendaryIds,
-        getChampionIds, syncPokedexOnLogin, getJohtoLeaderboardFields, getKantoE4Cleared
+        getChampionIds, getChampionIdsFromParty, syncPokedexOnLogin, getJohtoLeaderboardFields, getKantoE4Cleared
     };
 })();

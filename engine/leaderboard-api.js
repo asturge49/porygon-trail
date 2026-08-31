@@ -119,7 +119,11 @@
             if (wonOnly) query = query.eq('johto_completed', true);
         } else {
             if (isKantoOnly) query = query.is('johto_score', null);
-            if (wonOnly) query = query.eq('won', true);
+            // wonOnly is only ever passed by getFastestWinLeaderboard, and per
+            // the "Kanto E4 is the win marker" convention it means "cleared
+            // Kanto's E4" — not the full Red-capstone win (`won`), which is
+            // its own separate, much rarer achievement (see RED WINS tab).
+            if (wonOnly) query = query.eq('kanto_e4_cleared', true);
         }
 
         const { data, error } = await query.limit(limit || 20);
@@ -244,22 +248,24 @@
         }));
     }
 
-    // Lifetime champions — unique Pokemon that have survived an Elite Four win
-    // (i.e. carry the "champion" tag), across ALL of a trainer's runs. Trainers
-    // with zero are excluded entirely (HAVING > 0). Requires a
-    // `champion_ids integer[] default '{}'` column on pt_leaderboard plus a
-    // Postgres function to union it per user — run this once in the Supabase
-    // SQL editor:
+    // Lifetime champions — unique Pokemon that have survived a Kanto E4 clear
+    // (i.e. carry the "champion" tag — screens/elite-four-screen.js stamps
+    // state.kantoChampionIds at that moment, and victory-screen.js/
+    // gameover-screen.js both now save championIds, not just a full Red win),
+    // across ALL of a trainer's runs. Trainers with zero are excluded
+    // entirely (HAVING > 0). Requires a `champion_ids integer[] default '{}'`
+    // column on pt_leaderboard plus a Postgres function to union it per user —
+    // run this once in the Supabase SQL editor:
     //   alter table pt_leaderboard add column if not exists champion_ids integer[] default '{}';
     //   create or replace function pt_champion_leaderboard()
-    //   returns table(user_id uuid, username text, champion_count bigint, days_elapsed int, won boolean, date text)
+    //   returns table(user_id uuid, username text, champion_count bigint, days_elapsed int, kanto_e4_cleared boolean, date text)
     //   language sql stable as $$
     //     select
     //       l.user_id,
     //       max(l.username) as username,
     //       count(distinct pid) as champion_count,
     //       min(l.days_elapsed) as days_elapsed,
-    //       bool_or(l.won) as won,
+    //       bool_or(l.kanto_e4_cleared) as kanto_e4_cleared,
     //       max(l.date) as date
     //     from pt_leaderboard l
     //     left join lateral unnest(l.champion_ids) as pid on true
@@ -287,7 +293,7 @@
             name: row.username,
             championCount: row.champion_count,
             daysElapsed: row.days_elapsed,
-            won: row.won,
+            kantoE4Cleared: !!row.kanto_e4_cleared,
             date: row.date,
             inProgress: false
         }));

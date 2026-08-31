@@ -61,7 +61,11 @@
                 date: new Date().toLocaleDateString(),
                 won: false,
                 legendaryCount: PT.Engine.Scoring.countLegendaries(state),
-                kantoE4Cleared: PT.Engine.Scoring.getKantoE4Cleared(state)
+                kantoE4Cleared: PT.Engine.Scoring.getKantoE4Cleared(state),
+                // Champion credit for a Kanto E4 clear that didn't go on to
+                // beat Red — victory-screen.js's own Red-win-gated
+                // getChampionIds() covers the full-win case separately.
+                championIds: state.kantoChampionIds || []
             }, PT.Engine.Scoring.getJohtoLeaderboardFields(state, score)));
 
             // Update records
@@ -127,6 +131,8 @@
                     <div>Team Rocket Defeated: ${state.teamRocketDefeated}x</div>
                     ${breakdown.kantoVictory ? `<div>Kanto Clear Bonus: +${breakdown.kantoVictory}</div>` : ''}
                     ${breakdown.kantoSpeed ? `<div>Kanto Speed Bonus: +${breakdown.kantoSpeed}</div>` : ''}
+                    ${breakdown.johtoVictory ? `<div>Johto Clear Bonus: +${breakdown.johtoVictory}</div>` : ''}
+                    ${breakdown.johtoSpeed ? `<div>Johto Speed Bonus: +${breakdown.johtoSpeed}</div>` : ''}
                     ${breakdown.champion ? `<div>Champion Bonus: +${breakdown.champion}</div>` : ''}
                     ${state.redMonsDefeated ? `<div>Red's Team Defeated: ${state.redMonsDefeated}/6 (+${breakdown.redCapstone})</div>` : ''}
                     <div class="score-total">FINAL SCORE: ${score.toLocaleString()}</div>

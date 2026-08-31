@@ -344,6 +344,10 @@
                         const e4MoneyReward = PT.Engine.GameState.applyPayDay(state, JOHTO_E4_MONEY_REWARD);
                         state.resources.money += e4MoneyReward;
                         state.johtoE4Cleared = true;
+                        // Snapshot Johto's completion bonus now, symmetric to
+                        // Kanto's below — see calculateJohtoSnapshotBonus in
+                        // engine/scoring.js.
+                        state.johtoScoreSnapshot = PT.Engine.Scoring.calculateJohtoSnapshotBonus(state);
                         PT.Engine.GameState.addToLog(state, `Defeated the Johto Elite Four rematch! Earned $${e4MoneyReward} to restock before Mt. Silver.`);
 
                         // Telemetry (§13.3) — funnel: what fraction of Johto
@@ -379,6 +383,12 @@
                         // in engine/scoring.js for why this can't just be
                         // recomputed from final state later.
                         state.kantoScoreSnapshot = PT.Engine.Scoring.calculateKantoSnapshotBonus(state);
+                        // Champion snapshot (§ champions leaderboard/records) —
+                        // the party as it stands right now, before it's
+                        // touched by anything in Johto, so a Kanto-clearing
+                        // run still gets champion credit even without beating
+                        // Red (see screens/gameover-screen.js).
+                        state.kantoChampionIds = PT.Engine.Scoring.getChampionIdsFromParty(state.party);
                         PT.Engine.GameState.saveGame(state);
                         PT.App.goto('POSTVICTORY');
                         return;

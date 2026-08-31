@@ -201,18 +201,23 @@
         const name = state.trainerName;
         const date = new Date().toLocaleDateString();
         const won = state.hasWon;
+        const kantoWon = PT.Engine.Scoring.getKantoE4Cleared(state);
         const days = state.daysElapsed;
         const caught = state.pokedexCaught.length;
         const money = state.resources.money || 0;
 
         records.totalRuns++;
         if (won) records.totalWins++;
-        if (PT.Engine.Scoring.getKantoE4Cleared(state)) records.totalKantoE4Wins++;
+        if (kantoWon) records.totalKantoE4Wins++;
         if (state.johtoE4Cleared) records.totalJohtoE4Wins++;
 
         updateMax(records, 'highScore', score, name, date);
 
-        if (won) {
+        // Fastest/slowest/fewest-catches "win" records use Kanto E4 clear, not
+        // the full Red win — same "Kanto E4 is the win marker" convention as
+        // the leaderboard's FASTEST WIN tab, so these aren't stuck at '---'
+        // for every trainer who hasn't also beaten Red.
+        if (kantoWon) {
             updateMin(records, 'fastestWin', days, name, date);
             updateMax(records, 'slowestWin', days, name, date);
             updateMin(records, 'fewestCatchesWin', caught, name, date);
