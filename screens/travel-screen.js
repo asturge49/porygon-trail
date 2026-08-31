@@ -1141,8 +1141,18 @@
     function handleArrival(state) {
         const route = PT.Engine.GameState.getCurrentRoute(state);
 
-        // Pokemon League — handled by render via showE4PokemonCenter
+        // Pokemon League — render()'s own top-level check shows
+        // showE4PokemonCenter for this route, but that only fires on an
+        // actual render pass. This used to just `return` here, leaving the
+        // stale pre-arrival travel screen on screen after the day-recap
+        // overlay closed — its still-attached "CONTINUE" button then
+        // silently processed ANOTHER day of travel from a route with
+        // distanceToNext:0, which (now that Johto's routes are appended
+        // after this one) instantly overshot straight into New Bark Town,
+        // skipping the Elite Four entirely. Force the re-render so render()
+        // actually gets to run its pokemon_league check.
         if (route.id === 'pokemon_league') {
+            PT.App.goto('TRAVEL');
             return;
         }
 
