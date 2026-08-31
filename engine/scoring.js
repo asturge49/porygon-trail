@@ -149,9 +149,18 @@
     // populated once state.region has become 'johto' at some point in the run;
     // a Kanto-only run gets nulls so the existing Kanto columns/leaderboards are
     // completely unaffected. Called from screens/victory-screen.js and
-    // screens/gameover-screen.js (isFinal: true — the run/Johto leg is over) and
-    // from saveRunInProgress below (isFinal: false — still mid-Johto).
-    function getJohtoLeaderboardFields(state, score, isFinal) {
+    // screens/gameover-screen.js and from saveRunInProgress below.
+    //
+    // johtoCompleted feeds the "E4 WINS" leaderboard's Johto count (via
+    // pt_e4_wins_leaderboard's `count(*) filter (where johto_completed)`), so
+    // it must mean "this trainer beat the Johto Elite Four" — NOT "this
+    // Johto run has ended." It used to be `!!isFinal` (true on ANY
+    // game-over/victory save, including dying before ever reaching Falkner),
+    // which silently counted every Johto death as an E4 win. Use
+    // state.johtoE4Cleared instead — set only in the Johto-E4-rematch win
+    // branch of screens/elite-four-screen.js — so an in-progress save
+    // (isFinal:false) also reports it correctly rather than always false.
+    function getJohtoLeaderboardFields(state, score) {
         if (!state || state.region !== 'johto') {
             return { johtoCompleted: false, johtoBadges: null, johtoDaysElapsed: null, johtoScore: null, johtoPokedexCount: null };
         }
@@ -167,7 +176,7 @@
             ? Math.max(0, state.daysElapsed - state.daysElapsedAtJohtoEntry)
             : null;
         return {
-            johtoCompleted: !!isFinal,
+            johtoCompleted: !!state.johtoE4Cleared,
             johtoBadges,
             johtoDaysElapsed,
             johtoScore: score,
@@ -192,7 +201,7 @@
             date: new Date().toLocaleDateString(),
             won: false,
             legendaryCount: countLegendaries(state)
-        }, getJohtoLeaderboardFields(state, score, false)));
+        }, getJohtoLeaderboardFields(state, score)));
     }
 
     function getLeaderboard() {

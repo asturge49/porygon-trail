@@ -61,7 +61,7 @@
                 date: new Date().toLocaleDateString(),
                 won: false,
                 legendaryCount: PT.Engine.Scoring.countLegendaries(state)
-            }, PT.Engine.Scoring.getJohtoLeaderboardFields(state, score, true)));
+            }, PT.Engine.Scoring.getJohtoLeaderboardFields(state, score)));
 
             // Update records
             PT.Engine.Records.updateRecords(state, score);

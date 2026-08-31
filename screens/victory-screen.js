@@ -60,7 +60,7 @@
                 won: true,
                 legendaryCount: PT.Engine.Scoring.countLegendaries(state),
                 championIds: PT.Engine.Scoring.getChampionIds(state)
-            }, PT.Engine.Scoring.getJohtoLeaderboardFields(state, score, true)));
+            }, PT.Engine.Scoring.getJohtoLeaderboardFields(state, score)));
 
             // Update records
             PT.Engine.Records.updateRecords(state, score);
