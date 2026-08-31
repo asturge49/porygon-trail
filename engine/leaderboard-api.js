@@ -364,21 +364,34 @@
     // kept as its own separate leaderboard from E4 WINS since beating Red is a
     // much bigger, later accomplishment than either regional Elite Four clear
     // (see getKantoE4Cleared in engine/scoring.js). No new column needed — `won`
-    // (state.hasWon) has existed since launch — but the RPC itself still needs
-    // creating once in the Supabase SQL editor:
+    // (state.hasWon) has existed since launch.
+    //
+    // `won` alone is NOT enough to mean "beat Red", though: before the Johto
+    // expansion, beating Kanto's E4 WAS the entire game and set won=true (see
+    // the state.hasWon=true fallback still sitting in the region==='kanto'
+    // branch of screens/elite-four-screen.js, now unreachable in normal play
+    // but never cleaned out of old rows). Every one of those pre-expansion
+    // rows still has won=true sitting in pt_leaderboard with no Red capstone
+    // ever touched. A genuine Red win is only reachable after passing through
+    // Johto (screens/red-capstone-screen.js only runs with state.region ===
+    // 'johto'), which always populates johto_score — every legacy pre-Johto
+    // win has johto_score still null — so `and l.johto_score is not null`
+    // is what actually distinguishes a real Red win from old Kanto-only data.
+    // Run once in the Supabase SQL editor (or DROP FUNCTION first if
+    // pt_red_wins_leaderboard() already exists with a different signature):
     //   create or replace function pt_red_wins_leaderboard()
     //   returns table(user_id uuid, username text, red_wins bigint, days_elapsed int, date text)
     //   language sql stable as $$
     //     select
     //       l.user_id,
     //       max(l.username) as username,
-    //       count(*) filter (where l.won) as red_wins,
-    //       min(l.days_elapsed) as days_elapsed,
+    //       count(*) filter (where l.won and l.johto_score is not null) as red_wins,
+    //       min(l.days_elapsed) filter (where l.won and l.johto_score is not null) as days_elapsed,
     //       max(l.date) as date
     //     from pt_leaderboard l
-    //     where l.won
+    //     where l.won and l.johto_score is not null
     //     group by l.user_id
-    //     order by count(*) filter (where l.won) desc
+    //     order by count(*) filter (where l.won and l.johto_score is not null) desc
     //     limit 20;
     //   $$;
     async function getRedWinsLeaderboard() {
