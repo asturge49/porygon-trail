@@ -284,29 +284,39 @@
     }
 
     // Lifetime Elite Four wins — total number of times a trainer has beaten
-    // an Elite Four (Kanto's `won` flag and/or Johto's `johto_completed`
-    // flag), summed across ALL of their runs, not just their best one. No
-    // schema migration needed — both source columns already exist on
-    // pt_leaderboard. Unlike the other lifetime tabs (pokedex/legendary/
-    // champions), this ONE DOES support the ALL/KANTO/JOHTO region toggle —
-    // the RPC returns both counts per trainer in one shot, and
-    // getE4WinsLeaderboard's caller (leaderboard-screen.js) picks which
-    // count to sort/display by client-side, the same way fieldFor() already
-    // does for the row-based tabs. Run this once in the Supabase SQL editor:
+    // an Elite Four (Kanto's `kanto_e4_cleared` flag and/or Johto's
+    // `johto_completed` flag), summed across ALL of their runs, not just
+    // their best one. Deliberately NOT keyed on `won` (full Red-capstone
+    // victory) — beating Red is a separate, much bigger accomplishment than
+    // either regional E4 clear, and since screens/postvictory-screen.js
+    // auto-continues every Kanto E4 winner straight into Johto with no way
+    // to stop there, `won` would wildly undercount real Kanto E4 clears if
+    // used as its proxy. Needs the kanto_e4_cleared column added (schema
+    // migration below — run once in the Supabase SQL editor, on both the
+    // staging and prod projects):
+    //   alter table pt_leaderboard add column if not exists kanto_e4_cleared boolean not null default false;
+    //
+    //   -- Backfill existing rows: any run that beat Red, or ever reached
+    //   -- Johto at all (johto_score is not null on any Johto-region save),
+    //   -- necessarily beat Kanto's E4 first — that's a hard prerequisite,
+    //   -- so both conditions are safe, exact backfills.
+    //   update pt_leaderboard set kanto_e4_cleared = true
+    //   where won = true or johto_score is not null;
+    //
     //   create or replace function pt_e4_wins_leaderboard()
     //   returns table(user_id uuid, username text, kanto_e4_wins bigint, johto_e4_wins bigint, days_elapsed int, date text)
     //   language sql stable as $$
     //     select
     //       l.user_id,
     //       max(l.username) as username,
-    //       count(*) filter (where l.won) as kanto_e4_wins,
+    //       count(*) filter (where l.kanto_e4_cleared) as kanto_e4_wins,
     //       count(*) filter (where l.johto_completed) as johto_e4_wins,
     //       min(l.days_elapsed) as days_elapsed,
     //       max(l.date) as date
     //     from pt_leaderboard l
-    //     where l.won or l.johto_completed
+    //     where l.kanto_e4_cleared or l.johto_completed
     //     group by l.user_id
-    //     order by (count(*) filter (where l.won) + count(*) filter (where l.johto_completed)) desc
+    //     order by (count(*) filter (where l.kanto_e4_cleared) + count(*) filter (where l.johto_completed)) desc
     //     limit 20;
     //   $$;
     async function getE4WinsLeaderboard() {
@@ -411,7 +421,14 @@
             johto_badges: entry.johtoBadges != null ? entry.johtoBadges : null,
             johto_days_elapsed: entry.johtoDaysElapsed != null ? entry.johtoDaysElapsed : null,
             johto_score: entry.johtoScore != null ? entry.johtoScore : null,
-            johto_pokedex_count: entry.johtoPokedexCount != null ? entry.johtoPokedexCount : null
+            johto_pokedex_count: entry.johtoPokedexCount != null ? entry.johtoPokedexCount : null,
+            // Kanto E4 clear (engine/scoring.js's getKantoE4Cleared) — a
+            // separate accomplishment from `won` (full Red-capstone victory)
+            // and from johto_completed (Johto E4 clear). See the
+            // pt_e4_wins_leaderboard() RPC below: it must filter on this
+            // column for the Kanto count, not on `won`, since every Kanto E4
+            // winner is auto-continued into Johto with no way to stop there.
+            kanto_e4_cleared: !!entry.kantoE4Cleared
         };
 
         let { error } = await client.from('pt_leaderboard').upsert(row, { onConflict: 'run_id' });

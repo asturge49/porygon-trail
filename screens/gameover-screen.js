@@ -60,7 +60,8 @@
                 daysElapsed: state.daysElapsed,
                 date: new Date().toLocaleDateString(),
                 won: false,
-                legendaryCount: PT.Engine.Scoring.countLegendaries(state)
+                legendaryCount: PT.Engine.Scoring.countLegendaries(state),
+                kantoE4Cleared: PT.Engine.Scoring.getKantoE4Cleared(state)
             }, PT.Engine.Scoring.getJohtoLeaderboardFields(state, score)));
 
             // Update records

@@ -50,7 +50,12 @@ create table if not exists public.pt_leaderboard (
     johto_badges integer,
     johto_days_elapsed integer,
     johto_score integer,
-    johto_pokedex_count integer
+    johto_pokedex_count integer,
+    -- Kanto E4 clear — separate from `won` (full Red-capstone victory) and
+    -- from johto_completed (Johto E4 clear). See engine/leaderboard-api.js's
+    -- pt_e4_wins_leaderboard() comment for why `won` can't be used as this
+    -- flag's proxy.
+    kanto_e4_cleared boolean not null default false
 );
 alter table public.pt_leaderboard enable row level security;
 create policy "Public read" on public.pt_leaderboard for select using (true);
@@ -65,6 +70,7 @@ create policy "Users can update their own leaderboard rows" on public.pt_leaderb
 --   alter table public.pt_leaderboard add column if not exists johto_days_elapsed integer;
 --   alter table public.pt_leaderboard add column if not exists johto_score integer;
 --   alter table public.pt_leaderboard add column if not exists johto_pokedex_count integer;
+--   alter table public.pt_leaderboard add column if not exists kanto_e4_cleared boolean not null default false;
 
 create table if not exists public.pt_pokedex (
     user_id uuid primary key,

@@ -145,6 +145,19 @@
         return PT.Engine.LeaderboardAPI.saveToLeaderboard(entry);
     }
 
+    // Kanto E4 clear indicator, for the "E4 WINS" leaderboard's Kanto count —
+    // a totally separate accomplishment from beating Red (state.hasWon):
+    // screens/postvictory-screen.js forces every Kanto E4 winner straight into
+    // Johto with no "stop here" option, so `won` (the full-game/Red-capstone
+    // flag) massively undercounts real Kanto E4 clears if used as its proxy.
+    // state.completedRegions gets 'kanto' pushed the instant Kanto's E4 falls
+    // (screens/elite-four-screen.js) and never gets cleared afterward, so this
+    // stays true for the rest of the run regardless of what happens in Johto
+    // or against Red — independent of johtoE4Cleared and hasWon.
+    function getKantoE4Cleared(state) {
+        return !!(state && state.completedRegions && state.completedRegions.includes('kanto'));
+    }
+
     // Johto leaderboard fields (§13.1-13.2 of JOHTO_EXPANSION_SCOPE.md) — only
     // populated once state.region has become 'johto' at some point in the run;
     // a Kanto-only run gets nulls so the existing Kanto columns/leaderboards are
@@ -200,7 +213,8 @@
             daysElapsed: state.daysElapsed,
             date: new Date().toLocaleDateString(),
             won: false,
-            legendaryCount: countLegendaries(state)
+            legendaryCount: countLegendaries(state),
+            kantoE4Cleared: getKantoE4Cleared(state)
         }, getJohtoLeaderboardFields(state, score)));
     }
 
@@ -402,6 +416,6 @@
     PT.Engine.Scoring = {
         calculateScore, calculateRedCapstoneBonus, calculateKantoSnapshotBonus, saveToLeaderboard, saveRunInProgress, getLeaderboard, clearLeaderboard,
         getGlobalPokedex, updateGlobalPokedex, clearGlobalPokedex, countLegendaries, getLegendaryIds,
-        getChampionIds, syncPokedexOnLogin, getJohtoLeaderboardFields
+        getChampionIds, syncPokedexOnLogin, getJohtoLeaderboardFields, getKantoE4Cleared
     };
 })();

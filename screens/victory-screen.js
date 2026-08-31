@@ -59,7 +59,8 @@
                 date: new Date().toLocaleDateString(),
                 won: true,
                 legendaryCount: PT.Engine.Scoring.countLegendaries(state),
-                championIds: PT.Engine.Scoring.getChampionIds(state)
+                championIds: PT.Engine.Scoring.getChampionIds(state),
+                kantoE4Cleared: PT.Engine.Scoring.getKantoE4Cleared(state)
             }, PT.Engine.Scoring.getJohtoLeaderboardFields(state, score)));
 
             // Update records
