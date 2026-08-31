@@ -7852,6 +7852,11 @@
             weight: 2,
             oneTime: true,
             minDay: 6,
+            // Elm is a Johto-region character (New Bark Town) — this had no
+            // location restriction at all, so it could fire in Kanto before
+            // the player had ever met him. Matches the minLocation:29 pattern
+            // already used by the other johto_* general-pool events.
+            minLocation: 29,
             choices: [
                 {
                     text: "\"Sure, I'll take an egg!\"",
