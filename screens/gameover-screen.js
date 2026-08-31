@@ -124,6 +124,9 @@
                     <div>Badges: ${badgeList.length}/8</div>
                     <div>Gym Battles Won: ${state.gymBattlesWon}</div>
                     <div>Team Rocket Defeated: ${state.teamRocketDefeated}x</div>
+                    ${breakdown.kantoVictory ? `<div>Kanto Clear Bonus: +${breakdown.kantoVictory}</div>` : ''}
+                    ${breakdown.kantoSpeed ? `<div>Kanto Speed Bonus: +${breakdown.kantoSpeed}</div>` : ''}
+                    ${breakdown.champion ? `<div>Champion Bonus: +${breakdown.champion}</div>` : ''}
                     ${state.redMonsDefeated ? `<div>Red's Team Defeated: ${state.redMonsDefeated}/6 (+${breakdown.redCapstone})</div>` : ''}
                     <div class="score-total">FINAL SCORE: ${score.toLocaleString()}</div>
                 </div>

@@ -374,6 +374,11 @@
                     // cleared and let the player choose whether to continue.
                     if (state.region === 'kanto' && !state.completedRegions.includes('kanto')) {
                         state.completedRegions.push('kanto');
+                        // Snapshot Kanto's completion bonus now, at the exact
+                        // moment of clearing it — see calculateKantoSnapshotBonus
+                        // in engine/scoring.js for why this can't just be
+                        // recomputed from final state later.
+                        state.kantoScoreSnapshot = PT.Engine.Scoring.calculateKantoSnapshotBonus(state);
                         PT.Engine.GameState.saveGame(state);
                         PT.App.goto('POSTVICTORY');
                         return;

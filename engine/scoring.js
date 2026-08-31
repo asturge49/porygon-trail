@@ -27,6 +27,24 @@
         return Math.floor(triangular * RED_CAPSTONE_UNIT);
     }
 
+    // Kanto completion snapshot — beating the Kanto E4 used to be the entire
+    // game's victory condition, worth the 2000 victory bonus plus a speed
+    // bonus for a fast clear. Now that Kanto is just the first leg, those two
+    // bonuses stay gated behind state.hasWon (full Red capstone win), so a
+    // run that clears Kanto and then dies anywhere in Johto got neither —
+    // Johto's own difficulty was erasing credit already earned in Kanto.
+    // Stamped once onto state.kantoScoreSnapshot the moment Kanto's E4 falls
+    // (screens/elite-four-screen.js), using state as it stands at that exact
+    // instant, so it survives whatever happens afterward. calculateScore adds
+    // it back in unconditionally below — Johto's own hasWon-gated victory/
+    // speed bonuses then layer additively on top of it for a full clear.
+    function calculateKantoSnapshotBonus(state) {
+        return {
+            kantoVictoryBonus: 2000,
+            kantoSpeedBonus: Math.max(0, (100 - state.daysElapsed) * 50)
+        };
+    }
+
     function calculateScore(state) {
         let score = 0;
         const breakdown = {};
@@ -35,6 +53,17 @@
         if (state.hasWon) {
             breakdown.victory = 2000;
             score += 2000;
+        }
+
+        // Kanto completion snapshot (see calculateKantoSnapshotBonus above) —
+        // locked in at Kanto E4 time, added regardless of hasWon so a later
+        // Johto death can't erase it. A full Red-capstone win still also gets
+        // the full-game victory/speed bonuses above on top of this.
+        if (state.kantoScoreSnapshot) {
+            breakdown.kantoVictory = state.kantoScoreSnapshot.kantoVictoryBonus;
+            score += breakdown.kantoVictory;
+            breakdown.kantoSpeed = state.kantoScoreSnapshot.kantoSpeedBonus;
+            score += breakdown.kantoSpeed;
         }
 
         // Red capstone partial-credit bonus (§9.3) — only relevant once a
@@ -362,7 +391,7 @@
     }
 
     PT.Engine.Scoring = {
-        calculateScore, calculateRedCapstoneBonus, saveToLeaderboard, saveRunInProgress, getLeaderboard, clearLeaderboard,
+        calculateScore, calculateRedCapstoneBonus, calculateKantoSnapshotBonus, saveToLeaderboard, saveRunInProgress, getLeaderboard, clearLeaderboard,
         getGlobalPokedex, updateGlobalPokedex, clearGlobalPokedex, countLegendaries, getLegendaryIds,
         getChampionIds, syncPokedexOnLogin, getJohtoLeaderboardFields
     };
