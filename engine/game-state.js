@@ -345,9 +345,15 @@
     // `overrides` lets rare events hand back a customized individual (e.g. a
     // renamed, boosted, non-evolving Pokemon) without a new data/pokemon.js entry.
     function createPartyPokemon(data, state, overrides) {
-        const baseHp = data.rarity === 'legendary' ? 6 :
-                       data.rarity === 'rare' ? 4 : 3;
-        const maxHp = HP_OVERRIDES[data.id] !== undefined ? HP_OVERRIDES[data.id] : baseHp;
+        // Was a separate, duplicated inline formula (rarity tiers + override
+        // lookup, no evolution-stage bump) that silently disagreed with
+        // getMaxHpForPokemon — the function that computes the HP wild
+        // encounters and gym opponents actually display. Any stage>=2 mon
+        // with no explicit HP_OVERRIDES entry (e.g. Venomoth: uncommon, no
+        // override) showed its correct bumped HP everywhere EXCEPT the
+        // moment it actually joined your party, where it silently landed
+        // one HP short. Single source of truth now.
+        const maxHp = getMaxHpForPokemon(data);
         const route = state ? getCurrentRoute(state) : null;
         // Sprite generation is fixed at catch time from the current region and
         // never re-derived — a mon caught in Kanto keeps Gen I art forever,
