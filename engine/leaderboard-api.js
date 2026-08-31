@@ -45,11 +45,18 @@
         return fetchOrdered('score', false, false, null, null, region, 'johto_score');
     }
 
-    // Columns available since launch. legendary_count requires a schema migration
-    // (see engine/leaderboard-api.js comment on getLegendaryLeaderboard), so it's
-    // only requested by the query that actually needs it — otherwise a missing
-    // column would 400 every leaderboard tab, not just the Legendaries one.
-    const BASE_COLUMNS = 'user_id, username, score, pokedex_count, badges, days_elapsed, won, date, status';
+    // Columns available since launch, plus kanto_e4_cleared (added by this same
+    // migration pass that added kanto_e4_cleared — see engine/scoring.js's
+    // getKantoE4Cleared and the pt_e4_wins_leaderboard() comment below). Unlike
+    // legendary_count, this one IS in BASE_COLUMNS rather than its own opt-in
+    // query, so the ★ "win" marker (renderTable in screens/leaderboard-screen.js)
+    // can show correctly on every row-based tab — but that means a database that
+    // hasn't had `alter table pt_leaderboard add column if not exists
+    // kanto_e4_cleared boolean not null default false;` applied yet will 400 on
+    // EVERY row-based tab (HIGH SCORE, TOP TRAINERS, MOST CATCHES, FASTEST WIN),
+    // not just one. Apply it before relying on any of those on a given
+    // environment (staging vs prod are separate Supabase projects).
+    const BASE_COLUMNS = 'user_id, username, score, pokedex_count, badges, days_elapsed, won, date, status, kanto_e4_cleared';
 
     // Same idea, extended with the Johto columns (§13.1-13.2, supabase/schema.sql).
     // Only used for a Johto-region fetch, so a staging/prod DB that hasn't had the
@@ -66,6 +73,9 @@
             badges: row.badges,
             daysElapsed: row.days_elapsed,
             won: row.won,
+            // Row-based tabs' ★ marker (screens/leaderboard-screen.js) uses this
+            // instead of `won` — Kanto E4 clear, not the full Red-capstone win.
+            kantoE4Cleared: !!row.kanto_e4_cleared,
             date: row.date,
             inProgress: row.status === 'in_progress',
             legendaryCount: row.legendary_count || 0,
@@ -344,6 +354,51 @@
         }));
     }
 
+    // Lifetime Red (Mt. Silver capstone) wins — the actual full-game completion,
+    // kept as its own separate leaderboard from E4 WINS since beating Red is a
+    // much bigger, later accomplishment than either regional Elite Four clear
+    // (see getKantoE4Cleared in engine/scoring.js). No new column needed — `won`
+    // (state.hasWon) has existed since launch — but the RPC itself still needs
+    // creating once in the Supabase SQL editor:
+    //   create or replace function pt_red_wins_leaderboard()
+    //   returns table(user_id uuid, username text, red_wins bigint, days_elapsed int, date text)
+    //   language sql stable as $$
+    //     select
+    //       l.user_id,
+    //       max(l.username) as username,
+    //       count(*) filter (where l.won) as red_wins,
+    //       min(l.days_elapsed) as days_elapsed,
+    //       max(l.date) as date
+    //     from pt_leaderboard l
+    //     where l.won
+    //     group by l.user_id
+    //     order by count(*) filter (where l.won) desc
+    //     limit 20;
+    //   $$;
+    async function getRedWinsLeaderboard() {
+        const auth = PT.Engine.Auth;
+        if (!auth || !auth.isConfigured()) return null;
+
+        const client = auth.getClient();
+        if (!client) return null;
+
+        const { data, error } = await client.rpc('pt_red_wins_leaderboard');
+
+        if (error) {
+            console.warn('Could not fetch Red wins leaderboard (has the SQL migration run?):', error);
+            return null;
+        }
+
+        return data.map(row => ({
+            userId: row.user_id,
+            name: row.username,
+            redWins: row.red_wins,
+            daysElapsed: row.days_elapsed,
+            date: row.date,
+            inProgress: false
+        }));
+    }
+
     // Top 10 unique trainers ranked by their personal best run. `region`: 'kanto'
     // (default) or 'johto' — the Johto view ranks by johto_score and only
     // considers runs that reached Johto.
@@ -483,6 +538,7 @@
         getLegendaryLeaderboard,
         getChampionLeaderboard,
         getE4WinsLeaderboard,
+        getRedWinsLeaderboard,
         saveToLeaderboard,
         saveInProgress,
         saveLocal,

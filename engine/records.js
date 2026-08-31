@@ -19,7 +19,9 @@
     function getDefaultRecords() {
         return {
             totalRuns: 0,
-            totalWins: 0,
+            totalWins: 0,           // Red capstone (full game) wins
+            totalKantoE4Wins: 0,    // Kanto Elite Four clears — separate achievement, always a superset of totalWins
+            totalJohtoE4Wins: 0,    // Johto Elite Four (rematch) clears
             highScore: null,           // { value, name, date }
             fastestWin: null,          // { value (days), name, date }
             slowestWin: null,          // { value (days), name, date }
@@ -110,9 +112,13 @@
 
         const runDelta = Math.max(0, local.totalRuns - cloud.totalRuns);
         const winDelta = Math.max(0, local.totalWins - cloud.totalWins);
+        const kantoE4Delta = Math.max(0, (local.totalKantoE4Wins || 0) - (cloud.totalKantoE4Wins || 0));
+        const johtoE4Delta = Math.max(0, (local.totalJohtoE4Wins || 0) - (cloud.totalJohtoE4Wins || 0));
         const legDelta = Math.max(0, local.totalLegendaryCatches - cloud.totalLegendaryCatches);
         merged.totalRuns = cloud.totalRuns + runDelta;
         merged.totalWins = cloud.totalWins + winDelta;
+        merged.totalKantoE4Wins = (cloud.totalKantoE4Wins || 0) + kantoE4Delta;
+        merged.totalJohtoE4Wins = (cloud.totalJohtoE4Wins || 0) + johtoE4Delta;
         merged.totalLegendaryCatches = cloud.totalLegendaryCatches + legDelta;
 
         // catchTally: per-key max, not sum — safe under repeated merges.
@@ -201,6 +207,8 @@
 
         records.totalRuns++;
         if (won) records.totalWins++;
+        if (PT.Engine.Scoring.getKantoE4Cleared(state)) records.totalKantoE4Wins++;
+        if (state.johtoE4Cleared) records.totalJohtoE4Wins++;
 
         updateMax(records, 'highScore', score, name, date);
 

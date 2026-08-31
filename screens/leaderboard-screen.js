@@ -11,7 +11,8 @@
         { key: 'catches', label: 'MOST CATCHES', sub: 'Most Pokemon caught in a single run' },
         { key: 'legendary', label: 'LEGENDARIES', sub: 'Total legendaries caught across all runs', hideBadges: true },
         { key: 'champions', label: 'CHAMPIONS', sub: 'Total Pokemon champion-tagged across all wins', hideBadges: true },
-        { key: 'e4wins', label: 'E4 WINS', sub: 'Total Elite Four wins across all runs', hideBadges: true }
+        { key: 'e4wins', label: 'E4 WINS', sub: 'Total Elite Four wins across all runs', hideBadges: true },
+        { key: 'redwins', label: 'RED WINS', sub: 'Total Red (Mt. Silver) wins across all runs', hideBadges: true }
     ];
 
     let currentMode = 'runs';
@@ -63,6 +64,9 @@
         if (mode === 'e4wins') {
             return `${entry.kantoE4Wins} Kanto / ${entry.johtoE4Wins} Johto lifetime`;
         }
+        if (mode === 'redwins') {
+            return `${entry.redWins} lifetime | Day ${entry.daysElapsed} fastest`;
+        }
         if (mode === 'fastest') {
             const days = fieldFor(entry, region, 'daysElapsed', 'johtoDaysElapsed');
             const caught = fieldFor(entry, region, 'pokedexCount', 'johtoPokedexCount');
@@ -82,6 +86,7 @@
             if (region === 'kanto') return entry.kantoE4Wins;
             return entry.kantoE4Wins + entry.johtoE4Wins;
         }
+        if (mode === 'redwins') return entry.redWins;
         if (mode === 'fastest') return fieldFor(entry, region, 'daysElapsed', 'johtoDaysElapsed') + 'd';
         return (fieldFor(entry, region, 'score', 'johtoScore') || 0).toLocaleString();
     }
@@ -99,7 +104,7 @@
                  data-username="${entry.name}">
                 <span>${i + 1}</span>
                 <span>
-                    <span>${entry.name}</span>${entry.won ? ' ★' : entry.inProgress ? ' ⏳' : ''}
+                    <span>${entry.name}</span>${(entry.kantoE4Cleared !== undefined ? entry.kantoE4Cleared : entry.won) ? ' ★' : entry.inProgress ? ' ⏳' : ''}
                     <br><span style="font-size: 6px; color: var(--gb-dark);">${statLine(entry, mode, region)} | ${entry.inProgress ? 'IN PROGRESS' : entry.date}</span>
                 </span>
                 <span>${mainValue(entry, mode, region)}</span>
@@ -141,7 +146,7 @@
                 <div class="leaderboard-row header ${activeTab.hideBadges ? 'no-badges' : ''}">
                     <span>#</span>
                     <span>TRAINER</span>
-                    <span>${currentMode === 'runs' || currentMode === 'trainers' ? 'SCORE' : currentMode === 'pokedex' ? 'DEX %' : currentMode === 'catches' ? 'CAUGHT' : currentMode === 'legendary' ? 'LEGEND' : currentMode === 'champions' ? 'CHAMPS' : currentMode === 'e4wins' ? 'WINS' : 'DAYS'}</span>
+                    <span>${currentMode === 'runs' || currentMode === 'trainers' ? 'SCORE' : currentMode === 'pokedex' ? 'DEX %' : currentMode === 'catches' ? 'CAUGHT' : currentMode === 'legendary' ? 'LEGEND' : currentMode === 'champions' ? 'CHAMPS' : currentMode === 'e4wins' || currentMode === 'redwins' ? 'WINS' : 'DAYS'}</span>
                     ${activeTab.hideBadges ? '' : '<span>BADGES</span>'}
                 </div>
                 <div id="leaderboard-body">
@@ -150,7 +155,7 @@
             </div>
 
             <div style="font-size: 6px; color: var(--gb-dark); padding: 4px; text-align: center;">
-                ★ = Reached Indigo Plateau &nbsp;|&nbsp; ⏳ = Run still in progress
+                ★ = Beat the Kanto Elite Four &nbsp;|&nbsp; ⏳ = Run still in progress
                 ${regionToggleApplies
                     ? (currentMode === 'e4wins'
                         ? '<br>KANTO/JOHTO = lifetime wins of that Elite Four &nbsp;|&nbsp; ALL = combined'
@@ -194,7 +199,8 @@
                 fastest: () => API.getFastestWinLeaderboard(currentRegion),
                 legendary: () => API.getLegendaryLeaderboard(),
                 champions: () => API.getChampionLeaderboard(),
-                e4wins: () => API.getE4WinsLeaderboard()
+                e4wins: () => API.getE4WinsLeaderboard(),
+                redwins: () => API.getRedWinsLeaderboard()
             };
 
             const emptyMsgs = {
@@ -205,7 +211,8 @@
                 fastest: 'No wins yet!<br>Reach the Indigo Plateau to appear here!',
                 legendary: 'No legendaries caught yet!',
                 champions: 'No champions yet!<br>Win a run to crown your team!',
-                e4wins: 'No Elite Four wins yet!<br>Beat the Elite Four to appear here!'
+                e4wins: 'No Elite Four wins yet!<br>Beat the Elite Four to appear here!',
+                redwins: 'No Red wins yet!<br>Defeat Red at Mt. Silver to appear here!'
             };
 
             const region = regionToggleApplies ? currentRegion : null;

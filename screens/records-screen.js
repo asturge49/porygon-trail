@@ -39,10 +39,13 @@
             div.innerHTML = `
                 <div class="panel-header text-center">TRAINER RECORDS</div>
                 <div style="font-size: 7px; text-align: center; margin-bottom: 6px; color: var(--gb-dark);">
-                    ${r.totalRuns} run${r.totalRuns !== 1 ? 's' : ''} | ${r.totalWins} win${r.totalWins !== 1 ? 's' : ''} | ${winRate}% win rate
+                    ${r.totalRuns} run${r.totalRuns !== 1 ? 's' : ''} | ${r.totalWins} Red win${r.totalWins !== 1 ? 's' : ''} | ${winRate}% win rate
                 </div>
                 <div class="records-list" style="font-size: 7px; max-height: 280px; overflow-y: auto;">
-                    ${recordRow('TOTAL RUNS', r.totalRuns > 0 ? r.totalRuns : '---', r.totalRuns > 0 ? r.totalWins + ' win' + (r.totalWins !== 1 ? 's' : '') + ' | ' + (r.totalRuns - r.totalWins) + ' loss' + ((r.totalRuns - r.totalWins) !== 1 ? 'es' : '') + ' | ' + winRate + '% win rate' : '')}
+                    ${recordRow('TOTAL RUNS', r.totalRuns > 0 ? r.totalRuns : '---', r.totalRuns > 0 ? r.totalWins + ' Red win' + (r.totalWins !== 1 ? 's' : '') + ' | ' + (r.totalRuns - r.totalWins) + ' loss' + ((r.totalRuns - r.totalWins) !== 1 ? 'es' : '') + ' | ' + winRate + '% win rate' : '')}
+                    ${recordRow('KANTO E4 WINS', (r.totalKantoE4Wins || 0) > 0 ? r.totalKantoE4Wins : '---', (r.totalKantoE4Wins || 0) > 0 ? 'Beat the Kanto Elite Four' : '')}
+                    ${recordRow('JOHTO E4 WINS', (r.totalJohtoE4Wins || 0) > 0 ? r.totalJohtoE4Wins : '---', (r.totalJohtoE4Wins || 0) > 0 ? 'Beat the Johto Elite Four rematch' : '')}
+                    ${recordRow('RED WINS', r.totalWins > 0 ? r.totalWins : '---', r.totalWins > 0 ? 'Defeated Red at Mt. Silver' : '')}
                     ${recordRow('HIGH SCORE', r.highScore ? r.highScore.value.toLocaleString() : '---', fmtBy(r.highScore))}
                     ${recordRow('POKEDEX COMPLETION', dexCaught > 0 ? dexPct + '% (' + dexCaught + '/' + totalDex + ')' : '---', dexCaught > 0 ? 'Across all runs' : '')}
                     ${recordRow('CHAMPION POKEMON', champCount > 0 ? champCount + '/' + totalDex : '---', champCount > 0 ? 'Survived an Elite Four win' : '')}
