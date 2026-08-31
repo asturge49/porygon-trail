@@ -86,7 +86,7 @@
                         <img src="${PT.Engine.GameState.getSpriteUrl(mon.id)}"
                              style="width: 40px; height: 40px; image-rendering: pixelated;"
                              onerror="this.style.display='none'">
-                        <div style="font-weight: bold;">???</div>
+                        <div style="font-weight: bold;">${mon.name}</div>
                     </div>
                 `).join('')}
             </div>
