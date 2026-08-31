@@ -203,6 +203,16 @@
         114: 4,                  // Tangela
         148: 4,                  // Dragonair
         // Downgraded to 3 HP (mid evos, weaker finals, starter base forms)
+        // Pikachu/Clefairy/Jigglypuff pinned here explicitly: adding the baby
+        // evolutions (Pichu/Cleffa/Igglybuff -> these) made getEvoStage() see
+        // them as having something evolve INTO them, which flips them from
+        // "base form" to "mid evo" and the generic formula's stage>=2 rule
+        // silently bumped their HP 3->4 — an unintended side effect of that
+        // fix, not a deliberate rebalance. Locking them back to their
+        // original Dex-audit-pass tier.
+        25: 3,                   // Pikachu
+        35: 3,                   // Clefairy
+        39: 3,                   // Jigglypuff
         1: 3,                    // Bulbasaur
         4: 3,                    // Charmander
         7: 3,                    // Squirtle
