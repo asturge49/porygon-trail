@@ -94,6 +94,12 @@
             PT.App = PT.Engine.ScreenManager;
             PT.App.init(document.getElementById('app'));
 
+            // Time-on-page tracking for internal reporting (see engine/telemetry.js's
+            // top-of-file comment for the query). Starts regardless of login state —
+            // logEvent() itself no-ops if Supabase isn't configured, so this is a
+            // harmless call in local/dev environments.
+            if (PT.Engine.Telemetry) PT.Engine.Telemetry.startSessionTracking();
+
             const auth = PT.Engine.Auth;
             if (auth && auth.isConfigured()) {
                 auth.restoreSession().then(async loggedIn => {
