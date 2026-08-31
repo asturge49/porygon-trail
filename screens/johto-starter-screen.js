@@ -125,6 +125,10 @@
             if (!state.pokedexCaught.includes(starterData.id)) state.pokedexCaught.push(starterData.id);
             if (!state.pokedexSeen.includes(starterData.id)) state.pokedexSeen.push(starterData.id);
             PT.Engine.GameState.addToLog(state, `Received ${starterData.name} from Prof. Elm!`);
+            // Send-off supplies — Elm stocks you up for the road out of New Bark Town.
+            const ELM_FOOD_GIFT = 50;
+            state.resources.food += ELM_FOOD_GIFT;
+            PT.Engine.GameState.addToLog(state, `Prof. Elm gave you ${ELM_FOOD_GIFT} food for the road!`);
             enterJohto(state);
         });
     }
