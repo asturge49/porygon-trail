@@ -3,11 +3,27 @@
     const PT = window.PorygonTrail;
     PT.Screens = PT.Screens || {};
 
+    // Debug harness visibility (§ hardening): !PT.Config.isProd alone is a
+    // hostname whitelist — anyone on a URL that isn't in that exact list
+    // (e.g. a Vercel per-deployment preview URL for a push to main, which
+    // is NOT the same host as the canonical prod domain) sees this button
+    // by default. Requiring an explicit ?debug=1 in the URL too means it
+    // never shows on a plain link someone might mistake for "just the app,"
+    // on any host — you have to know to ask for it.
+    function debugHarnessRequested() {
+        try {
+            return new URLSearchParams(window.location.search).get('debug') === '1';
+        } catch (e) {
+            return false;
+        }
+    }
+
     PT.Screens.TITLE = {
         render(container) {
             const GS = PT.Engine.GameState;
             const auth = PT.Engine.Auth;
             const authConfigured = auth && auth.isConfigured();
+            const showDebugHarness = !PT.Config.isProd && debugHarnessRequested();
 
             // Guard: if auth is configured and user isn't logged in (and isn't a
             // staging-only guest), send them to login
@@ -64,7 +80,7 @@
                     ` : ''}
                     <button class="btn btn-wide btn-small" id="btn-sound">SOUND: ${PT.Engine.Audio && PT.Engine.Audio.isEnabled() ? 'ON' : 'OFF'}</button>
                     <button class="btn btn-wide btn-small" id="btn-discord">JOIN DISCORD</button>
-                    ${!PT.Config.isProd ? `
+                    ${showDebugHarness ? `
                     <button class="btn btn-wide btn-small" id="btn-johto-debug">🧪 JUMP TO JOHTO (DEBUG)</button>
                     ` : ''}
                 </div>

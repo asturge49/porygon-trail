@@ -19,60 +19,73 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
     <!-- Config (fill in your Supabase URL + anon key here) -->
-    <script src="engine/config.js"></script>
+    <script src="engine/config.js?v=f9014cc"></script>
+
+    <!--
+        Cache-busting: every local script below carries ?v=<short git hash of
+        the commit that last touched this deploy>. No build step exists in
+        this project (see CLAUDE.md), so this is applied by hand rather than
+        injected automatically — bump every "?v=f9014cc" to the new commit's
+        short hash whenever you cut a deploy with real gameplay changes.
+        Without this, Vercel's edge cache and players' own browsers can go on
+        serving a stale pre-deploy copy of these files for a while after a
+        push, which is exactly what caused the post-merge HP-values-look-wrong
+        confusion (Dodrio computing to 3 instead of 4, etc.) — the code was
+        already fixed on the server, browsers just hadn't fetched it yet.
+    -->
 
     <!-- Data -->
-    <script src="engine/pixel-art.js"></script>
-    <script src="data/pokemon.js"></script>
-    <script src="data/routes.js"></script>
-    <script src="data/events.js"></script>
-    <script src="data/gym-leaders.js"></script>
-    <script src="data/items.js"></script>
-    <script src="data/key-items.js"></script>
-    <script src="data/ability-buffs.js"></script>
-    <script src="data/location-scenes.js"></script>
+    <script src="engine/pixel-art.js?v=f9014cc"></script>
+    <script src="data/pokemon.js?v=f9014cc"></script>
+    <script src="data/routes.js?v=f9014cc"></script>
+    <script src="data/events.js?v=f9014cc"></script>
+    <script src="data/gym-leaders.js?v=f9014cc"></script>
+    <script src="data/items.js?v=f9014cc"></script>
+    <script src="data/key-items.js?v=f9014cc"></script>
+    <script src="data/ability-buffs.js?v=f9014cc"></script>
+    <script src="data/location-scenes.js?v=f9014cc"></script>
 
     <!-- Engine -->
-    <script src="engine/rng.js"></script>
-    <script src="engine/auth.js"></script>
-    <script src="engine/game-state.js"></script>
-    <script src="engine/screen-manager.js"></script>
-    <script src="engine/encounter-engine.js"></script>
-    <script src="engine/event-engine.js"></script>
-    <script src="engine/travel-engine.js"></script>
-    <script src="engine/leaderboard-api.js"></script>
-    <script src="engine/scoring.js"></script>
-    <script src="engine/records.js"></script>
-    <script src="engine/telemetry.js"></script>
+    <script src="engine/rng.js?v=f9014cc"></script>
+    <script src="engine/auth.js?v=f9014cc"></script>
+    <script src="engine/game-state.js?v=f9014cc"></script>
+    <script src="engine/screen-manager.js?v=f9014cc"></script>
+    <script src="engine/encounter-engine.js?v=f9014cc"></script>
+    <script src="engine/event-engine.js?v=f9014cc"></script>
+    <script src="engine/travel-engine.js?v=f9014cc"></script>
+    <script src="engine/leaderboard-api.js?v=f9014cc"></script>
+    <script src="engine/scoring.js?v=f9014cc"></script>
+    <script src="engine/records.js?v=f9014cc"></script>
+    <script src="engine/telemetry.js?v=f9014cc"></script>
 
     <!-- Screens -->
-    <script src="screens/title-screen.js"></script>
-    <script src="screens/login-screen.js"></script>
-    <script src="screens/starter-screen.js"></script>
-    <script src="screens/travel-screen.js"></script>
-    <script src="screens/encounter-screen.js"></script>
-    <script src="screens/event-screen.js"></script>
-    <script src="screens/inventory-screen.js"></script>
-    <script src="screens/party-screen.js"></script>
-    <script src="screens/shop-screen.js"></script>
-    <script src="screens/gym-screen.js"></script>
-    <script src="screens/gym-reward-screen.js"></script>
-    <script src="screens/stats-screen.js"></script>
-    <script src="screens/elite-four-screen.js"></script>
-    <script src="screens/postvictory-screen.js"></script>
-    <script src="screens/johto-starter-screen.js"></script>
-    <script src="screens/johto-debug-screen.js"></script>
-    <script src="screens/red-capstone-screen.js"></script>
-    <script src="screens/gameover-screen.js"></script>
-    <script src="screens/victory-screen.js"></script>
-    <script src="screens/leaderboard-screen.js"></script>
-    <script src="screens/profile-screen.js"></script>
-    <script src="screens/pokedex-screen.js"></script>
-    <script src="screens/records-screen.js"></script>
-    <script src="screens/hall-of-fame-screen.js"></script>
+    <script src="screens/title-screen.js?v=f9014cc"></script>
+    <script src="screens/login-screen.js?v=f9014cc"></script>
+    <script src="screens/starter-screen.js?v=f9014cc"></script>
+    <script src="screens/travel-screen.js?v=f9014cc"></script>
+    <script src="screens/encounter-screen.js?v=f9014cc"></script>
+    <script src="screens/event-screen.js?v=f9014cc"></script>
+    <script src="screens/inventory-screen.js?v=f9014cc"></script>
+    <script src="screens/party-screen.js?v=f9014cc"></script>
+    <script src="screens/shop-screen.js?v=f9014cc"></script>
+    <script src="screens/gym-screen.js?v=f9014cc"></script>
+    <script src="screens/gym-reward-screen.js?v=f9014cc"></script>
+    <script src="screens/stats-screen.js?v=f9014cc"></script>
+    <script src="screens/elite-four-screen.js?v=f9014cc"></script>
+    <script src="screens/postvictory-screen.js?v=f9014cc"></script>
+    <script src="screens/johto-starter-screen.js?v=f9014cc"></script>
+    <script src="screens/johto-debug-screen.js?v=f9014cc"></script>
+    <script src="screens/red-capstone-screen.js?v=f9014cc"></script>
+    <script src="screens/gameover-screen.js?v=f9014cc"></script>
+    <script src="screens/victory-screen.js?v=f9014cc"></script>
+    <script src="screens/leaderboard-screen.js?v=f9014cc"></script>
+    <script src="screens/profile-screen.js?v=f9014cc"></script>
+    <script src="screens/pokedex-screen.js?v=f9014cc"></script>
+    <script src="screens/records-screen.js?v=f9014cc"></script>
+    <script src="screens/hall-of-fame-screen.js?v=f9014cc"></script>
 
     <!-- Audio -->
-    <script src="engine/audio.js"></script>
+    <script src="engine/audio.js?v=f9014cc"></script>
 
     <!-- Main: restore session then route to title or login -->
     <script>
