@@ -188,7 +188,7 @@
                         pool: "jessie_james",
                         difficulty: "easy",
                         trainerName: "Jessie & James",
-                        winNarration: "\"Team Rocket's blasting off agaaaaain!\" ✨ They fly into the sky.",
+                        winNarration: "\"Team Rocket's blasting off agaaaaain!\" They fly into the sky.",
                         lossNarration: "\"We did it!\" Jessie and James high-five while Meowth raids your bag.",
                         winEffects: { money: 300 },
                         lossEffects: { pokeballs: -2, food: -3 }
@@ -4045,7 +4045,7 @@
                         pool: "jessie_james",
                         difficulty: "easy",
                         trainerName: "Jessie & James",
-                        winNarration: "\"We're blasting off agaaaaain!\" ✨ They drop some items as they fly away.",
+                        winNarration: "\"We're blasting off agaaaaain!\" They drop some items as they fly away.",
                         lossNarration: "\"We actually won?!\" Jessie and James are as surprised as you are. They grab some supplies and run.",
                         winEffects: { pokeballs: 2, money: 200 },
                         lossEffects: { food: -5, pokeballs: -2 }

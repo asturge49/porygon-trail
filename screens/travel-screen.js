@@ -452,11 +452,11 @@
                 let nextHint = '';
                 if (encounter) {
                     const pokeName = encounter.name || 'a wild Pokemon';
-                    nextHint = `<div class="recap-next">⚡ A wild ${pokeName} appeared!</div>`;
+                    nextHint = `<div class="recap-next">A wild ${pokeName} appeared!</div>`;
                 } else if (event) {
-                    nextHint = `<div class="recap-next">❗ Something is happening ahead...</div>`;
+                    nextHint = `<div class="recap-next">Something is happening ahead...</div>`;
                 } else if (arrivedRoute) {
-                    nextHint = `<div class="recap-next">📍 Arrived at ${arrivedRoute.name}!</div>`;
+                    nextHint = `<div class="recap-next">Arrived at ${arrivedRoute.name}!</div>`;
                 }
 
                 // Create overlay
@@ -508,7 +508,7 @@
                 overlay.className = 'day-recap-overlay';
                 overlay.innerHTML = `
                     <div class="day-recap-popup" style="max-width: 90%;">
-                        <div class="day-recap-title">🔮 PSYCHIC FORESIGHT</div>
+                        <div class="day-recap-title">PSYCHIC FORESIGHT</div>
                         <div class="day-recap-body" style="font-size: 7px; text-align: center;">
                             Your Psychic-type senses two wild Pokemon nearby. Choose which to face!
                         </div>
@@ -548,17 +548,17 @@
                 overlay.className = 'day-recap-overlay';
                 overlay.innerHTML = `
                     <div class="day-recap-popup" style="max-width: 90%;">
-                        <div class="day-recap-title">🔮 PSYCHIC FORESIGHT</div>
+                        <div class="day-recap-title">PSYCHIC FORESIGHT</div>
                         <div class="day-recap-body" style="font-size: 7px; text-align: center;">
                             Your Psychic-type foresees two possible futures. Choose your path!
                         </div>
                         <div style="display: flex; flex-direction: column; gap: 6px; margin: 8px 0;">
                             <button class="btn btn-small psychic-evt-pick" data-pick="1" style="padding: 8px; text-align: left;">
-                                <div style="font-size: 8px; font-weight: bold;">🔮 ${evt1.name}</div>
+                                <div style="font-size: 8px; font-weight: bold;">${evt1.name}</div>
                                 <div style="font-size: 6px; margin-top: 2px;">${evt1.description.substring(0, 80)}...</div>
                             </button>
                             <button class="btn btn-small psychic-evt-pick" data-pick="2" style="padding: 8px; text-align: left;">
-                                <div style="font-size: 8px; font-weight: bold;">🔮 ${evt2.name}</div>
+                                <div style="font-size: 8px; font-weight: bold;">${evt2.name}</div>
                                 <div style="font-size: 6px; margin-top: 2px;">${evt2.description.substring(0, 80)}...</div>
                             </button>
                         </div>
@@ -604,7 +604,7 @@
                         gymOverlay.className = 'day-recap-overlay';
                         gymOverlay.innerHTML = `
                             <div class="day-recap-popup">
-                                <div class="day-recap-title">⚠️ GYM ALERT</div>
+                                <div class="day-recap-title">GYM ALERT</div>
                                 <div class="day-recap-body">
                                     <div class="recap-line">${gymLeaderData.name} awaits at the ${gymLeaderData.badge} gym.</div>
                                     <div class="recap-line">You're about to leave — are you sure?</div>
@@ -677,7 +677,7 @@
                     centerOverlay.className = 'day-recap-overlay';
                     centerOverlay.innerHTML = `
                         <div class="day-recap-popup">
-                            <div class="day-recap-title">🏥 POKEMON CENTER</div>
+                            <div class="day-recap-title">POKEMON CENTER</div>
                             <div class="day-recap-body">
                                 <div class="recap-line">${healed > 0 ? `Your Pokemon have been fully healed! (${healed} restored)` : 'Your Pokemon are already healthy!'}</div>
                             </div>
@@ -843,11 +843,11 @@
             const isVisited = i < currentIdx;
             const isFuture = i > currentIdx;
 
-            // Icons for amenities
+            // Amenity tags (plain letters, no emoji)
             const icons = [];
-            if (r.hasCenter) icons.push('🏥');
-            if (r.hasShop) icons.push('🛒');
-            if (r.hasGym) icons.push('⚔️');
+            if (r.hasCenter) icons.push('C');
+            if (r.hasShop) icons.push('M');
+            if (r.hasGym) icons.push('G');
 
             // Distance label
             const dist = r.distanceToNext > 0 ? `${r.distanceToNext} mi` : '—';
@@ -868,7 +868,7 @@
             return `<div style="display:flex;align-items:center;gap:4px;padding:3px 6px;font-size:8px;border-bottom:1px solid var(--gb-light);${style}">
                 <span style="width:12px;text-align:center;">${isCurrent ? '▶' : isVisited ? '✓' : '·'}</span>
                 <span style="flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${r.name}</span>
-                <span style="font-size:7px;min-width:36px;text-align:right;">${icons.join('')}</span>
+                <span style="font-size:7px;min-width:36px;text-align:right;">${icons.join(' ')}</span>
                 <span style="font-size:7px;min-width:32px;text-align:right;">${dist}${progressText}</span>
             </div>`;
         }).join('');
@@ -877,9 +877,9 @@
         overlay.className = 'day-recap-overlay';
         overlay.innerHTML = `
             <div class="day-recap-popup" style="max-height:80vh;min-width:260px;">
-                <div class="day-recap-title" style="flex-shrink:0;">🗺️ ${state.region === 'johto' ? 'JOHTO' : 'KANTO'} MAP</div>
+                <div class="day-recap-title" style="flex-shrink:0;">${state.region === 'johto' ? 'JOHTO' : 'KANTO'} MAP</div>
                 <div style="font-size:7px;text-align:center;margin-bottom:4px;color:var(--gb-dark);flex-shrink:0;">
-                    🏥 Center &nbsp; 🛒 Mart &nbsp; ⚔️ Gym
+                    C = Center &nbsp; M = Mart &nbsp; G = Gym
                 </div>
                 <div style="border:1px solid var(--gb-dark);border-radius:2px;overflow-y:auto;min-height:0;">
                     ${rows}
@@ -943,13 +943,13 @@
             return `<div style="display:flex; align-items:center; gap:6px; margin:4px 0;">
                 <img src="${p.spriteUrl}" style="width:28px;height:28px;image-rendering:pixelated;" onerror="this.style.display='none'">
                 <span style="font-size:9px;">${p.name}</span>
-                <span style="font-size:8px;color:var(--gb-dark);">HP ${p.hp}/${p.maxHp} ✔️</span>
+                <span style="font-size:8px;color:var(--gb-dark);">HP ${p.hp}/${p.maxHp}</span>
             </div>`;
         }).join('');
 
         container.innerHTML = `
             <div class="screen travel-screen" style="text-align:center;">
-                <div class="event-title" style="font-size:12px;">🏥 POKEMON CENTER</div>
+                <div class="event-title" style="font-size:12px;">POKEMON CENTER</div>
                 <div style="font-size:9px;margin:6px 0;">Welcome to the Indigo Plateau Pokemon Center!</div>
                 <div style="font-size:8px;margin:4px 0;color:var(--gb-dark);">
                     Nurse Joy: "Your Pokemon are fighting fit! Good luck against the Elite Four!"
@@ -962,7 +962,7 @@
                     The Elite Four remember you. This time, there's Mt. Silver waiting beyond them.
                 </div>` : ''}
                 <div style="font-size:7px;color:var(--gb-dark);margin:8px 0;">
-                    ⚠️ There is no turning back. The Elite Four gauntlet begins now.
+                    There is no turning back. The Elite Four gauntlet begins now.
                 </div>
                 <button class="btn btn-wide" id="btn-e4-begin">ENTER THE ELITE FOUR</button>
             </div>
@@ -1060,7 +1060,7 @@
                 </div>
 
                 <div class="profile-section">
-                    <div class="profile-row"><span class="profile-label">Ability:</span> <span>${pokemon.travelAbility || 'none'}</span> <span class="profile-desc">${abilityDesc[pokemon.travelAbility] || ''}</span>${[1,2,3,4,5,6,7,8,9].includes(pokemon.id) ? ' <span class="profile-hint" style="color:var(--gb-darkest);font-weight:bold;">⭐ 3x Starter</span>' : ''}</div>
+                    <div class="profile-row"><span class="profile-label">Ability:</span> <span>${pokemon.travelAbility || 'none'}</span> <span class="profile-desc">${abilityDesc[pokemon.travelAbility] || ''}</span>${[1,2,3,4,5,6,7,8,9].includes(pokemon.id) ? ' <span class="profile-hint" style="color:var(--gb-darkest);font-weight:bold;">★ 3x Starter</span>' : ''}</div>
                     <div class="profile-row"><span class="profile-label">Caught:</span> ${pokemon.caughtAt || 'Unknown'} (Day ${pokemon.caughtDay || 0})</div>
                     <div class="profile-row"><span class="profile-label">Evolution:</span> ${evoChainDisplay} ${isFinal ? '✓ Final' : `(${evoStage}/${evoChain.length})`}</div>
                     <div class="profile-row"><span class="profile-label">Food/day:</span> ${foodCost} ration${foodCost !== 1 ? 's' : ''}</div>

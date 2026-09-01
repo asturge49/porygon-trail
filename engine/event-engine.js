@@ -181,7 +181,7 @@
         const winRateBonus = PT.Engine.GameState.getWinRateBonus(state);
         if (winRateBonus > 0) {
             chance += winRateBonus;
-            battleBonuses.push(`💪 WIN RATE +${winRateBonus}%`);
+            battleBonuses.push(`WIN RATE +${winRateBonus}%`);
         }
 
         // Poison ability: scales with power
@@ -189,20 +189,20 @@
         if (poisonPower > 0) {
             const poisonBonus = Math.floor(1 * poisonPower);
             chance += poisonBonus;
-            battleBonuses.push(`☠️ POISON +${poisonBonus}%`);
+            battleBonuses.push(`POISON +${poisonBonus}%`);
         }
         // Intimidate ability: scales with power
         const intimidatePower = PT.Engine.GameState.getAbilityPower(state, 'intimidate');
         if (intimidatePower > 0) {
             const intimBonus = Math.floor(3 * intimidatePower);
             chance += intimBonus;
-            battleBonuses.push(`😤 INTIMIDATE +${intimBonus}%`);
+            battleBonuses.push(`INTIMIDATE +${intimBonus}%`);
         }
 
         // Psychic Dominance (Mewtwo) — +50% win chance on all battles
         if (PT.Engine.GameState.hasAbility(state, 'psychic_dominance')) {
             chance += 50;
-            battleBonuses.push(`🧠 PSYCHIC DOMINANCE +50%`);
+            battleBonuses.push(`PSYCHIC DOMINANCE +50%`);
         }
 
         // Battle Stars bonus
@@ -216,13 +216,13 @@
         // wild-encounter, and gym-loss regional bumps applied elsewhere.
         if (state.region === 'johto') {
             chance -= 10;
-            battleBonuses.push('🌩️ JOHTO -10%');
+            battleBonuses.push('JOHTO -10%');
         }
 
         const preClampChance = chance;
         chance = Math.max(15, Math.min(85, chance));
         const maxed = preClampChance !== chance;
-        if (maxed) battleBonuses.push(chance === 85 ? '⚠️ MAXED OUT' : '⚠️ FLOORED OUT');
+        if (maxed) battleBonuses.push(chance === 85 ? 'MAXED OUT' : 'FLOORED OUT');
 
         const won = state.rng.chance(chance);
         const opponentHp = PT.Engine.GameState.getMaxHpForPokemon(opponent);

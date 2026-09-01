@@ -93,7 +93,6 @@
                                  onerror="this.style.display='none'">
                             <div class="hof-name" style="${!isAlive ? 'text-decoration: line-through;' : ''}">${p.name}</div>
                             ${stars > 0 ? `<div style="font-size: 6px; color: #b8860b;">${'★'.repeat(stars)}</div>` : ''}
-                            ${!isAlive ? '<div style="font-size: 5px;">💀</div>' : ''}
                         </div>
                     `}).join('')}
                 </div>
@@ -119,7 +118,7 @@
                 </div>
                 <div id="fallen-log" style="display: none; margin-top: 8px;">
                     <div class="text-box" style="font-size: 7px; max-height: 120px; overflow-y: auto;">
-                        <div style="font-weight: bold; margin-bottom: 4px; text-align: center;">💀 FALLEN POKEMON 💀</div>
+                        <div style="font-weight: bold; margin-bottom: 4px; text-align: center;">FALLEN POKEMON</div>
                         ${graveyard.length === 0
                             ? '<div style="text-align: center; color: var(--gb-dark);">No Pokemon were lost. Incredible!</div>'
                             : graveyard.map(g => `

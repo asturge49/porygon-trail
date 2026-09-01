@@ -53,25 +53,25 @@
     function checkSaveMessages(pokemon, state, results) {
         if (pokemon._safeguardSaved) {
             const savior = abilityHolder(state, 'safeguard') || 'Chansey';
-            results.messages.push(`🩹 SAFEGUARD: ${savior} stepped in and saved ${pokemon.name} from fainting! (1 HP)`);
+            results.messages.push(`SAFEGUARD: ${savior} stepped in and saved ${pokemon.name} from fainting! (1 HP)`);
             pokemon._safeguardSaved = false;
         }
         if (pokemon._systemRestored) {
             const savior = abilityHolder(state, 'system_restore') || 'Porygon';
-            results.messages.push(`💾 SYSTEM RESTORE: ${savior} restored ${pokemon.name} from backup data! (1 HP)`);
+            results.messages.push(`SYSTEM RESTORE: ${savior} restored ${pokemon.name} from backup data! (1 HP)`);
             pokemon._systemRestored = false;
         }
         if (pokemon._clutched) {
-            results.messages.push(`⭐ CLUTCH: ${pokemon.name}'s battle experience kicked in — survived at 1 HP!`);
+            results.messages.push(`★ CLUTCH: ${pokemon.name}'s battle experience kicked in — survived at 1 HP!`);
             pokemon._clutched = false;
         }
         if (pokemon._focusBandSaved) {
-            results.messages.push(`🎒 FOCUS BAND: ${pokemon.name} held on and survived at 1 HP!`);
+            results.messages.push(`FOCUS BAND: ${pokemon.name} held on and survived at 1 HP!`);
             pokemon._focusBandSaved = false;
         }
         if (pokemon._auroraBlocked) {
             const savior = abilityHolder(state, 'aurora_veil') || 'Articuno';
-            results.messages.push(`❄️ AURORA VEIL: ${savior} absorbed the hit meant for ${pokemon.name}!`);
+            results.messages.push(`AURORA VEIL: ${savior} absorbed the hit meant for ${pokemon.name}!`);
             pokemon._auroraBlocked = false;
         }
     }
@@ -99,7 +99,7 @@
             // Thunderclap (Zapdos) — double travel distance
             if (PT.Engine.GameState.hasAbility(state, 'thunderclap')) {
                 dist *= 2;
-                results.messages.push(`⚡ THUNDERCLAP: Zapdos' lightning speed doubles your travel distance!`);
+                results.messages.push(`THUNDERCLAP: Zapdos' lightning speed doubles your travel distance!`);
             }
 
             results.messages.push(`Traveled ${dist} miles.`);
@@ -117,7 +117,7 @@
         const hasSacredFlame = PT.Engine.GameState.hasAbility(state, 'sacred_flame');
         let foodConsumed = 0;
         if (hasSacredFlame) {
-            results.messages.push(`🔥 SACRED FLAME: Moltres' legendary fire sustains the party! No food consumed.`);
+            results.messages.push(`SACRED FLAME: Moltres' legendary fire sustains the party! No food consumed.`);
         } else {
             const baseFood = aliveParty.length > 0
                 ? aliveParty.reduce((sum, p) => sum + PT.Engine.GameState.getFoodCost(p), 0)
@@ -131,7 +131,7 @@
                 const fireSaved = Math.min(foodConsumed - 1, Math.max(1, Math.floor(firePower)));
                 foodConsumed -= fireSaved;
                 const fireName = abilityHolder(state, 'fire');
-                results.messages.push(`🔥 ${fireName} cooked efficiently, saving ${fireSaved} food!`);
+                results.messages.push(`${fireName} cooked efficiently, saving ${fireSaved} food!`);
             }
 
             state.resources.food = Math.max(0, state.resources.food - foodConsumed);
@@ -144,13 +144,13 @@
             const foraged = Math.max(1, Math.floor(state.rng.randInt(1, 3) * cutPower));
             state.resources.food += foraged;
             const cutName = abilityHolder(state, 'cut');
-            results.messages.push(`🌿 ${cutName} cut through the brush and foraged +${foraged} food!`);
+            results.messages.push(`${cutName} cut through the brush and foraged +${foraged} food!`);
         }
 
         // --- Starvation check ---
         if (state.resources.food <= 0) {
             state.starvingDays++;
-            results.messages.push(`⚠️ No food! Your Pokemon are starving!`);
+            results.messages.push(`No food! Your Pokemon are starving!`);
             // Starvation damage — hits every alive party member for 1 HP
             const starving = PT.Engine.GameState.getAliveParty(state);
             starving.forEach(p => {
@@ -190,7 +190,7 @@
                     if (toHeal.length === 0) break;
                     const healed = state.rng.pick(toHeal);
                     healed.hp = Math.min(healed.hp + 1, healed.maxHp);
-                    results.messages.push(`💗 ${healerName} nursed ${healed.name} back to health! (+1 HP)`);
+                    results.messages.push(`${healerName} nursed ${healed.name} back to health! (+1 HP)`);
                 }
             }
         }
@@ -207,7 +207,7 @@
                 const reduction = Math.min(0.8, strengthPower * 0.15); // 15% reduction per power, max 80%
                 effectiveInjuryChance = Math.floor(effectiveInjuryChance * (1 - reduction));
                 const strengthName = abilityHolder(state, 'strength');
-                results.messages.push(`💪 ${strengthName} is carrying the team, reducing injury risk!`);
+                results.messages.push(`${strengthName} is carrying the team, reducing injury risk!`);
             }
             if (state.rng.chance(effectiveInjuryChance)) {
                 // Guard ability can block the injury entirely (scales with power)
@@ -215,7 +215,7 @@
                 const guardChance = guardPower > 0 ? Math.min(70, Math.floor(15 * guardPower)) : 0;
                 if (guardPower > 0 && state.rng.chance(guardChance)) {
                     const guardName = abilityHolder(state, 'guard');
-                    results.messages.push(`🛡️ ${guardName} shielded the party from injury!`);
+                    results.messages.push(`${guardName} shielded the party from injury!`);
                 } else {
                     const victim = state.rng.pick(PT.Engine.GameState.getAliveParty(state));
                     if (victim) {
@@ -234,7 +234,7 @@
                 checkSaveMessages(p, state, results);
                 results.messages.push(`${p.name} takes poison damage!`);
                 if (fainted) {
-                    results.messages.push(`${p.name} died from poison! 💀`);
+                    results.messages.push(`${p.name} died from poison!`);
                 }
             }
         });
@@ -251,7 +251,7 @@
         // --- Bicycle: flat bonus travel distance, no Pokemon required (stacks) ---
         const bicycleBonus = PT.Engine.GameState.getBicycleBonus(state);
         if (bicycleBonus > 0 && pace.distance > 0 && !results.arrivedAtLocation) {
-            results.messages.push(`🚲 The Bicycle covers extra ground! (+${bicycleBonus} miles)`);
+            results.messages.push(`The Bicycle covers extra ground! (+${bicycleBonus} miles)`);
             addTravelDistance(state, route, nextRoute, bicycleBonus, results);
         }
 
@@ -260,7 +260,7 @@
         if (flyPower > 0 && pace.distance > 0 && !results.arrivedAtLocation) {
             const flyBonus = Math.max(1, Math.floor(3 * flyPower));
             const flyName = abilityHolder(state, 'fly');
-            results.messages.push(`🦅 ${flyName} scouted a shortcut! (+${flyBonus} miles)`);
+            results.messages.push(`${flyName} scouted a shortcut! (+${flyBonus} miles)`);
             addTravelDistance(state, route, nextRoute, flyBonus, results);
         }
 
@@ -270,7 +270,7 @@
             if (route.terrain === 'water') {
                 const surfBonus = Math.max(1, Math.floor(5 * surfPower));
                 const surfName = abilityHolder(state, 'surf');
-                results.messages.push(`🌊 ${surfName} surfs ahead on the open water! (+${surfBonus} miles)`);
+                results.messages.push(`${surfName} surfs ahead on the open water! (+${surfBonus} miles)`);
                 addTravelDistance(state, route, nextRoute, surfBonus, results);
             }
         }
@@ -284,13 +284,13 @@
                 const baseMoneyFound = Math.floor(state.rng.randInt(50, 200) * flashPower);
                 const moneyFound = PT.Engine.GameState.applyPayDay(state, baseMoneyFound);
                 state.resources.money += moneyFound;
-                results.messages.push(`⚡ ${flashName} lit up a hidden stash! Found $${moneyFound}!${moneyFound > baseMoneyFound ? ' 💰 BONUS!' : ''}`);
+                results.messages.push(`${flashName} lit up a hidden stash! Found $${moneyFound}!${moneyFound > baseMoneyFound ? ' BONUS!' : ''}`);
             } else if (flashRoll <= 70) {
                 state.resources.potions++;
-                results.messages.push(`⚡ ${flashName} found a hidden Potion!`);
+                results.messages.push(`${flashName} found a hidden Potion!`);
             } else {
                 state.resources.pokeballs += 2;
-                results.messages.push(`⚡ ${flashName} found 2 hidden Poke Balls!`);
+                results.messages.push(`${flashName} found 2 hidden Poke Balls!`);
             }
         }
 
@@ -341,7 +341,7 @@
                 if (alt && alt.id !== results.encounter.id) {
                     results.psychicChoice = 'encounter';
                     results.psychicAlt = alt;
-                    results.messages.push(`🔮 ${psychicName} foresees two possible encounters!`);
+                    results.messages.push(`${psychicName} foresees two possible encounters!`);
                 }
             } else if (results.event) {
                 // Roll a second event as an alternative
@@ -349,7 +349,7 @@
                 if (alt && alt.id !== results.event.id) {
                     results.psychicChoice = 'event';
                     results.psychicAlt = alt;
-                    results.messages.push(`🔮 ${psychicName} foresees two possible futures!`);
+                    results.messages.push(`${psychicName} foresees two possible futures!`);
                 }
             } else {
                 // No encounter or event — psychic forces an encounter choice
@@ -359,10 +359,10 @@
                     results.encounter = enc1;
                     results.psychicChoice = 'encounter';
                     results.psychicAlt = enc2;
-                    results.messages.push(`🔮 ${psychicName} senses wild Pokemon nearby — choose which to face!`);
+                    results.messages.push(`${psychicName} senses wild Pokemon nearby — choose which to face!`);
                 } else if (enc1) {
                     results.encounter = enc1;
-                    results.messages.push(`🔮 ${psychicName} detected a wild Pokemon!`);
+                    results.messages.push(`${psychicName} detected a wild Pokemon!`);
                 }
             }
         }
@@ -379,21 +379,21 @@
                     const duped = Math.min(state.resources[dupeKey], state.rng.randInt(1, 3));
                     state.resources[dupeKey] += duped;
                     const itemName = PT.Data.Items[dupeKey] ? PT.Data.Items[dupeKey].name : dupeKey;
-                    results.messages.push(`👾 GLITCH ABILITY: MissingNo. corrupted your bag! +${duped} ${itemName} duplicated!`);
+                    results.messages.push(`GLITCH ABILITY: MissingNo. corrupted your bag! +${duped} ${itemName} duplicated!`);
                 }
             } else if (glitchRoll <= 50) {
                 // Random money glitch
                 const baseGlitchMoney = state.rng.randInt(100, 500);
                 const glitchMoney = PT.Engine.GameState.applyPayDay(state, baseGlitchMoney);
                 state.resources.money += glitchMoney;
-                results.messages.push(`👾 GLITCH ABILITY: Memory overflow! +$${glitchMoney} appeared in your wallet!${glitchMoney > baseGlitchMoney ? ' 💰 BONUS!' : ''}`);
+                results.messages.push(`GLITCH ABILITY: Memory overflow! +$${glitchMoney} appeared in your wallet!${glitchMoney > baseGlitchMoney ? ' BONUS!' : ''}`);
             } else if (glitchRoll <= 70) {
                 // Heal a random party member to full
                 const injured = PT.Engine.GameState.getAliveParty(state).filter(p => p.hp < p.maxHp);
                 if (injured.length > 0) {
                     const target = state.rng.pick(injured);
                     target.hp = target.maxHp;
-                    results.messages.push(`👾 GLITCH ABILITY: Data corruption healed ${target.name} to full HP!`);
+                    results.messages.push(`GLITCH ABILITY: Data corruption healed ${target.name} to full HP!`);
                 }
             } else {
                 // Random damage to a party member (chaotic!)
@@ -401,7 +401,7 @@
                 if (victim) {
                     PT.Engine.GameState.damagePokemon(victim, 1, state);
                     checkSaveMessages(victim, state, results);
-                    results.messages.push(`👾 GLITCH ABILITY: Buffer overflow! ${victim.name} took 1 glitch damage!`);
+                    results.messages.push(`GLITCH ABILITY: Buffer overflow! ${victim.name} took 1 glitch damage!`);
                 }
             }
         }
@@ -415,32 +415,32 @@
                     p.hp = p.maxHp;
                     if (p.status === 'poisoned' || p.status === 'paralyzed') p.status = 'healthy';
                 });
-                results.messages.push(`✨ MIRACLE: Mew's radiant energy heals the entire party to full HP!`);
+                results.messages.push(`MIRACLE: Mew's radiant energy heals the entire party to full HP!`);
             } else if (miracleRoll <= 40) {
                 // Free food
                 const foodGain = state.rng.randInt(15, 30);
                 state.resources.food += foodGain;
-                results.messages.push(`✨ MIRACLE: Mew conjures ${foodGain} food from thin air!`);
+                results.messages.push(`MIRACLE: Mew conjures ${foodGain} food from thin air!`);
             } else if (miracleRoll <= 55) {
                 // Bonus money
                 const moneyGain = PT.Engine.GameState.applyPayDay(state, state.rng.randInt(200, 500));
                 state.resources.money += moneyGain;
-                results.messages.push(`✨ MIRACLE: Mew manifests $${moneyGain} out of nothing!`);
+                results.messages.push(`MIRACLE: Mew manifests $${moneyGain} out of nothing!`);
             } else if (miracleRoll <= 70) {
                 // Free items
                 const itemRoll = state.rng.randInt(1, 3);
-                if (itemRoll === 1) { state.resources.potions += 2; results.messages.push(`✨ MIRACLE: Mew creates 2 Potions!`); }
-                else if (itemRoll === 2) { state.resources.superPotions += 1; results.messages.push(`✨ MIRACLE: Mew creates a Super Potion!`); }
-                else { state.resources.greatballs += 2; results.messages.push(`✨ MIRACLE: Mew creates 2 Great Balls!`); }
+                if (itemRoll === 1) { state.resources.potions += 2; results.messages.push(`MIRACLE: Mew creates 2 Potions!`); }
+                else if (itemRoll === 2) { state.resources.superPotions += 1; results.messages.push(`MIRACLE: Mew creates a Super Potion!`); }
+                else { state.resources.greatballs += 2; results.messages.push(`MIRACLE: Mew creates 2 Great Balls!`); }
             } else if (miracleRoll <= 85) {
                 // Bonus miles
                 if (pace.distance > 0 && !results.arrivedAtLocation) {
                     const bonusMiles = state.rng.randInt(5, 15);
-                    results.messages.push(`✨ MIRACLE: Mew teleports the party forward ${bonusMiles} miles!`);
+                    results.messages.push(`MIRACLE: Mew teleports the party forward ${bonusMiles} miles!`);
                     addTravelDistance(state, route, nextRoute, bonusMiles, results);
                 } else {
                     state.resources.food += 10;
-                    results.messages.push(`✨ MIRACLE: Mew creates 10 food!`);
+                    results.messages.push(`MIRACLE: Mew creates 10 food!`);
                 }
             } else {
                 // Battle star on random party member
@@ -448,10 +448,10 @@
                 if (starCandidates.length > 0) {
                     const lucky = state.rng.pick(starCandidates);
                     lucky.battleStars = (lucky.battleStars || 0) + 1;
-                    results.messages.push(`✨ MIRACLE: Mew bestows a Battle Star on ${lucky.name}! ★`);
+                    results.messages.push(`MIRACLE: Mew bestows a Battle Star on ${lucky.name}! ★`);
                 } else {
                     state.resources.food += 10;
-                    results.messages.push(`✨ MIRACLE: Mew creates 10 food!`);
+                    results.messages.push(`MIRACLE: Mew creates 10 food!`);
                 }
             }
         }

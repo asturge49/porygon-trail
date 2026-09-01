@@ -55,7 +55,7 @@
                 </div>
                 <div class="pokedex-legend" style="text-align: center; font-size: 6px; margin-bottom: 8px;">
                     <span style="opacity: 0.3;">? = Unknown</span> &nbsp;
-                    <span>&#128065; = Seen</span> &nbsp;
+                    <span>S = Seen</span> &nbsp;
                     <span style="color: var(--gb-darkest);">&#10003; = Caught</span> &nbsp;
                     <span>&#9733; = Champion</span>
                 </div>
@@ -117,7 +117,7 @@
             const isChampion = dex.champions.includes(p.id);
 
             const spriteUrl = PT.Engine.GameState.getSpriteUrl(p.id);
-            const statusIcon = isChampion ? '&#9733;' : isCaught ? '&#10003;' : isSeen ? '&#128065;' : '?';
+            const statusIcon = isChampion ? '&#9733;' : isCaught ? '&#10003;' : isSeen ? 'S' : '?';
             const known = isSeen || isCaught;
 
             return `

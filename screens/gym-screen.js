@@ -66,7 +66,7 @@
                                  onerror="this.style.display='none'; this.parentElement.querySelector('.gym-opponent-name').style.marginTop='40px';">
                             <div class="gym-opponent-name" style="font-size: 9px; font-weight: bold;">${opponent.name}</div>
                             <div style="font-size: 6px;">${opponentTypes.join('/').toUpperCase()}</div>
-                            ${isAce ? '<div style="font-size: 7px; color: var(--gb-darkest);">⭐ ACE POKEMON</div>' : ''}
+                            ${isAce ? '<div style="font-size: 7px; color: var(--gb-darkest);">★ ACE POKEMON</div>' : ''}
                         </div>
                     </div>
                     <div class="gym-challenge-text">${leader.name} sends out ${opponent.name}!</div>
@@ -167,7 +167,7 @@
         const winRateBonus = PT.Engine.GameState.getWinRateBonus(state);
         if (winRateBonus > 0) {
             chance += winRateBonus;
-            battleBonuses.push(`💪 WIN RATE +${winRateBonus}%`);
+            battleBonuses.push(`WIN RATE +${winRateBonus}%`);
         }
 
         // Party size bonus
@@ -181,7 +181,7 @@
             power += (pokemon.battleStars || 0) * 0.25;
             const poisonBonus = Math.floor(1 * power);
             chance += poisonBonus;
-            battleBonuses.push(`☠️ POISON +${poisonBonus}%`);
+            battleBonuses.push(`POISON +${poisonBonus}%`);
         }
 
         // Intimidate ability: scales with power
@@ -189,13 +189,13 @@
         if (intimidatePower > 0) {
             const intimBonus = Math.floor(3 * intimidatePower);
             chance += intimBonus;
-            battleBonuses.push(`😤 INTIMIDATE +${intimBonus}%`);
+            battleBonuses.push(`INTIMIDATE +${intimBonus}%`);
         }
 
         // Psychic Dominance (Mewtwo) — +50% win chance on all battles
         if (PT.Engine.GameState.hasAbility(state, 'psychic_dominance')) {
             chance += 50;
-            battleBonuses.push(`🧠 PSYCHIC DOMINANCE +50%`);
+            battleBonuses.push(`PSYCHIC DOMINANCE +50%`);
         }
 
         // Battle Stars bonus
@@ -214,7 +214,7 @@
         // Clamp
         const preClampChance = chance;
         chance = Math.max(10, Math.min(80, chance));
-        if (preClampChance !== chance) battleBonuses.push(chance === 80 ? '⚠️ MAXED OUT' : '⚠️ FLOORED OUT');
+        if (preClampChance !== chance) battleBonuses.push(chance === 80 ? 'MAXED OUT' : 'FLOORED OUT');
 
         const won = state.rng.chance(chance);
         let gymMoneyReward = 0;
@@ -259,12 +259,12 @@
             const starResult = PT.Engine.GameState.addBattleWin(pokemon, state, evoResult.evolved);
             let starLine = '';
             if (starResult.earned) {
-                starLine = `<br>⭐ ${pokemon.name} earned a Battle Star! [${'★'.repeat(pokemon.battleStars)}] (${pokemon.battleStars}/3)`;
+                starLine = `<br>★ ${pokemon.name} earned a Battle Star! [${'★'.repeat(pokemon.battleStars)}] (${pokemon.battleStars}/3)`;
             }
             if (starResult.expShareBonus) {
                 starLine += starResult.expShareBonus.type === 'evolution'
-                    ? `<br>🎓 EXP. SHARE: ${starResult.expShareBonus.name} also evolved into ${starResult.expShareBonus.newName}!`
-                    : `<br>🎓 EXP. SHARE: ${starResult.expShareBonus.name} also earned a Battle Star!`;
+                    ? `<br>EXP. SHARE: ${starResult.expShareBonus.name} also evolved into ${starResult.expShareBonus.newName}!`
+                    : `<br>EXP. SHARE: ${starResult.expShareBonus.name} also earned a Battle Star!`;
             }
 
             div.innerHTML = `
@@ -282,7 +282,7 @@
                     <div class="gym-challenge-text">${leader.victoryText}</div>
                     <div style="font-size: 8px; margin-top: 8px;">
                         ${pokemon.name} defeated ${leader.name}'s ${opponent.name}!
-                        <br>Earned: <span class="badge-earned">${leader.badge}</span> + $${gymMoneyReward}${gymMoneyReward > leader.reward.money ? ' 💰 BONUS!' : ''}${evoLine}${starLine}
+                        <br>Earned: <span class="badge-earned">${leader.badge}</span> + $${gymMoneyReward}${gymMoneyReward > leader.reward.money ? ' BONUS!' : ''}${evoLine}${starLine}
                         <br><span style="font-size: 6px;">Win chance was ${chance}%${battleBonuses.length > 0 ? ' (' + battleBonuses.join(', ') + ')' : ''}</span>
                     </div>
                 </div>
@@ -336,7 +336,7 @@
 
             const died = gymKilled || gymFainted;
             if (died) {
-                PT.Engine.GameState.addToLog(state, `Lost to ${leader.name}'s ${opponent.name}. ${pokemon.name} was killed! 💀`);
+                PT.Engine.GameState.addToLog(state, `Lost to ${leader.name}'s ${opponent.name}. ${pokemon.name} was killed!`);
             } else {
                 PT.Engine.GameState.addToLog(state, `Lost to ${leader.name}'s ${opponent.name}. ${pokemon.name} was badly hurt.`);
             }
@@ -349,17 +349,17 @@
                             <img src="${opponentSprite}" alt="${opponent.name}"
                                  style="width: 64px; height: 64px; image-rendering: pixelated;"
                                  onerror="this.style.display='none'">
-                            <div style="font-size: 8px; font-weight: bold;">${opponent.name}${isAce ? ' ⭐' : ''}</div>
+                            <div style="font-size: 8px; font-weight: bold;">${opponent.name}${isAce ? ' ★' : ''}</div>
                         </div>
                     </div>
                     <div class="gym-leader-name">${leader.name} wins</div>
                     <div class="gym-challenge-text">${leader.defeatText}</div>
                     <div style="font-size: 8px; margin-top: 8px;">
                         ${died
-                            ? `💀 ${pokemon.name} was killed by ${opponent.name}!`
+                            ? `${pokemon.name} was killed by ${opponent.name}!`
                             : `${pokemon.name} takes ${damage} damage from ${opponent.name}!`}
-                        ${focusBandSaved ? `<br>🎒 FOCUS BAND: ${pokemon.name} held on through what should've been a finishing blow!` : ''}
-                        ${isAce ? '<br><span style="font-size: 6px;">⚠️ Ace Pokemon ignore Battle Star protection!</span>' : ''}
+                        ${focusBandSaved ? `<br>FOCUS BAND: ${pokemon.name} held on through what should've been a finishing blow!` : ''}
+                        ${isAce ? '<br><span style="font-size: 6px;">Ace Pokemon ignore Battle Star protection!</span>' : ''}
                         <br><span style="font-size: 6px;">Win chance was ${chance}%${battleBonuses.length > 0 ? ' (' + battleBonuses.join(', ') + ')' : ''}</span>
                         ${died ? '' : '<br>You can try again next time you visit.'}
                     </div>
@@ -401,7 +401,7 @@
                         <img src="${PT.Engine.GameState.getSpriteUrl(mon.id, 'johto')}" alt="${mon.name}"
                              style="width: 40px; height: 40px; image-rendering: pixelated;"
                              onerror="this.style.display='none'">
-                        <div style="font-weight: bold;">${mon.name}${mon.ace ? ' ⭐' : ''}</div>
+                        <div style="font-weight: bold;">${mon.name}${mon.ace ? ' ★' : ''}</div>
                     </div>
                 `).join('')}
             </div>
@@ -446,7 +446,7 @@
                              onerror="this.style.display='none'">
                         <div class="gym-opponent-name" style="font-size: 9px; font-weight: bold;">${opponent.name}</div>
                         <div style="font-size: 6px;">${opponentTypes.join('/').toUpperCase()}</div>
-                        ${isAce ? '<div style="font-size: 7px; color: var(--gb-darkest);">⭐ ACE POKEMON</div>' : ''}
+                        ${isAce ? '<div style="font-size: 7px; color: var(--gb-darkest);">★ ACE POKEMON</div>' : ''}
                     </div>
                 </div>
                 <div class="gym-challenge-text">${leader.name} sends out ${opponent.name}!</div>
@@ -500,7 +500,7 @@
         if (hasAdvantage) chance += 20;
         if (hasDisadvantage) chance -= 20;
         const winRateBonus = PT.Engine.GameState.getWinRateBonus(state);
-        if (winRateBonus > 0) { chance += winRateBonus; battleBonuses.push(`💪 WIN RATE +${winRateBonus}%`); }
+        if (winRateBonus > 0) { chance += winRateBonus; battleBonuses.push(`WIN RATE +${winRateBonus}%`); }
         const aliveCount = PT.Engine.GameState.getAliveParty(state).length;
         chance += aliveCount * 2;
         if (pokemon.travelAbility === 'poison') {
@@ -509,15 +509,15 @@
             power += (pokemon.battleStars || 0) * 0.25;
             const poisonBonus = Math.floor(1 * power);
             chance += poisonBonus;
-            battleBonuses.push(`☠️ POISON +${poisonBonus}%`);
+            battleBonuses.push(`POISON +${poisonBonus}%`);
         }
         const intimidatePower = PT.Engine.GameState.getAbilityPower(state, 'intimidate');
         if (intimidatePower > 0) {
             const intimBonus = Math.floor(3 * intimidatePower);
             chance += intimBonus;
-            battleBonuses.push(`😤 INTIMIDATE +${intimBonus}%`);
+            battleBonuses.push(`INTIMIDATE +${intimBonus}%`);
         }
-        if (PT.Engine.GameState.hasAbility(state, 'psychic_dominance')) { chance += 50; battleBonuses.push(`🧠 PSYCHIC DOMINANCE +50%`); }
+        if (PT.Engine.GameState.hasAbility(state, 'psychic_dominance')) { chance += 50; battleBonuses.push(`PSYCHIC DOMINANCE +50%`); }
         const starBonus = PT.Engine.GameState.getStarBonus(pokemon);
         if (starBonus.winChanceBonus > 0) {
             chance += starBonus.winChanceBonus;
@@ -528,7 +528,7 @@
         if (gymScaling > 0) chance -= gymScaling;
         const preClampChance = chance;
         chance = Math.max(10, Math.min(80, chance));
-        if (preClampChance !== chance) battleBonuses.push(chance === 80 ? '⚠️ MAXED OUT' : '⚠️ FLOORED OUT');
+        if (preClampChance !== chance) battleBonuses.push(chance === 80 ? 'MAXED OUT' : 'FLOORED OUT');
 
         const won = state.rng.chance(chance);
         const isLastRound = round >= leader.pokemon.length - 1;
@@ -550,12 +550,12 @@
             const starResult = PT.Engine.GameState.addBattleWin(pokemon, state, evoResult.evolved);
             let starLine = '';
             if (starResult.earned) {
-                starLine = `<br>⭐ ${pokemon.name} earned a Battle Star! [${'★'.repeat(pokemon.battleStars)}] (${pokemon.battleStars}/3)`;
+                starLine = `<br>★ ${pokemon.name} earned a Battle Star! [${'★'.repeat(pokemon.battleStars)}] (${pokemon.battleStars}/3)`;
             }
             if (starResult.expShareBonus) {
                 starLine += starResult.expShareBonus.type === 'evolution'
-                    ? `<br>🎓 EXP. SHARE: ${starResult.expShareBonus.name} also evolved into ${starResult.expShareBonus.newName}!`
-                    : `<br>🎓 EXP. SHARE: ${starResult.expShareBonus.name} also earned a Battle Star!`;
+                    ? `<br>EXP. SHARE: ${starResult.expShareBonus.name} also evolved into ${starResult.expShareBonus.newName}!`
+                    : `<br>EXP. SHARE: ${starResult.expShareBonus.name} also earned a Battle Star!`;
             }
 
             let gymMoneyReward = 0;
@@ -590,7 +590,7 @@
                     <div class="gym-challenge-text">${leader.victoryText}</div>` : ''}
                     <div style="font-size: 8px; margin-top: 8px;">
                         ${pokemon.name} defeated ${leader.name}'s ${opponent.name}!
-                        ${isLastRound ? `<br>Earned: <span class="badge-earned">${leader.badge}</span> + $${gymMoneyReward}${gymMoneyReward > leader.reward.money ? ' 💰 BONUS!' : ''}` : `<br>${leader.pokemon.length - round - 1} Pokemon left.`}
+                        ${isLastRound ? `<br>Earned: <span class="badge-earned">${leader.badge}</span> + $${gymMoneyReward}${gymMoneyReward > leader.reward.money ? ' BONUS!' : ''}` : `<br>${leader.pokemon.length - round - 1} Pokemon left.`}
                         ${evoLine}${starLine}
                         <br><span style="font-size: 6px;">Win chance was ${chance}%${battleBonuses.length > 0 ? ' (' + battleBonuses.join(', ') + ')' : ''}</span>
                     </div>
@@ -658,7 +658,7 @@
 
         const died = gymKilled || gymFainted;
         if (died) {
-            PT.Engine.GameState.addToLog(state, `Lost to ${leader.name}'s ${opponent.name}. ${pokemon.name} was killed! 💀`);
+            PT.Engine.GameState.addToLog(state, `Lost to ${leader.name}'s ${opponent.name}. ${pokemon.name} was killed!`);
         } else {
             PT.Engine.GameState.addToLog(state, `Lost to ${leader.name}'s ${opponent.name}. ${pokemon.name} was badly hurt.`);
         }
@@ -674,17 +674,17 @@
                         <img src="${opponentSprite}" alt="${opponent.name}"
                              style="width: 64px; height: 64px; image-rendering: pixelated;"
                              onerror="this.style.display='none'">
-                        <div style="font-size: 8px; font-weight: bold;">${opponent.name}${isAce ? ' ⭐' : ''}</div>
+                        <div style="font-size: 8px; font-weight: bold;">${opponent.name}${isAce ? ' ★' : ''}</div>
                     </div>
                 </div>
                 <div class="gym-leader-name">${leader.name} wins</div>
                 <div class="gym-challenge-text">${leader.defeatText}</div>
                 <div style="font-size: 8px; margin-top: 8px;">
                     ${died
-                        ? `💀 ${pokemon.name} was killed by ${opponent.name}!`
+                        ? `${pokemon.name} was killed by ${opponent.name}!`
                         : `${pokemon.name} takes ${damage} damage from ${opponent.name}!`}
-                    ${focusBandSaved ? `<br>🎒 FOCUS BAND: ${pokemon.name} held on through what should've been a finishing blow!` : ''}
-                    ${isAce ? '<br><span style="font-size: 6px;">⚠️ Ace Pokemon ignore Battle Star protection!</span>' : ''}
+                    ${focusBandSaved ? `<br>FOCUS BAND: ${pokemon.name} held on through what should've been a finishing blow!` : ''}
+                    ${isAce ? '<br><span style="font-size: 6px;">Ace Pokemon ignore Battle Star protection!</span>' : ''}
                     <br><span style="font-size: 6px;">Win chance was ${chance}%${battleBonuses.length > 0 ? ' (' + battleBonuses.join(', ') + ')' : ''}</span>
                     ${partyWiped
                         ? '<br><strong>All your Pokemon have fallen...</strong>'

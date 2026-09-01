@@ -205,7 +205,7 @@
                     if (victim && state.rng.chance(result.hitChance || 40)) {
                         const fainted = PT.Engine.GameState.damagePokemon(victim, 1, state);
                         messageBox.textContent += fainted
-                            ? ` ${pokemon.name} killed ${victim.name}! 💀`
+                            ? ` ${pokemon.name} killed ${victim.name}!`
                             : ` ${pokemon.name} attacks ${victim.name}!`;
                     }
                 }
@@ -344,8 +344,8 @@
                 clearInterval(shakeInterval);
                 if (result.success) {
                     const addResult = PT.Engine.EncounterEngine.addPokemonToParty(state, pokemon);
-                    const intLabel = result.intimidateBonus ? ' 😤 INTIMIDATE +15%' : '';
-                    const maxedLabel = result.maxed ? ' ⚠️ CATCH RATE MAXED OUT' : '';
+                    const intLabel = result.intimidateBonus ? ' INTIMIDATE +15%' : '';
+                    const maxedLabel = result.maxed ? ' CATCH RATE MAXED OUT' : '';
                     PT.Engine.GameState.addToLog(state, `Caught ${pokemon.name}! (${result.catchChance}% chance)`);
                     if (A) A.catchSuccess();
                     if (sprite) sprite.classList.add('catch-sparkle');
@@ -370,8 +370,8 @@
                 } else {
                     if (A) A.catchFail();
                     if (sprite) sprite.classList.add('damage-flash');
-                    const intLabel = result.intimidateBonus ? ' 😤 INTIMIDATE +15%' : '';
-                    const maxedLabel = result.maxed ? ' ⚠️ CATCH RATE MAXED OUT' : '';
+                    const intLabel = result.intimidateBonus ? ' INTIMIDATE +15%' : '';
+                    const maxedLabel = result.maxed ? ' CATCH RATE MAXED OUT' : '';
                     msgEl.textContent = `${'shake... '.repeat(result.shakes)}Oh no! ${pokemon.name} broke free! (${result.catchChance}% chance)${intLabel}${maxedLabel}`;
 
                     // Update ball counts and re-enable actions
@@ -487,7 +487,7 @@
         const winRateBonus = PT.Engine.GameState.getWinRateBonus(state);
         if (winRateBonus > 0) {
             chance += winRateBonus;
-            battleBonuses.push(`💪 WIN RATE +${winRateBonus}%`);
+            battleBonuses.push(`WIN RATE +${winRateBonus}%`);
         }
 
         // Poison ability: only applies if the fighting Pokemon has poison
@@ -497,7 +497,7 @@
             power += (chosen.battleStars || 0) * 0.25;
             const poisonBonus = Math.floor(1 * power);
             chance += poisonBonus;
-            battleBonuses.push(`☠️ POISON +${poisonBonus}%`);
+            battleBonuses.push(`POISON +${poisonBonus}%`);
         }
 
         // Intimidate ability: scales with power
@@ -505,7 +505,7 @@
         if (intimidatePowerBattle > 0) {
             const intimBonus = Math.floor(3 * intimidatePowerBattle);
             chance += intimBonus;
-            battleBonuses.push(`😤 INTIMIDATE +${intimBonus}%`);
+            battleBonuses.push(`INTIMIDATE +${intimBonus}%`);
         }
 
         // Battle Stars bonus
@@ -518,7 +518,7 @@
         // Clamp
         const preClampChance = chance;
         chance = Math.max(15, Math.min(85, chance));
-        if (preClampChance !== chance) battleBonuses.push(chance === 85 ? '⚠️ MAXED OUT' : '⚠️ FLOORED OUT');
+        if (preClampChance !== chance) battleBonuses.push(chance === 85 ? 'MAXED OUT' : 'FLOORED OUT');
 
         const won = state.rng.chance(chance);
         const wildHp = PT.Engine.GameState.getMaxHpForPokemon(pokemon);
@@ -541,12 +541,12 @@
             const starResult = PT.Engine.GameState.addBattleWin(chosen, state, evoResult.evolved);
             let starLine = '';
             if (starResult.earned) {
-                starLine = `<br>⭐ ${chosen.name} earned a Battle Star! [${'★'.repeat(chosen.battleStars)}] (${chosen.battleStars}/3)`;
+                starLine = `<br>★ ${chosen.name} earned a Battle Star! [${'★'.repeat(chosen.battleStars)}] (${chosen.battleStars}/3)`;
             }
             if (starResult.expShareBonus) {
                 starLine += starResult.expShareBonus.type === 'evolution'
-                    ? `<br>🎓 EXP. SHARE: ${starResult.expShareBonus.name} also evolved into ${starResult.expShareBonus.newName}!`
-                    : `<br>🎓 EXP. SHARE: ${starResult.expShareBonus.name} also earned a Battle Star!`;
+                    ? `<br>EXP. SHARE: ${starResult.expShareBonus.name} also evolved into ${starResult.expShareBonus.newName}!`
+                    : `<br>EXP. SHARE: ${starResult.expShareBonus.name} also earned a Battle Star!`;
             }
 
             // Reward: small money bounty
@@ -557,7 +557,7 @@
             msgEl.innerHTML = `
                 <div style="text-align: center;">
                     <strong>${chosen.name} defeated wild ${pokemon.name}!</strong>
-                    <br>Won $${moneyReward}!${moneyReward > baseMoneyReward ? ' 💰 BONUS!' : ''}${evoLine}${starLine}
+                    <br>Won $${moneyReward}!${moneyReward > baseMoneyReward ? ' BONUS!' : ''}${evoLine}${starLine}
                     <br><span style="font-size: 6px;">Win chance was ${chance}%${battleBonuses.length > 0 ? ' (' + battleBonuses.join(', ') + ')' : ''}</span>
                 </div>
             `;
@@ -580,7 +580,7 @@
             const died = fainted || chosen.hp <= 0;
 
             if (died) {
-                PT.Engine.GameState.addToLog(state, `${chosen.name} was killed by wild ${pokemon.name}! 💀`);
+                PT.Engine.GameState.addToLog(state, `${chosen.name} was killed by wild ${pokemon.name}!`);
             } else {
                 PT.Engine.GameState.addToLog(state, `${chosen.name} took ${lossDamage} damage from wild ${pokemon.name}.`);
             }
@@ -589,8 +589,8 @@
                 <div style="text-align: center;">
                     <strong>${chosen.name} lost to wild ${pokemon.name}!</strong>
                     <br>${died
-                        ? `💀 ${chosen.name} was killed!`
-                        : `💥 ${chosen.name} took ${lossDamage} damage! (${chosen.hp}/${chosen.maxHp} HP)`}
+                        ? `${chosen.name} was killed!`
+                        : `${chosen.name} took ${lossDamage} damage! (${chosen.hp}/${chosen.maxHp} HP)`}
                     <br><span style="font-size: 6px;">Win chance was ${chance}%${battleBonuses.length > 0 ? ' (' + battleBonuses.join(', ') + ')' : ''} | Wild ${pokemon.name} HP: ${wildHp}</span>
                 </div>
             `;

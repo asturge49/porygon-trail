@@ -153,7 +153,7 @@
                              onerror="this.style.display='none'">
                         <div class="gym-opponent-name" style="font-size: 9px; font-weight: bold;">${opponent.name}</div>
                         <div style="font-size: 6px;">${opponentTypes.join('/').toUpperCase()}</div>
-                        <div style="font-size: 7px; color: var(--gb-darkest);">⭐ ELITE POKEMON</div>
+                        <div style="font-size: 7px; color: var(--gb-darkest);">★ ELITE POKEMON</div>
                     </div>
                 </div>
                 <div class="gym-challenge-text" style="font-size: 7px;">${trainer.introText}</div>
@@ -161,7 +161,7 @@
             <div class="text-box" style="font-size: 7px;">
                 ${trainer.name} sends out ${opponent.name}! (${opponentTypes.join('/')}-type)
                 <br>Weak to: ${typeChart.weakTo.join(', ') || 'none'} | Resists: ${typeChart.strongTo.join(', ') || 'none'}
-                <br><span style="font-size: 6px;">⚠️ Battle Stars do NOT protect against E4 kills!</span>
+                <br><span style="font-size: 6px;">Battle Stars do NOT protect against E4 kills!</span>
             </div>
             <div class="event-choices" id="e4-choices">
                 ${alive.map((p, i) => {
@@ -207,7 +207,7 @@
         // Progressive difficulty — each fight is harder than the last
         const progressionPenalty = e4Index * 3; // 0%, -3%, -6%, -9%, -12%
         chance -= progressionPenalty;
-        if (progressionPenalty > 0) battleBonuses.push(`📈 Round ${e4Index + 1} penalty -${progressionPenalty}%`);
+        if (progressionPenalty > 0) battleBonuses.push(`Round ${e4Index + 1} penalty -${progressionPenalty}%`);
 
         // Type advantage (smaller bonus than gyms)
         const hasAdvantage = pokemon.types.some(t => typeChart.weakTo.includes(t));
@@ -225,7 +225,7 @@
             power += (pokemon.battleStars || 0) * 0.25;
             const poisonBonus = Math.max(1, Math.floor(0.5 * power));
             chance += poisonBonus;
-            battleBonuses.push(`☠️ POISON +${poisonBonus}%`);
+            battleBonuses.push(`POISON +${poisonBonus}%`);
         }
 
         // Intimidate ability: scales with power (halved in E4)
@@ -233,13 +233,13 @@
         if (intimidatePower > 0) {
             const intimBonus = Math.max(1, Math.floor(1.5 * intimidatePower));
             chance += intimBonus;
-            battleBonuses.push(`😤 INTIMIDATE +${intimBonus}%`);
+            battleBonuses.push(`INTIMIDATE +${intimBonus}%`);
         }
 
         // Psychic Dominance (Mewtwo) — reduced in E4 (from +50% to +25%)
         if (PT.Engine.GameState.hasAbility(state, 'psychic_dominance')) {
             chance += 25;
-            battleBonuses.push(`🧠 PSYCHIC DOMINANCE +25%`);
+            battleBonuses.push(`PSYCHIC DOMINANCE +25%`);
         }
 
         // Battle Stars bonus (halved in E4: +1.5% per star instead of +3%)
@@ -281,12 +281,12 @@
             const starResult = PT.Engine.GameState.addBattleWin(pokemon, state, evoResult.evolved);
             let starLine = '';
             if (starResult.earned) {
-                starLine = `<br>⭐ ${pokemon.name} earned a Battle Star! [${'★'.repeat(pokemon.battleStars)}] (${pokemon.battleStars}/3)`;
+                starLine = `<br>★ ${pokemon.name} earned a Battle Star! [${'★'.repeat(pokemon.battleStars)}] (${pokemon.battleStars}/3)`;
             }
             if (starResult.expShareBonus) {
                 starLine += starResult.expShareBonus.type === 'evolution'
-                    ? `<br>🎓 EXP. SHARE: ${starResult.expShareBonus.name} also evolved into ${starResult.expShareBonus.newName}!`
-                    : `<br>🎓 EXP. SHARE: ${starResult.expShareBonus.name} also earned a Battle Star!`;
+                    ? `<br>EXP. SHARE: ${starResult.expShareBonus.name} also evolved into ${starResult.expShareBonus.newName}!`
+                    : `<br>EXP. SHARE: ${starResult.expShareBonus.name} also earned a Battle Star!`;
             }
 
             const isLastBattle = e4Index >= pool.length - 1;
@@ -435,7 +435,7 @@
             }
 
             const dmgMsg = killed
-                ? `${pokemon.name} was killed by ${trainer.name}'s ${opponent.name}! 💀`
+                ? `${pokemon.name} was killed by ${trainer.name}'s ${opponent.name}!`
                 : `${pokemon.name} took ${E4_LOSS_DAMAGE} damage from ${trainer.name}'s ${opponent.name}! (${pokemon.hp}/${pokemon.maxHp} HP)`;
             PT.Engine.GameState.addToLog(state, dmgMsg);
 
@@ -443,8 +443,8 @@
             const partyWiped = aliveAfter.length === 0;
 
             const statusMsg = killed
-                ? `💀 ${pokemon.name} was killed by ${opponent.name}!`
-                : `💥 ${pokemon.name} took ${E4_LOSS_DAMAGE} damage! (${pokemon.hp}/${pokemon.maxHp} HP remaining)`;
+                ? `${pokemon.name} was killed by ${opponent.name}!`
+                : `${pokemon.name} took ${E4_LOSS_DAMAGE} damage! (${pokemon.hp}/${pokemon.maxHp} HP remaining)`;
 
             div.innerHTML = `
                 <div class="event-title">DEFEAT...</div>
@@ -454,14 +454,14 @@
                             <img src="${opponentSprite}" alt="${opponent.name}"
                                  style="width: 64px; height: 64px; image-rendering: pixelated;"
                                  onerror="this.style.display='none'">
-                            <div style="font-size: 8px; font-weight: bold;">${opponent.name} ⭐</div>
+                            <div style="font-size: 8px; font-weight: bold;">${opponent.name} ★</div>
                         </div>
                     </div>
                     <div class="gym-leader-name">${trainer.name} wins</div>
                     <div style="font-size: 8px; margin-top: 8px;">
                         ${statusMsg}
                         <br><span style="font-size: 6px;">Win chance was ${chance}%${battleBonuses.length > 0 ? ' (' + battleBonuses.join(', ') + ')' : ''}</span>
-                        <br><span style="font-size: 6px;">⚠️ Elite Four ignores Battle Star protection!</span>
+                        <br><span style="font-size: 6px;">Elite Four ignores Battle Star protection!</span>
                         ${partyWiped
                             ? '<br><strong>All your Pokemon have fallen...</strong>'
                             : `<br>You must defeat ${trainer.name}'s ${opponent.name} to advance.`}

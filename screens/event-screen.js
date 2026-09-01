@@ -210,7 +210,7 @@
             const evoResult = PT.Engine.GameState.evolvePokemon(chosen, state);
             let evoLine = '';
             if (evoResult.evolved) {
-                evoLine = `<br>⬆ ${evoResult.oldName} evolved into ${evoResult.newName}!`;
+                evoLine = `<br>${evoResult.oldName} evolved into ${evoResult.newName}!`;
                 PT.Engine.GameState.addToLog(state, `${evoResult.oldName} evolved into ${evoResult.newName}!`);
             }
 
@@ -218,12 +218,12 @@
             const starResult = PT.Engine.GameState.addBattleWin(chosen, state, evoResult.evolved);
             let starLine = '';
             if (starResult.earned) {
-                starLine = `<br>⭐ ${chosen.name} earned a Battle Star! [${'★'.repeat(chosen.battleStars)}] (${chosen.battleStars}/3)`;
+                starLine = `<br>★ ${chosen.name} earned a Battle Star! [${'★'.repeat(chosen.battleStars)}] (${chosen.battleStars}/3)`;
             }
             if (starResult.expShareBonus) {
                 starLine += starResult.expShareBonus.type === 'evolution'
-                    ? `<br>🎓 EXP. SHARE: ${starResult.expShareBonus.name} also evolved into ${starResult.expShareBonus.newName}!`
-                    : `<br>🎓 EXP. SHARE: ${starResult.expShareBonus.name} also earned a Battle Star!`;
+                    ? `<br>EXP. SHARE: ${starResult.expShareBonus.name} also evolved into ${starResult.expShareBonus.newName}!`
+                    : `<br>EXP. SHARE: ${starResult.expShareBonus.name} also earned a Battle Star!`;
             }
 
             const winNarration = battle.winNarration || `${chosen.name} won the battle!`;
@@ -249,7 +249,7 @@
             PT.Engine.EventEngine.applyEffects(lossEffects, state);
 
             if (died) {
-                PT.Engine.GameState.addToLog(state, `${chosen.name} was killed by ${opponent.name}! 💀`);
+                PT.Engine.GameState.addToLog(state, `${chosen.name} was killed by ${opponent.name}!`);
             } else {
                 PT.Engine.GameState.addToLog(state, `${chosen.name} lost to ${opponent.name}, took ${result.lossDamage} damage.`);
             }
@@ -259,8 +259,8 @@
                 <div style="text-align: center;">
                     <strong>${lossNarration}</strong>
                     <br>${died
-                        ? `💀 ${chosen.name} was killed!`
-                        : `💥 ${chosen.name} took ${result.lossDamage} damage! (${chosen.hp}/${chosen.maxHp} HP)`}
+                        ? `${chosen.name} was killed!`
+                        : `${chosen.name} took ${result.lossDamage} damage! (${chosen.hp}/${chosen.maxHp} HP)`}
                     <br><span style="font-size: 6px;">Win chance: ${result.chance}%${result.battleBonuses.length > 0 ? ' (' + result.battleBonuses.join(', ') + ')' : ''}</span>
                 </div>
             ` + buildEffectsSummary(lossEffects);
@@ -300,7 +300,7 @@
                 else partyDamageTally.push({ name: r.name, hits: 1, fainted: r.fainted });
             });
             partyDamageTally.filter(t => !t.fainted).forEach(t => {
-                lines.push(`💥 ${t.name} was hit${t.hits > 1 ? ` (${t.hits}x)` : ''}!`);
+                lines.push(`${t.name} was hit${t.hits > 1 ? ` (${t.hits}x)` : ''}!`);
             });
         } else if (effects.partyDamage) {
             lines.push(`Party takes ${effects.partyDamage} damage!`);
@@ -332,39 +332,39 @@
             }
         }
         if (effects.trainPokemon && effects._trainResult && effects._trainResult.evolved) {
-            lines.push(`⬆ ${effects._trainResult.oldName} evolved into ${effects._trainResult.newName}!`);
+            lines.push(`${effects._trainResult.oldName} evolved into ${effects._trainResult.newName}!`);
         }
         if (effects.boostPokemonMaxHp && effects._boostResult) {
-            lines.push(`💪 ${effects._boostResult.name} max HP: ${effects._boostResult.oldMax} → ${effects._boostResult.newMax}!`);
+            lines.push(`${effects._boostResult.name} max HP: ${effects._boostResult.oldMax} → ${effects._boostResult.newMax}!`);
         }
         if (effects.reducePokemonMaxHp && effects._reduceResult) {
-            lines.push(`⬇ ${effects._reduceResult.name} max HP: ${effects._reduceResult.oldMax} → ${effects._reduceResult.newMax}!`);
+            lines.push(`${effects._reduceResult.name} max HP: ${effects._reduceResult.oldMax} → ${effects._reduceResult.newMax}!`);
         }
         if (effects._hatchedName) {
             const hatchPending = effects._pendingCatch && effects._pendingCatch.find(d => d.id === effects._hatchedId);
             if (hatchPending) {
-                lines.push(`🥚 The egg hatched into ${effects._hatchedName}! (Party full — swap?)`);
+                lines.push(`The egg hatched into ${effects._hatchedName}! (Party full — swap?)`);
             } else {
-                lines.push(`🥚 The egg hatched into ${effects._hatchedName}!`);
+                lines.push(`The egg hatched into ${effects._hatchedName}!`);
             }
         }
         if (effects.grantStar && effects._starResult) {
-            lines.push(`⭐ ${effects._starResult.name} earned a Battle Star! [${'★'.repeat(effects._starResult.stars)}] (${effects._starResult.stars}/3)`);
+            lines.push(`★ ${effects._starResult.name} earned a Battle Star! [${'★'.repeat(effects._starResult.stars)}] (${effects._starResult.stars}/3)`);
         }
         if (effects.champion) lines.push('YOU BECAME CHAMPION!');
         // Death lines — collected separately for emphasis
         const deathLines = [];
         if (effects.pokemonDeath && effects._deathResult && effects._deathResult.killed) {
-            deathLines.push(`💀 ${effects._deathResult.name} was lost forever!`);
+            deathLines.push(`${effects._deathResult.name} was lost forever!`);
         }
         if (effects.pokemonDeath2 && effects._deathResult2 && effects._deathResult2.killed) {
-            deathLines.push(`💀 ${effects._deathResult2.name} was lost forever!`);
+            deathLines.push(`${effects._deathResult2.name} was lost forever!`);
         }
         if (effects.pokemonDeath3 && effects._deathResult3 && effects._deathResult3.killed) {
-            deathLines.push(`💀 ${effects._deathResult3.name} was lost forever!`);
+            deathLines.push(`${effects._deathResult3.name} was lost forever!`);
         }
         partyDamageTally.filter(t => t.fainted).forEach(t => {
-            deathLines.push(`💀 ${t.name} was hit and fainted!`);
+            deathLines.push(`${t.name} was hit and fainted!`);
         });
 
         if (lines.length === 0 && deathLines.length === 0) return '';

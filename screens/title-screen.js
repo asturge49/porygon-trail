@@ -82,7 +82,7 @@
                     <button class="btn btn-wide btn-small" id="btn-sound">SOUND: ${PT.Engine.Audio && PT.Engine.Audio.isEnabled() ? 'ON' : 'OFF'}</button>
                     <button class="btn btn-wide btn-small" id="btn-discord">JOIN DISCORD</button>
                     ${showDebugHarness ? `
-                    <button class="btn btn-wide btn-small" id="btn-johto-debug">🧪 JUMP TO JOHTO (DEBUG)</button>
+                    <button class="btn btn-wide btn-small" id="btn-johto-debug">JUMP TO JOHTO (DEBUG)</button>
                     ` : ''}
                 </div>
                 <div class="blink text-sm" style="margin-top: 8px;">PRESS START</div>

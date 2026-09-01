@@ -2397,6 +2397,16 @@ body {
     opacity: 0.8;
 }
 
+/* Guide screen only — the shared --gb-dark green is low-contrast for the
+   description-heavy Abilities/Scoring/Items reference text specifically,
+   so this scopes to black without touching Records or anything else that
+   also uses .record-label/.record-sub. */
+.guide-screen .record-label,
+.guide-screen .record-sub {
+    color: #000;
+    opacity: 1;
+}
+
 /* ============================================
    UTILITY CLASSES
    ============================================ */

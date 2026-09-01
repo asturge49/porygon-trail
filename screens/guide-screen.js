@@ -14,28 +14,28 @@
     // and engine/game-state.js's getAbilityPower/hasAbility, not guessed.
     // Ordered roughly common -> rare (legendary-exclusive abilities last).
     const ABILITIES = [
-        { icon: '🌊', name: 'Surf', desc: 'Covers extra ground on water routes.' },
-        { icon: '💪', name: 'Strength', desc: 'Lowers the injury risk of a grueling Push pace.' },
-        { icon: '🔮', name: 'Psychic', desc: 'A chance to sense two paths ahead, letting you choose between two wild encounters or events.' },
-        { icon: '🦅', name: 'Fly', desc: 'Covers extra ground every day.' },
-        { icon: '⚡', name: 'Flash', desc: 'A chance to find hidden money, a Potion, or Poke Balls on the trail.' },
-        { icon: '✂️', name: 'Cut', desc: 'A chance to forage extra food along the way.' },
-        { icon: '☠️', name: 'Poison', desc: 'Improves your odds in battle-style events and gym fights.' },
-        { icon: '🛡️', name: 'Guard', desc: 'A chance to block a Push-pace injury entirely.' },
-        { icon: '🔥', name: 'Fire', desc: "Reduces how much food your party eats each day." },
-        { icon: '💗', name: 'Heal', desc: 'A passive chance to nurse an injured teammate back to health.' },
-        { icon: '🕳️', name: 'Dig', desc: 'Guarantees a successful escape from a wild Pokemon.' },
-        { icon: '😤', name: 'Intimidate', desc: 'Boosts both your catch rate and your battle odds.' },
-        { icon: '✨', name: 'Miracle', pokemon: 'Mew', desc: 'Every day, a random bonus — a full heal, free food, money, items, bonus distance, or a Battle Star.' },
-        { icon: '🔥', name: 'Sacred Flame', pokemon: 'Moltres', desc: 'Your party eats no food at all.' },
-        { icon: '🔁', name: 'Mimic', pokemon: 'Ditto', desc: "Copies whichever ability your strongest teammate already has active, adding its own power on top." },
-        { icon: '⚡', name: 'Thunderclap', pokemon: 'Zapdos', desc: 'Doubles how far you travel every day.' },
-        { icon: '💾', name: 'System Restore', pokemon: 'Porygon', desc: 'Revives a fainted Pokemon from the brink — once per run.' },
-        { icon: '🩹', name: 'Safeguard', pokemon: 'Chansey', desc: 'Saves a Pokemon from fainting — once per Pokemon, for the whole run.' },
-        { icon: '🧠', name: 'Psychic Dominance', pokemon: 'Mewtwo', desc: 'A massive +50% win chance in every battle.' },
-        { icon: '💰', name: 'Pay Day', desc: 'Boosts every money reward you earn.' },
-        { icon: '👾', name: 'Glitch', pokemon: 'MissingNo.', desc: 'Unpredictable — duplicates items, conjures money, heals, or deals stray damage.' },
-        { icon: '❄️', name: 'Aurora Veil', pokemon: 'Articuno', desc: 'Softens every hit your party takes by 1 damage.' }
+        { name: 'Surf', desc: 'Covers extra ground on water routes.' },
+        { name: 'Strength', desc: 'Lowers the injury risk of a grueling Push pace.' },
+        { name: 'Psychic', desc: 'A chance to sense two paths ahead, letting you choose between two wild encounters or events.' },
+        { name: 'Fly', desc: 'Covers extra ground every day.' },
+        { name: 'Flash', desc: 'A chance to find hidden money, a Potion, or Poke Balls on the trail.' },
+        { name: 'Cut', desc: 'A chance to forage extra food along the way.' },
+        { name: 'Poison', desc: 'Improves your odds in battle-style events and gym fights.' },
+        { name: 'Guard', desc: 'A chance to block a Push-pace injury entirely.' },
+        { name: 'Fire', desc: "Reduces how much food your party eats each day." },
+        { name: 'Heal', desc: 'A passive chance to nurse an injured teammate back to health.' },
+        { name: 'Dig', desc: 'Guarantees a successful escape from a wild Pokemon.' },
+        { name: 'Intimidate', desc: 'Boosts both your catch rate and your battle odds.' },
+        { name: 'Miracle', pokemon: 'Mew', desc: 'Every day, a random bonus — a full heal, free food, money, items, bonus distance, or a Battle Star.' },
+        { name: 'Sacred Flame', pokemon: 'Moltres', desc: 'Your party eats no food at all.' },
+        { name: 'Mimic', pokemon: 'Ditto', desc: "Copies whichever ability your strongest teammate already has active, adding its own power on top." },
+        { name: 'Thunderclap', pokemon: 'Zapdos', desc: 'Doubles how far you travel every day.' },
+        { name: 'System Restore', pokemon: 'Porygon', desc: 'Revives a fainted Pokemon from the brink — once per run.' },
+        { name: 'Safeguard', pokemon: 'Chansey', desc: 'Saves a Pokemon from fainting — once per Pokemon, for the whole run.' },
+        { name: 'Psychic Dominance', pokemon: 'Mewtwo', desc: 'A massive +50% win chance in every battle.' },
+        { name: 'Pay Day', desc: 'Boosts every money reward you earn.' },
+        { name: 'Glitch', pokemon: 'MissingNo.', desc: 'Unpredictable — duplicates items, conjures money, heals, or deals stray damage.' },
+        { name: 'Aurora Veil', pokemon: 'Articuno', desc: 'Softens every hit your party takes by 1 damage.' }
     ];
 
     const ABILITY_NOTE = "An ability's strength grows with its Pokemon's evolution stage and Battle Stars, and starter-line Pokemon carry double weight. Teammates who share an ability stack their power together.";
@@ -92,11 +92,11 @@
 
     function renderAbilities() {
         return `
-            <div style="font-size: 6px; color: var(--gb-dark); padding: 6px; text-align: center;">${ABILITY_NOTE}</div>
+            <div style="font-size: 6px; color: #000; padding: 6px; text-align: center;">${ABILITY_NOTE}</div>
             <div class="records-list">
                 ${ABILITIES.map(a => `
                     <div class="record-row">
-                        <div class="record-label">${a.icon} ${a.name.toUpperCase()}${a.pokemon ? ` — ${a.pokemon}` : ''}</div>
+                        <div class="record-label">${a.name.toUpperCase()}${a.pokemon ? ` — ${a.pokemon}` : ''}</div>
                         <div class="record-sub" style="margin-top: 3px;">${a.desc}</div>
                     </div>
                 `).join('')}
@@ -147,7 +147,7 @@
             <div class="record-row" style="background: var(--gb-dark); padding: 4px 6px; margin-top: 6px;">
                 <div class="record-label" style="color: var(--gb-white);">Gym Reward Items</div>
             </div>
-            <div style="font-size: 6px; color: var(--gb-dark); padding: 6px; text-align: center;">Every gym win offers a choice of 3 of these. Picking the same one again stacks its bonus.</div>
+            <div style="font-size: 6px; color: #000; padding: 6px; text-align: center;">Every gym win offers a choice of 3 of these. Picking the same one again stacks its bonus.</div>
             <div class="records-list">
                 ${keyItems.map(item => `
                     <div class="record-row">

@@ -64,7 +64,7 @@
                 </div>
 
                 <div class="text-box" style="font-size: 6px; margin-top: 6px;">
-                    Win/catch bonuses are clamped in battle — you'll see ⚠️ MAXED OUT there once you can't push them any higher.
+                    Win/catch bonuses are clamped in battle — you'll see MAXED OUT there once you can't push them any higher.
                 </div>
 
                 <button class="btn btn-wide" id="btn-stats-back" style="margin-top: 8px;">BACK</button>

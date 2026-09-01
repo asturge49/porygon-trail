@@ -42,7 +42,7 @@
                 <div class="reward-card-body">
                     <div class="reward-card-name">${info.name} Boost${stacks > 0 ? ` <span class="reward-card-owned">(x${stacks})</span>` : ''}</div>
                     <div class="reward-card-desc">${info.desc}</div>
-                    <div class="reward-card-buff">${active ? '✓ active in your party' : '⚠ dormant — no Pokemon with this ability yet'}</div>
+                    <div class="reward-card-buff">${active ? '✓ active in your party' : 'dormant — no Pokemon with this ability yet'}</div>
                 </div>
             </button>`;
     }
@@ -54,7 +54,7 @@
                 <img src="${pokemon.spriteUrl}" alt="${pokemon.name}" class="reward-card-icon" onerror="this.style.display='none'">
                 <div class="reward-card-body">
                     <div class="reward-card-name">${pokemon.name}${pokemon.hpBonus > 0 ? ` <span class="reward-card-owned">(+${pokemon.hpBonus} HP Up)</span>` : ''}</div>
-                    <div class="reward-card-buff">${canBoost ? `HP ${pokemon.hp}/${pokemon.maxHp} → ${pokemon.hp + 1}/${pokemon.maxHp + 1}` : `⚠ MAXED OUT (+${pokemon.hpBonus} is the cap)`}</div>
+                    <div class="reward-card-buff">${canBoost ? `HP ${pokemon.hp}/${pokemon.maxHp} → ${pokemon.hp + 1}/${pokemon.maxHp + 1}` : `MAXED OUT (+${pokemon.hpBonus} is the cap)`}</div>
                 </div>
             </button>`;
     }
