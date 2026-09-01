@@ -4974,6 +4974,7 @@
             weight: 3,
             oneTime: true,
             minDay: 10,
+            conflictsWith: ["ss_anne_truck"],
             choices: [
                 {
                     text: "Throw your best ball!",
@@ -5017,6 +5018,34 @@
                     outcomes: [
                         { weight: 70, narration: "\"Your loss, kid! This is a PREMIUM fish!\" He shuffles off to find his next victim. Your wallet thanks you.", effects: {} },
                         { weight: 30, narration: "\"Fine! How about a discount — $200! No? Okay here, just take this junk.\" He throws some Poke Balls at you and storms off.", effects: { pokeballs: 3 } }
+                    ]
+                }
+            ]
+        },
+
+        // #7.5 - The Truck by the S.S. Anne (Vermilion City) — a nod to the
+        // Gen I urban legend: a Mew rumored to be hiding under a truck near
+        // the S.S. Anne, only reachable with glitches/tricks the game never
+        // officially supported. Here it's real, but absurdly rare — the
+        // EVENT itself isn't rare (weight matches magikarp_salesman above,
+        // so most Vermilion visits have a normal shot at hearing the rumor
+        // and checking), but the truck actually having Mew under it is a
+        // 1-in-1000 roll. Most peeks find nothing.
+        {
+            id: "ss_anne_truck",
+            type: "legendary",
+            name: "The Truck by the S.S. Anne",
+            description: "Down by the dock, a beat-up delivery truck sits parked outside the S.S. Anne. A sailor leans against a railing nearby, chewing on a toothpick. \"Heh, you hear the rumor? Some kid swears there's a Mew hidin' under that thing. Been there for years, nobody's ever moved it.\" You crouch down and peer into the shadow underneath.",
+            weight: 7,
+            oneTime: true,
+            locationIds: ["vermilion_city"],
+            conflictsWith: ["mew_apparition"],
+            choices: [
+                {
+                    text: "Peek under the truck",
+                    outcomes: [
+                        { weight: 1, narration: "Two tiny eyes blink back at you from the darkness. It can't be. It IS. MEW, curled up beneath the truck like it's been waiting the whole time. It floats out, tilts its head at you once, and doesn't resist at all. The sailor's jaw drops. \"...No way.\"", effects: { catchPokemon: 151 } },
+                        { weight: 999, narration: "Nothing but a flattened soda can, a wad of gum, and a lot of dust. You back out, dust on your knees, and the sailor just shrugs. \"Yeah, that's usually what happens.\"", effects: {} }
                     ]
                 }
             ]
