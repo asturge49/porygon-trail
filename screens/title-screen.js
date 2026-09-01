@@ -71,6 +71,7 @@
                     </div>
                     <button class="btn btn-wide" id="btn-new-game">NEW GAME</button>
                     <button class="btn btn-wide" id="btn-pokedex">POKÉDEX</button>
+                    <button class="btn btn-wide" id="btn-guide">GUIDE</button>
                     <button class="btn btn-wide" id="btn-leaderboard">LEADERBOARD</button>
                     <button class="btn btn-wide" id="btn-records">RECORDS</button>
                     ${isLoggedIn ? `
@@ -143,6 +144,9 @@
 
             document.getElementById('btn-pokedex').addEventListener('click', () => {
                 PT.App.goto('POKEDEX');
+            });
+            document.getElementById('btn-guide').addEventListener('click', () => {
+                PT.App.goto('GUIDE');
             });
             document.getElementById('btn-leaderboard').addEventListener('click', () => {
                 PT.App.goto('LEADERBOARD');
