@@ -7,7 +7,17 @@
         const route = PT.Engine.GameState.getCurrentRoute(state);
         if (!route || !route.encounterTable || route.encounterTable.length === 0) return null;
 
-        const entry = state.rng.weightedChoice(route.encounterTable);
+        // Red Gyarados (Lake of Rage's shiny-flagged entry) is a one-of-a-kind
+        // catch per run — once caught, drop it from the table so the regular
+        // Gyarados (and everything else) still shows up, just never the shiny
+        // again. Other routes' tables have no shiny entries, so this is a
+        // no-op filter for them.
+        const table = state.redGyaradosCaught
+            ? route.encounterTable.filter(e => !e.shiny)
+            : route.encounterTable;
+        if (table.length === 0) return null;
+
+        const entry = state.rng.weightedChoice(table);
         if (!entry) return null;
 
         const pokemonData = PT.Data.Pokemon.find(p => p.id === entry.pokemonId);
@@ -158,6 +168,13 @@
         }
         if (!state.pokedexSeen.includes(pokemon.id)) {
             state.pokedexSeen.push(pokemon.id);
+        }
+
+        // Red Gyarados is a one-of-a-kind catch — mark it consumed regardless
+        // of whether the party had room (matches pokedexCaught above, which
+        // also updates unconditionally before the party-space check below).
+        if (pokemon.shiny) {
+            state.redGyaradosCaught = true;
         }
 
         // Add to party if space

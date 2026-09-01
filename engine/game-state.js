@@ -161,6 +161,11 @@
             pokemonLost: 0,
             graveyard: [],
             ballsWasted: 0,
+            // Lake of Rage's Red Gyarados (shiny-flagged encounter-table entry)
+            // — a one-of-a-kind catch per run. Set in
+            // engine/encounter-engine.js's addPokemonToParty; checked in
+            // rollEncounter to drop the shiny entry from the table once true.
+            redGyaradosCaught: false,
 
             // Log
             log: [],

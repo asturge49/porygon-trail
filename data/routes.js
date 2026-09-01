@@ -1348,7 +1348,7 @@
                 { pokemonId: 186, weight: 6 },  // Politoed
                 { pokemonId: 98, weight: 4 },   // Krabby
                 { pokemonId: 99, weight: 12 },  // Kingler
-                { pokemonId: 130, weight: 8, shiny: true, hpOverride: 6 } // Gyarados - Shiny Gyarados (flagged, §10.4) — quadrupled from weight 2 (2.3% -> 8.5% of table) per user request, a Lake of Rage staple
+                { pokemonId: 130, weight: 4, shiny: true, hpOverride: 6 } // Gyarados - Red Gyarados (flagged, §10.4) — halved back down from weight 8 (8.5% -> ~4.4% of table) after real-run reports of it showing up too often; now also a one-time catch per run (see redGyaradosCaught in engine/game-state.js / engine/encounter-engine.js), so the drop only ever matters until it's actually caught once
             ],
             eventPool: ["lake_of_rage_red_gyarados_rumor", "lake_of_rage_general", "lake_of_rage_team_rocket_scheme", "lake_of_rage_magikarp_salesman"],
             flavor: "Fog clings to the water's surface. Fishermen speak in hushed tones of a red Gyarados."
