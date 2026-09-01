@@ -10,10 +10,43 @@
     function getRecords() {
         try {
             const data = localStorage.getItem(RECORDS_KEY);
-            return data ? Object.assign(getDefaultRecords(), JSON.parse(data)) : getDefaultRecords();
+            const records = data ? Object.assign(getDefaultRecords(), JSON.parse(data)) : getDefaultRecords();
+            return reconcileLegacyWinCounts(records);
         } catch (e) {
             return getDefaultRecords();
         }
+    }
+
+    // totalWins predates this session's Johto/Red split: before Johto
+    // existed, beating Kanto's E4 WAS the entire game and incremented
+    // totalWins directly. Once Johto+Red shipped, totalWins narrowed to mean
+    // "beat Red" specifically, but whatever had already accumulated in it
+    // was never migrated — so old pre-Johto wins still sit there, now
+    // mislabeled "Red Wins."
+    //
+    // Game mechanics give us a real invariant to self-heal with: totalWins
+    // (Red) can never legitimately exceed totalJohtoE4Wins, since beating
+    // Red requires clearing Johto's E4 in that same run. Any excess is
+    // provably pre-Johto legacy data — fold it into totalKantoE4Wins (every
+    // one of those old wins was, at minimum, a Kanto E4 clear) and clamp
+    // totalWins down to what's actually verifiable. Idempotent, so it's
+    // safe to run on every read rather than needing a one-time migration
+    // flag — once corrected, wins <= johto holds and further calls are
+    // no-ops.
+    function reconcileLegacyWinCounts(records) {
+        const johto = records.totalJohtoE4Wins || 0;
+        const wins = records.totalWins || 0;
+        const kanto = records.totalKantoE4Wins || 0;
+        if (wins > johto) {
+            records.totalKantoE4Wins = kanto + (wins - johto);
+            records.totalWins = johto;
+        } else if (kanto < wins) {
+            // Defensive: a genuine Red win always increments totalKantoE4Wins
+            // in the same call, so this shouldn't happen in practice — but
+            // never let the Kanto count read lower than Red's.
+            records.totalKantoE4Wins = wins;
+        }
+        return records;
     }
 
     function getDefaultRecords() {
@@ -107,6 +140,11 @@
     // pre-login-history case this merge exists to handle.
     function mergeRecords(local, cloud) {
         if (!cloud) return local;
+
+        // Reconcile each side before diffing — otherwise legacy-contaminated
+        // totalWins on either side throws off the delta math below.
+        local = reconcileLegacyWinCounts(Object.assign({}, local));
+        cloud = reconcileLegacyWinCounts(Object.assign({}, cloud));
 
         const merged = getDefaultRecords();
 
@@ -268,6 +306,7 @@
         getRecords,
         updateRecords,
         clearRecords,
-        syncRecordsOnLogin
+        syncRecordsOnLogin,
+        reconcileLegacyWinCounts
     };
 })();

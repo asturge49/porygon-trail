@@ -87,14 +87,19 @@
                     return;
                 }
 
-                const r = recRes.data && recRes.data.records_data
+                const r = PT.Engine.Records.reconcileLegacyWinCounts(recRes.data && recRes.data.records_data
                     ? recRes.data.records_data
-                    : { totalRuns: 0, totalWins: 0, catchTally: {} };
+                    : { totalRuns: 0, totalWins: 0, totalKantoE4Wins: 0, totalJohtoE4Wins: 0, catchTally: {} });
                 const dex = dexRes.data && dexRes.data.pokedex_data
                     ? dexRes.data.pokedex_data
                     : { seen: [], caught: [], champions: [] };
 
-                const winRate = r.totalRuns > 0 ? Math.round((r.totalWins / r.totalRuns) * 100) : 0;
+                // "Wins" here means Kanto E4 clears, not the full Red win —
+                // Red is rare enough that using it as the headline win stat
+                // left most profiles showing 0. Johto/Red get their own rows
+                // below instead of being folded into this one.
+                const kantoWins = r.totalKantoE4Wins || 0;
+                const winRate = r.totalRuns > 0 ? Math.round((kantoWins / r.totalRuns) * 100) : 0;
                 const favCatch = topTally(r.catchTally);
 
                 const totalDex = PT.Data.Pokemon.length;
@@ -104,7 +109,10 @@
 
                 el.innerHTML =
                     stat('TOTAL RUNS', r.totalRuns > 0 ? r.totalRuns : '---',
-                        r.totalRuns > 0 ? r.totalWins + ' win' + (r.totalWins !== 1 ? 's' : '') + ' | ' + (r.totalRuns - r.totalWins) + ' loss' + ((r.totalRuns - r.totalWins) !== 1 ? 'es' : '') + ' | ' + winRate + '% win rate' : '') +
+                        r.totalRuns > 0 ? kantoWins + ' Kanto win' + (kantoWins !== 1 ? 's' : '') + ' | ' + (r.totalRuns - kantoWins) + ' loss' + ((r.totalRuns - kantoWins) !== 1 ? 'es' : '') + ' | ' + winRate + '% win rate' : '') +
+                    stat('KANTO E4 WINS', kantoWins > 0 ? kantoWins : '---', kantoWins > 0 ? 'Beat the Kanto Elite Four' : '') +
+                    stat('JOHTO E4 WINS', (r.totalJohtoE4Wins || 0) > 0 ? r.totalJohtoE4Wins : '---', (r.totalJohtoE4Wins || 0) > 0 ? 'Beat the Johto Elite Four rematch' : '') +
+                    stat('RED WINS', (r.totalWins || 0) > 0 ? r.totalWins : '---', (r.totalWins || 0) > 0 ? 'Defeated Red at Mt. Silver' : '') +
                     stat('HIGH SCORE', r.highScore ? r.highScore.value.toLocaleString() : '---', fmtBy(r.highScore)) +
                     stat('POKEDEX COMPLETION', dexCaught > 0 ? dexPct + '% (' + dexCaught + '/' + totalDex + ')' : '---', dexCaught > 0 ? 'Across all runs' : '') +
                     stat('CHAMPION POKEMON', champCount > 0 ? champCount + '/' + totalDex : '---', champCount > 0 ? 'Survived an Elite Four win' : '') +
