@@ -39,21 +39,12 @@
             const div = document.createElement('div');
             div.className = 'screen title-screen';
             div.innerHTML = `
-                <div class="title-art">
-▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
-█  ▄▄▄  █  ▄▄▄  █  ▄▄▄  █  ▄  █
-█ █   █ █ █   █ █ █   █ █ █ █ █
-█ █▄▄▄█ █ █▄▄▄█ █ █▄▄▄█ █ █▄█ █
-█▄▄▄▄▄▄▄█▄▄▄▄▄▄▄█▄▄▄▄▄▄▄█▄▄▄▄▄█
-                </div>
                 <div style="text-align:center;margin-bottom:4px;">
                     <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-i/red-blue/gray/137.png"
                          alt="Porygon" style="width:64px;height:64px;image-rendering:pixelated;"
                          onerror="this.style.display='none'">
                 </div>
                 <div class="title-logo">PORYGON<br>TRAIL</div>
-                <div class="title-subtitle">KANTO EXPEDITION</div>
-                <div class="title-subtitle text-sm" style="margin-top: -12px; opacity: 0.7;">- Gen I Survival Adventure -</div>
 
                 <div id="user-status" style="font-size: 7px; text-align: center; margin: 6px 0;
                      color: var(--gb-dark); min-height: 14px;">
