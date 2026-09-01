@@ -80,10 +80,48 @@
         }
     ];
 
+    // Sourced directly from the battle-resolution code (screens/gym-screen.js
+    // and engine/event-engine.js's SE/NVE handling, engine/game-state.js's
+    // getStarBonus/addBattleWin) — kept in sync by hand, same as scoring.
+    const BATTLE_SECTIONS = [
+        {
+            title: 'Win Chance',
+            rows: [
+                { label: 'Base chance', value: '45%' },
+                { label: 'Super Effective (SE)', value: '+20%', sub: 'Your type beats theirs.' },
+                { label: 'Not Very Effective (NVE)', value: '-20% / -15%', sub: 'Their type resists yours — gyms / the trail.' },
+                { label: 'Party size', value: '+2%', sub: 'Per Pokemon still alive.' },
+                { label: 'Battle Stars', value: '+3%', sub: 'Per star, up to +9% at 3 stars.' },
+                { label: 'Ability & item bonuses', value: 'varies', sub: 'Poison, Intimidate, Win Rate, Psychic Dominance and more all stack in — see Abilities tab.' },
+                { label: 'Gets tougher as you progress', value: '-%', sub: 'Win chance drops the more badges you\'ve earned.' },
+                { label: 'Always clamped', value: '10%–80%', sub: 'Never a guaranteed win, never a guaranteed loss.' }
+            ]
+        },
+        {
+            title: 'If You Win',
+            rows: [
+                { label: 'Money', sub: 'Plus the gym badge, on a first clear.' },
+                { label: 'A chance to evolve', sub: 'If eligible.' },
+                { label: 'Battle Stars', sub: 'Only final-evolution Pokemon can earn one — max 3, one per location.' },
+                { label: 'Exp. Share', sub: 'If held, one other teammate also gets in on the win.' }
+            ]
+        },
+        {
+            title: 'If You Lose',
+            rows: [
+                { label: 'Your Pokemon takes damage', value: '2–3 HP', sub: 'Not just "no reward" — early gyms hit for less than late ones.' },
+                { label: 'Ace Pokemon hit harder', sub: '+1 damage, and far likelier to knock a Pokemon out.' },
+                { label: 'Battle Stars, Focus Band, Safeguard, System Restore', sub: 'Each can save a Pokemon from fainting at the last second — see Abilities/Items tabs.' },
+                { label: 'Ace Pokemon punch through Battle Star protection', sub: 'Specifically — the other saves still apply.' }
+            ]
+        }
+    ];
+
     function renderTabs() {
         return `
             <div class="leaderboard-tabs">
                 <button class="leaderboard-tab ${currentTab === 'abilities' ? 'active' : ''}" data-tab="abilities">ABILITIES</button>
+                <button class="leaderboard-tab ${currentTab === 'battle' ? 'active' : ''}" data-tab="battle">BATTLE</button>
                 <button class="leaderboard-tab ${currentTab === 'scoring' ? 'active' : ''}" data-tab="scoring">SCORING</button>
                 <button class="leaderboard-tab ${currentTab === 'items' ? 'active' : ''}" data-tab="items">ITEMS</button>
             </div>
@@ -104,10 +142,12 @@
         `;
     }
 
-    function renderScoring() {
+    // Shared renderer for the Scoring/Battle tabs — both are grouped
+    // sections of label/value/sub rows, styled identically.
+    function renderSections(sections) {
         return `
             <div class="records-list">
-                ${SCORING_SECTIONS.map(section => `
+                ${sections.map(section => `
                     <div class="record-row" style="background: var(--gb-dark); padding: 4px 6px;">
                         <div class="record-label" style="color: var(--gb-white);">${section.title}</div>
                     </div>
@@ -117,12 +157,20 @@
                                 <div class="record-value" style="font-size: 7px;">${r.label}</div>
                                 ${r.sub ? `<div class="record-sub">${r.sub}</div>` : ''}
                             </div>
-                            <div class="record-value" style="white-space: nowrap;">${r.value}</div>
+                            ${r.value ? `<div class="record-value" style="white-space: nowrap;">${r.value}</div>` : ''}
                         </div>
                     `).join('')}
                 `).join('')}
             </div>
         `;
+    }
+
+    function renderScoring() {
+        return renderSections(SCORING_SECTIONS);
+    }
+
+    function renderBattle() {
+        return renderSections(BATTLE_SECTIONS);
     }
 
     function renderItems() {
@@ -161,6 +209,7 @@
     }
 
     function renderContent() {
+        if (currentTab === 'battle') return renderBattle();
         if (currentTab === 'scoring') return renderScoring();
         if (currentTab === 'items') return renderItems();
         return renderAbilities();
