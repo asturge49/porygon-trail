@@ -5027,18 +5027,22 @@
         // Gen I urban legend: a Mew rumored to be hiding under a truck near
         // the S.S. Anne, only reachable with glitches/tricks the game never
         // officially supported. Here it's real, but absurdly rare — the
-        // EVENT itself isn't rare (weight matches magikarp_salesman above,
-        // so most Vermilion visits have a normal shot at hearing the rumor
+        // EVENT itself isn't rare once the Silph Scope requirement is met
+        // (weight matches magikarp_salesman above, so most Vermilion visits
+        // after getting the Scope have a normal shot at hearing the rumor
         // and checking), but the truck actually having Mew under it is a
-        // 1-in-1000 roll. Most peeks find nothing.
+        // 1-in-1000 roll. Most peeks find nothing. Requires owning a Silph
+        // Scope (from silph_co_siege) just to become available — you need
+        // it to actually make anything out under there.
         {
             id: "ss_anne_truck",
             type: "legendary",
             name: "The Truck by the S.S. Anne",
-            description: "Down by the dock, a beat-up delivery truck sits parked outside the S.S. Anne. A sailor leans against a railing nearby, chewing on a toothpick. \"Heh, you hear the rumor? Some kid swears there's a Mew hidin' under that thing. Been there for years, nobody's ever moved it.\" You crouch down and peer into the shadow underneath.",
+            description: "Down by the dock, a beat-up delivery truck sits parked outside the S.S. Anne. A sailor leans against a railing nearby, chewing on a toothpick. \"Heh, you hear the rumor? Some kid swears there's a Mew hidin' under that thing. Been there for years, nobody's ever moved it — too dark to see anything under there anyway.\" You crouch down and hold up your Silph Scope, peering into the shadow underneath.",
             weight: 7,
             oneTime: true,
             locationIds: ["vermilion_city"],
+            requiresKeyItem: "Silph Scope",
             conflictsWith: ["mew_apparition"],
             choices: [
                 {

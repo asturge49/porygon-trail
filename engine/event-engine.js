@@ -272,6 +272,9 @@
             if (event.conflictsWith && event.conflictsWith.some(id => state.eventsTriggered.includes(id))) return false;
             // Requires another event to have already fired (e.g. Snorlax roadblocks need the Poke Flute to have been offered)
             if (event.requiresEventOccurred && !state.eventsTriggered.includes(event.requiresEventOccurred)) return false;
+            // Requires a key item just to become available at all (not just to
+            // pick a specific choice — see choice.requiresKeyItem below for that).
+            if (event.requiresKeyItem && !state.keyItems.includes(event.requiresKeyItem)) return false;
             // Route event pool check (if event has no location restriction, it can happen anywhere)
             if (!event.locationIds && !event.terrainTypes && route.eventPool && !route.eventPool.includes(event.id)) {
                 // General events can still occur anywhere
