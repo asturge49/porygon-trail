@@ -365,8 +365,10 @@
                     <button class="btn-map" id="btn-map" title="Map">MAP</button>
                     <button class="btn btn-small" id="btn-inventory">BAG</button>
                     ${route.hasShop ? '<button class="btn btn-small" id="btn-shop">MART</button>' : '<button class="btn btn-small" disabled>NO MART</button>'}
-                    ${route.hasGym && !state.badges.includes(PT.Data.GymLeaders[route.gymLeader]?.badge)
-                            ? `<button class="btn btn-small" id="btn-gym">GYM</button>`
+                    ${route.hasGym
+                            ? (!state.badges.includes(PT.Data.GymLeaders[route.gymLeader]?.badge)
+                                ? `<button class="btn btn-small" id="btn-gym">GYM</button>`
+                                : '<button class="btn btn-small" disabled>DEFEATED</button>')
                             : '<button class="btn btn-small" disabled>NO GYM</button>'}
                     ${route.hasCenter ? '<button class="btn btn-small" id="btn-center">CENTER</button>' : '<button class="btn btn-small" disabled>NO CENTER</button>'}
                     <button class="btn btn-small" id="btn-stats">STATS</button>

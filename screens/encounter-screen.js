@@ -261,38 +261,59 @@
             <button class="btn btn-small" id="btn-release-catch">RELEASE</button>
         `;
 
-        // SWAP — show party picker
+        // SWAP — show party picker. Each existing member can be swapped out
+        // either as a plain release or butchered for food, same choice the
+        // newly-caught Pokemon gets below.
         document.getElementById('btn-swap').addEventListener('click', () => {
             actionsDiv.innerHTML = `
                 <div style="font-size: 7px; margin-bottom: 4px; font-weight: bold;">Replace which Pokemon with ${pokemon.name} (HP: ${PT.Engine.GameState.getMaxHpForPokemon(pokemonData)}/${PT.Engine.GameState.getMaxHpForPokemon(pokemonData)})?</div>
                 <div class="potion-pokemon-list">
-                    ${state.party.map((p, i) => `
-                        <button class="potion-target-btn" data-idx="${i}">
+                    ${state.party.map((p, i) => {
+                        const stars = p.battleStars || 0;
+                        const outFood = PT.Engine.GameState.pokemonToFood(p.rarity);
+                        return `
+                        <div class="potion-target-btn" style="cursor: default;">
                             <img class="potion-target-sprite" src="${p.spriteUrl}" alt="${p.name}"
                                  onerror="this.style.display='none'">
-                            <div class="potion-target-info">
-                                <div style="font-weight: bold;">${p.name}</div>
+                            <div class="potion-target-info" style="flex: 1;">
+                                <div style="font-weight: bold;">${p.name}${stars > 0 ? ` <span style="color: #b8860b;">${'★'.repeat(stars)}</span>` : ''}</div>
                                 <div>${p.types.join('/')} | HP: ${p.hp}/${p.maxHp}</div>
                             </div>
-                        </button>
-                    `).join('')}
+                            <div style="display: flex; flex-direction: column; gap: 2px;">
+                                <button class="btn btn-small potion-swap-release" data-idx="${i}" style="font-size: 6px; padding: 3px 6px;">SWAP</button>
+                                <button class="btn btn-small potion-swap-butcher" data-idx="${i}" style="font-size: 6px; padding: 3px 6px;">BUTCHER (+${outFood})</button>
+                            </div>
+                        </div>
+                    `;
+                    }).join('')}
                 </div>
                 <button class="btn btn-small" id="btn-swap-cancel" style="margin-top: 6px; width: 100%;">CANCEL</button>
             `;
 
-            document.querySelectorAll('.potion-target-btn').forEach(btn => {
-                btn.addEventListener('click', () => {
-                    const idx = parseInt(btn.dataset.idx);
-                    const replaced = state.party[idx];
-                    const newMember = PT.Engine.GameState.createPartyPokemon(pokemonData, state);
-                    state.party[idx] = newMember;
-                    PT.Engine.GameState.addToLog(state, `Swapped ${replaced.name} for ${pokemon.name}!`);
-                    if (PT.Engine.Audio) PT.Engine.Audio.buy();
+            function doSwap(idx, butcher) {
+                const replaced = state.party[idx];
+                const newMember = PT.Engine.GameState.createPartyPokemon(pokemonData, state);
+                state.party[idx] = newMember;
+                if (PT.Engine.Audio) PT.Engine.Audio.buy();
 
+                if (butcher) {
+                    const outFood = PT.Engine.GameState.pokemonToFood(replaced.rarity);
+                    state.resources.food += outFood;
+                    PT.Engine.GameState.addToLog(state, `Butchered ${replaced.name} for ${outFood} food. ${pokemon.name} joined the team!`);
+                    msgEl.innerHTML = `<strong>${replaced.name}</strong> was butchered for <strong>${outFood} food</strong>. <strong>${pokemon.name}</strong> joined your team!`;
+                } else {
+                    PT.Engine.GameState.addToLog(state, `Swapped ${replaced.name} for ${pokemon.name}!`);
                     msgEl.innerHTML = `<strong>${replaced.name}</strong> was released. <strong>${pokemon.name}</strong> joined your team!`;
-                    actionsDiv.innerHTML = '<button class="btn btn-wide" id="btn-continue">CONTINUE</button>';
-                    document.getElementById('btn-continue').addEventListener('click', () => PT.App.goto('TRAVEL'));
-                });
+                }
+                actionsDiv.innerHTML = '<button class="btn btn-wide" id="btn-continue">CONTINUE</button>';
+                document.getElementById('btn-continue').addEventListener('click', () => PT.App.goto('TRAVEL'));
+            }
+
+            document.querySelectorAll('.potion-swap-release').forEach(btn => {
+                btn.addEventListener('click', () => doSwap(parseInt(btn.dataset.idx), false));
+            });
+            document.querySelectorAll('.potion-swap-butcher').forEach(btn => {
+                btn.addEventListener('click', () => doSwap(parseInt(btn.dataset.idx), true));
             });
 
             document.getElementById('btn-swap-cancel').addEventListener('click', () => {
