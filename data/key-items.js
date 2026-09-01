@@ -87,9 +87,9 @@
             id: "expShare",
             name: "Exp. Share",
             icon: "assets/key-items/exp-share.png",
-            desc: "Splits battle experience with the team — one other eligible Pokemon also gets a shot at a Battle Star on every win. Rare, and you can only carry one.",
+            desc: "Splits battle experience with the team — one other eligible Pokemon also gets a shot at a Battle Star on every win, or a shot at evolving in place if they're not fully evolved yet. Rare, and you can only carry one.",
             stat: "teamExp",
-            buffLabel: "Shares Battle Stars",
+            buffLabel: "Shares Battle Stars & Evolutions",
             maxStacks: 1,
             pickWeight: 1
         }
