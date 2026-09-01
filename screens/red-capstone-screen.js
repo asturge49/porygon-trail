@@ -99,7 +99,7 @@
             <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin: 8px 0;">
                 ${order.map(mon => `
                     <div style="text-align: center; font-size: 7px; min-width: 55px;">
-                        <img src="${PT.Engine.GameState.getSpriteUrl(mon.id)}"
+                        <img src="${PT.Engine.GameState.getSpriteUrl(mon.id, 'johto')}"
                              style="width: 40px; height: 40px; image-rendering: pixelated;"
                              onerror="this.style.display='none'">
                         <div style="font-weight: bold;">${mon.name}</div>
@@ -125,7 +125,7 @@
         const { redIndex } = params;
         const order = state.redOrder;
         const opponent = order[redIndex];
-        const opponentSprite = PT.Engine.GameState.getSpriteUrl(opponent.id);
+        const opponentSprite = PT.Engine.GameState.getSpriteUrl(opponent.id, 'johto');
 
         const opponentData = PT.Data.Pokemon.find(p => p.id === opponent.id);
         const opponentTypes = opponentData ? opponentData.types : ['normal'];
@@ -141,6 +141,9 @@
             <div class="gym-battle-area">
                 <div class="gym-battle-sprites">
                     <div class="gym-leader-portrait">
+                        <img src="${PT.Data.RedCapstone.spriteUrl}" alt="Red"
+                             style="width: 56px; height: 56px; image-rendering: pixelated;"
+                             onerror="this.style.display='none'">
                         <div class="gym-portrait-label">Red</div>
                         <div style="font-size: 6px;">${PT.Data.RedCapstone.title}</div>
                     </div>
@@ -188,7 +191,7 @@
         const { redIndex } = params;
         const order = state.redOrder;
         const opponent = order[redIndex];
-        const opponentSprite = PT.Engine.GameState.getSpriteUrl(opponent.id);
+        const opponentSprite = PT.Engine.GameState.getSpriteUrl(opponent.id, 'johto');
 
         const opponentData = PT.Data.Pokemon.find(p => p.id === opponent.id);
         const opponentTypes = opponentData ? opponentData.types : ['normal'];

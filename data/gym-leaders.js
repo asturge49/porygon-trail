@@ -454,6 +454,7 @@
     // at the start of the fight — order here is just the canonical list).
     PT.Data.RedCapstone = {
         name: "Red", title: "The Silent Trainer of Mt. Silver",
+        spriteUrl: "assets/gym-leaders/red.png",
         introText: "Red says nothing. He simply raises a Poke Ball.",
         defeatText: "Red gives a small, respectful nod, and says nothing at all.",
         pokemon: [
