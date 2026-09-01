@@ -45,6 +45,7 @@
                          onerror="this.style.display='none'">
                 </div>
                 <div class="title-logo">PORYGON<br>TRAIL</div>
+                <div style="font-size: 7px; text-align: center; color: var(--gb-dark);">created by ProfOak</div>
 
                 <div id="user-status" style="font-size: 7px; text-align: center; margin: 6px 0;
                      color: var(--gb-dark); min-height: 14px;">
