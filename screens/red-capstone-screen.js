@@ -55,6 +55,22 @@
         render(container, state, params) {
             // Initialize capstone state on first entry
             if (!params || params.redIndex === undefined) {
+                // Snapshot the party that's actually about to face Red — the
+                // party can differ from state.e4EntryParty (last taken at
+                // Johto's E4 rematch) after the Route 28/Mt. Silver walk, so
+                // Hall of Fame/victory-screen.js need their own snapshot here
+                // to show who really beat Red, not just who beat Johto's E4.
+                state.redEntryParty = state.party.map(p => ({
+                    name: p.name,
+                    id: p.id,
+                    spriteUrl: p.spriteUrl,
+                    types: p.types ? [...p.types] : ['normal'],
+                    hp: p.hp,
+                    maxHp: p.maxHp,
+                    rarity: p.rarity,
+                    battleStars: p.battleStars || 0
+                }));
+
                 // Fresh shuffle of Red's roster every run (§9.3: "presented
                 // in random order each run").
                 const order = state.rng.shuffle([...PT.Data.RedCapstone.pokemon]);

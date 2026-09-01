@@ -460,7 +460,7 @@
             { id: 6, name: "Charizard", ace: true },
             { id: 9, name: "Blastoise", ace: true },
             { id: 3, name: "Venusaur", ace: true },
-            { id: 99, name: "Kingler", ace: true },
+            { id: 18, name: "Pidgeot", ace: true },
             { id: 128, name: "Tauros", ace: true },
             { id: 25, name: "Pikachu", ace: true }
         ]

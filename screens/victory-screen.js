@@ -8,8 +8,11 @@
             const { score, breakdown } = PT.Engine.Scoring.calculateScore(state);
             const survivors = state.party.filter(p => p.status !== 'fainted');
 
-            // Use e4EntryParty if available (full party that entered Elite Four)
-            const hofTeam = state.e4EntryParty || survivors;
+            // Prefer redEntryParty (the party that actually faced Red — see
+            // screens/red-capstone-screen.js) over e4EntryParty (last taken
+            // at Johto's E4 rematch, which can be stale by the time Red is
+            // reached) or the live survivors as a last-resort fallback.
+            const hofTeam = state.redEntryParty || state.e4EntryParty || survivors;
             const aliveNames = state.party.map(p => p.name);
             const graveyard = state.graveyard || [];
 

@@ -240,9 +240,11 @@
         }).length;
         records.totalLegendaryCatches += legendariesThisRun;
 
-        // Hall of Fame — snapshot the party that beat the Elite Four
+        // Hall of Fame — snapshot the party that actually beat Red (see
+        // screens/red-capstone-screen.js's redEntryParty), falling back to
+        // the Johto E4 entry snapshot or live party for older saves.
         if (won) {
-            const team = (state.e4EntryParty || state.party).map(p => ({
+            const team = (state.redEntryParty || state.e4EntryParty || state.party).map(p => ({
                 id: p.id,
                 name: p.name,
                 spriteUrl: p.spriteUrl,

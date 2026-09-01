@@ -876,15 +876,15 @@
         const overlay = document.createElement('div');
         overlay.className = 'day-recap-overlay';
         overlay.innerHTML = `
-            <div class="day-recap-popup" style="max-height:80vh;overflow-y:auto;min-width:260px;">
-                <div class="day-recap-title">🗺️ ${state.region === 'johto' ? 'JOHTO' : 'KANTO'} MAP</div>
-                <div style="font-size:7px;text-align:center;margin-bottom:4px;color:var(--gb-dark);">
+            <div class="day-recap-popup" style="max-height:80vh;min-width:260px;">
+                <div class="day-recap-title" style="flex-shrink:0;">🗺️ ${state.region === 'johto' ? 'JOHTO' : 'KANTO'} MAP</div>
+                <div style="font-size:7px;text-align:center;margin-bottom:4px;color:var(--gb-dark);flex-shrink:0;">
                     🏥 Center &nbsp; 🛒 Mart &nbsp; ⚔️ Gym
                 </div>
-                <div style="border:1px solid var(--gb-dark);border-radius:2px;overflow:hidden;">
+                <div style="border:1px solid var(--gb-dark);border-radius:2px;overflow-y:auto;min-height:0;">
                     ${rows}
                 </div>
-                <button class="btn btn-small day-recap-btn" id="btn-map-close" style="margin-top:8px;">CLOSE</button>
+                <button class="btn btn-small day-recap-btn" id="btn-map-close" style="margin-top:8px;flex-shrink:0;">CLOSE</button>
             </div>
         `;
         document.querySelector('.travel-screen').appendChild(overlay);
