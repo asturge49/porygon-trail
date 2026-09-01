@@ -79,11 +79,20 @@
                     ${PT.Engine.GameState.getAliveParty(state).map((p, i) => {
                         const hasAdvantage = p.types.some(t => typeChart.weakTo.includes(t));
                         const hasDisadvantage = p.types.some(t => typeChart.strongTo.includes(t));
-                        let label = `${p.name} (${p.types.join('/')}) | HP:${p.hp}/${p.maxHp}`;
-                        if (p.battleStars > 0) label += ` ${'★'.repeat(p.battleStars)}`;
-                        if (hasAdvantage) label += ' [SE!]';
-                        if (hasDisadvantage) label += ' [NVE]';
-                        return `<button class="btn btn-wide" data-index="${i}">${label}</button>`;
+                        return `
+                        <button class="btn roster-pick-card" data-index="${i}">
+                            <img class="roster-pick-sprite" src="${p.spriteUrl}" alt="${p.name}" onerror="this.style.display='none'">
+                            <span class="roster-pick-info">
+                                <span class="roster-pick-name">${p.name}</span>
+                                <span class="roster-pick-meta">${p.types.join('/')} | HP:${p.hp}/${p.maxHp}</span>
+                            </span>
+                            <span class="roster-pick-badges">
+                                ${p.battleStars > 0 ? `<span class="roster-badge roster-badge-star">${'★'.repeat(p.battleStars)}</span>` : ''}
+                                ${hasAdvantage ? '<span class="roster-badge roster-badge-se">SE!</span>' : ''}
+                                ${hasDisadvantage ? '<span class="roster-badge roster-badge-nve">NVE</span>' : ''}
+                            </span>
+                        </button>
+                    `;
                     }).join('')}
                 </div>
             `;
@@ -460,11 +469,20 @@
                 ${PT.Engine.GameState.getAliveParty(state).map((p, i) => {
                     const hasAdvantage = p.types.some(t => typeChart.weakTo.includes(t));
                     const hasDisadvantage = p.types.some(t => typeChart.strongTo.includes(t));
-                    let label = `${p.name} (${p.types.join('/')}) | HP:${p.hp}/${p.maxHp}`;
-                    if (p.battleStars > 0) label += ` ${'★'.repeat(p.battleStars)}`;
-                    if (hasAdvantage) label += ' [SE!]';
-                    if (hasDisadvantage) label += ' [NVE]';
-                    return `<button class="btn btn-wide" data-index="${i}">${label}</button>`;
+                    return `
+                    <button class="btn roster-pick-card" data-index="${i}">
+                        <img class="roster-pick-sprite" src="${p.spriteUrl}" alt="${p.name}" onerror="this.style.display='none'">
+                        <span class="roster-pick-info">
+                            <span class="roster-pick-name">${p.name}</span>
+                            <span class="roster-pick-meta">${p.types.join('/')} | HP:${p.hp}/${p.maxHp}</span>
+                        </span>
+                        <span class="roster-pick-badges">
+                            ${p.battleStars > 0 ? `<span class="roster-badge roster-badge-star">${'★'.repeat(p.battleStars)}</span>` : ''}
+                            ${hasAdvantage ? '<span class="roster-badge roster-badge-se">SE!</span>' : ''}
+                            ${hasDisadvantage ? '<span class="roster-badge roster-badge-nve">NVE</span>' : ''}
+                        </span>
+                    </button>
+                `;
                 }).join('')}
             </div>
         `;

@@ -2190,6 +2190,7 @@ body {
     align-items: center;
     gap: 8px;
     width: 100%;
+    min-height: 46px;
     padding: 6px 8px;
     border: 2px solid var(--gb-darkest);
     background: var(--gb-lightest);
@@ -2207,6 +2208,7 @@ body {
 .potion-target-sprite {
     width: 32px;
     height: 32px;
+    flex-shrink: 0;
     image-rendering: pixelated;
 }
 
@@ -2214,6 +2216,118 @@ body {
     display: flex;
     flex-direction: column;
     gap: 2px;
+    min-width: 0;
+}
+
+.potion-target-name {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Two-action variant (SWAP / BUTCHER) — grid keeps the sprite, info, and
+   action columns aligned at fixed widths no matter how long a Pokemon's
+   name or type string is, so every card in the list matches. */
+.potion-target-btn--split {
+    display: grid;
+    grid-template-columns: 32px 1fr 108px;
+    cursor: default;
+}
+
+.potion-target-btn--split:hover {
+    background: var(--gb-lightest);
+    border-color: var(--gb-darkest);
+}
+
+.potion-target-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.potion-target-actions .btn {
+    width: 100%;
+    text-align: center;
+    white-space: nowrap;
+    padding-left: 4px;
+    padding-right: 4px;
+}
+
+/* ============================================
+   ROSTER PICK CARD (wild/trainer battle chooser)
+   ============================================ */
+
+/* Full-width vertical stack that spans both columns of a 2-column parent
+   grid (e.g. .encounter-actions) — used any time a single-column flow of
+   cards/buttons needs to render inside a container that's normally split
+   into two side-by-side action buttons, so it doesn't get squeezed into
+   half the width alongside unrelated content. */
+.roster-pick-list {
+    grid-column: 1 / -1;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.roster-pick-card {
+    display: grid;
+    grid-template-columns: 32px 1fr 44px;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+    min-height: 46px;
+    padding: 6px 8px;
+    text-transform: none;
+    text-align: left;
+}
+
+.roster-pick-sprite {
+    width: 32px;
+    height: 32px;
+    flex-shrink: 0;
+    image-rendering: pixelated;
+}
+
+.roster-pick-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+}
+
+.roster-pick-name {
+    font-size: 7px;
+    font-weight: bold;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.roster-pick-meta {
+    font-size: 6px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.roster-pick-badges {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 2px;
+    font-size: 6px;
+}
+
+.roster-badge {
+    padding: 1px 3px;
+    border: 1px solid currentColor;
+    white-space: nowrap;
+}
+
+.roster-badge-star {
+    border-color: transparent;
+    color: #b8860b;
+    padding: 0;
 }
 
 .potion-result {

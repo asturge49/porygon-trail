@@ -167,16 +167,27 @@
 
                 const aliveParty = PT.Engine.GameState.getAliveParty(state);
                 actionsDiv.innerHTML = `
-                    ${aliveParty.map((p, i) => {
-                        const hasAdvantage = p.types.some(t => typeChart.weakTo.includes(t));
-                        const hasDisadvantage = p.types.some(t => typeChart.strongTo.includes(t));
-                        let label = `${p.name} (${p.types.join('/')} | HP:${p.hp}/${p.maxHp})`;
-                        if (p.battleStars > 0) label += ` ${'★'.repeat(p.battleStars)}`;
-                        if (hasAdvantage) label += ' [SE!]';
-                        if (hasDisadvantage) label += ' [NVE]';
-                        return `<button class="btn btn-wide battle-pick-btn" data-battle-idx="${i}">${label}</button>`;
-                    }).join('')}
-                    <button class="btn btn-wide" id="btn-battle-cancel">CANCEL</button>
+                    <div class="roster-pick-list">
+                        ${aliveParty.map((p, i) => {
+                            const hasAdvantage = p.types.some(t => typeChart.weakTo.includes(t));
+                            const hasDisadvantage = p.types.some(t => typeChart.strongTo.includes(t));
+                            return `
+                            <button class="btn roster-pick-card battle-pick-btn" data-battle-idx="${i}">
+                                <img class="roster-pick-sprite" src="${p.spriteUrl}" alt="${p.name}" onerror="this.style.display='none'">
+                                <span class="roster-pick-info">
+                                    <span class="roster-pick-name">${p.name}</span>
+                                    <span class="roster-pick-meta">${p.types.join('/')} | HP:${p.hp}/${p.maxHp}</span>
+                                </span>
+                                <span class="roster-pick-badges">
+                                    ${p.battleStars > 0 ? `<span class="roster-badge roster-badge-star">${'★'.repeat(p.battleStars)}</span>` : ''}
+                                    ${hasAdvantage ? '<span class="roster-badge roster-badge-se">SE!</span>' : ''}
+                                    ${hasDisadvantage ? '<span class="roster-badge roster-badge-nve">NVE</span>' : ''}
+                                </span>
+                            </button>
+                        `;
+                        }).join('')}
+                        <button class="btn btn-wide" id="btn-battle-cancel">CANCEL</button>
+                    </div>
                 `;
 
                 document.querySelectorAll('.battle-pick-btn').forEach(btn => {
@@ -251,14 +262,16 @@
         `;
 
         actionsDiv.innerHTML = `
-            <div style="text-align: center; margin-bottom: 8px;">
-                <img src="${spriteUrl}" alt="${pokemon.name}" style="width: 40px; height: 40px; image-rendering: pixelated;"
-                     onerror="this.style.display='none'">
-                <div style="font-size: 7px;">${pokemon.name} | ${pokemon.types.join('/')} | ${pokemon.rarity.toUpperCase()} | HP: ${PT.Engine.GameState.getMaxHpForPokemon(pokemonData)}/${PT.Engine.GameState.getMaxHpForPokemon(pokemonData)}</div>
+            <div class="roster-pick-list">
+                <div style="text-align: center; margin-bottom: 8px;">
+                    <img src="${spriteUrl}" alt="${pokemon.name}" style="width: 40px; height: 40px; image-rendering: pixelated;"
+                         onerror="this.style.display='none'">
+                    <div style="font-size: 7px;">${pokemon.name} | ${pokemon.types.join('/')} | ${pokemon.rarity.toUpperCase()} | HP: ${PT.Engine.GameState.getMaxHpForPokemon(pokemonData)}/${PT.Engine.GameState.getMaxHpForPokemon(pokemonData)}</div>
+                </div>
+                <button class="btn btn-small" id="btn-swap">SWAP WITH PARTY</button>
+                <button class="btn btn-small" id="btn-butcher-catch">BUTCHER FOR FOOD (+${foodAmount})</button>
+                <button class="btn btn-small" id="btn-release-catch">RELEASE</button>
             </div>
-            <button class="btn btn-small" id="btn-swap">SWAP WITH PARTY</button>
-            <button class="btn btn-small" id="btn-butcher-catch">BUTCHER FOR FOOD (+${foodAmount})</button>
-            <button class="btn btn-small" id="btn-release-catch">RELEASE</button>
         `;
 
         // SWAP — show party picker. Each existing member can be swapped out
@@ -266,28 +279,30 @@
         // newly-caught Pokemon gets below.
         document.getElementById('btn-swap').addEventListener('click', () => {
             actionsDiv.innerHTML = `
-                <div style="font-size: 7px; margin-bottom: 4px; font-weight: bold;">Replace which Pokemon with ${pokemon.name} (HP: ${PT.Engine.GameState.getMaxHpForPokemon(pokemonData)}/${PT.Engine.GameState.getMaxHpForPokemon(pokemonData)})?</div>
-                <div class="potion-pokemon-list">
-                    ${state.party.map((p, i) => {
-                        const stars = p.battleStars || 0;
-                        const outFood = PT.Engine.GameState.pokemonToFood(p.rarity);
-                        return `
-                        <div class="potion-target-btn" style="cursor: default;">
-                            <img class="potion-target-sprite" src="${p.spriteUrl}" alt="${p.name}"
-                                 onerror="this.style.display='none'">
-                            <div class="potion-target-info" style="flex: 1;">
-                                <div style="font-weight: bold;">${p.name}${stars > 0 ? ` <span style="color: #b8860b;">${'★'.repeat(stars)}</span>` : ''}</div>
-                                <div>${p.types.join('/')} | HP: ${p.hp}/${p.maxHp}</div>
+                <div class="roster-pick-list">
+                    <div style="font-size: 7px; margin-bottom: 4px; font-weight: bold;">Replace which Pokemon with ${pokemon.name} (HP: ${PT.Engine.GameState.getMaxHpForPokemon(pokemonData)}/${PT.Engine.GameState.getMaxHpForPokemon(pokemonData)})?</div>
+                    <div class="potion-pokemon-list">
+                        ${state.party.map((p, i) => {
+                            const stars = p.battleStars || 0;
+                            const outFood = PT.Engine.GameState.pokemonToFood(p.rarity);
+                            return `
+                            <div class="potion-target-btn potion-target-btn--split">
+                                <img class="potion-target-sprite" src="${p.spriteUrl}" alt="${p.name}"
+                                     onerror="this.style.display='none'">
+                                <div class="potion-target-info">
+                                    <div class="potion-target-name">${p.name}${stars > 0 ? ` <span style="color: #b8860b;">${'★'.repeat(stars)}</span>` : ''}</div>
+                                    <div>${p.types.join('/')} | HP: ${p.hp}/${p.maxHp}</div>
+                                </div>
+                                <div class="potion-target-actions">
+                                    <button class="btn btn-small potion-swap-release" data-idx="${i}">SWAP</button>
+                                    <button class="btn btn-small potion-swap-butcher" data-idx="${i}">BUTCHER (+${outFood})</button>
+                                </div>
                             </div>
-                            <div style="display: flex; flex-direction: column; gap: 2px;">
-                                <button class="btn btn-small potion-swap-release" data-idx="${i}" style="font-size: 6px; padding: 3px 6px;">SWAP</button>
-                                <button class="btn btn-small potion-swap-butcher" data-idx="${i}" style="font-size: 6px; padding: 3px 6px;">BUTCHER (+${outFood})</button>
-                            </div>
-                        </div>
-                    `;
-                    }).join('')}
+                        `;
+                        }).join('')}
+                    </div>
+                    <button class="btn btn-small" id="btn-swap-cancel" style="margin-top: 6px; width: 100%;">CANCEL</button>
                 </div>
-                <button class="btn btn-small" id="btn-swap-cancel" style="margin-top: 6px; width: 100%;">CANCEL</button>
             `;
 
             function doSwap(idx, butcher) {

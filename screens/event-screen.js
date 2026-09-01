@@ -163,10 +163,19 @@
             <div style="font-size: 7px; margin-bottom: 4px; font-weight: bold;">Choose your Pokemon for a 1v1 battle!</div>
             ${aliveParty.map((p, i) => {
                 const hasAdv = p.types.some(t => weakTo.has(t));
-                let label = `${p.name} (${p.types.join('/')} | HP:${p.hp}/${p.maxHp})`;
-                if (p.battleStars > 0) label += ` ${'★'.repeat(p.battleStars)}`;
-                if (hasAdv) label += ' [SE!]';
-                return `<button class="btn btn-wide evt-battle-pick" data-eidx="${i}">${label}</button>`;
+                return `
+                <button class="btn roster-pick-card evt-battle-pick" data-eidx="${i}">
+                    <img class="roster-pick-sprite" src="${p.spriteUrl}" alt="${p.name}" onerror="this.style.display='none'">
+                    <span class="roster-pick-info">
+                        <span class="roster-pick-name">${p.name}</span>
+                        <span class="roster-pick-meta">${p.types.join('/')} | HP:${p.hp}/${p.maxHp}</span>
+                    </span>
+                    <span class="roster-pick-badges">
+                        ${p.battleStars > 0 ? `<span class="roster-badge roster-badge-star">${'★'.repeat(p.battleStars)}</span>` : ''}
+                        ${hasAdv ? '<span class="roster-badge roster-badge-se">SE!</span>' : ''}
+                    </span>
+                </button>
+            `;
             }).join('')}
         `;
 
@@ -648,16 +657,16 @@
                         const stars = p.battleStars || 0;
                         const outFood = PT.Engine.GameState.pokemonToFood(p.rarity);
                         return `
-                        <div class="potion-target-btn" style="cursor: default;">
+                        <div class="potion-target-btn potion-target-btn--split">
                             <img class="potion-target-sprite" src="${p.spriteUrl}" alt="${p.name}"
                                  onerror="this.style.display='none'">
-                            <div class="potion-target-info" style="flex: 1;">
-                                <div style="font-weight: bold;">${p.name}${stars > 0 ? ` <span style="color: #b8860b;">${'★'.repeat(stars)}</span>` : ''}</div>
+                            <div class="potion-target-info">
+                                <div class="potion-target-name">${p.name}${stars > 0 ? ` <span style="color: #b8860b;">${'★'.repeat(stars)}</span>` : ''}</div>
                                 <div>${p.types.join('/')} | HP: ${p.hp}/${p.maxHp}</div>
                             </div>
-                            <div style="display: flex; flex-direction: column; gap: 2px;">
-                                <button class="btn btn-small potion-swap-release" data-idx="${i}" style="font-size: 6px; padding: 3px 6px;">SWAP</button>
-                                <button class="btn btn-small potion-swap-butcher" data-idx="${i}" style="font-size: 6px; padding: 3px 6px;">BUTCHER (+${outFood})</button>
+                            <div class="potion-target-actions">
+                                <button class="btn btn-small potion-swap-release" data-idx="${i}">SWAP</button>
+                                <button class="btn btn-small potion-swap-butcher" data-idx="${i}">BUTCHER (+${outFood})</button>
                             </div>
                         </div>
                     `;
