@@ -82,7 +82,11 @@
 
     // Sourced directly from the battle-resolution code (screens/gym-screen.js
     // and engine/event-engine.js's SE/NVE handling, engine/game-state.js's
-    // getStarBonus/addBattleWin) — kept in sync by hand, same as scoring.
+    // getStarBonus/addBattleWin, screens/encounter-screen.js's
+    // resolveWildBattle for the Wild Battles section) — kept in sync by
+    // hand, same as scoring. Win Chance/If You Win/If You Lose describe
+    // gym and trail-event battles; Wild Battles (fighting rather than
+    // catching a wild Pokemon) runs on its own separate numbers.
     const BATTLE_SECTIONS = [
         {
             title: 'Win Chance',
@@ -113,6 +117,20 @@
                 { label: 'Ace Pokemon hit harder', sub: '+1 damage, and far likelier to knock a Pokemon out.' },
                 { label: 'Battle Stars, Focus Band, Safeguard, System Restore', sub: 'Each can save a Pokemon from fainting at the last second — see Abilities/Items tabs.' },
                 { label: 'Ace Pokemon punch through Battle Star protection', sub: 'Specifically — the other saves still apply.' }
+            ]
+        },
+        {
+            title: 'Wild Battles',
+            rows: [
+                { label: 'Fighting instead of catching', sub: 'A separate option from throwing a ball — its own numbers below.' },
+                { label: 'Base chance', value: '50%' },
+                { label: 'SE / NVE', value: '+20% / -20%', sub: 'Same type-advantage swing as gyms.' },
+                { label: 'Vs. a Rare / Legendary', value: '-5% / -15%' },
+                { label: 'Gets tougher as you progress', value: 'up to -18%', sub: 'Scales with your total badge count.' },
+                { label: 'In Johto', value: '-10%' },
+                { label: 'Clamped', value: '15%–85%' },
+                { label: 'If you win', sub: 'The wild Pokemon is defeated (not caught) — money, a chance to evolve, a shot at a Battle Star.' },
+                { label: 'If you lose', value: "HP−1", sub: "Damage to your Pokemon equals the wild Pokemon's max HP minus 1." }
             ]
         }
     ];
