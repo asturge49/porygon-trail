@@ -210,10 +210,11 @@
         let chance = 20; // Lower base than the E4's 25% — this is the true final boss
         let battleBonuses = [];
 
-        // Progressive difficulty across Red's 6 Pokemon
-        const progressionPenalty = redIndex * 3; // 0%,-3%,-6%,-9%,-12%,-15%
+        // Progressive difficulty across Red's 6 Pokemon — starts at -5% on
+        // the first Pokemon, then +3% per round: -5%,-8%,-11%,-14%,-17%,-20%.
+        const progressionPenalty = 5 + redIndex * 3;
         chance -= progressionPenalty;
-        if (progressionPenalty > 0) battleBonuses.push(`Pokemon ${redIndex + 1} penalty -${progressionPenalty}%`);
+        battleBonuses.push(`Pokemon ${redIndex + 1} penalty -${progressionPenalty}%`);
 
         const hasAdvantage = pokemon.types.some(t => typeChart.weakTo.includes(t));
         const hasDisadvantage = pokemon.types.some(t => typeChart.strongTo.includes(t));
