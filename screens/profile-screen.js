@@ -27,12 +27,12 @@
 
     function stat(label, value, sub) {
         return `
-            <div style="padding: 5px 0; border-bottom: 1px solid var(--gb-light); font-size: 7px;">
-                <div style="display: flex; justify-content: space-between; align-items: baseline;">
-                    <span style="color: var(--gb-dark);">${label}</span>
-                    <span style="color: var(--gb-darkest); text-align: right;">${value}</span>
+            <div class="trainer-stat-row">
+                <div class="trainer-stat-line">
+                    <span class="trainer-stat-label">${label}</span>
+                    <span class="trainer-stat-value">${value}</span>
                 </div>
-                ${sub ? `<div style="color: var(--gb-dark); opacity: 0.8; text-align: right;">${sub}</div>` : ''}
+                ${sub ? `<div class="trainer-stat-sub">${sub}</div>` : ''}
             </div>`;
     }
 

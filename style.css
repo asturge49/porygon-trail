@@ -2522,6 +2522,38 @@ body {
     opacity: 1;
 }
 
+/* Trainer stat row — label+value on one line, sub-line below right-aligned,
+   single bottom divider. Shared by screens/records-screen.js (your own
+   records) and screens/profile-screen.js (another trainer's, via the
+   leaderboard) so both render identically; profile-screen.js originated
+   this layout inline before it was pulled out here. */
+.trainer-stat-row {
+    padding: 5px 0;
+    border-bottom: 1px solid var(--gb-light);
+    font-size: 7px;
+}
+
+.trainer-stat-line {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+}
+
+.trainer-stat-label {
+    color: var(--gb-dark);
+}
+
+.trainer-stat-value {
+    color: var(--gb-darkest);
+    text-align: right;
+}
+
+.trainer-stat-sub {
+    color: var(--gb-dark);
+    opacity: 0.8;
+    text-align: right;
+}
+
 /* ============================================
    UTILITY CLASSES
    ============================================ */

@@ -88,10 +88,12 @@
 
     function recordRow(label, value, sub) {
         return `
-            <div class="record-row">
-                <div class="record-label">${label}</div>
-                <div class="record-value">${value}</div>
-                ${sub ? `<div class="record-sub">${sub}</div>` : ''}
+            <div class="trainer-stat-row">
+                <div class="trainer-stat-line">
+                    <span class="trainer-stat-label">${label}</span>
+                    <span class="trainer-stat-value">${value}</span>
+                </div>
+                ${sub ? `<div class="trainer-stat-sub">${sub}</div>` : ''}
             </div>
         `;
     }
