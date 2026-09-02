@@ -301,6 +301,7 @@
         const completedUserIds = new Set(completedRuns.map(r => r.user_id));
         const totalHoursAll = (heartbeats.length * MINUTES_PER_HEARTBEAT) / 60;
         const totalHoursCompletedUsers = (heartbeats.filter(e => completedUserIds.has(e.user_id)).length * MINUTES_PER_HEARTBEAT) / 60;
+        const avgHoursPerCompletedTrainer = completedUserIds.size ? totalHoursCompletedUsers / completedUserIds.size : 0;
 
         const topHeartbeatUsersAllTime = allSorted(heartbeatsByUserAllTime)
             .map(([userId, count]) => [nameFor(userId), +(count * MINUTES_PER_HEARTBEAT).toFixed(1)]);
@@ -348,7 +349,9 @@
                     ${statCard('Avg Pokedex Count', avg(leaderboard.map(r => r.pokedex_count)).toFixed(1))}
                     ${statCard('Johto Runs Completed', johtoEntries)}
                     ${statCard('Total Hours On Trail', totalHoursAll.toFixed(1))}
+                    ${statCard('Trainers With A Completed Run', `${completedUserIds.size} / ${profilesCount}`)}
                     ${statCard('Total Hours (Completed-Run Trainers)', totalHoursCompletedUsers.toFixed(1))}
+                    ${statCard('Avg Hours Per Completed-Run Trainer', avgHoursPerCompletedTrainer.toFixed(1))}
                 </div>
             </section>
 
