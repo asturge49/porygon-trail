@@ -528,6 +528,18 @@
             ({ error } = await client.from('pt_leaderboard').upsert(row, { onConflict: 'run_id' }));
         }
 
+        // A completed run (won or not) only gets ONE shot at this — there's no
+        // "retry on next launch" mechanism, the run is already over and the
+        // player's about to see the local score regardless. A transient failure
+        // (token silently expired, brief network blip — see the onAuthStateChange
+        // comment in engine/auth.js) used to mean total, invisible data loss.
+        // Two short-backoff retries before giving up costs nothing on the
+        // happy path and catches exactly that class of failure.
+        for (let attempt = 0; error && attempt < 2; attempt++) {
+            await new Promise(resolve => setTimeout(resolve, 400 * (attempt + 1)));
+            ({ error } = await client.from('pt_leaderboard').upsert(row, { onConflict: 'run_id' }));
+        }
+
         if (error) {
             console.warn('Could not save global score:', error);
         }

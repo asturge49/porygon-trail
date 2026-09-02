@@ -36,6 +36,23 @@
         if (!isConfigured()) return null;
         if (!_client) {
             _client = supabase.createClient(PT.Config.supabaseUrl, PT.Config.supabaseAnonKey);
+            // _currentUser was previously only ever set by signIn/signUp/restoreSession
+            // (each a one-shot call) and never revisited — isLoggedIn() just checked
+            // that stale in-memory flag. If the access token silently expired or was
+            // invalidated (long-backgrounded mobile tab, resuming a session that was
+            // signed out elsewhere, etc.) _currentUser stayed non-null, so isLoggedIn()
+            // kept reporting true while every actual Supabase call started failing —
+            // and every save path in this codebase is fire-and-forget with only a
+            // console.warn on error, so that failure was completely invisible (see the
+            // Dilly-beat-Red-but-it-never-saved investigation). This listener keeps
+            // _currentUser in sync with the SDK's own view of the session — including
+            // TOKEN_REFRESHED and SIGNED_OUT — instead of a snapshot from login time.
+            _client.auth.onAuthStateChange((_event, session) => {
+                _currentUser = session?.user || null;
+                _currentUsername = _currentUser
+                    ? (_currentUser.user_metadata?.username || _currentUser.email?.split('@')[0] || _currentUsername)
+                    : null;
+            });
         }
         return _client;
     }
