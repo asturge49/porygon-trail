@@ -9475,6 +9475,111 @@
                 }
             ]
         },
+        // Three more anywhere-in-Johto Rocket events, matching the feel/taper
+        // of Kanto's team_rocket_ambush (weight 15) / jessie_james (weight 10) /
+        // char_jessie_james (weight 5) — same weight/minDay progression, same
+        // "battle or talk your way out" choice shape, minLocation: 29 (New
+        // Bark Town, Johto's first route) instead of a locationIds/terrainTypes
+        // restriction so they can fire on any Johto route, same as those three.
+        {
+            id: "johto_rocket_ambush",
+            type: "combat",
+            name: "Team Rocket Ambush!",
+            description: "A cluster of Team Rocket grunts blocks the path, regrouped and re-outfitted since Kanto. \"New boss, new gear — hand over your Pokemon and nobody gets hurt!\"",
+            weight: 15,
+            oneTime: false,
+            minDay: 3,
+            minLocation: 29,
+            choices: [
+                {
+                    text: "Battle them!",
+                    eventBattle: {
+                        pool: "johto_rocket_grunt",
+                        difficulty: "medium",
+                        trainerName: "Rocket Grunt",
+                        winNarration: "You drive the grunts off! They scatter into the underbrush, cursing the day they picked this route.",
+                        lossNarration: "The grunt's Pokemon overpowers yours before you can regroup!",
+                        winEffects: { money: 400 },
+                        lossEffects: { food: -5 }
+                    }
+                },
+                {
+                    text: "Hand over supplies",
+                    outcomes: [
+                        { weight: 100, narration: "They take your food and Pokeballs and vanish into the brush.", effects: { food: -12, pokeballs: -4 } }
+                    ]
+                },
+                {
+                    text: "Use Escape Rope",
+                    requiresItem: "escapeRope",
+                    outcomes: [
+                        { weight: 100, narration: "You slip away through a side trail before they notice you're gone.", effects: { escapeRope: -1 } }
+                    ]
+                }
+            ]
+        },
+        {
+            id: "johto_rocket_duo",
+            type: "combat",
+            name: "Rocket Duo!",
+            description: "Two grunts in matching uniforms try to look intimidating and mostly succeed at looking cold. \"This is a shakedown! Or a hold-up! We haven't settled on terminology yet!\"",
+            weight: 10,
+            oneTime: false,
+            minDay: 4,
+            minLocation: 29,
+            choices: [
+                {
+                    text: "Battle them",
+                    eventBattle: {
+                        pool: "johto_rocket_grunt",
+                        difficulty: "easy",
+                        trainerName: "Rocket Duo",
+                        winNarration: "\"Retreat! Retreat!\" They trip over each other running for the tree line.",
+                        lossNarration: "\"We actually won one!\" They high-five and grab what they can before you recover.",
+                        winEffects: { money: 300 },
+                        lossEffects: { pokeballs: -2, food: -3 }
+                    }
+                },
+                {
+                    text: "Point out their terrible disguises",
+                    outcomes: [
+                        { weight: 70, narration: "They're so flustered by the callout that they forget why they stopped you and just leave.", effects: {} },
+                        { weight: 30, narration: "\"These are TOP-OF-THE-LINE disguises!\" They rob you out of spite.", effects: { food: -6, money: -150 } }
+                    ]
+                }
+            ]
+        },
+        {
+            id: "johto_rocket_duo_encore",
+            type: "combat",
+            name: "Rocket Duo, Again!",
+            description: "The same two grunts from before, slightly more organized and considerably more annoyed to see you. \"You. Again. This time we brought backup snacks.\"",
+            weight: 5,
+            oneTime: false,
+            minDay: 5,
+            minLocation: 29,
+            choices: [
+                {
+                    text: "\"Not you two again...\"",
+                    eventBattle: {
+                        pool: "johto_rocket_grunt",
+                        difficulty: "easy",
+                        trainerName: "Rocket Duo",
+                        winNarration: "They flee, snacks and all, muttering about updating their resumes.",
+                        lossNarration: "They win this round and help themselves to your bag before running off, thrilled with themselves.",
+                        winEffects: { pokeballs: 2, money: 200 },
+                        lossEffects: { food: -5, pokeballs: -2 }
+                    }
+                },
+                {
+                    text: "Just walk past them",
+                    outcomes: [
+                        { weight: 60, narration: "They're too busy arguing about who gets the last snack to stop you.", effects: {} },
+                        { weight: 40, narration: "They notice just in time to grab a few supplies as you pass.", effects: { pokeballs: -2, food: -3 } }
+                    ]
+                }
+            ]
+        },
         {
             id: "johto_rocket_radio_tip",
             type: "story",
