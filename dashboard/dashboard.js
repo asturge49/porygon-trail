@@ -127,7 +127,7 @@
         });
     }
 
-    function buildHBarChart(canvasId, labels, data, label) {
+    function buildHBarChart(canvasId, labels, data, label, xStepSize) {
         return new Chart(document.getElementById(canvasId), {
             type: 'bar',
             data: {
@@ -140,7 +140,7 @@
                 maintainAspectRatio: false,
                 plugins: { legend: { display: false } },
                 scales: {
-                    x: { ticks: { color: '#6ba585' }, grid: { color: '#1d4a2c' }, beginAtZero: true },
+                    x: { ticks: { color: '#6ba585', stepSize: xStepSize }, grid: { color: '#1d4a2c' }, beginAtZero: true },
                     y: { ticks: { color: '#6ba585' }, grid: { display: false } }
                 }
             }
@@ -465,8 +465,8 @@
 
         const alltimePage = topHeartbeatUsersAllTime.slice(0, SEE_MORE_STEP);
         const todayPage = topHeartbeatUsersToday.slice(0, SEE_MORE_STEP);
-        const chartHeartbeatAllTime = buildHBarChart('chart-heartbeat-alltime', alltimePage.map(x => x[0]), alltimePage.map(x => x[1]), 'Minutes');
-        const chartHeartbeatToday = buildHBarChart('chart-heartbeat-today', todayPage.map(x => x[0]), todayPage.map(x => x[1]), 'Minutes');
+        const chartHeartbeatAllTime = buildHBarChart('chart-heartbeat-alltime', alltimePage.map(x => x[0]), alltimePage.map(x => x[1]), 'Minutes', 60);
+        const chartHeartbeatToday = buildHBarChart('chart-heartbeat-today', todayPage.map(x => x[0]), todayPage.map(x => x[1]), 'Minutes', 60);
         setupSeeMore('btn-heartbeat-alltime', 'wrap-heartbeat-alltime', chartHeartbeatAllTime, topHeartbeatUsersAllTime);
         setupSeeMore('btn-heartbeat-today', 'wrap-heartbeat-today', chartHeartbeatToday, topHeartbeatUsersToday);
 
