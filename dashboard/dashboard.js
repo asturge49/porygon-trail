@@ -121,6 +121,39 @@
         return (POKEMON_INFO[id] && POKEMON_INFO[id].ability) || 'unknown';
     }
 
+    // id -> next evolution id, or [ids] for a branching evolution (Gloom, Poliwhirl,
+    // Slowpoke, Eevee, Tyrogue) — compact copy of data/pokemon.js's evolvesTo field,
+    // same reasoning as ROUTE_ORDER/POKEMON_INFO above.
+    const EVOLVES_TO = {
+        1:2, 2:3, 4:5, 5:6, 7:8, 8:9, 10:11, 11:12, 13:14, 14:15, 16:17, 17:18, 19:20,
+        21:22, 23:24, 25:26, 27:28, 29:30, 30:31, 32:33, 33:34, 35:36, 37:38, 39:40,
+        41:42, 42:169, 43:44, 44:[45,182], 46:47, 48:49, 50:51, 52:53, 54:55, 56:57,
+        58:59, 60:61, 61:[62,186], 63:64, 64:65, 66:67, 67:68, 69:70, 70:71, 72:73,
+        74:75, 75:76, 77:78, 79:[80,199], 81:82, 84:85, 86:87, 88:89, 90:91, 92:93,
+        93:94, 95:208, 96:97, 98:99, 100:101, 102:103, 104:105, 109:110, 111:112,
+        113:242, 116:117, 117:230, 118:119, 120:121, 123:212, 129:130, 133:[134,135,136],
+        137:233, 138:139, 140:141, 147:148, 148:149, 152:153, 153:154, 155:156, 156:157,
+        158:159, 159:160, 161:162, 163:164, 165:166, 167:168, 170:171, 172:25, 173:35,
+        174:39, 175:176, 177:178, 179:180, 180:181, 183:184, 187:188, 188:189, 191:192,
+        194:195, 204:205, 209:210, 216:217, 218:219, 220:221, 223:224, 228:229, 231:232,
+        236:[106,107,237], 238:124, 239:125, 240:126, 246:247, 247:248
+    };
+
+    // Given one run's champion_ids (a lineage's base form plus every pre-evolution
+    // padded in for Pokedex credit — see getChampionIdsFromParty in
+    // engine/scoring.js), keeps only the highest-stage form actually present: an id
+    // is dropped if any of its own evolution targets is also in the same set, since
+    // that means a later stage of the same mon was the one actually on the team.
+    function highestFormsInSet(ids) {
+        const set = new Set(ids);
+        return ids.filter(id => {
+            const next = EVOLVES_TO[id];
+            if (next === undefined) return true;
+            const targets = Array.isArray(next) ? next : [next];
+            return !targets.some(t => set.has(t));
+        });
+    }
+
     const app = document.getElementById('app');
     const refreshEl = document.getElementById('last-refresh');
 
@@ -437,9 +470,12 @@
         // actually on the team. Scoped to kanto_e4_cleared && !johto_completed
         // rows so it isn't also carrying Johto's ids mixed in (those two arrays
         // get concatenated onto the same column for a run that clears both).
+        // highestFormsInSet strips the padded-in pre-evolutions back out per row
+        // (a Magikarp entry only survives if no Gyarados is also in that same
+        // row's set) so the counts reflect the actual team, not the full lineage.
         const kantoPartyPool = leaderboard
             .filter(r => r.kanto_e4_cleared && !r.johto_completed)
-            .flatMap(r => r.champion_ids || []);
+            .flatMap(r => highestFormsInSet(r.champion_ids || []));
         const johtoPartyPool = events
             .filter(e => e.event_type === 'johto_elite_four_cleared')
             .flatMap(e => (e.payload && e.payload.party_ids) || []);
@@ -550,7 +586,7 @@
                 <div class="panel-grid">
                     <div class="panel">
                         <h3>Kanto E4 Team Composition</h3>
-                        <p class="panel-note">Includes each team member's pre-evolutions (Pokedex-credit data — see champion_ids), not just the 6 actually on the team.</p>
+                        <p class="panel-note">Reduced to each lineage's highest form actually on the team (a Magikarp only counts if that run's Gyarados hadn't evolved yet) — Kanto has no exact per-team snapshot like Johto's, so this is reconstructed from champion_ids.</p>
                         <div class="chart-tall" id="wrap-kanto-team" style="height: ${tallChartHeight(Math.min(SEE_MORE_STEP, kantoTeamSorted.length))}px;">
                             <canvas id="chart-kanto-team"></canvas>
                         </div>
@@ -565,7 +601,7 @@
                     </div>
                     <div class="panel">
                         <h3>Kanto E4 Ability Composition</h3>
-                        <p class="panel-note">Same pre-evolution caveat as team composition above.</p>
+                        <p class="panel-note">Same reconstructed-from-champion_ids caveat as team composition above.</p>
                         <div class="chart-tall" id="wrap-kanto-ability" style="height: ${tallChartHeight(Math.min(SEE_MORE_STEP, kantoAbilitySorted.length))}px;">
                             <canvas id="chart-kanto-ability"></canvas>
                         </div>
