@@ -280,9 +280,14 @@
             bucketCounts[idx]++;
         });
 
-        // ----- Event type breakdown -----
-        const eventTypeCounts = {};
-        events.forEach(e => { eventTypeCounts[e.event_type] = (eventTypeCounts[e.event_type] || 0) + 1; });
+        // ----- Accounts created per day (last 30 days with data) -----
+        const accountsByDay = {};
+        profiles.forEach(p => {
+            const k = dayKey(p.created_at);
+            accountsByDay[k] = (accountsByDay[k] || 0) + 1;
+        });
+        const accountDayLabels = Object.keys(accountsByDay).sort().slice(-30);
+        const accountDayCounts = accountDayLabels.map(d => accountsByDay[d]);
 
         // ----- Top scores table -----
         const topScores = [...leaderboard].sort((a, b) => b.score - a.score).slice(0, 15);
@@ -373,8 +378,8 @@
                         <canvas id="chart-runs-day"></canvas>
                     </div>
                     <div class="panel">
-                        <h3>Event Volume By Type</h3>
-                        <canvas id="chart-event-types"></canvas>
+                        <h3>Accounts Created Per Day</h3>
+                        <canvas id="chart-accounts-day"></canvas>
                     </div>
                 </div>
             </section>
@@ -468,7 +473,15 @@
             tension: 0.25
         }]);
 
-        buildBarChart('chart-event-types', Object.keys(eventTypeCounts), Object.values(eventTypeCounts), 'Events');
+        buildLineChart('chart-accounts-day', accountDayLabels, [{
+            label: 'Accounts Created',
+            data: accountDayCounts,
+            borderColor: '#33ff8c',
+            backgroundColor: 'rgba(51,255,140,0.15)',
+            fill: true,
+            tension: 0.25
+        }]);
+
         buildBarChart('chart-starters', starterTop.map(x => x[0]), starterTop.map(x => x[1]), 'Runs');
         buildDoughnut('chart-reasons', Object.keys(reasonCounts), Object.values(reasonCounts));
         buildBarChart('chart-scores', bucketLabels, bucketCounts, 'Runs');
@@ -496,7 +509,7 @@
     async function main() {
         try {
             const [profiles, leaderboard, events] = await Promise.all([
-                fetchAll('pt_profiles', 'id, username'),
+                fetchAll('pt_profiles', 'id, username, created_at'),
                 fetchAll('pt_leaderboard', 'user_id, username, score, pokedex_count, badges, days_elapsed, won, date, status, kanto_e4_cleared, johto_completed, legendary_count, created_at'),
                 fetchAll('pt_events', 'event_type, payload, created_at, user_id')
             ]);
