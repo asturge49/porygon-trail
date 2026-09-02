@@ -295,6 +295,13 @@
             }
         });
 
+        // Total hours on the trail: all heartbeats, and the subset logged by users
+        // who have at least one completed run (status !== 'in_progress') — excludes
+        // time from users who only ever loaded the page or abandoned mid-run.
+        const completedUserIds = new Set(completedRuns.map(r => r.user_id));
+        const totalHoursAll = (heartbeats.length * MINUTES_PER_HEARTBEAT) / 60;
+        const totalHoursCompletedUsers = (heartbeats.filter(e => completedUserIds.has(e.user_id)).length * MINUTES_PER_HEARTBEAT) / 60;
+
         const topHeartbeatUsersAllTime = allSorted(heartbeatsByUserAllTime)
             .map(([userId, count]) => [nameFor(userId), +(count * MINUTES_PER_HEARTBEAT).toFixed(1)]);
         const topHeartbeatUsersToday = allSorted(heartbeatsByUserToday)
@@ -340,6 +347,8 @@
                     ${statCard('Avg Days Survived', avg(leaderboard.map(r => r.days_elapsed)).toFixed(1))}
                     ${statCard('Avg Pokedex Count', avg(leaderboard.map(r => r.pokedex_count)).toFixed(1))}
                     ${statCard('Johto Runs Completed', johtoEntries)}
+                    ${statCard('Total Hours On Trail', totalHoursAll.toFixed(1))}
+                    ${statCard('Total Hours (Completed-Run Trainers)', totalHoursCompletedUsers.toFixed(1))}
                 </div>
             </section>
 
@@ -475,7 +484,7 @@
         try {
             const [profiles, leaderboard, events] = await Promise.all([
                 fetchAll('pt_profiles', 'id, username'),
-                fetchAll('pt_leaderboard', 'username, score, pokedex_count, badges, days_elapsed, won, date, status, kanto_e4_cleared, johto_completed, legendary_count, created_at'),
+                fetchAll('pt_leaderboard', 'user_id, username, score, pokedex_count, badges, days_elapsed, won, date, status, kanto_e4_cleared, johto_completed, legendary_count, created_at'),
                 fetchAll('pt_events', 'event_type, payload, created_at, user_id')
             ]);
             render(profiles, leaderboard, events);
