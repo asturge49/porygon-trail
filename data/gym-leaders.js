@@ -329,6 +329,7 @@
     PT.Data.EliteFour = [
         {
             name: "Lorelei", title: "Ice Master", type: "ice",
+            spriteUrl: "assets/gym-leaders/lorelei.png",
             introText: "Lorelei adjusts her glasses. \"Welcome to the Pokemon League. I am the first of the Elite Four. Let me freeze you in your tracks.\"",
             defeatText: "\"How dare you! You won't get past the others!\"",
             pokemon: [
@@ -339,6 +340,7 @@
         },
         {
             name: "Bruno", title: "Fighting Elite", type: "fighting",
+            spriteUrl: "assets/gym-leaders/bruno.png",
             introText: "Bruno flexes his muscles. \"I trained with my Pokemon in the mountains. We've pushed beyond our limits. Can you match our power?\"",
             defeatText: "\"My fighting spirit wasn't enough?! Go... prove yourself to the rest.\"",
             pokemon: [
@@ -349,6 +351,7 @@
         },
         {
             name: "Agatha", title: "Ghost Specialist", type: "ghost",
+            spriteUrl: "assets/gym-leaders/agatha.png",
             introText: "Agatha cackles. \"I see the fear in your eyes, child. My ghosts will drag your Pokemon into the shadows!\"",
             defeatText: "\"Hmph! You're tougher than you look. But the worst is yet to come...\"",
             pokemon: [
@@ -359,6 +362,7 @@
         },
         {
             name: "Lance", title: "Dragon Master", type: "dragon",
+            spriteUrl: "assets/gym-leaders/lance.png",
             introText: "Lance's cape billows behind him. \"I am the last of the Elite Four. My dragons have never been defeated. You will fall here.\"",
             defeatText: "\"I can't believe it... You've earned the right to face the Champion!\"",
             pokemon: [
@@ -369,6 +373,7 @@
         },
         {
             name: "Blue", title: "Pokemon Champion", type: "mixed",
+            spriteUrl: "assets/gym-leaders/blue.png",
             introText: "Blue smirks. \"Well, well. Look who made it. I've been waiting for you. Let's see if you've got what it takes to dethrone me!\"",
             defeatText: "\"No way! I can't believe I lost! You're the new Champion!\"",
             pokemon: [
@@ -388,6 +393,7 @@
     PT.Data.JohtoEliteFour = [
         {
             name: "Lorelei", title: "Ice Master", type: "ice",
+            spriteUrl: "assets/gym-leaders/lorelei.png",
             introText: "Lorelei's glasses catch the light. \"You again! I've had a long time to sharpen my team since Kanto. Let's see if you've grown too.\"",
             defeatText: "\"Impressive... you're a different trainer than the one I remember.\"",
             pokemon: [
@@ -399,6 +405,7 @@
         },
         {
             name: "Bruno", title: "Fighting Elite", type: "fighting",
+            spriteUrl: "assets/gym-leaders/bruno.png",
             introText: "Bruno cracks his knuckles. \"Still training in the mountains, still pushing past my limits. Show me how far you've come!\"",
             defeatText: "\"Hah! Good! A rematch should feel like that. Go — the others are waiting.\"",
             pokemon: [
@@ -411,6 +418,7 @@
         },
         {
             name: "Agatha", title: "Ghost Specialist", type: "ghost",
+            spriteUrl: "assets/gym-leaders/agatha.png",
             introText: "Agatha's cackle echoes off the league walls. \"Back for more nightmares? My ghosts have gotten meaner with age!\"",
             defeatText: "\"Ohoho! You've got some fight in you still. But the worst is yet to come...\"",
             pokemon: [
@@ -422,6 +430,7 @@
         },
         {
             name: "Lance", title: "Dragon Master", type: "dragon",
+            spriteUrl: "assets/gym-leaders/lance.png",
             introText: "Lance's cape billows once more. \"I told you my dragons never lose. Let's find out if that's still true.\"",
             defeatText: "\"...Unbelievable. Go face the Champion — you've earned it twice over.\"",
             pokemon: [
@@ -433,6 +442,7 @@
         },
         {
             name: "Blue", title: "Pokemon Champion", type: "mixed",
+            spriteUrl: "assets/gym-leaders/blue.png",
             introText: "Blue leans against the throne, arms crossed. \"Didn't think I'd let the title go that easily, did you? I've been training nonstop since Kanto.\"",
             defeatText: "\"...Ha. HA! Unbelievable! You've done it again. You're still the Champion!\"",
             // Deliberately avoids duplicating Lance's dragon lean (§9.2) —
