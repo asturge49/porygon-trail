@@ -2326,8 +2326,9 @@ body {
 
 .roster-badge-star {
     border-color: transparent;
-    color: #b8860b;
+    color: var(--gb-darkest);
     padding: 0;
+    font-size: 9px;
 }
 
 .potion-result {

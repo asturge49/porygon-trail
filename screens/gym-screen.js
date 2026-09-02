@@ -46,6 +46,14 @@
             // Build type effectiveness lookup based on opponent's types
             const typeChart = getTypeWeaknesses(opponentTypes);
 
+            // Loss damage preview — same formula resolveGymBattle uses on an
+            // actual loss (Sabrina-onward gyms hit harder, aces hit hardest),
+            // computed here too so the player can see the cost before picking.
+            const previewGymIndex = PT.Data.GymOrder.indexOf(leaderId);
+            const previewIsLateGym = previewGymIndex >= 4;
+            const previewBaseDamage = previewIsLateGym ? 3 : 2;
+            const lossDamage = isAce ? previewBaseDamage + 1 : previewBaseDamage;
+
             const div = document.createElement('div');
             div.className = 'screen gym-screen';
             div.innerHTML = `
@@ -74,6 +82,7 @@
                 <div class="text-box" style="font-size: 7px;">
                     Choose your Pokemon! ${opponent.name} is ${opponentTypes.join('/')}-type.
                     <br>Weak to: ${typeChart.weakTo.join(', ') || 'none'} | Resists: ${typeChart.strongTo.join(', ') || 'none'}
+                    <br><span style="font-size: 6px;">If you lose, your Pokemon takes ${lossDamage} damage.</span>
                 </div>
                 <div class="event-choices" id="gym-choices">
                     ${PT.Engine.GameState.getAliveParty(state).map((p, i) => {
@@ -436,6 +445,12 @@
         const opponentTypes = opponentData ? opponentData.types : [leader.type];
         const typeChart = getTypeWeaknesses(opponentTypes);
 
+        // Loss damage preview — same formula the loss branch below uses.
+        const previewGymIndex = PT.Data.GymOrder.indexOf(leaderId);
+        const previewIsLateGym = previewGymIndex >= 4;
+        const previewBaseDamage = previewIsLateGym ? 3 : 2;
+        const lossDamage = isAce ? previewBaseDamage + 1 : previewBaseDamage;
+
         const div = document.createElement('div');
         div.className = 'screen gym-screen';
         div.innerHTML = `
@@ -463,6 +478,7 @@
             <div class="text-box" style="font-size: 7px;">
                 Choose your Pokemon! ${opponent.name} is ${opponentTypes.join('/')}-type.
                 <br>Weak to: ${typeChart.weakTo.join(', ') || 'none'} | Resists: ${typeChart.strongTo.join(', ') || 'none'}
+                <br><span style="font-size: 6px;">If you lose, your Pokemon takes ${lossDamage} damage.</span>
                 ${round > 0 ? `<br><span style="font-size: 6px;">Defeated so far: ${round}/${leader.pokemon.length}</span>` : ''}
             </div>
             <div class="event-choices" id="gym-choices">

@@ -164,7 +164,7 @@
             <div class="text-box" style="font-size: 7px;">
                 ${trainer.name} sends out ${opponent.name}! (${opponentTypes.join('/')}-type)
                 <br>Weak to: ${typeChart.weakTo.join(', ') || 'none'} | Resists: ${typeChart.strongTo.join(', ') || 'none'}
-                <br><span style="font-size: 6px;">Battle Stars do NOT protect against E4 kills!</span>
+                <br><span style="font-size: 6px;">If you lose, your Pokemon takes 4 damage. Battle Stars do NOT protect against E4 kills!</span>
             </div>
             <div class="event-choices" id="e4-choices">
                 ${alive.map((p, i) => {

@@ -160,7 +160,7 @@
             <div class="text-box" style="font-size: 7px;">
                 Red sends out ${opponent.name}! (${opponentTypes.join('/')}-type)
                 <br>Weak to: ${typeChart.weakTo.join(', ') || 'none'} | Resists: ${typeChart.strongTo.join(', ') || 'none'}
-                <br><span style="font-size: 6px;">Battle Stars do NOT protect against Red's Pokemon!</span>
+                <br><span style="font-size: 6px;">If you lose, your Pokemon takes 5 damage. Battle Stars do NOT protect against Red's Pokemon!</span>
                 ${defeated > 0 ? `<br><span style="font-size: 6px;">Defeated so far: ${defeated}/6</span>` : ''}
             </div>
             <div class="event-choices" id="red-choices">

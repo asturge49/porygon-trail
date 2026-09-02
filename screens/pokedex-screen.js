@@ -97,8 +97,94 @@
                     PT.App.goto('TITLE');
                 }
             });
+
+            document.getElementById('pokedex-grid').addEventListener('click', (e) => {
+                const entry = e.target.closest('.pokedex-entry[data-known="true"]');
+                if (!entry) return;
+                const data = PT.Data.Pokemon.find(p => p.id === parseInt(entry.dataset.id, 10));
+                if (data) showPokedexProfile(data, dex);
+            });
         }
     };
+
+    // Species-level profile popup for a Pokedex entry — same visual language
+    // as travel-screen.js's showPokemonProfile (party member profile), but
+    // for a species aggregated across every playthrough rather than one live
+    // party instance, so there's no HP/status/battle record/caught-location
+    // to show and no potion/candy/butcher actions to take. Ability, rarity,
+    // evolution chain, and food cost are all fixed per species and safe to
+    // read straight off PT.Data.Pokemon.
+    function showPokedexProfile(data, dex) {
+        const abilityDesc = {
+            cut: 'Forages extra food while traveling',
+            surf: 'Bonus miles on water routes',
+            fly: 'Scouts shortcuts for bonus miles',
+            strength: 'Reduces injury chance on risky travel',
+            flash: 'Finds hidden money and items',
+            dig: 'Guarantees escape from wild encounters',
+            fire: 'Efficient cooking saves food',
+            heal: 'Passively heals injured party members',
+            psychic: 'Foresight: choose between encounters/events',
+            poison: 'Battle win bonus',
+            guard: 'Chance to block injuries entirely',
+            intimidate: 'Catch rate bonus + battle win bonus',
+            payday: 'Bonus money on all rewards',
+            safeguard: 'Saves a Pokemon from death once',
+            system_restore: 'Revive one lost Pokemon (once per game)',
+            glitch: 'Unpredictable chaos effects',
+            mimic: 'Copies the strongest ability in your party',
+            aurora_veil: 'All party damage reduced by 1',
+            thunderclap: 'Double travel distance on all paces',
+            sacred_flame: 'Zero food consumption',
+            psychic_dominance: '+50% win chance on all battles',
+            miracle: 'Random powerful bonus effect every day'
+        };
+
+        const isSeen = dex.seen.includes(data.id);
+        const isCaught = dex.caught.includes(data.id);
+        const isChampion = dex.champions.includes(data.id);
+
+        const evoChain = PT.Engine.GameState.getEvoChain(data.id);
+        const evoStage = evoChain.findIndex(e => e.id === data.id) + 1;
+        const evoChainDisplay = evoChain.map(e =>
+            e.id === data.id ? `<strong>[${e.name}]</strong>` : e.name
+        ).join(' → ');
+        const isFinal = PT.Engine.GameState.isFinalEvolution(data);
+        const foodCost = PT.Engine.GameState.getFoodCost ? PT.Engine.GameState.getFoodCost(data) : '?';
+        const spriteUrl = PT.Engine.GameState.getSpriteUrl(data.id);
+
+        const overlay = document.createElement('div');
+        overlay.className = 'day-recap-overlay';
+        overlay.innerHTML = `
+            <div class="pokemon-profile-popup">
+                <div class="profile-header">
+                    <img class="profile-sprite" src="${spriteUrl}" alt="${data.name}"
+                         onerror="this.style.display='none'">
+                    <div class="profile-header-info">
+                        <div class="profile-name">${data.name}</div>
+                        <div class="profile-types">${data.types.join(' / ')} | ${data.rarity.toUpperCase()}</div>
+                        <div class="profile-status">${isChampion ? '★ CHAMPION' : isCaught ? '✓ CAUGHT' : 'SEEN'}</div>
+                    </div>
+                </div>
+
+                <div class="profile-section">
+                    <div class="profile-row"><span class="profile-label">Ability:</span> <span>${data.travelAbility || 'none'}</span> <span class="profile-desc">${abilityDesc[data.travelAbility] || ''}</span></div>
+                    <div class="profile-row"><span class="profile-label">Evolution:</span> ${evoChainDisplay} ${isFinal ? '✓ Final' : `(${evoStage}/${evoChain.length})`}</div>
+                    <div class="profile-row"><span class="profile-label">Food/day:</span> ${foodCost} ration${foodCost !== 1 ? 's' : ''}</div>
+                </div>
+
+                <div class="profile-actions" style="grid-template-columns: 1fr;">
+                    <button class="btn btn-small profile-action-btn" id="pokedex-profile-close">CLOSE</button>
+                </div>
+            </div>
+        `;
+        document.querySelector('.pokedex-screen').appendChild(overlay);
+
+        document.getElementById('pokedex-profile-close').addEventListener('click', () => overlay.remove());
+        overlay.addEventListener('click', (e) => {
+            if (e.target === overlay) overlay.remove();
+        });
+    }
 
     function renderGrid(allPokemon, dex, region) {
         // Include MissingNo if seen (always Kanto-side, so hide it under a Johto filter)
@@ -119,9 +205,10 @@
             const spriteUrl = PT.Engine.GameState.getSpriteUrl(p.id);
             const statusIcon = isChampion ? '&#9733;' : isCaught ? '&#10003;' : isSeen ? 'S' : '?';
             const known = isSeen || isCaught;
+            const clickable = known && p.id !== 0;
 
             return `
-                <div class="pokedex-entry ${isChampion ? 'champion' : isCaught ? 'caught' : isSeen ? 'seen' : 'unknown'}" title="${known ? p.name : '???'} #${p.id === 0 ? '???' : p.id}">
+                <div class="pokedex-entry ${isChampion ? 'champion' : isCaught ? 'caught' : isSeen ? 'seen' : 'unknown'}" title="${known ? p.name : '???'} #${p.id === 0 ? '???' : p.id}" data-id="${p.id}" data-known="${clickable}" style="${clickable ? 'cursor: pointer;' : ''}">
                     ${known
                         ? `<img class="pokedex-sprite" src="${spriteUrl}" alt="${p.name}" onerror="this.style.display='none'">`
                         : `<div class="pokedex-sprite-unknown">?</div>`
