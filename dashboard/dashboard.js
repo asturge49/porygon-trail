@@ -12,6 +12,49 @@
 
     const CHART_COLORS = ['#33ff8c', '#ffb020', '#d21a1a', '#7fe6ff', '#c78bff', '#ff8bcb', '#6ba585'];
 
+    // Progression order of every location, id/name/region only (mirrors data/routes.js
+    // array order 1:1 — index here === state.currentLocationIndex === payload.route_index
+    // in a game_over event). Kept as a compact copy rather than loading the full
+    // routes.js (which also carries encounter tables/event pools this dashboard has
+    // no use for) — this project's Vercel deploy root is dashboard/, so a file outside
+    // it isn't reachable at runtime anyway.
+    const ROUTE_ORDER = [
+        ["pallet_town", "Pallet Town", "kanto"], ["route_1", "Route 1", "kanto"],
+        ["viridian_city", "Viridian City", "kanto"], ["viridian_forest", "Viridian Forest", "kanto"],
+        ["pewter_city", "Pewter City", "kanto"], ["mt_moon", "Mt. Moon", "kanto"],
+        ["cerulean_city", "Cerulean City", "kanto"], ["route_5", "Route 5", "kanto"],
+        ["route_6", "Route 6", "kanto"], ["vermilion_city", "Vermilion City", "kanto"],
+        ["route_8", "Route 8", "kanto"], ["rock_tunnel", "Rock Tunnel", "kanto"],
+        ["lavender_town", "Lavender Town", "kanto"], ["route_8_celadon", "Route 7", "kanto"],
+        ["celadon_city", "Celadon City", "kanto"], ["saffron_city", "Saffron City", "kanto"],
+        ["cycling_road", "Cycling Road", "kanto"], ["fuchsia_city", "Fuchsia City", "kanto"],
+        ["sea_route_19", "Sea Route 19", "kanto"], ["sea_route_20", "Sea Route 20", "kanto"],
+        ["seafoam_islands", "Seafoam Islands", "kanto"], ["cinnabar_island", "Cinnabar Island", "kanto"],
+        ["route_21", "Route 21", "kanto"], ["viridian_city_return", "Viridian City (Return Trip)", "kanto"],
+        ["route_22", "Route 22", "kanto"], ["route_23", "Route 23", "kanto"],
+        ["victory_road", "Victory Road", "kanto"], ["indigo_plateau", "Indigo Plateau", "kanto"],
+        ["pokemon_league", "Pokemon League (Kanto E4)", "kanto"],
+        ["new_bark_town", "New Bark Town", "johto"], ["route_29", "Route 29", "johto"],
+        ["cherrygrove_city", "Cherrygrove City", "johto"], ["route_30", "Route 30", "johto"],
+        ["route_31", "Route 31", "johto"], ["violet_city", "Violet City", "johto"],
+        ["route_32", "Route 32", "johto"], ["union_cave", "Union Cave", "johto"],
+        ["route_33", "Route 33", "johto"], ["azalea_town", "Azalea Town", "johto"],
+        ["slowpoke_well", "Slowpoke Well", "johto"], ["route_34", "Route 34", "johto"],
+        ["goldenrod_city", "Goldenrod City", "johto"], ["route_35", "Route 35", "johto"],
+        ["national_park", "National Park", "johto"], ["route_36", "Route 36", "johto"],
+        ["route_37", "Route 37", "johto"], ["ecruteak_city", "Ecruteak City", "johto"],
+        ["route_38", "Route 38", "johto"], ["route_39", "Route 39", "johto"],
+        ["olivine_city", "Olivine City", "johto"], ["route_40", "Route 40", "johto"],
+        ["route_41", "Route 41", "johto"], ["cianwood_city", "Cianwood City", "johto"],
+        ["route_42", "Route 42", "johto"], ["mt_mortar", "Mt. Mortar", "johto"],
+        ["mahogany_town", "Mahogany Town", "johto"], ["lake_of_rage", "Lake of Rage", "johto"],
+        ["route_44", "Route 44", "johto"], ["ice_path", "Ice Path", "johto"],
+        ["blackthorn_city", "Blackthorn City", "johto"], ["dragons_den", "Dragon's Den", "johto"],
+        ["victory_road_johto", "Victory Road (Johto)", "johto"],
+        ["indigo_plateau_johto", "Indigo Plateau (Johto E4)", "johto"],
+        ["route_28_mt_silver", "Route 28 / Mt. Silver", "johto"]
+    ].map(([id, name, region]) => ({ id, name, region }));
+
     const app = document.getElementById('app');
     const refreshEl = document.getElementById('last-refresh');
 
@@ -212,14 +255,28 @@
         const heartbeatDayLabels = Object.keys(heartbeatsByDay).sort().slice(-30);
         const heartbeatDayMinutes = heartbeatDayLabels.map(d => +(heartbeatsByDay[d] * MINUTES_PER_HEARTBEAT).toFixed(1));
 
-        // ----- Death locations (game_over.route — johto_run_ended is a duplicate
-        // event for the same death, so it's excluded to avoid double-counting) -----
-        const deathLocationCounts = {};
+        // ----- Death locations, in game-progression order (Pallet Town -> Mt. Silver) -----
+        // Keyed by payload.route_index rather than the route name — several names repeat
+        // (Viridian City, Victory Road, Indigo Plateau) between a first pass and a Johto
+        // revisit, so name alone can't tell a Kanto death from a Johto one. route_index
+        // matches state.currentLocationIndex 1:1 against ROUTE_ORDER above. (johto_run_ended
+        // is a duplicate event for the same death, so it's excluded to avoid double-counting.)
+        const deathCountsByIndex = new Array(ROUTE_ORDER.length).fill(0);
+        let deathsWithUnknownLocation = 0;
         events.filter(e => e.event_type === 'game_over').forEach(e => {
-            const route = (e.payload && e.payload.route) || 'Unknown';
-            deathLocationCounts[route] = (deathLocationCounts[route] || 0) + 1;
+            const idx = e.payload && e.payload.route_index;
+            if (Number.isInteger(idx) && idx >= 0 && idx < ROUTE_ORDER.length) {
+                deathCountsByIndex[idx]++;
+            } else {
+                deathsWithUnknownLocation++;
+            }
         });
-        const deathLocationsSorted = topN(deathLocationCounts, 25);
+        const deathLocationLabels = ROUTE_ORDER.map(r => r.name);
+        const deathLocationCounts = deathCountsByIndex.slice();
+        if (deathsWithUnknownLocation > 0) {
+            deathLocationLabels.push('Unknown Location');
+            deathLocationCounts.push(deathsWithUnknownLocation);
+        }
 
         app.innerHTML = `
             <section class="dex-section">
@@ -287,7 +344,7 @@
                     </div>
                     <div class="panel wide">
                         <h3>Where Trainers Die Most Often</h3>
-                        <div class="chart-tall" style="height: ${tallChartHeight(deathLocationsSorted.length)}px;">
+                        <div class="chart-tall" style="height: ${tallChartHeight(deathLocationLabels.length)}px;">
                             <canvas id="chart-deaths"></canvas>
                         </div>
                     </div>
@@ -346,7 +403,7 @@
             fill: true,
             tension: 0.25
         }]);
-        buildHBarChart('chart-deaths', deathLocationsSorted.map(x => x[0]), deathLocationsSorted.map(x => x[1]), 'Deaths');
+        buildHBarChart('chart-deaths', deathLocationLabels, deathLocationCounts, 'Deaths');
     }
 
     async function main() {
