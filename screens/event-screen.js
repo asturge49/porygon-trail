@@ -191,7 +191,7 @@
     function resolveEventBattleResult(event, choice, chosen, opponent, state, narrative, choicesDiv) {
         const battle = choice.eventBattle;
         const difficulty = battle.difficulty || 'medium';
-        const result = PT.Engine.EventEngine.resolveEventBattle(chosen, opponent, state, difficulty);
+        const result = PT.Engine.EventEngine.resolveEventBattle(chosen, opponent, state, difficulty, battle.pool);
 
         if (result.won) {
             // Victory — apply win effects
@@ -210,7 +210,7 @@
             PT.Engine.GameState.addToLog(state, `${chosen.name} defeated ${battle.trainerName || 'trainer'}'s ${opponent.name}!`);
 
             // Track Team Rocket defeats
-            const rocketPools = ['rocket_grunt', 'jessie_james', 'giovanni'];
+            const rocketPools = ['rocket_grunt', 'johto_rocket_grunt', 'jessie_james', 'giovanni'];
             if (rocketPools.includes(battle.pool)) {
                 state.teamRocketDefeated++;
             }

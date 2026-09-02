@@ -103,7 +103,12 @@
     // Pick an opponent from a pool based on current progression
     function pickEventBattleOpponent(poolName, state) {
         let pool;
-        const entry = EVENT_BATTLE_OPPONENTS[poolName];
+        // johto_rocket_grunt lives in its own data file (data/johto-rocket.js)
+        // rather than EVENT_BATTLE_OPPONENTS above — see that file's header
+        // comment for why this is a separate roster from Kanto's rocket_grunt.
+        const entry = poolName === 'johto_rocket_grunt'
+            ? PT.Data.JohtoRocketPool
+            : EVENT_BATTLE_OPPONENTS[poolName];
         if (!entry) return null;
 
         if (Array.isArray(entry)) {
@@ -133,7 +138,9 @@
     }
 
     // Resolve a 1v1 event battle — returns { won, chance, opponent, battleBonuses }
-    function resolveEventBattle(chosen, opponent, state, difficulty) {
+    // `pool` (optional) is the eventBattle.pool string from data/events.js —
+    // only used to special-case johto_rocket_grunt's loss damage below.
+    function resolveEventBattle(chosen, opponent, state, difficulty, pool) {
         // difficulty: 'easy' (random trainers), 'medium' (rockets), 'hard' (giovanni/gary late)
         const baseChance = difficulty === 'easy' ? 60 : difficulty === 'hard' ? 40 : 50;
 
@@ -234,7 +241,11 @@
         // Add a Johto progression component so late-game event battles carry
         // real stakes regardless of which opponent Pokemon got picked.
         let lossDamage = Math.max(1, opponentHp - 1);
-        if (state.region === 'johto') {
+        // johto_rocket_grunt's roster (data/johto-rocket.js) is drawn from
+        // actual Johto-tier Pokemon rather than reused Kanto grunts, so it
+        // doesn't need the compensating bonus below — flat HP-1 is the
+        // intended, final formula for this pool specifically.
+        if (state.region === 'johto' && pool !== 'johto_rocket_grunt') {
             const badgeCount = state.badges.filter(b => b !== 'champion').length;
             const johtoBadges = Math.max(0, badgeCount - 8);
             lossDamage += 2 + johtoBadges;

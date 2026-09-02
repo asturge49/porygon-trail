@@ -9249,7 +9249,7 @@
                 {
                     text: "Fight them and free the Slowpoke",
                     eventBattle: {
-                        pool: "rocket_grunt",
+                        pool: "johto_rocket_grunt",
                         difficulty: "medium",
                         trainerName: "Rocket Grunt",
                         winNarration: "The grunt goes down hard. You throw open the pen and the Slowpoke scatter into the tunnels, safe. One lingers just long enough to follow you back up into the daylight, grateful in its own slow way.",
@@ -9458,7 +9458,7 @@
                 {
                     text: "Confront him",
                     eventBattle: {
-                        pool: "rocket_grunt",
+                        pool: "johto_rocket_grunt",
                         difficulty: "easy",
                         trainerName: "Rocket Scout",
                         winNarration: "\"You weren't supposed to notice!\" He flees, dropping half his supplies in the process.",
@@ -10607,7 +10607,7 @@
                 {
                     text: "Storm the hideout",
                     eventBattle: {
-                        pool: "rocket_grunt",
+                        pool: "johto_rocket_grunt",
                         difficulty: "hard",
                         trainerName: "Rocket Radio Technician",
                         winNarration: "You smash the jamming rig and the grunts scatter through the tunnels. The broadcast dies mid-static. Whatever they were doing to those Slowpoke, it stops today.",
@@ -10718,7 +10718,7 @@
                 {
                     text: "Confront them",
                     eventBattle: {
-                        pool: "rocket_grunt",
+                        pool: "johto_rocket_grunt",
                         difficulty: "medium",
                         trainerName: "Rocket Grunt",
                         winNarration: "You scatter the grunts and their equipment goes into the lake with a satisfying splash. Whatever they were doing to the local Magikarp, it stops here.",
@@ -11686,7 +11686,7 @@
                 {
                     text: "Fight them off",
                     eventBattle: {
-                        pool: "rocket_grunt",
+                        pool: "johto_rocket_grunt",
                         difficulty: "medium",
                         trainerName: "Rocket Straggler",
                         winNarration: "They fold quicker than you expected — this crew's clearly lost some morale since Mahogany. They scatter into the brush.",
