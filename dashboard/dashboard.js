@@ -30,12 +30,6 @@
         return rows;
     }
 
-    async function fetchCount(table) {
-        const { count, error } = await client.from(table).select('*', { count: 'exact', head: true });
-        if (error) throw new Error(`${table}: ${error.message}`);
-        return count;
-    }
-
     function pct(n, d) {
         if (!d) return '0%';
         return `${Math.round((n / d) * 100)}%`;
@@ -90,6 +84,25 @@
         });
     }
 
+    function buildHBarChart(canvasId, labels, data, label) {
+        new Chart(document.getElementById(canvasId), {
+            type: 'bar',
+            data: {
+                labels,
+                datasets: [{ label, data, backgroundColor: CHART_COLORS[0] }]
+            },
+            options: {
+                indexAxis: 'y',
+                responsive: true,
+                plugins: { legend: { display: false } },
+                scales: {
+                    x: { ticks: { color: '#6ba585' }, grid: { color: '#1d4a2c' }, beginAtZero: true },
+                    y: { ticks: { color: '#6ba585' }, grid: { display: false } }
+                }
+            }
+        });
+    }
+
     function buildDoughnut(canvasId, labels, data) {
         new Chart(document.getElementById(canvasId), {
             type: 'doughnut',
@@ -105,7 +118,16 @@
         return Object.entries(counts).sort((a, b) => b[1] - a[1]).slice(0, n);
     }
 
-    function render(profilesCount, leaderboard, events) {
+    // Each session_heartbeat fires every HEARTBEAT_MS (30s) while the tab is
+    // foregrounded — see engine/telemetry.js. So 1 heartbeat = 0.5 minutes.
+    const MINUTES_PER_HEARTBEAT = 30000 / 60000;
+
+    function render(profiles, leaderboard, events) {
+        const profilesCount = profiles.length;
+        const usernameById = {};
+        profiles.forEach(p => { usernameById[p.id] = p.username; });
+        const nameFor = (userId) => usernameById[userId] || (userId ? `Unknown (${userId.slice(0, 8)})` : 'Unknown');
+
         const totalRuns = leaderboard.length;
         const completedRuns = leaderboard.filter(r => r.status !== 'in_progress');
         const wins = leaderboard.filter(r => r.won).length;
@@ -113,9 +135,12 @@
         const johtoEntries = leaderboard.filter(r => r.johto_completed === true).length;
 
         // ----- Runs per day (last 30 days with data) -----
+        // Bucketed by created_at, not the `date` column — that's a locale-formatted
+        // string (e.g. "29/8/2026" vs "29.08.2026" for the same day) and fragments
+        // a single day across multiple labels.
         const runsByDay = {};
         leaderboard.forEach(r => {
-            const k = r.date || dayKey(r.created_at);
+            const k = dayKey(r.created_at);
             runsByDay[k] = (runsByDay[k] || 0) + 1;
         });
         const dayLabels = Object.keys(runsByDay).sort().slice(-30);
@@ -153,6 +178,39 @@
         // ----- Top scores table -----
         const topScores = [...leaderboard].sort((a, b) => b.score - a.score).slice(0, 15);
 
+        // ----- Heartbeats: time-on-page (session_heartbeat, 1 beat = 0.5 min) -----
+        const heartbeats = events.filter(e => e.event_type === 'session_heartbeat');
+        const todayKey = dayKey(new Date());
+
+        const heartbeatsByUserAllTime = {};
+        const heartbeatsByUserToday = {};
+        const heartbeatsByDay = {};
+        heartbeats.forEach(e => {
+            heartbeatsByUserAllTime[e.user_id] = (heartbeatsByUserAllTime[e.user_id] || 0) + 1;
+            const d = dayKey(e.created_at);
+            heartbeatsByDay[d] = (heartbeatsByDay[d] || 0) + 1;
+            if (d === todayKey) {
+                heartbeatsByUserToday[e.user_id] = (heartbeatsByUserToday[e.user_id] || 0) + 1;
+            }
+        });
+
+        const topHeartbeatUsersAllTime = topN(heartbeatsByUserAllTime, 10)
+            .map(([userId, count]) => [nameFor(userId), +(count * MINUTES_PER_HEARTBEAT).toFixed(1)]);
+        const topHeartbeatUsersToday = topN(heartbeatsByUserToday, 10)
+            .map(([userId, count]) => [nameFor(userId), +(count * MINUTES_PER_HEARTBEAT).toFixed(1)]);
+
+        const heartbeatDayLabels = Object.keys(heartbeatsByDay).sort().slice(-30);
+        const heartbeatDayMinutes = heartbeatDayLabels.map(d => +(heartbeatsByDay[d] * MINUTES_PER_HEARTBEAT).toFixed(1));
+
+        // ----- Death locations (game_over.route — johto_run_ended is a duplicate
+        // event for the same death, so it's excluded to avoid double-counting) -----
+        const deathLocationCounts = {};
+        events.filter(e => e.event_type === 'game_over').forEach(e => {
+            const route = (e.payload && e.payload.route) || 'Unknown';
+            deathLocationCounts[route] = (deathLocationCounts[route] || 0) + 1;
+        });
+        const deathLocationsSorted = topN(deathLocationCounts, 25);
+
         app.innerHTML = `
             <section class="dex-section">
                 <h2>&gt; Overview</h2>
@@ -183,6 +241,24 @@
             </section>
 
             <section class="dex-section">
+                <h2>&gt; Time On Trail (Heartbeats, 1 beat = 30s)</h2>
+                <div class="panel-grid">
+                    <div class="panel">
+                        <h3>Top Trainers By Time On Page (All-Time)</h3>
+                        <canvas id="chart-heartbeat-alltime"></canvas>
+                    </div>
+                    <div class="panel">
+                        <h3>Top Trainers By Time On Page (Today)</h3>
+                        <canvas id="chart-heartbeat-today"></canvas>
+                    </div>
+                    <div class="panel">
+                        <h3>Minutes-On-Page Per Day, All Trainers</h3>
+                        <canvas id="chart-heartbeat-day"></canvas>
+                    </div>
+                </div>
+            </section>
+
+            <section class="dex-section">
                 <h2>&gt; Player Behavior</h2>
                 <div class="panel-grid">
                     <div class="panel">
@@ -196,6 +272,10 @@
                     <div class="panel">
                         <h3>Score Distribution</h3>
                         <canvas id="chart-scores"></canvas>
+                    </div>
+                    <div class="panel wide">
+                        <h3>Where Trainers Die Most Often</h3>
+                        <canvas id="chart-deaths"></canvas>
                     </div>
                 </div>
             </section>
@@ -241,16 +321,28 @@
         buildBarChart('chart-starters', starterTop.map(x => x[0]), starterTop.map(x => x[1]), 'Runs');
         buildDoughnut('chart-reasons', Object.keys(reasonCounts), Object.values(reasonCounts));
         buildBarChart('chart-scores', bucketLabels, bucketCounts, 'Runs');
+
+        buildHBarChart('chart-heartbeat-alltime', topHeartbeatUsersAllTime.map(x => x[0]), topHeartbeatUsersAllTime.map(x => x[1]), 'Minutes');
+        buildHBarChart('chart-heartbeat-today', topHeartbeatUsersToday.map(x => x[0]), topHeartbeatUsersToday.map(x => x[1]), 'Minutes');
+        buildLineChart('chart-heartbeat-day', heartbeatDayLabels, [{
+            label: 'Minutes on page (all trainers)',
+            data: heartbeatDayMinutes,
+            borderColor: '#ffb020',
+            backgroundColor: 'rgba(255,176,32,0.15)',
+            fill: true,
+            tension: 0.25
+        }]);
+        buildHBarChart('chart-deaths', deathLocationsSorted.map(x => x[0]), deathLocationsSorted.map(x => x[1]), 'Deaths');
     }
 
     async function main() {
         try {
-            const [profilesCount, leaderboard, events] = await Promise.all([
-                fetchCount('pt_profiles'),
+            const [profiles, leaderboard, events] = await Promise.all([
+                fetchAll('pt_profiles', 'id, username'),
                 fetchAll('pt_leaderboard', 'username, score, pokedex_count, badges, days_elapsed, won, date, status, kanto_e4_cleared, johto_completed, legendary_count, created_at'),
-                fetchAll('pt_events', 'event_type, payload, created_at')
+                fetchAll('pt_events', 'event_type, payload, created_at, user_id')
             ]);
-            render(profilesCount, leaderboard, events);
+            render(profiles, leaderboard, events);
             refreshEl.textContent = `SYNCED ${new Date().toLocaleTimeString()}`;
         } catch (err) {
             app.innerHTML = `<div class="error-row">UPLINK FAILED: ${err.message}</div>`;

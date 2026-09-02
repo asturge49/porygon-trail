@@ -217,6 +217,12 @@ section.dex-section h2 {
 
 .panel canvas { max-height: 260px; }
 
+.panel.wide {
+    grid-column: 1 / -1;
+}
+
+.panel.wide canvas { max-height: 520px; }
+
 /* ===== Tables ===== */
 table.dex-table {
     width: 100%;
