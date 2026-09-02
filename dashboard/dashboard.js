@@ -94,6 +94,7 @@
             options: {
                 indexAxis: 'y',
                 responsive: true,
+                maintainAspectRatio: false,
                 plugins: { legend: { display: false } },
                 scales: {
                     x: { ticks: { color: '#6ba585' }, grid: { color: '#1d4a2c' }, beginAtZero: true },
@@ -116,6 +117,15 @@
 
     function topN(counts, n) {
         return Object.entries(counts).sort((a, b) => b[1] - a[1]).slice(0, n);
+    }
+
+    function allSorted(counts) {
+        return Object.entries(counts).sort((a, b) => b[1] - a[1]);
+    }
+
+    // Height (px) for a horizontal bar chart tall enough to fit every row legibly.
+    function tallChartHeight(rowCount) {
+        return Math.max(280, rowCount * 20);
     }
 
     // Each session_heartbeat fires every HEARTBEAT_MS (30s) while the tab is
@@ -194,9 +204,9 @@
             }
         });
 
-        const topHeartbeatUsersAllTime = topN(heartbeatsByUserAllTime, 10)
+        const topHeartbeatUsersAllTime = allSorted(heartbeatsByUserAllTime)
             .map(([userId, count]) => [nameFor(userId), +(count * MINUTES_PER_HEARTBEAT).toFixed(1)]);
-        const topHeartbeatUsersToday = topN(heartbeatsByUserToday, 10)
+        const topHeartbeatUsersToday = allSorted(heartbeatsByUserToday)
             .map(([userId, count]) => [nameFor(userId), +(count * MINUTES_PER_HEARTBEAT).toFixed(1)]);
 
         const heartbeatDayLabels = Object.keys(heartbeatsByDay).sort().slice(-30);
@@ -242,18 +252,20 @@
 
             <section class="dex-section">
                 <h2>&gt; Time On Trail (Heartbeats, 1 beat = 30s)</h2>
-                <div class="panel-grid">
-                    <div class="panel">
-                        <h3>Top Trainers By Time On Page (All-Time)</h3>
+                <div class="panel">
+                    <h3>Minutes-On-Page Per Day, All Trainers</h3>
+                    <canvas id="chart-heartbeat-day"></canvas>
+                </div>
+                <div class="panel wide" style="margin-top: 16px;">
+                    <h3>Every Trainer By Time On Page (All-Time)</h3>
+                    <div class="chart-tall" style="height: ${tallChartHeight(topHeartbeatUsersAllTime.length)}px;">
                         <canvas id="chart-heartbeat-alltime"></canvas>
                     </div>
-                    <div class="panel">
-                        <h3>Top Trainers By Time On Page (Today)</h3>
+                </div>
+                <div class="panel wide" style="margin-top: 16px;">
+                    <h3>Every Trainer By Time On Page (Today)</h3>
+                    <div class="chart-tall" style="height: ${tallChartHeight(topHeartbeatUsersToday.length)}px;">
                         <canvas id="chart-heartbeat-today"></canvas>
-                    </div>
-                    <div class="panel">
-                        <h3>Minutes-On-Page Per Day, All Trainers</h3>
-                        <canvas id="chart-heartbeat-day"></canvas>
                     </div>
                 </div>
             </section>
@@ -275,7 +287,9 @@
                     </div>
                     <div class="panel wide">
                         <h3>Where Trainers Die Most Often</h3>
-                        <canvas id="chart-deaths"></canvas>
+                        <div class="chart-tall" style="height: ${tallChartHeight(deathLocationsSorted.length)}px;">
+                            <canvas id="chart-deaths"></canvas>
+                        </div>
                     </div>
                 </div>
             </section>

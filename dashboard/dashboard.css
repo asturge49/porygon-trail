@@ -221,7 +221,12 @@ section.dex-section h2 {
     grid-column: 1 / -1;
 }
 
-.panel.wide canvas { max-height: 520px; }
+.chart-tall {
+    position: relative;
+    width: 100%;
+}
+
+.chart-tall canvas { max-height: none; }
 
 /* ===== Tables ===== */
 table.dex-table {
