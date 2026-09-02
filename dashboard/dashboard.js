@@ -235,6 +235,14 @@
         const e4Clears = leaderboard.filter(r => r.kanto_e4_cleared).length;
         const johtoEntries = leaderboard.filter(r => r.johto_completed === true).length;
 
+        // ----- Red capstone battle: challenged vs. won -----
+        // capstone_result fires exactly once per run that reaches Red and resolves
+        // the fight — red_mons_defeated === 6 on a full clear (see
+        // screens/red-capstone-screen.js), anything less on a party-wipe loss.
+        const capstoneResults = events.filter(e => e.event_type === 'capstone_result');
+        const redChallenges = capstoneResults.length;
+        const redWins = capstoneResults.filter(e => e.payload && e.payload.red_mons_defeated === 6).length;
+
         // ----- Runs per day (last 30 days with data) -----
         // Bucketed by created_at, not the `date` column — that's a locale-formatted
         // string (e.g. "29/8/2026" vs "29.08.2026" for the same day) and fragments
@@ -352,6 +360,8 @@
                     ${statCard('Trainers With A Completed Run', `${completedUserIds.size} / ${profilesCount}`)}
                     ${statCard('Total Hours (Completed-Run Trainers)', totalHoursCompletedUsers.toFixed(1))}
                     ${statCard('Avg Hours Per Completed-Run Trainer', avgHoursPerCompletedTrainer.toFixed(1))}
+                    ${statCard('Red Challenged', redChallenges)}
+                    ${statCard('Red Defeated', `${redWins} (${pct(redWins, redChallenges)})`)}
                 </div>
             </section>
 
