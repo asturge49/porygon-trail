@@ -142,7 +142,12 @@
                     "The trail is long and unforgiving.<br>Few trainers make it to the end."
                 </div>
 
-                <div class="btn-row" style="width: 100%; max-width: 500px;">
+                <div class="text-box text-center" style="font-size: 7px; margin-top: 8px;">
+                    ProfOak would value any feedback or new ideas. If you found anything confusing, janky, broken, or even have an idea that could be a cool feature. Pop in the discord and lmk! Just don't expect many people there. When I wrote this message on Sept 1, there are only 3 people in the channel. lol!
+                </div>
+                <button class="btn btn-wide btn-small" id="btn-gameover-discord" style="margin-top: 4px;">JOIN DISCORD</button>
+
+                <div class="btn-row" style="width: 100%; max-width: 500px; margin-top: 8px;">
                     <button class="btn flex-1" id="btn-retry">MAIN MENU</button>
                     <button class="btn flex-1" id="btn-leaderboard">LEADERBOARD</button>
                 </div>
@@ -155,6 +160,9 @@
             });
             document.getElementById('btn-leaderboard').addEventListener('click', () => {
                 PT.App.goto('LEADERBOARD');
+            });
+            document.getElementById('btn-gameover-discord').addEventListener('click', () => {
+                window.open('https://discord.gg/6yNHjbAYF', '_blank', 'noopener');
             });
         }
     };
