@@ -217,6 +217,13 @@ section.dex-section h2 {
 
 .panel canvas { max-height: 260px; }
 
+.panel-note {
+    font-size: 13px;
+    color: var(--ink-dim);
+    margin: -6px 0 10px;
+    font-style: italic;
+}
+
 .panel.wide {
     grid-column: 1 / -1;
 }

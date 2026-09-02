@@ -55,6 +55,72 @@
         ["route_28_mt_silver", "Route 28 / Mt. Silver", "johto"]
     ].map(([id, name, region]) => ({ id, name, region }));
 
+    // id -> [name, travelAbility], compact copy of data/pokemon.js (name +
+    // travelAbility only — the rest of that file, moveset/encounter tables
+    // etc., has no use here). Same "can't reach files outside dashboard/'s
+    // Vercel deploy root" reasoning as ROUTE_ORDER above.
+    const POKEMON_INFO = Object.fromEntries([
+        [1,"Bulbasaur","cut"],[2,"Ivysaur","cut"],[3,"Venusaur","cut"],[4,"Charmander","fire"],[5,"Charmeleon","fire"],
+        [6,"Charizard","fire"],[7,"Squirtle","surf"],[8,"Wartortle","surf"],[9,"Blastoise","surf"],[10,"Caterpie","cut"],
+        [11,"Metapod","guard"],[12,"Butterfree","fly"],[13,"Weedle","poison"],[14,"Kakuna","guard"],[15,"Beedrill","poison"],
+        [16,"Pidgey","fly"],[17,"Pidgeotto","fly"],[18,"Pidgeot","fly"],[19,"Rattata","dig"],[20,"Raticate","dig"],
+        [21,"Spearow","fly"],[22,"Fearow","fly"],[23,"Ekans","poison"],[24,"Arbok","intimidate"],[25,"Pikachu","flash"],
+        [26,"Raichu","flash"],[27,"Sandshrew","dig"],[28,"Sandslash","dig"],[29,"Nidoran F","poison"],[30,"Nidorina","poison"],
+        [31,"Nidoqueen","strength"],[32,"Nidoran M","poison"],[33,"Nidorino","poison"],[34,"Nidoking","strength"],[35,"Clefairy","heal"],
+        [36,"Clefable","heal"],[37,"Vulpix","fire"],[38,"Ninetales","fire"],[39,"Jigglypuff","heal"],[40,"Wigglytuff","heal"],
+        [41,"Zubat","fly"],[42,"Golbat","fly"],[43,"Oddish","cut"],[44,"Gloom","poison"],[45,"Vileplume","poison"],
+        [46,"Paras","cut"],[47,"Parasect","cut"],[48,"Venonat","poison"],[49,"Venomoth","psychic"],[50,"Diglett","dig"],
+        [51,"Dugtrio","dig"],[52,"Meowth","payday"],[53,"Persian","payday"],[54,"Psyduck","surf"],[55,"Golduck","surf"],
+        [56,"Mankey","strength"],[57,"Primeape","strength"],[58,"Growlithe","fire"],[59,"Arcanine","intimidate"],[60,"Poliwag","surf"],
+        [61,"Poliwhirl","surf"],[62,"Poliwrath","strength"],[63,"Abra","psychic"],[64,"Kadabra","psychic"],[65,"Alakazam","psychic"],
+        [66,"Machop","strength"],[67,"Machoke","strength"],[68,"Machamp","strength"],[69,"Bellsprout","cut"],[70,"Weepinbell","cut"],
+        [71,"Victreebel","cut"],[72,"Tentacool","surf"],[73,"Tentacruel","surf"],[74,"Geodude","guard"],[75,"Graveler","guard"],
+        [76,"Golem","guard"],[77,"Ponyta","fire"],[78,"Rapidash","fire"],[79,"Slowpoke","psychic"],[80,"Slowbro","psychic"],
+        [81,"Magnemite","flash"],[82,"Magneton","flash"],[83,"Farfetchd","cut"],[84,"Doduo","fly"],[85,"Dodrio","fly"],
+        [86,"Seel","surf"],[87,"Dewgong","surf"],[88,"Grimer","poison"],[89,"Muk","poison"],[90,"Shellder","guard"],
+        [91,"Cloyster","guard"],[92,"Gastly","psychic"],[93,"Haunter","psychic"],[94,"Gengar","psychic"],[95,"Onix","strength"],
+        [96,"Drowzee","psychic"],[97,"Hypno","psychic"],[98,"Krabby","surf"],[99,"Kingler","strength"],[100,"Voltorb","flash"],
+        [101,"Electrode","flash"],[102,"Exeggcute","psychic"],[103,"Exeggutor","psychic"],[104,"Cubone","dig"],[105,"Marowak","dig"],
+        [106,"Hitmonlee","strength"],[107,"Hitmonchan","strength"],[108,"Lickitung","heal"],[109,"Koffing","poison"],[110,"Weezing","poison"],
+        [111,"Rhyhorn","guard"],[112,"Rhydon","guard"],[113,"Chansey","safeguard"],[114,"Tangela","cut"],[115,"Kangaskhan","strength"],
+        [116,"Horsea","surf"],[117,"Seadra","surf"],[118,"Goldeen","surf"],[119,"Seaking","surf"],[120,"Staryu","flash"],
+        [121,"Starmie","flash"],[122,"Mr. Mime","psychic"],[123,"Scyther","cut"],[124,"Jynx","psychic"],[125,"Electabuzz","flash"],
+        [126,"Magmar","fire"],[127,"Pinsir","strength"],[128,"Tauros","intimidate"],[129,"Magikarp","surf"],[130,"Gyarados","intimidate"],
+        [131,"Lapras","surf"],[132,"Ditto","mimic"],[133,"Eevee","heal"],[134,"Vaporeon","surf"],[135,"Jolteon","flash"],
+        [136,"Flareon","fire"],[137,"Porygon","system_restore"],[138,"Omanyte","surf"],[139,"Omastar","guard"],[140,"Kabuto","guard"],
+        [141,"Kabutops","cut"],[142,"Aerodactyl","fly"],[143,"Snorlax","guard"],[144,"Articuno","aurora_veil"],[145,"Zapdos","thunderclap"],
+        [146,"Moltres","sacred_flame"],[147,"Dratini","surf"],[148,"Dragonair","surf"],[149,"Dragonite","fly"],[150,"Mewtwo","psychic_dominance"],
+        [151,"Mew","miracle"],[152,"Chikorita","cut"],[153,"Bayleef","cut"],[154,"Meganium","heal"],[155,"Cyndaquil","fire"],
+        [156,"Quilava","fire"],[157,"Typhlosion","fire"],[158,"Totodile","strength"],[159,"Croconaw","strength"],[160,"Feraligatr","strength"],
+        [161,"Sentret","dig"],[162,"Furret","dig"],[163,"Hoothoot","fly"],[164,"Noctowl","psychic"],[165,"Ledyba","cut"],
+        [166,"Ledian","cut"],[167,"Spinarak","poison"],[168,"Ariados","poison"],[169,"Crobat","fly"],[170,"Chinchou","flash"],
+        [171,"Lanturn","flash"],[172,"Pichu","flash"],[173,"Cleffa","miracle"],[174,"Igglybuff","heal"],[175,"Togepi","miracle"],
+        [176,"Togetic","miracle"],[177,"Natu","psychic"],[178,"Xatu","psychic"],[179,"Mareep","flash"],[180,"Flaaffy","flash"],
+        [181,"Ampharos","flash"],[182,"Bellossom","heal"],[183,"Marill","surf"],[184,"Azumarill","surf"],[185,"Sudowoodo","strength"],
+        [186,"Politoed","surf"],[187,"Hoppip","fly"],[188,"Skiploom","fly"],[189,"Jumpluff","fly"],[190,"Aipom","dig"],
+        [191,"Sunkern","heal"],[192,"Sunflora","heal"],[193,"Yanma","fly"],[194,"Wooper","surf"],[195,"Quagsire","surf"],
+        [196,"Espeon","psychic"],[197,"Umbreon","intimidate"],[198,"Murkrow","flash"],[199,"Slowking","psychic"],[200,"Misdreavus","flash"],
+        [201,"Unown","mimic"],[202,"Wobbuffet","guard"],[203,"Girafarig","psychic"],[204,"Pineco","guard"],[205,"Forretress","guard"],
+        [206,"Dunsparce","dig"],[207,"Gligar","fly"],[208,"Steelix","guard"],[209,"Snubbull","intimidate"],[210,"Granbull","intimidate"],
+        [211,"Qwilfish","poison"],[212,"Scizor","intimidate"],[213,"Shuckle","guard"],[214,"Heracross","strength"],[215,"Sneasel","flash"],
+        [216,"Teddiursa","strength"],[217,"Ursaring","strength"],[218,"Slugma","fire"],[219,"Magcargo","fire"],[220,"Swinub","dig"],
+        [221,"Piloswine","strength"],[222,"Corsola","surf"],[223,"Remoraid","surf"],[224,"Octillery","surf"],[225,"Delibird","fly"],
+        [226,"Mantine","surf"],[227,"Skarmory","fly"],[228,"Houndour","intimidate"],[229,"Houndoom","intimidate"],[230,"Kingdra","surf"],
+        [231,"Phanpy","strength"],[232,"Donphan","strength"],[233,"Porygon2","system_restore"],[234,"Stantler","psychic"],[235,"Smeargle","mimic"],
+        [236,"Tyrogue","strength"],[237,"Hitmontop","strength"],[238,"Smoochum","psychic"],[239,"Elekid","flash"],[240,"Magby","fire"],
+        [241,"Miltank","heal"],[242,"Blissey","heal"],[243,"Raikou","thunderclap"],[244,"Entei","sacred_flame"],[245,"Suicune","safeguard"],
+        [246,"Larvitar","strength"],[247,"Pupitar","strength"],[248,"Tyranitar","intimidate"],[249,"Lugia","psychic_dominance"],[250,"Ho-Oh","sacred_flame"],
+        [0,"MissingNo.","glitch"]
+    ].map(([id, name, ability]) => [id, { name, ability }]));
+
+    function pokemonName(id) {
+        return (POKEMON_INFO[id] && POKEMON_INFO[id].name) || `#${id}`;
+    }
+
+    function pokemonAbility(id) {
+        return (POKEMON_INFO[id] && POKEMON_INFO[id].ability) || 'unknown';
+    }
+
     const app = document.getElementById('app');
     const refreshEl = document.getElementById('last-refresh');
 
@@ -176,7 +242,8 @@
     // Wires a "See More" button that reveals SEE_MORE_STEP more rows of a horizontal
     // bar chart per click, growing its container to match. entries is the FULL
     // [label, value] list; the chart itself is created already showing the first page.
-    function setupSeeMore(btnId, wrapId, chart, entries) {
+    function setupSeeMore(btnId, wrapId, chart, entries, itemLabel) {
+        itemLabel = itemLabel || 'TRAINERS';
         const btn = document.getElementById(btnId);
         const wrap = document.getElementById(wrapId);
         if (!btn) return;
@@ -194,13 +261,24 @@
             chart.resize();
             chart.update();
             if (shown >= entries.length) {
-                btn.textContent = 'ALL TRAINERS SHOWN';
+                btn.textContent = `ALL ${itemLabel} SHOWN`;
                 btn.disabled = true;
             } else {
                 btn.textContent = `SEE MORE ▼ (${shown}/${entries.length})`;
             }
         });
         btn.textContent = `SEE MORE ▼ (${shown}/${entries.length})`;
+    }
+
+    // Creates a horizontal bar chart pre-loaded with just the first SEE_MORE_STEP
+    // rows of `sortedEntries` ([label, value], already sorted desc) and wires its
+    // See More button. Bundles the "build the initial page + wire the button"
+    // pair used by every top-N-with-See-More chart on this dashboard.
+    function buildTopNWithSeeMore(canvasId, wrapId, btnId, sortedEntries, xLabel, itemLabel, xStepSize) {
+        const page = sortedEntries.slice(0, SEE_MORE_STEP);
+        const chart = buildHBarChart(canvasId, page.map(x => x[0]), page.map(x => x[1]), xLabel, xStepSize);
+        setupSeeMore(btnId, wrapId, chart, sortedEntries, itemLabel);
+        return chart;
     }
 
     // Wires the day-range toggle buttons (7d/30d) for a line chart, re-slicing from
@@ -349,6 +427,37 @@
             deathLocationCounts.push(deathsWithUnknownLocation);
         }
 
+        // ----- Pokemon team composition: parties that WON the E4 battle -----
+        // Johto: the johto_elite_four_cleared event logs the exact living party
+        // (state.party.map(p => p.id)) at clear time — clean, single-region.
+        // Kanto has no equivalent event, so this falls back to the leaderboard's
+        // champion_ids — but that field (see engine/scoring.js's
+        // getChampionIdsFromParty) adds every pre-evolution of each living party
+        // member too, for Pokedex-credit purposes, not just the 6 that were
+        // actually on the team. Scoped to kanto_e4_cleared && !johto_completed
+        // rows so it isn't also carrying Johto's ids mixed in (those two arrays
+        // get concatenated onto the same column for a run that clears both).
+        const kantoPartyPool = leaderboard
+            .filter(r => r.kanto_e4_cleared && !r.johto_completed)
+            .flatMap(r => r.champion_ids || []);
+        const johtoPartyPool = events
+            .filter(e => e.event_type === 'johto_elite_four_cleared')
+            .flatMap(e => (e.payload && e.payload.party_ids) || []);
+
+        function countBy(ids, mapper) {
+            const counts = {};
+            ids.forEach(id => {
+                const key = mapper(id);
+                counts[key] = (counts[key] || 0) + 1;
+            });
+            return counts;
+        }
+
+        const kantoTeamSorted = allSorted(countBy(kantoPartyPool, pokemonName));
+        const johtoTeamSorted = allSorted(countBy(johtoPartyPool, pokemonName));
+        const kantoAbilitySorted = allSorted(countBy(kantoPartyPool, pokemonAbility));
+        const johtoAbilitySorted = allSorted(countBy(johtoPartyPool, pokemonAbility));
+
         app.innerHTML = `
             <section class="dex-section">
                 <h2>&gt; Overview</h2>
@@ -437,6 +546,42 @@
             </section>
 
             <section class="dex-section">
+                <h2>&gt; Pokemon Team Composition (E4-Winning Parties)</h2>
+                <div class="panel-grid">
+                    <div class="panel">
+                        <h3>Kanto E4 Team Composition</h3>
+                        <p class="panel-note">Includes each team member's pre-evolutions (Pokedex-credit data — see champion_ids), not just the 6 actually on the team.</p>
+                        <div class="chart-tall" id="wrap-kanto-team" style="height: ${tallChartHeight(Math.min(SEE_MORE_STEP, kantoTeamSorted.length))}px;">
+                            <canvas id="chart-kanto-team"></canvas>
+                        </div>
+                        <button class="see-more-btn" id="btn-kanto-team">SEE MORE ▼</button>
+                    </div>
+                    <div class="panel">
+                        <h3>Johto E4 Team Composition</h3>
+                        <div class="chart-tall" id="wrap-johto-team" style="height: ${tallChartHeight(Math.min(SEE_MORE_STEP, johtoTeamSorted.length))}px;">
+                            <canvas id="chart-johto-team"></canvas>
+                        </div>
+                        <button class="see-more-btn" id="btn-johto-team">SEE MORE ▼</button>
+                    </div>
+                    <div class="panel">
+                        <h3>Kanto E4 Ability Composition</h3>
+                        <p class="panel-note">Same pre-evolution caveat as team composition above.</p>
+                        <div class="chart-tall" id="wrap-kanto-ability" style="height: ${tallChartHeight(Math.min(SEE_MORE_STEP, kantoAbilitySorted.length))}px;">
+                            <canvas id="chart-kanto-ability"></canvas>
+                        </div>
+                        <button class="see-more-btn" id="btn-kanto-ability">SEE MORE ▼</button>
+                    </div>
+                    <div class="panel">
+                        <h3>Johto E4 Ability Composition</h3>
+                        <div class="chart-tall" id="wrap-johto-ability" style="height: ${tallChartHeight(Math.min(SEE_MORE_STEP, johtoAbilitySorted.length))}px;">
+                            <canvas id="chart-johto-ability"></canvas>
+                        </div>
+                        <button class="see-more-btn" id="btn-johto-ability">SEE MORE ▼</button>
+                    </div>
+                </div>
+            </section>
+
+            <section class="dex-section">
                 <h2>&gt; Top Runs</h2>
                 <div class="panel table-scroll">
                     <table class="dex-table">
@@ -486,12 +631,8 @@
         buildDoughnut('chart-reasons', Object.keys(reasonCounts), Object.values(reasonCounts));
         buildBarChart('chart-scores', bucketLabels, bucketCounts, 'Runs');
 
-        const alltimePage = topHeartbeatUsersAllTime.slice(0, SEE_MORE_STEP);
-        const todayPage = topHeartbeatUsersToday.slice(0, SEE_MORE_STEP);
-        const chartHeartbeatAllTime = buildHBarChart('chart-heartbeat-alltime', alltimePage.map(x => x[0]), alltimePage.map(x => x[1]), 'Minutes', 60);
-        const chartHeartbeatToday = buildHBarChart('chart-heartbeat-today', todayPage.map(x => x[0]), todayPage.map(x => x[1]), 'Minutes', 60);
-        setupSeeMore('btn-heartbeat-alltime', 'wrap-heartbeat-alltime', chartHeartbeatAllTime, topHeartbeatUsersAllTime);
-        setupSeeMore('btn-heartbeat-today', 'wrap-heartbeat-today', chartHeartbeatToday, topHeartbeatUsersToday);
+        buildTopNWithSeeMore('chart-heartbeat-alltime', 'wrap-heartbeat-alltime', 'btn-heartbeat-alltime', topHeartbeatUsersAllTime, 'Minutes', 'TRAINERS', 60);
+        buildTopNWithSeeMore('chart-heartbeat-today', 'wrap-heartbeat-today', 'btn-heartbeat-today', topHeartbeatUsersToday, 'Minutes', 'TRAINERS', 60);
 
         const chartHeartbeatDay = buildLineChart('chart-heartbeat-day', heartbeatDayLabels, [{
             label: 'Minutes on page (all trainers)',
@@ -504,13 +645,18 @@
         setupRangeToggle('#group-heartbeat-day', chartHeartbeatDay, heartbeatDayLabelsAll, heartbeatDayMinutesAll);
 
         buildHBarChart('chart-deaths', deathLocationLabels, deathLocationCounts, 'Deaths');
+
+        buildTopNWithSeeMore('chart-kanto-team', 'wrap-kanto-team', 'btn-kanto-team', kantoTeamSorted, 'Runs', 'POKEMON');
+        buildTopNWithSeeMore('chart-johto-team', 'wrap-johto-team', 'btn-johto-team', johtoTeamSorted, 'Runs', 'POKEMON');
+        buildTopNWithSeeMore('chart-kanto-ability', 'wrap-kanto-ability', 'btn-kanto-ability', kantoAbilitySorted, 'Runs', 'ABILITIES');
+        buildTopNWithSeeMore('chart-johto-ability', 'wrap-johto-ability', 'btn-johto-ability', johtoAbilitySorted, 'Runs', 'ABILITIES');
     }
 
     async function main() {
         try {
             const [profiles, leaderboard, events] = await Promise.all([
                 fetchAll('pt_profiles', 'id, username, created_at'),
-                fetchAll('pt_leaderboard', 'user_id, username, score, pokedex_count, badges, days_elapsed, won, date, status, kanto_e4_cleared, johto_completed, legendary_count, created_at'),
+                fetchAll('pt_leaderboard', 'user_id, username, score, pokedex_count, badges, days_elapsed, won, date, status, kanto_e4_cleared, johto_completed, legendary_count, created_at, champion_ids'),
                 fetchAll('pt_events', 'event_type, payload, created_at, user_id')
             ]);
             render(profiles, leaderboard, events);
