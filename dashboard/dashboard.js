@@ -95,7 +95,7 @@
     }
 
     function buildLineChart(canvasId, labels, series) {
-        new Chart(document.getElementById(canvasId), {
+        return new Chart(document.getElementById(canvasId), {
             type: 'line',
             data: { labels, datasets: series },
             options: {
@@ -128,7 +128,7 @@
     }
 
     function buildHBarChart(canvasId, labels, data, label) {
-        new Chart(document.getElementById(canvasId), {
+        return new Chart(document.getElementById(canvasId), {
             type: 'bar',
             data: {
                 labels,
@@ -169,6 +169,54 @@
     // Height (px) for a horizontal bar chart tall enough to fit every row legibly.
     function tallChartHeight(rowCount) {
         return Math.max(280, rowCount * 20);
+    }
+
+    const SEE_MORE_STEP = 10;
+
+    // Wires a "See More" button that reveals SEE_MORE_STEP more rows of a horizontal
+    // bar chart per click, growing its container to match. entries is the FULL
+    // [label, value] list; the chart itself is created already showing the first page.
+    function setupSeeMore(btnId, wrapId, chart, entries) {
+        const btn = document.getElementById(btnId);
+        const wrap = document.getElementById(wrapId);
+        if (!btn) return;
+        if (entries.length <= SEE_MORE_STEP) {
+            btn.style.display = 'none';
+            return;
+        }
+        let shown = SEE_MORE_STEP;
+        btn.addEventListener('click', () => {
+            shown = Math.min(entries.length, shown + SEE_MORE_STEP);
+            const page = entries.slice(0, shown);
+            chart.data.labels = page.map(x => x[0]);
+            chart.data.datasets[0].data = page.map(x => x[1]);
+            wrap.style.height = `${tallChartHeight(shown)}px`;
+            chart.resize();
+            chart.update();
+            if (shown >= entries.length) {
+                btn.textContent = 'ALL TRAINERS SHOWN';
+                btn.disabled = true;
+            } else {
+                btn.textContent = `SEE MORE ▼ (${shown}/${entries.length})`;
+            }
+        });
+        btn.textContent = `SEE MORE ▼ (${shown}/${entries.length})`;
+    }
+
+    // Wires the day-range toggle buttons (7d/30d) for a line chart, re-slicing from
+    // the FULL (unsliced) day-labels/values arrays.
+    function setupRangeToggle(groupSelector, chart, fullLabels, fullData) {
+        const buttons = document.querySelectorAll(`${groupSelector} .range-btn`);
+        buttons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                buttons.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                const range = parseInt(btn.dataset.range, 10);
+                chart.data.labels = fullLabels.slice(-range);
+                chart.data.datasets[0].data = fullData.slice(-range);
+                chart.update();
+            });
+        });
     }
 
     // Each session_heartbeat fires every HEARTBEAT_MS (30s) while the tab is
@@ -252,8 +300,10 @@
         const topHeartbeatUsersToday = allSorted(heartbeatsByUserToday)
             .map(([userId, count]) => [nameFor(userId), +(count * MINUTES_PER_HEARTBEAT).toFixed(1)]);
 
-        const heartbeatDayLabels = Object.keys(heartbeatsByDay).sort().slice(-30);
-        const heartbeatDayMinutes = heartbeatDayLabels.map(d => +(heartbeatsByDay[d] * MINUTES_PER_HEARTBEAT).toFixed(1));
+        const heartbeatDayLabelsAll = Object.keys(heartbeatsByDay).sort();
+        const heartbeatDayMinutesAll = heartbeatDayLabelsAll.map(d => +(heartbeatsByDay[d] * MINUTES_PER_HEARTBEAT).toFixed(1));
+        const heartbeatDayLabels = heartbeatDayLabelsAll.slice(-30);
+        const heartbeatDayMinutes = heartbeatDayMinutesAll.slice(-30);
 
         // ----- Death locations, in game-progression order (Pallet Town -> Mt. Silver) -----
         // Keyed by payload.route_index rather than the route name — several names repeat
@@ -309,21 +359,29 @@
 
             <section class="dex-section">
                 <h2>&gt; Time On Trail (Heartbeats, 1 beat = 30s)</h2>
-                <div class="panel">
-                    <h3>Minutes-On-Page Per Day, All Trainers</h3>
+                <div class="panel" id="group-heartbeat-day">
+                    <div class="panel-header-row">
+                        <h3>Minutes-On-Page Per Day, All Trainers</h3>
+                        <div class="range-toggle">
+                            <button class="range-btn active" data-range="30">30 DAYS</button>
+                            <button class="range-btn" data-range="7">7 DAYS</button>
+                        </div>
+                    </div>
                     <canvas id="chart-heartbeat-day"></canvas>
                 </div>
                 <div class="panel wide" style="margin-top: 16px;">
-                    <h3>Every Trainer By Time On Page (All-Time)</h3>
-                    <div class="chart-tall" style="height: ${tallChartHeight(topHeartbeatUsersAllTime.length)}px;">
+                    <h3>Top Trainers By Time On Page (All-Time)</h3>
+                    <div class="chart-tall" id="wrap-heartbeat-alltime" style="height: ${tallChartHeight(Math.min(SEE_MORE_STEP, topHeartbeatUsersAllTime.length))}px;">
                         <canvas id="chart-heartbeat-alltime"></canvas>
                     </div>
+                    <button class="see-more-btn" id="btn-heartbeat-alltime">SEE MORE ▼</button>
                 </div>
                 <div class="panel wide" style="margin-top: 16px;">
-                    <h3>Every Trainer By Time On Page (Today)</h3>
-                    <div class="chart-tall" style="height: ${tallChartHeight(topHeartbeatUsersToday.length)}px;">
+                    <h3>Top Trainers By Time On Page (Today)</h3>
+                    <div class="chart-tall" id="wrap-heartbeat-today" style="height: ${tallChartHeight(Math.min(SEE_MORE_STEP, topHeartbeatUsersToday.length))}px;">
                         <canvas id="chart-heartbeat-today"></canvas>
                     </div>
+                    <button class="see-more-btn" id="btn-heartbeat-today">SEE MORE ▼</button>
                 </div>
             </section>
 
@@ -393,9 +451,14 @@
         buildDoughnut('chart-reasons', Object.keys(reasonCounts), Object.values(reasonCounts));
         buildBarChart('chart-scores', bucketLabels, bucketCounts, 'Runs');
 
-        buildHBarChart('chart-heartbeat-alltime', topHeartbeatUsersAllTime.map(x => x[0]), topHeartbeatUsersAllTime.map(x => x[1]), 'Minutes');
-        buildHBarChart('chart-heartbeat-today', topHeartbeatUsersToday.map(x => x[0]), topHeartbeatUsersToday.map(x => x[1]), 'Minutes');
-        buildLineChart('chart-heartbeat-day', heartbeatDayLabels, [{
+        const alltimePage = topHeartbeatUsersAllTime.slice(0, SEE_MORE_STEP);
+        const todayPage = topHeartbeatUsersToday.slice(0, SEE_MORE_STEP);
+        const chartHeartbeatAllTime = buildHBarChart('chart-heartbeat-alltime', alltimePage.map(x => x[0]), alltimePage.map(x => x[1]), 'Minutes');
+        const chartHeartbeatToday = buildHBarChart('chart-heartbeat-today', todayPage.map(x => x[0]), todayPage.map(x => x[1]), 'Minutes');
+        setupSeeMore('btn-heartbeat-alltime', 'wrap-heartbeat-alltime', chartHeartbeatAllTime, topHeartbeatUsersAllTime);
+        setupSeeMore('btn-heartbeat-today', 'wrap-heartbeat-today', chartHeartbeatToday, topHeartbeatUsersToday);
+
+        const chartHeartbeatDay = buildLineChart('chart-heartbeat-day', heartbeatDayLabels, [{
             label: 'Minutes on page (all trainers)',
             data: heartbeatDayMinutes,
             borderColor: '#ffb020',
@@ -403,6 +466,8 @@
             fill: true,
             tension: 0.25
         }]);
+        setupRangeToggle('#group-heartbeat-day', chartHeartbeatDay, heartbeatDayLabelsAll, heartbeatDayMinutesAll);
+
         buildHBarChart('chart-deaths', deathLocationLabels, deathLocationCounts, 'Deaths');
     }
 

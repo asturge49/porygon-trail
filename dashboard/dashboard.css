@@ -228,6 +228,67 @@ section.dex-section h2 {
 
 .chart-tall canvas { max-height: none; }
 
+.see-more-btn {
+    display: block;
+    margin: 14px auto 2px;
+    padding: 6px 18px;
+    background: transparent;
+    border: 2px solid var(--phosphor-dim);
+    border-radius: 4px;
+    color: var(--phosphor);
+    font-family: 'VT323', monospace;
+    font-size: 16px;
+    letter-spacing: 1px;
+    cursor: pointer;
+}
+
+.see-more-btn:hover:not(:disabled) {
+    background: rgba(51, 255, 140, 0.1);
+    border-color: var(--phosphor);
+}
+
+.see-more-btn:disabled {
+    color: var(--ink-dim);
+    border-color: var(--panel-border);
+    cursor: default;
+}
+
+.panel-header-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.panel-header-row h3 { margin: 0; }
+
+.range-toggle {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 10px;
+}
+
+.range-btn {
+    background: transparent;
+    border: 1px solid var(--panel-border);
+    border-radius: 4px;
+    color: var(--ink-dim);
+    font-family: 'VT323', monospace;
+    font-size: 14px;
+    letter-spacing: 1px;
+    padding: 3px 10px;
+    cursor: pointer;
+}
+
+.range-btn:hover { border-color: var(--phosphor-dim); color: var(--ink); }
+
+.range-btn.active {
+    border-color: var(--amber);
+    color: var(--amber);
+    background: rgba(255, 176, 32, 0.1);
+}
+
 /* ===== Tables ===== */
 table.dex-table {
     width: 100%;
