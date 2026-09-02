@@ -410,6 +410,16 @@
             });
         }
 
+        // Johto E4 clear snapshot (state.johtoChampionIds, stamped in
+        // screens/elite-four-screen.js) — same idea as kantoChampionIds
+        // above, for a run that clears the Johto rematch but never beats
+        // Red on Mt. Silver.
+        if (state.johtoChampionIds) {
+            state.johtoChampionIds.forEach(id => {
+                if (!dex.champions.includes(id)) dex.champions.push(id);
+            });
+        }
+
         saveGlobalPokedex(dex);
         cloudPushPokedex(dex).catch(() => {});
         return dex;

@@ -360,6 +360,12 @@
                         // Kanto's below — see calculateJohtoSnapshotBonus in
                         // engine/scoring.js.
                         state.johtoScoreSnapshot = PT.Engine.Scoring.calculateJohtoSnapshotBonus(state);
+                        // Champion snapshot (§ champions leaderboard/records) —
+                        // symmetric to state.kantoChampionIds below: a Johto
+                        // E4 clear earns champion credit for the party as it
+                        // stands right now, even if Red is never reached or
+                        // the run is lost on Mt. Silver afterward.
+                        state.johtoChampionIds = PT.Engine.Scoring.getChampionIdsFromParty(state.party);
                         PT.Engine.GameState.addToLog(state, `Defeated the Johto Elite Four rematch! Earned $${e4MoneyReward} to restock before Mt. Silver.`);
 
                         // Telemetry (§13.3) — funnel: what fraction of Johto

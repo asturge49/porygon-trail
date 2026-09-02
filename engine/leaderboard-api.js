@@ -377,6 +377,10 @@
     // 'johto'), which always populates johto_score — every legacy pre-Johto
     // win has johto_score still null — so `and l.johto_score is not null`
     // is what actually distinguishes a real Red win from old Kanto-only data.
+    // Tiebreaker (§ speed): trainers tied on red_wins are ranked by their
+    // fastest (minimum) days-to-beat-Red across their winning runs, ascending
+    // — the same "Day X fastest" figure already shown alongside the win
+    // count, now also used to break ties instead of just being displayed.
     // Run once in the Supabase SQL editor (or DROP FUNCTION first if
     // pt_red_wins_leaderboard() already exists with a different signature):
     //   create or replace function pt_red_wins_leaderboard()
@@ -391,7 +395,8 @@
     //     from pt_leaderboard l
     //     where l.won and l.johto_score is not null
     //     group by l.user_id
-    //     order by count(*) filter (where l.won and l.johto_score is not null) desc
+    //     order by count(*) filter (where l.won and l.johto_score is not null) desc,
+    //              min(l.days_elapsed) filter (where l.won and l.johto_score is not null) asc
     //     limit 20;
     //   $$;
     async function getRedWinsLeaderboard() {

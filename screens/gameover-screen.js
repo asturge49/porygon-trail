@@ -62,10 +62,15 @@
                 won: false,
                 legendaryCount: PT.Engine.Scoring.countLegendaries(state),
                 kantoE4Cleared: PT.Engine.Scoring.getKantoE4Cleared(state),
-                // Champion credit for a Kanto E4 clear that didn't go on to
-                // beat Red — victory-screen.js's own Red-win-gated
-                // getChampionIds() covers the full-win case separately.
-                championIds: state.kantoChampionIds || []
+                // Champion credit for a Kanto and/or Johto E4 clear that
+                // didn't go on to beat Red — victory-screen.js's own
+                // Red-win-gated getChampionIds() covers the full-win case
+                // separately. A run can carry both snapshots (cleared Kanto,
+                // continued into Johto, cleared that too, then lost to Red);
+                // concat is safe since the leaderboard's champion count is
+                // deduped server-side (count(distinct pid) over the unnested
+                // array).
+                championIds: [...(state.kantoChampionIds || []), ...(state.johtoChampionIds || [])]
             }, PT.Engine.Scoring.getJohtoLeaderboardFields(state, score)));
 
             // Update records
