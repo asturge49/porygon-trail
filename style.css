@@ -1735,6 +1735,15 @@ body {
     gap: 6px;
 }
 
+/* A "wide" button means "span the full row" by definition — but as a lone
+   child of a 2-column grid, it only fills its own cell (the first column),
+   leaving it half-width and pinned to the left instead of centered/full
+   width like every other battle outcome screen's CONTINUE button (those
+   live in single-column containers, so .btn-wide already spans there). */
+.encounter-actions > .btn-wide {
+    grid-column: 1 / -1;
+}
+
 /* ============================================
    EVENT SCREEN
    ============================================ */
