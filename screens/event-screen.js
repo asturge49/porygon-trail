@@ -184,7 +184,7 @@
                     ${trainerSprite ? `
                     <div class="gym-leader-portrait">
                         <img src="${trainerSprite}" alt="${trainerLabel}"
-                             style="width: 56px; height: 56px; image-rendering: pixelated;"
+                             style="width: 80px; height: 80px; image-rendering: pixelated;"
                              onerror="this.style.display='none'">
                         <div class="gym-portrait-label">${trainerLabel}</div>
                     </div>` : ''}
