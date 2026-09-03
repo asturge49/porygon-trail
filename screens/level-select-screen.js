@@ -105,17 +105,29 @@
                 if (defaultCard) selectLevel(unlocked, defaultCard);
             }
 
+            // Staging test-environment bypass: same !PT.Config.isProd +
+            // ?debug=1 gate as the rest of the debug harness (title-screen.js,
+            // debug-panel-screen.js) — unlocks every level with no need to
+            // actually beat Red first, so a tester can jump straight to any
+            // level. Never true on prod regardless of query string.
+            const debugRequested = new URLSearchParams(window.location.search).get('debug') === '1';
+            const unlockAllForTesting = PT.Config && !PT.Config.isProd && debugRequested;
+
             // getHighestUnlockedLevel may return a Promise or a plain number
             // (contract note — match whatever the real implementation does).
             // Wrapping in Promise.resolve() handles either case identically,
             // same as this screen would if it awaited it directly.
             let highestUnlockedResult = 1;
             try {
-                const auth = PT.Engine.Auth;
-                const accountContext = auth && auth.isLoggedIn() ? auth.getCurrentUser() : null;
-                highestUnlockedResult = PT.Engine.LeaderboardAPI && PT.Engine.LeaderboardAPI.getHighestUnlockedLevel
-                    ? PT.Engine.LeaderboardAPI.getHighestUnlockedLevel(accountContext)
-                    : 1;
+                if (unlockAllForTesting) {
+                    highestUnlockedResult = 5;
+                } else {
+                    const auth = PT.Engine.Auth;
+                    const accountContext = auth && auth.isLoggedIn() ? auth.getCurrentUser() : null;
+                    highestUnlockedResult = PT.Engine.LeaderboardAPI && PT.Engine.LeaderboardAPI.getHighestUnlockedLevel
+                        ? PT.Engine.LeaderboardAPI.getHighestUnlockedLevel(accountContext)
+                        : 1;
+                }
             } catch (e) {
                 highestUnlockedResult = 1;
             }
