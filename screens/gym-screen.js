@@ -19,7 +19,10 @@
             const leader = PT.Data.GymLeaders[leaderId];
             if (!leader) { PT.App.goto('TRAVEL'); return; }
 
-            if (isJohtoLeader(leaderId)) {
+            // Level 3+ difficulty routes Kanto gyms through the same full
+            // 3-on-3 gauntlet Johto always uses, instead of Kanto's normal
+            // single random-pick battle.
+            if (isJohtoLeader(leaderId) || state.difficultyLevel >= 3) {
                 if (params.gymRound === undefined) {
                     renderGauntletIntro(container, state, leader, leaderId);
                 } else {

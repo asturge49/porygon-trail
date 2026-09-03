@@ -132,7 +132,7 @@
                     if (!confirm('This will overwrite your saved game. Continue?')) return;
                     GS.deleteSave();
                 }
-                PT.App.goto('STARTER');
+                PT.App.goto('LEVEL_SELECT');
             });
 
             document.getElementById('btn-pokedex').addEventListener('click', () => {

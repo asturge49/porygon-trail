@@ -53,6 +53,7 @@
         return {
             totalRuns: 0,
             totalWins: 0,           // Red capstone (full game) wins
+            winsByLevel: {},        // { level (1-5): Red win count at that difficulty level }
             totalKantoE4Wins: 0,    // Kanto Elite Four clears — separate achievement, always a superset of totalWins
             totalJohtoE4Wins: 0,    // Johto Elite Four (rematch) clears
             highScore: null,           // { value, name, date }
@@ -159,6 +160,16 @@
         merged.totalJohtoE4Wins = (cloud.totalJohtoE4Wins || 0) + johtoE4Delta;
         merged.totalLegendaryCatches = cloud.totalLegendaryCatches + legDelta;
 
+        // winsByLevel: same delta approach as totalWins/totalRuns above, per level key.
+        merged.winsByLevel = {};
+        const allLevels = new Set([...Object.keys(local.winsByLevel || {}), ...Object.keys(cloud.winsByLevel || {})]);
+        allLevels.forEach(lvl => {
+            const localCount = (local.winsByLevel || {})[lvl] || 0;
+            const cloudCount = (cloud.winsByLevel || {})[lvl] || 0;
+            const delta = Math.max(0, localCount - cloudCount);
+            merged.winsByLevel[lvl] = cloudCount + delta;
+        });
+
         // catchTally: per-key max, not sum — safe under repeated merges.
         merged.catchTally = {};
         const allKeys = new Set([...Object.keys(local.catchTally || {}), ...Object.keys(cloud.catchTally || {})]);
@@ -246,6 +257,13 @@
 
         records.totalRuns++;
         if (won) records.totalWins++;
+        if (won) {
+            // Difficulty levels (1-5, see data/difficulty-levels.js) — pre-level
+            // saves default to 1. Backs the RECORDS screen's L2-L5 WINS rows.
+            const level = state.difficultyLevel || 1;
+            records.winsByLevel = records.winsByLevel || {};
+            records.winsByLevel[level] = (records.winsByLevel[level] || 0) + 1;
+        }
         if (kantoWon) records.totalKantoE4Wins++;
         if (state.johtoE4Cleared) records.totalJohtoE4Wins++;
 

@@ -359,6 +359,12 @@
                         state.completedRegions.push('johto');
                     }
                     state.hasWon = true;
+                    // Difficulty-level unlock tracking (§ level select) — old
+                    // saves predate state.difficultyLevel entirely, so treat
+                    // a missing value as Level 1 rather than skip the call.
+                    if (PT.Engine.LeaderboardAPI && PT.Engine.LeaderboardAPI.recordLevelWin) {
+                        PT.Engine.LeaderboardAPI.recordLevelWin(state, state.difficultyLevel || 1);
+                    }
                     PT.Engine.Telemetry.logCapstoneResult(state, 6);
                     PT.App.goto('VICTORY');
                 } else {

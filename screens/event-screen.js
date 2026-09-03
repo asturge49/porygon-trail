@@ -38,7 +38,7 @@
 
             const route = PT.Engine.GameState.getCurrentRoute(state);
             const nextRoute = PT.Engine.GameState.getNextRoute(state);
-            const progress = nextRoute ? Math.min(100, (state.distanceTraveled / route.distanceToNext) * 100) : 100;
+            const progress = nextRoute ? Math.min(100, (state.distanceTraveled / PT.Engine.GameState.getRouteDistance(route, state)) * 100) : 100;
 
             const div = document.createElement('div');
             div.className = 'screen event-screen';
@@ -53,8 +53,8 @@
                         <div class="progress-bar-fill" style="width: ${progress}%"></div>
                     </div>
                     <div class="progress-labels">
-                        <span>${state.distanceTraveled} / ${route.distanceToNext} mi</span>
-                        <span>${nextRoute ? (route.distanceToNext - state.distanceTraveled) + ' mi left' : 'ARRIVED'}</span>
+                        <span>${state.distanceTraveled} / ${PT.Engine.GameState.getRouteDistance(route, state)} mi</span>
+                        <span>${nextRoute ? (PT.Engine.GameState.getRouteDistance(route, state) - state.distanceTraveled) + ' mi left' : 'ARRIVED'}</span>
                     </div>
                 </div>
                 <div class="event-narrative" id="event-narrative">
