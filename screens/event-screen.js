@@ -13,6 +13,24 @@
             </div>`;
     }
 
+    // Trainer portrait sprite for the "VS" panel — mirrors gym-screen.js's
+    // leader.spriteUrl, but event battles don't carry a trainer object, only
+    // an eventBattle.pool string, so the mapping lives here instead. Johto
+    // grunts alternate male/female per encounter since there's no in-fiction
+    // reason every grunt would be the same gender.
+    function getEventTrainerSprite(pool, state) {
+        switch (pool) {
+            case 'rocket_grunt': return 'assets/team-rocket/rocket-grunt-kanto.png';
+            case 'giovanni': return 'assets/team-rocket/giovanni.png';
+            case 'jessie_james': return 'assets/team-rocket/jessie-james.png';
+            case 'johto_rocket_grunt':
+                return state.rng.chance(50)
+                    ? 'assets/team-rocket/rocket-grunt-johto-m.png'
+                    : 'assets/team-rocket/rocket-grunt-johto-f.png';
+            default: return null;
+        }
+    }
+
     PT.Screens.EVENT = {
         render(container, state, params) {
             const event = params.event;
@@ -158,12 +176,30 @@
         opponent.types.forEach(t => { if (weaknesses[t]) weaknesses[t].weakTo.forEach(w => weakTo.add(w)); });
 
         const trainerLabel = battle.trainerName || 'Opponent';
+        const trainerSprite = getEventTrainerSprite(battle.pool, state);
 
         narrative.innerHTML = `
-            <div style="text-align: center; margin-bottom: 4px;">
-                <strong>${trainerLabel} sends out ${opponent.name}!</strong>
-                <br><img src="${opponentSprite}" style="width: 48px; height: 48px; image-rendering: pixelated; margin: 4px 0;" onerror="this.style.display='none'">
-                <br><span style="font-size: 7px;">${opponent.types.join('/')} | Weak to: ${[...weakTo].join(', ') || 'none'}</span>
+            <div class="gym-battle-area">
+                <div class="gym-battle-sprites">
+                    ${trainerSprite ? `
+                    <div class="gym-leader-portrait">
+                        <img src="${trainerSprite}" alt="${trainerLabel}"
+                             style="width: 56px; height: 56px; image-rendering: pixelated;"
+                             onerror="this.style.display='none'">
+                        <div class="gym-portrait-label">${trainerLabel}</div>
+                    </div>` : ''}
+                    <div class="gym-opponent-pokemon">
+                        <img src="${opponentSprite}" alt="${opponent.name}"
+                             style="width: 80px; height: 80px; image-rendering: pixelated;"
+                             onerror="this.style.display='none'">
+                        <div class="gym-opponent-name" style="font-size: 9px; font-weight: bold;">${opponent.name}</div>
+                        <div style="font-size: 6px;">${opponent.types.join('/').toUpperCase()}</div>
+                    </div>
+                </div>
+                <div class="gym-challenge-text">${trainerLabel} sends out ${opponent.name}!</div>
+            </div>
+            <div style="text-align: center; font-size: 7px;">
+                Weak to: ${[...weakTo].join(', ') || 'none'}
                 <br><span style="font-size: 6px;">If you lose, your Pokemon takes ${lossDamage} damage.</span>
             </div>
         `;
