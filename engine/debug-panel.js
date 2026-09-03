@@ -16,6 +16,7 @@
     PT.Engine = PT.Engine || {};
 
     let forcedOutcome = null; // null | 'win' | 'lose' — single-use, cleared on read
+    let alwaysWinEnabled = false; // persistent toggle — every battle wins while on, no re-arming needed
     let autoCatchEnabled = false; // persistent toggle — every wild catch attempt auto-succeeds while on
 
     PT.Engine.DebugPanel = {
@@ -27,6 +28,14 @@
             forcedOutcome = (value === 'win' || value === 'lose') ? value : null;
         },
 
+        getAlwaysWinEnabled() {
+            return alwaysWinEnabled;
+        },
+
+        setAlwaysWinEnabled(value) {
+            alwaysWinEnabled = !!value;
+        },
+
         getAutoCatchEnabled() {
             return autoCatchEnabled;
         },
@@ -36,8 +45,10 @@
         },
 
         // Drop-in replacement for `rng.chance(chance)` at a battle-resolution
-        // site. Consumes the forced outcome so it only applies to the very
-        // next battle, then falls back to the normal roll.
+        // site. A single-use forced outcome (if armed) takes priority and is
+        // consumed on read; otherwise the persistent "always win" toggle
+        // applies to every battle without needing to be re-armed; otherwise
+        // falls back to the real roll.
         resolveOutcome(chance, rng) {
             if (forcedOutcome === 'win') {
                 forcedOutcome = null;
@@ -46,6 +57,9 @@
             if (forcedOutcome === 'lose') {
                 forcedOutcome = null;
                 return false;
+            }
+            if (alwaysWinEnabled) {
+                return true;
             }
             return rng.chance(chance);
         }
