@@ -13,20 +13,24 @@
 
             const render = () => {
                 const armed = PT.Engine.DebugPanel.getForcedOutcome();
+                const alwaysWin = PT.Engine.DebugPanel.getAlwaysWinEnabled();
                 const autoCatch = PT.Engine.DebugPanel.getAutoCatchEnabled();
                 const hasRun = !!PT.State;
                 div.innerHTML = `
                     <div class="text-box">
                         <p><strong>BATTLE DEBUG PANEL</strong> (staging only)</p>
-                        <p style="margin-top: 6px;">Forces the result of the very next battle
-                        you fight (wild, gym, elite four, or rocket) — wins normally after that.</p>
+                        <p style="margin-top: 6px;">${alwaysWin
+                            ? '<strong>ALWAYS WIN: ON</strong> — every battle (wild, gym, elite four, rocket, trainer) wins automatically.'
+                            : 'Always Win is off — battles roll normally unless force-armed below.'}</p>
                         <p style="margin-top: 6px;">${armed
-                            ? `<strong>ARMED: next battle will ${armed.toUpperCase()}</strong>`
-                            : 'Nothing armed — next battle rolls normally.'}</p>
+                            ? `<strong>ARMED: next battle will ${armed.toUpperCase()}</strong> (one-time, overrides Always Win)`
+                            : 'Nothing one-time armed.'}</p>
                     </div>
-                    <button class="btn btn-wide" id="btn-force-win" style="margin-bottom:6px;">FORCE WIN NEXT BATTLE</button>
+                    <button class="btn btn-wide" id="btn-toggle-always-win" style="margin-bottom:6px;">
+                        ${alwaysWin ? 'TURN ALWAYS WIN OFF' : 'TURN ALWAYS WIN ON'}
+                    </button>
                     <button class="btn btn-wide" id="btn-force-lose" style="margin-bottom:6px;">FORCE LOSE NEXT BATTLE</button>
-                    <button class="btn btn-wide btn-small" id="btn-clear">CLEAR</button>
+                    <button class="btn btn-wide btn-small" id="btn-clear">CLEAR ALL BATTLE OVERRIDES</button>
 
                     <div class="text-box" style="margin-top:12px;">
                         <p><strong>FAST-RUN TOOLS</strong></p>
@@ -43,8 +47,8 @@
 
                     <button class="btn btn-wide btn-small" id="btn-debug-panel-back" style="margin-top:8px;">BACK</button>
                 `;
-                document.getElementById('btn-force-win').addEventListener('click', () => {
-                    PT.Engine.DebugPanel.setForcedOutcome('win');
+                document.getElementById('btn-toggle-always-win').addEventListener('click', () => {
+                    PT.Engine.DebugPanel.setAlwaysWinEnabled(!alwaysWin);
                     render();
                 });
                 document.getElementById('btn-force-lose').addEventListener('click', () => {
@@ -53,6 +57,7 @@
                 });
                 document.getElementById('btn-clear').addEventListener('click', () => {
                     PT.Engine.DebugPanel.setForcedOutcome(null);
+                    PT.Engine.DebugPanel.setAlwaysWinEnabled(false);
                     render();
                 });
                 document.getElementById('btn-toggle-autocatch').addEventListener('click', () => {
