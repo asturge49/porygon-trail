@@ -922,6 +922,13 @@
             { label: 'RECORDS', screen: 'RECORDS' },
             { label: 'LEADERBOARD', screen: 'LEADERBOARD' }
         ];
+        // Same staging-only (!PT.Config.isProd) + ?debug=1 gate used by
+        // title-screen.js's debug row — lets a debug-panel session add food /
+        // toggle auto-catch mid-run instead of only pre-game.
+        const debugRequested = new URLSearchParams(window.location.search).get('debug') === '1';
+        if (PT.Config && !PT.Config.isProd && debugRequested) {
+            items.push({ label: 'DEBUG PANEL', screen: 'DEBUGPANEL' });
+        }
 
         const soundOn = PT.Engine.Audio && PT.Engine.Audio.isEnabled();
 

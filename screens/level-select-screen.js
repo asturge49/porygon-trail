@@ -24,8 +24,14 @@
     };
 
     function getLevelConfigs() {
-        const data = PT.Data && (PT.Data.DifficultyLevels || (PT.Data.getLevelConfig ? null : null));
-        if (Array.isArray(data) && data.length > 0) return data;
+        // PT.Data.DifficultyLevels is 1-indexed (index 0 is null, so
+        // DifficultyLevels[state.difficultyLevel] reads naturally) — filter
+        // that placeholder out before rendering.
+        const data = PT.Data && PT.Data.DifficultyLevels;
+        if (Array.isArray(data)) {
+            const configs = data.filter(Boolean);
+            if (configs.length > 0) return configs;
+        }
         // Fallback synthetic configs — used only if the engine-layer data
         // module hasn't landed yet. Shape mirrors the documented contract.
         return [1, 2, 3, 4, 5].map(level => ({ level }));

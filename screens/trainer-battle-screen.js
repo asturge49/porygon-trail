@@ -185,17 +185,20 @@
         let title;
         if (won) {
             title = 'VICTORY!';
+            // Prefer the engine's actual awarded amount (Pay Day-style abilities
+            // can boost it above the trainer's base reward) — fall back to the
+            // base reward if TrainerEngine wasn't available to resolve it.
+            const awarded = (engineResult && engineResult.moneyAwarded != null) ? engineResult.moneyAwarded : battle.reward;
             resultRows = rewardRow('RESULT', `${pokemon.name} defeated ${battle.trainerName}'s ${battle.pokemon.name}!`);
-            if (battle.reward) resultRows += rewardRow('REWARD', `+$${battle.reward}`);
+            if (awarded) resultRows += rewardRow('REWARD', `+$${awarded}`);
         } else {
             title = 'DEFEAT...';
             const dmg = battle.damage != null ? battle.damage : 2;
             resultRows = rewardRow('RESULT', `${pokemon.name} took ${dmg} damage from ${battle.trainerName}'s ${battle.pokemon.name}!`);
         }
 
-        PT.Engine.GameState.addToLog(state, won
-            ? `Defeated ${battle.trainerName}'s ${battle.pokemon.name}!`
-            : `Lost to ${battle.trainerName}'s ${battle.pokemon.name}.`);
+        // Logging is handled by PT.Engine.TrainerEngine.resolveTrainerBattle
+        // above (it has the reward/damage amounts) — don't double-log here.
 
         div.innerHTML = `
             <div class="event-title">${title}</div>
