@@ -230,12 +230,11 @@
         // Badge bonus (minimal)
         chance += state.badges.filter(b => b !== 'champion').length * 1;
 
-        // Poison ability: only applies if the fighting Pokemon has poison (halved in E4)
-        if (pokemon.travelAbility === 'poison') {
-            const stage = PT.Engine.GameState.getEvoStage(pokemon.id);
-            let power = stage === 1 ? 1.0 : stage === 2 ? 1.5 : 2.0;
-            power += (pokemon.battleStars || 0) * 0.25;
-            const poisonBonus = Math.max(1, Math.floor(0.5 * power));
+        // Poison ability: scales with power, party-wide (halved in E4, same as
+        // Intimidate below — see engine/game-state.js's getAbilityPower)
+        const poisonPower = PT.Engine.GameState.getAbilityPower(state, 'poison');
+        if (poisonPower > 0) {
+            const poisonBonus = Math.max(1, Math.floor(0.5 * poisonPower));
             chance += poisonBonus;
             battleBonuses.push(`POISON +${poisonBonus}%`);
         }

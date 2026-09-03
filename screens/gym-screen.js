@@ -192,12 +192,10 @@
         const aliveCount = PT.Engine.GameState.getAliveParty(state).length;
         chance += aliveCount * 2;
 
-        // Poison ability: only applies if the fighting Pokemon has poison
-        if (pokemon.travelAbility === 'poison') {
-            const stage = PT.Engine.GameState.getEvoStage(pokemon.id);
-            let power = stage === 1 ? 1.0 : stage === 2 ? 1.5 : 2.0;
-            power += (pokemon.battleStars || 0) * 0.25;
-            const poisonBonus = Math.floor(1 * power);
+        // Poison ability: scales with power (party-wide, same as Intimidate)
+        const poisonPower = PT.Engine.GameState.getAbilityPower(state, 'poison');
+        if (poisonPower > 0) {
+            const poisonBonus = Math.floor(1 * poisonPower);
             chance += poisonBonus;
             battleBonuses.push(`POISON +${poisonBonus}%`);
         }
@@ -537,11 +535,9 @@
         if (winRateBonus > 0) { chance += winRateBonus; battleBonuses.push(`WIN RATE +${winRateBonus}%`); }
         const aliveCount = PT.Engine.GameState.getAliveParty(state).length;
         chance += aliveCount * 2;
-        if (pokemon.travelAbility === 'poison') {
-            const stage = PT.Engine.GameState.getEvoStage(pokemon.id);
-            let power = stage === 1 ? 1.0 : stage === 2 ? 1.5 : 2.0;
-            power += (pokemon.battleStars || 0) * 0.25;
-            const poisonBonus = Math.floor(1 * power);
+        const poisonPower = PT.Engine.GameState.getAbilityPower(state, 'poison');
+        if (poisonPower > 0) {
+            const poisonBonus = Math.floor(1 * poisonPower);
             chance += poisonBonus;
             battleBonuses.push(`POISON +${poisonBonus}%`);
         }
