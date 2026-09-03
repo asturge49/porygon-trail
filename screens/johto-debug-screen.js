@@ -26,7 +26,7 @@
         'mid-attrition': {
             label: 'MID-ATTRITION',
             desc: '3-4 Pokemon, mixed evolution stages, moderate resources.',
-            // Fearow(fly,2*) / Nidoking(strength,1*) / Wartortle(surf, mid-evo) / Kadabra(psychic, mid-evo)
+            // Fearow(fly,2*) / Nidoking(poison,1*) / Wartortle(surf, mid-evo) / Kadabra(psychic, mid-evo)
             // — mid-evolutions legitimately hold 0 stars; only finals can earn them.
             party: [[22, 2], [34, 1], [8, 0], [64, 0]],
             badges: 6,
