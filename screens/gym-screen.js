@@ -262,7 +262,7 @@
         chance = Math.max(10, Math.min(80, chance));
         const maxed = preClampChance !== chance ? (chance === 80 ? 'capped' : 'floored') : null;
 
-        const won = state.rng.chance(chance);
+        const won = PT.Engine.DebugPanel.resolveOutcome(chance, state.rng);
         let gymMoneyReward = 0;
 
         container.innerHTML = '';
@@ -606,7 +606,7 @@
         chance = Math.max(10, Math.min(80, chance));
         const maxed = preClampChance !== chance ? (chance === 80 ? 'capped' : 'floored') : null;
 
-        const won = state.rng.chance(chance);
+        const won = PT.Engine.DebugPanel.resolveOutcome(chance, state.rng);
         const isLastRound = round >= leader.pokemon.length - 1;
 
         container.innerHTML = '';

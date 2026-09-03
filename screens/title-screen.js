@@ -75,6 +75,7 @@
                     <button class="btn btn-wide btn-small" id="btn-discord">JOIN DISCORD</button>
                     ${showDebugHarness ? `
                     <button class="btn btn-wide btn-small" id="btn-johto-debug">JUMP TO JOHTO (DEBUG)</button>
+                    <button class="btn btn-wide btn-small" id="btn-debug-panel">BATTLE DEBUG PANEL</button>
                     ` : ''}
                 </div>
                 <div class="blink text-sm" style="margin-top: 8px;">PRESS START</div>
@@ -163,6 +164,13 @@
                 johtoDebugBtn.addEventListener('click', () => {
                     if (hasLocal && !confirm('This will overwrite your saved game. Continue?')) return;
                     PT.App.goto('JOHTODEBUG');
+                });
+            }
+
+            const debugPanelBtn = document.getElementById('btn-debug-panel');
+            if (debugPanelBtn) {
+                debugPanelBtn.addEventListener('click', () => {
+                    PT.App.goto('DEBUGPANEL');
                 });
             }
 
