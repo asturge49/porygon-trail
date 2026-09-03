@@ -55,7 +55,18 @@ create table if not exists public.pt_leaderboard (
     -- from johto_completed (Johto E4 clear). See engine/leaderboard-api.js's
     -- pt_e4_wins_leaderboard() comment for why `won` can't be used as this
     -- flag's proxy.
-    kanto_e4_cleared boolean not null default false
+    kanto_e4_cleared boolean not null default false,
+    -- Difficulty levels (1-5, see data/difficulty-levels.js) — the level a run
+    -- was started on. Defaults to 1 so every pre-existing row (from before
+    -- difficulty levels existed) reads as Level 1 with no backfill needed.
+    -- Level-unlock eligibility is derived at read time from this column (see
+    -- engine/leaderboard-api.js's getHighestUnlockedLevel) rather than tracked
+    -- in a separate unlocks table — deliberately simpler than an earlier plan
+    -- that would've needed its own migration; this one needs none since a
+    -- default-1 column value already correctly grandfathers every existing
+    -- Red-win account into Level 2 eligibility. Apply via the Supabase SQL
+    -- editor against the STAGING project only (see CLAUDE.md) — never prod.
+    difficulty_level int default 1
 );
 alter table public.pt_leaderboard enable row level security;
 create policy "Public read" on public.pt_leaderboard for select using (true);
@@ -71,6 +82,10 @@ create policy "Users can update their own leaderboard rows" on public.pt_leaderb
 --   alter table public.pt_leaderboard add column if not exists johto_score integer;
 --   alter table public.pt_leaderboard add column if not exists johto_pokedex_count integer;
 --   alter table public.pt_leaderboard add column if not exists kanto_e4_cleared boolean not null default false;
+
+-- Difficulty levels migration for an EXISTING pt_leaderboard table — run once,
+-- by hand, against the STAGING project's SQL editor:
+--   alter table public.pt_leaderboard add column if not exists difficulty_level int default 1;
 
 create table if not exists public.pt_pokedex (
     user_id uuid primary key,

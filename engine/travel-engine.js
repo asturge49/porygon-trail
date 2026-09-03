@@ -31,7 +31,7 @@
     // became a real ~100-mile leg (as Johto's Mt. Silver is).
     function addTravelDistance(state, route, nextRoute, amount, results) {
         state.distanceTraveled += amount;
-        if (state.distanceTraveled >= route.distanceToNext && canLeaveLocation(state, route) && nextRoute) {
+        if (state.distanceTraveled >= PT.Engine.GameState.getRouteDistance(route, state) && canLeaveLocation(state, route) && nextRoute) {
             state.currentLocationIndex++;
             state.distanceTraveled = 0;
             results.arrivedAtLocation = true;
@@ -82,6 +82,20 @@
             messages: [],
             encounter: null,
             event: null,
+            // Trail trainer battle roll (difficulty level 2+, see
+            // engine/trainer-engine.js#rollTrainerEncounter). null when no
+            // trainer battle was rolled today; otherwise shaped:
+            //   {
+            //     trainerClassId, trainerName, spriteKey, region, tier,
+            //     pokemon: { id, name, level, ace },
+            //     damage, reward
+            //   }
+            // This roll is INDEPENDENT of the wild encounter/event roll above —
+            // it can be non-null on the same day as results.encounter and/or
+            // results.event. Screen code should present it alongside whatever
+            // else happened that day and eventually call
+            // PT.Engine.TrainerEngine.resolveTrainerBattle(state, partyMemberId, won, results.trainerBattle).
+            trainerBattle: null,
             arrivedAtLocation: false,
             gameOver: false
         };
@@ -327,6 +341,16 @@
                 if (results.event) {
                     results.messages.push(`Event: ${results.event.name}`);
                 }
+            }
+        }
+
+        // --- Trail trainer battle roll (difficulty level 2+) ---
+        // Independent of the wild encounter/event roll above — can fire on
+        // the same day as either (or both/neither) of those.
+        if (!results.arrivedAtLocation || pace.distance === 0) {
+            results.trainerBattle = PT.Engine.TrainerEngine.rollTrainerEncounter(state);
+            if (results.trainerBattle) {
+                results.messages.push(`A trainer wants to battle: ${results.trainerBattle.trainerName}!`);
             }
         }
 

@@ -110,7 +110,11 @@
         // Consume ball
         state.resources[ballType] = Math.max(0, state.resources[ballType] - 1);
 
-        const success = state.rng.chance(catchChance);
+        // Staging debug hook (engine/debug-panel.js) — auto-catch toggle for
+        // fast test runs. Never true on prod: nothing arms it outside the
+        // gated debug panel screen.
+        const debugAutoCatch = PT.Engine.DebugPanel && PT.Engine.DebugPanel.getAutoCatchEnabled();
+        const success = debugAutoCatch ? true : state.rng.chance(catchChance);
 
         if (!success) {
             state.ballsWasted++;

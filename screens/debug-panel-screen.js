@@ -13,6 +13,8 @@
 
             const render = () => {
                 const armed = PT.Engine.DebugPanel.getForcedOutcome();
+                const autoCatch = PT.Engine.DebugPanel.getAutoCatchEnabled();
+                const hasRun = !!PT.State;
                 div.innerHTML = `
                     <div class="text-box">
                         <p><strong>BATTLE DEBUG PANEL</strong> (staging only)</p>
@@ -25,6 +27,20 @@
                     <button class="btn btn-wide" id="btn-force-win" style="margin-bottom:6px;">FORCE WIN NEXT BATTLE</button>
                     <button class="btn btn-wide" id="btn-force-lose" style="margin-bottom:6px;">FORCE LOSE NEXT BATTLE</button>
                     <button class="btn btn-wide btn-small" id="btn-clear">CLEAR</button>
+
+                    <div class="text-box" style="margin-top:12px;">
+                        <p><strong>FAST-RUN TOOLS</strong></p>
+                        <p style="margin-top: 6px;">${autoCatch
+                            ? '<strong>AUTO-CATCH: ON</strong> — every wild catch attempt succeeds.'
+                            : 'Auto-catch is off — catches roll normally.'}</p>
+                    </div>
+                    <button class="btn btn-wide" id="btn-toggle-autocatch" style="margin-bottom:6px;">
+                        ${autoCatch ? 'TURN AUTO-CATCH OFF' : 'TURN AUTO-CATCH ON'}
+                    </button>
+                    <button class="btn btn-wide" id="btn-add-food" ${hasRun ? '' : 'disabled'} style="margin-bottom:6px;">
+                        ${hasRun ? 'ADD 1000 FOOD' : 'ADD 1000 FOOD (no run in progress)'}
+                    </button>
+
                     <button class="btn btn-wide btn-small" id="btn-debug-panel-back" style="margin-top:8px;">BACK</button>
                 `;
                 document.getElementById('btn-force-win').addEventListener('click', () => {
@@ -39,8 +55,26 @@
                     PT.Engine.DebugPanel.setForcedOutcome(null);
                     render();
                 });
+                document.getElementById('btn-toggle-autocatch').addEventListener('click', () => {
+                    PT.Engine.DebugPanel.setAutoCatchEnabled(!autoCatch);
+                    render();
+                });
+                document.getElementById('btn-add-food').addEventListener('click', () => {
+                    if (!PT.State) return;
+                    PT.State.resources.food = (PT.State.resources.food || 0) + 1000;
+                    if (PT.Engine.GameState.saveGame) PT.Engine.GameState.saveGame(PT.State);
+                    render();
+                });
                 document.getElementById('btn-debug-panel-back').addEventListener('click', () => {
-                    PT.App.goto('TITLE');
+                    // Reachable both pre-game (pushed/goto'd from TITLE) and
+                    // mid-run (pushed from the TRAVEL menu) — pop back to
+                    // whichever screen actually opened this one if there is
+                    // one, otherwise fall back to TITLE.
+                    if (PT.App.screenStack && PT.App.screenStack.length > 0) {
+                        PT.App.pop();
+                    } else {
+                        PT.App.goto('TITLE');
+                    }
                 });
             };
 

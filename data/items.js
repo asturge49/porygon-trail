@@ -20,7 +20,9 @@
     // x5, sell, sell x5) stays consistent.
     PT.Data.getItemPrice = function(key, state) {
         const item = PT.Data.Items[key];
-        return item ? item.price : 0;
+        if (!item) return 0;
+        const multiplier = PT.Data.getLevelConfig(state).shopPriceMultiplier;
+        return Math.round(item.price * multiplier);
     };
 
     // Shop inventory varies by location progression

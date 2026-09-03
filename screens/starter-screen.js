@@ -24,8 +24,9 @@
     let selectedStarter = null;
 
     PT.Screens.STARTER = {
-        render(container) {
+        render(container, state, params) {
             selectedStarter = null;
+            const difficultyLevel = (params && params.difficultyLevel) || 1;
             const auth = PT.Engine.Auth;
             const loggedInUsername = auth && auth.isLoggedIn() ? auth.getCurrentUsername() : null;
 
@@ -72,7 +73,7 @@
                 const nameInput = document.getElementById('trainer-name');
                 const name = loggedInUsername || (nameInput.value.trim().toUpperCase() || 'RED');
                 const starterData = STARTERS.find(s => s.id === selectedStarter);
-                PT.State = PT.Engine.GameState.createNewGame(name, selectedStarter);
+                PT.State = PT.Engine.GameState.createNewGame(name, selectedStarter, difficultyLevel);
                 PT.Engine.GameState.addToLog(PT.State, `${name} set out from Pallet Town with ${starterData.name}!`);
                 PT.Engine.Telemetry.logEvent('game_start', {
                     trainer_name: name,

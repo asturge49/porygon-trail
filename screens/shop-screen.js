@@ -8,8 +8,11 @@
     function getSellPrice(key, state) {
         const item = PT.Data.Items[key];
         if (!item) return 0;
-        // Food sells per 10 rations (same as buy unit).
-        return Math.floor(PT.Data.getItemPrice(key, state) / 2);
+        // Sell price stays at the base rate regardless of difficulty level —
+        // only buying gets more expensive at Level 5, not selling (otherwise
+        // the price hike partly pays for itself). Food sells per 10 rations
+        // (same as buy unit).
+        return Math.floor(item.price / 2);
     }
 
     function getSellableItems(state) {

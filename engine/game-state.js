@@ -105,7 +105,7 @@
         grantKeyItem(state, 'hpUp');
     }
 
-    function createNewGame(trainerName, starterId) {
+    function createNewGame(trainerName, starterId, difficultyLevel) {
         const seed = Date.now();
         const starterData = PT.Data.Pokemon.find(p => p.id === starterId);
         const starter = createPartyPokemon(starterData);
@@ -116,6 +116,10 @@
             runId: (crypto.randomUUID ? crypto.randomUUID() : `${seed}-${Math.random().toString(36).slice(2)}`),
             seed: seed,
             rng: PT.Engine.RNG.createRNG(seed),
+
+            // Difficulty level (1-5, see data/difficulty-levels.js). Defaults
+            // to 1 (Casual) whenever an older/other call site omits it.
+            difficultyLevel: difficultyLevel || 1,
 
             // Region — 'kanto' until the post-Elite-Four choice moves it to
             // 'johto'. completedRegions records the Hall-of-Fame-worthy clears.
@@ -166,6 +170,13 @@
             // engine/encounter-engine.js's addPokemonToParty; checked in
             // rollEncounter to drop the shiny entry from the table once true.
             redGyaradosCaught: false,
+
+            // Trail trainer battles (difficulty level 2+, see
+            // engine/trainer-engine.js) — location indices that have already
+            // rolled a trainer encounter this run, and a running count of
+            // trainers actually defeated (feeds scoring.js's breakdown).
+            trainerEncounteredLocations: [],
+            trainersDefeated: 0,
 
             // Log
             log: [],
@@ -640,6 +651,15 @@
         return PT.Data.Routes[next];
     }
 
+    // Effective travel distance for a route, after the current difficulty
+    // level's routeDistanceBonus (data/difficulty-levels.js) is applied.
+    // Every read site that compares/uses distance-to-arrive math should go
+    // through this rather than reading route.distanceToNext directly, so
+    // higher difficulty levels' longer routes are honored everywhere.
+    function getRouteDistance(route, state) {
+        return route.distanceToNext + PT.Data.getLevelConfig(state).routeDistanceBonus;
+    }
+
     // Evolution System — limited to once per location
     function evolvePokemon(partyMon, state) {
         if (partyMon.noEvolve) return { evolved: false };
@@ -923,6 +943,11 @@
             // legacy in-progress Kanto run, ahead of any Johto-aware code (§6.2).
             if (data.region === undefined) data.region = 'kanto';
             if (!data.completedRegions) data.completedRegions = [];
+            // Older saves predate difficulty levels / trail trainers — default
+            // them to Casual with no trainer history yet.
+            if (data.difficultyLevel === undefined) data.difficultyLevel = 1;
+            if (!data.trainerEncounteredLocations) data.trainerEncounteredLocations = [];
+            if (data.trainersDefeated === undefined) data.trainersDefeated = 0;
             return data;
         } catch (e) {
             console.warn('Could not load save:', e);
@@ -985,6 +1010,9 @@
             if (!saveData.buffs) saveData.buffs = createDefaultBuffs();
             if (saveData.region === undefined) saveData.region = 'kanto';
             if (!saveData.completedRegions) saveData.completedRegions = [];
+            if (saveData.difficultyLevel === undefined) saveData.difficultyLevel = 1;
+            if (!saveData.trainerEncounteredLocations) saveData.trainerEncounteredLocations = [];
+            if (saveData.trainersDefeated === undefined) saveData.trainersDefeated = 0;
             return saveData;
         } catch (e) {
             console.warn('Cloud load failed:', e);
@@ -1055,6 +1083,7 @@
         hasType,
         getCurrentRoute,
         getNextRoute,
+        getRouteDistance,
         evolvePokemon,
         killPokemon,
         addBattleWin,

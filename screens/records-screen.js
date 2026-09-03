@@ -17,6 +17,14 @@
         return { id: entries[0][0], count: entries[0][1] };
     }
 
+    // Red wins at a specific difficulty level (see engine/records.js's
+    // winsByLevel — the same "level 1 default for pre-level data" convention
+    // as difficulty_level on pt_leaderboard). Level 1 stays folded into the
+    // existing RED WINS row above rather than getting its own L1 row.
+    function levelWins(r, level) {
+        return (r.winsByLevel && r.winsByLevel[level]) || 0;
+    }
+
     function pokemonName(id) {
         const p = PT.Data.Pokemon.find(pk => pk.id === parseInt(id));
         return p ? p.name : '???';
@@ -46,6 +54,10 @@
                     ${recordRow('KANTO E4 WINS', (r.totalKantoE4Wins || 0) > 0 ? r.totalKantoE4Wins : '---', (r.totalKantoE4Wins || 0) > 0 ? 'Beat the Kanto Elite Four' : '')}
                     ${recordRow('JOHTO E4 WINS', (r.totalJohtoE4Wins || 0) > 0 ? r.totalJohtoE4Wins : '---', (r.totalJohtoE4Wins || 0) > 0 ? 'Beat the Johto Elite Four rematch' : '')}
                     ${recordRow('RED WINS', r.totalWins > 0 ? r.totalWins : '---', r.totalWins > 0 ? 'Defeated Red at Mt. Silver' : '')}
+                    ${recordRow('L2 WINS', levelWins(r, 2) > 0 ? levelWins(r, 2) : '---', levelWins(r, 2) > 0 ? 'Red wins at Difficulty Level 2' : '')}
+                    ${recordRow('L3 WINS', levelWins(r, 3) > 0 ? levelWins(r, 3) : '---', levelWins(r, 3) > 0 ? 'Red wins at Difficulty Level 3' : '')}
+                    ${recordRow('L4 WINS', levelWins(r, 4) > 0 ? levelWins(r, 4) : '---', levelWins(r, 4) > 0 ? 'Red wins at Difficulty Level 4' : '')}
+                    ${recordRow('L5 WINS', levelWins(r, 5) > 0 ? levelWins(r, 5) : '---', levelWins(r, 5) > 0 ? 'Red wins at Difficulty Level 5' : '')}
                     ${recordRow('HIGH SCORE', r.highScore ? r.highScore.value.toLocaleString() : '---', fmtBy(r.highScore))}
                     ${recordRow('POKEDEX COMPLETION', dexCaught > 0 ? dexPct + '% (' + dexCaught + '/' + totalDex + ')' : '---', dexCaught > 0 ? 'Across all runs' : '')}
                     ${recordRow('CHAMPION POKEMON', champCount > 0 ? champCount + '/' + totalDex : '---', champCount > 0 ? 'Survived an Elite Four win' : '')}

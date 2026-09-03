@@ -98,7 +98,7 @@
     // ranked by their johto_* column). 'all' and 'kanto' both rank by the
     // base column since a run's overall score/badges/etc. already reflect
     // the whole run regardless of how far it went.
-    async function fetchOrdered(column, ascending, wonOnly, limit, columns, region, johtoColumn) {
+    async function fetchOrdered(column, ascending, wonOnly, limit, columns, region, johtoColumn, levelFilter) {
         const auth = PT.Engine.Auth;
         if (!auth || !auth.isConfigured()) return null;
 
@@ -126,6 +126,8 @@
             if (wonOnly) query = query.eq('kanto_e4_cleared', true);
         }
 
+        if (levelFilter) query = query.eq('difficulty_level', levelFilter);
+
         const { data, error } = await query.limit(limit || 20);
 
         if (error) {
@@ -139,8 +141,10 @@
     // Highest Pokedex count in a single run. `region`: 'kanto' (default) or 'johto'
     // — the Johto view ranks by johto_pokedex_count and only includes runs that
     // reached Johto.
-    function getMostCatchesLeaderboard(region) {
-        return fetchOrdered('pokedex_count', false, false, null, null, region, 'johto_pokedex_count');
+    // `levelFilter` (optional, 1-5): restrict to runs started at that
+    // difficulty level. Omit for no change from prior behavior.
+    function getMostCatchesLeaderboard(region, levelFilter) {
+        return fetchOrdered('pokedex_count', false, false, null, null, region, 'johto_pokedex_count', levelFilter);
     }
 
     // Lifetime Pokedex completion — unique Pokemon ever caught across ALL of a
@@ -166,7 +170,13 @@
     //     order by dex_count desc nulls last
     //     limit 20;
     //   $$;
-    async function getDexCompletionLeaderboard() {
+    // `levelFilter` param accepted for signature parity with the other named
+    // leaderboard functions, but deliberately not wired to a `.eq(...)` here
+    // — this reads from a Postgres RPC (pt_dex_completion_leaderboard) that
+    // aggregates lifetime dex completion per user_id across ALL of their
+    // runs/levels; it doesn't select or group by difficulty_level, so there's
+    // no column to filter on without rewriting the SQL function itself.
+    async function getDexCompletionLeaderboard(levelFilter) {
         const auth = PT.Engine.Auth;
         if (!auth || !auth.isConfigured()) return null;
 
@@ -195,8 +205,10 @@
     // Fastest win — lowest days_elapsed among completed wins. `region`: 'kanto'
     // (default) or 'johto' — the Johto view ranks by johto_days_elapsed (days spent
     // in Johto, not total run length) among runs where johto_completed is true.
-    function getFastestWinLeaderboard(region) {
-        return fetchOrdered('days_elapsed', true, true, null, null, region, 'johto_days_elapsed');
+    // `levelFilter` (optional, 1-5): restrict to runs started at that
+    // difficulty level. Omit for no change from prior behavior.
+    function getFastestWinLeaderboard(region, levelFilter) {
+        return fetchOrdered('days_elapsed', true, true, null, null, region, 'johto_days_elapsed', levelFilter);
     }
 
     // Lifetime legendaries caught — unique legendary Pokemon ever caught across
@@ -223,7 +235,10 @@
     //     order by legendary_count desc
     //     limit 20;
     //   $$;
-    async function getLegendaryLeaderboard() {
+    // `levelFilter` param accepted for signature parity — see the identical
+    // note on getDexCompletionLeaderboard above; this is also a lifetime,
+    // cross-level RPC aggregate with no difficulty_level to filter on.
+    async function getLegendaryLeaderboard(levelFilter) {
         const auth = PT.Engine.Auth;
         if (!auth || !auth.isConfigured()) return null;
 
@@ -274,7 +289,11 @@
     //     order by champion_count desc
     //     limit 20;
     //   $$;
-    async function getChampionLeaderboard() {
+    // `levelFilter` param accepted for signature parity — see the identical
+    // note on getDexCompletionLeaderboard above (and per this project's
+    // "Kanto E4 is level-agnostic by design" convention, Champion Pokemon
+    // stays a lifetime, cross-level stat regardless).
+    async function getChampionLeaderboard(levelFilter) {
         const auth = PT.Engine.Auth;
         if (!auth || !auth.isConfigured()) return null;
 
@@ -335,7 +354,11 @@
     //     order by (count(*) filter (where l.kanto_e4_cleared) + count(*) filter (where l.johto_completed)) desc
     //     limit 20;
     //   $$;
-    async function getE4WinsLeaderboard() {
+    // `levelFilter` param accepted for signature parity — see the identical
+    // note on getDexCompletionLeaderboard above; E4 wins also stay
+    // level-agnostic in spirit (a UI simply choosing not to pass this is how
+    // that's expressed).
+    async function getE4WinsLeaderboard(levelFilter) {
         const auth = PT.Engine.Auth;
         if (!auth || !auth.isConfigured()) return null;
 
@@ -399,7 +422,11 @@
     //              min(l.days_elapsed) filter (where l.won and l.johto_score is not null) asc
     //     limit 20;
     //   $$;
-    async function getRedWinsLeaderboard() {
+    // `levelFilter` param accepted for signature parity — see the identical
+    // note on getDexCompletionLeaderboard above. (The RECORDS screen's new
+    // per-level L2-L5 WINS rows are sourced from engine/records.js's local+
+    // cloud tally instead of this RPC, for exactly this reason.)
+    async function getRedWinsLeaderboard(levelFilter) {
         const auth = PT.Engine.Auth;
         if (!auth || !auth.isConfigured()) return null;
 
@@ -426,7 +453,9 @@
     // Top 10 unique trainers ranked by their personal best run. `region`: 'kanto'
     // (default) or 'johto' — the Johto view ranks by johto_score and only
     // considers runs that reached Johto.
-    async function getTopTrainers(region) {
+    // `levelFilter` (optional, 1-5): restrict to runs started at that
+    // difficulty level. Omit for no change from prior behavior.
+    async function getTopTrainers(region, levelFilter) {
         const auth = PT.Engine.Auth;
         if (!auth || !auth.isConfigured()) return null;
 
@@ -444,6 +473,7 @@
             .order(sortColumn, { ascending: false });
         if (isJohto) query = query.not(sortColumn, 'is', null);
         else if (isKantoOnly) query = query.is('johto_score', null);
+        if (levelFilter) query = query.eq('difficulty_level', levelFilter);
 
         const { data, error } = await query.limit(500);
 
@@ -507,7 +537,12 @@
             // pt_e4_wins_leaderboard() RPC below: it must filter on this
             // column for the Kanto count, not on `won`, since every Kanto E4
             // winner is auto-continued into Johto with no way to stop there.
-            kanto_e4_cleared: !!entry.kantoE4Cleared
+            kanto_e4_cleared: !!entry.kantoE4Cleared,
+            // Difficulty level (1-5, see data/difficulty-levels.js) this run
+            // was started on — feeds getHighestUnlockedLevel below. Defaults
+            // to 1 to match the column's own DB default for pre-existing
+            // rows/callers that don't pass it through yet.
+            difficulty_level: entry.difficultyLevel || 1
         };
 
         let { error } = await client.from('pt_leaderboard').upsert(row, { onConflict: 'run_id' });
@@ -525,6 +560,7 @@
             delete row.johto_days_elapsed;
             delete row.johto_score;
             delete row.johto_pokedex_count;
+            delete row.difficulty_level;
             ({ error } = await client.from('pt_leaderboard').upsert(row, { onConflict: 'run_id' }));
         }
 
@@ -542,6 +578,68 @@
 
         if (error) {
             console.warn('Could not save global score:', error);
+        }
+    }
+
+    // ===== LEVEL UNLOCKS =====
+    // Highest level an account may start on = min(5, 1 + MAX(difficulty_level)
+    // across pt_leaderboard rows for that user where won = true), defaulting
+    // to 1 for an account with no wins. Deliberately derived from existing win
+    // history rather than tracked in its own table/migration — a default-1
+    // difficulty_level column already correctly grandfathers every
+    // pre-existing Red-win account into Level 2 eligibility with no backfill.
+    const LEVEL_UNLOCK_KEY = 'porygonTrail_highestUnlockedLevel';
+
+    // Logged-out / dev-mode fallback — same "cloud disabled, local still
+    // works" pattern as the rest of this file (see isGlobalEnabled / saveLocal).
+    function getLocalHighestUnlockedLevel() {
+        try {
+            const stored = parseInt(localStorage.getItem(LEVEL_UNLOCK_KEY), 10);
+            return stored > 0 ? Math.min(5, stored) : 1;
+        } catch (e) {
+            return 1;
+        }
+    }
+
+    async function getHighestUnlockedLevel(state) {
+        const auth = PT.Engine.Auth;
+        if (auth && auth.isConfigured() && auth.isLoggedIn()) {
+            const client = auth.getClient();
+            const user = auth.getCurrentUser();
+            if (client && user) {
+                const { data, error } = await client
+                    .from('pt_leaderboard')
+                    .select('difficulty_level')
+                    .eq('user_id', user.id)
+                    .eq('won', true)
+                    .order('difficulty_level', { ascending: false })
+                    .limit(1);
+                if (!error && data && data.length > 0) {
+                    const maxWon = data[0].difficulty_level || 1;
+                    return Math.min(5, maxWon + 1);
+                }
+                if (!error) return 1; // logged in, no wins yet — level 1 only
+            }
+        }
+        // Logged out / dev mode / query failed — fall back to localStorage.
+        return getLocalHighestUnlockedLevel();
+    }
+
+    // Called from the Red-capstone win screen. A Red win already gets saved
+    // to pt_leaderboard via the normal won=true save path (with
+    // difficulty_level included, see upsertGlobal above), so this just also
+    // updates the local fallback used by getHighestUnlockedLevel, so an
+    // offline/dev-mode player's next level unlocks immediately without a
+    // round-trip read.
+    function recordLevelWin(state, level) {
+        try {
+            const current = getLocalHighestUnlockedLevel();
+            const next = Math.min(5, (level || 1) + 1);
+            if (next > current) {
+                localStorage.setItem(LEVEL_UNLOCK_KEY, String(next));
+            }
+        } catch (e) {
+            console.warn('Could not save level unlock progress:', e);
         }
     }
 
@@ -580,6 +678,8 @@
         saveLocal,
         saveGlobal: upsertGlobal,
         clearLocal,
-        isGlobalEnabled
+        isGlobalEnabled,
+        getHighestUnlockedLevel,
+        recordLevelWin
     };
 })();

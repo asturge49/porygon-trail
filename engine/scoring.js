@@ -142,8 +142,12 @@
         breakdown.teamRocket = state.teamRocketDefeated * 50;
         score += breakdown.teamRocket;
 
+        // Trail trainers defeated (difficulty level 2+, see engine/trainer-engine.js)
+        breakdown.trainersDefeated = (state.trainersDefeated || 0) * 50;
+        score += breakdown.trainersDefeated;
+
         // Distance traveled
-        const totalDist = PT.Data.Routes.slice(0, state.currentLocationIndex).reduce((sum, r) => sum + r.distanceToNext, 0) + state.distanceTraveled;
+        const totalDist = PT.Data.Routes.slice(0, state.currentLocationIndex).reduce((sum, r) => sum + PT.Engine.GameState.getRouteDistance(r, state), 0) + state.distanceTraveled;
         breakdown.distance = Math.floor(totalDist / 5) * 5;
         score += breakdown.distance;
 
@@ -158,6 +162,10 @@
         const faintedCount = state.party.filter(p => p.status === 'fainted').length;
         breakdown.penalties = -(faintedCount * 50 + (state.ballsWasted || 0) * 3);
         score += breakdown.penalties;
+
+        // Difficulty level score multiplier (data/difficulty-levels.js) —
+        // applied to the running total, after every additive breakdown line.
+        score *= PT.Data.getLevelConfig(state).scoreMultiplier;
 
         score = Math.max(0, score);
         return { score, breakdown };

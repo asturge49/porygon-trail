@@ -228,7 +228,7 @@
             // (travel-engine.js's canLeaveLocation blocks arrival at Mt.
             // Silver until state.johtoE4Cleared, so this only fires here).
             if (route.id === 'indigo_plateau_johto' && !state.johtoE4Cleared &&
-                state.distanceTraveled >= route.distanceToNext) {
+                state.distanceTraveled >= PT.Engine.GameState.getRouteDistance(route, state)) {
                 showE4PokemonCenter(container, state, { johto: true });
                 return;
             }
@@ -236,7 +236,7 @@
             // Route 28/Mt. Silver — the final stretch. Reaching the far end
             // triggers the Red capstone battle (§9.3) instead of normal
             // arrival, since this is the last entry in PT.Data.Routes.
-            if (route.id === 'route_28_mt_silver' && state.distanceTraveled >= route.distanceToNext) {
+            if (route.id === 'route_28_mt_silver' && state.distanceTraveled >= PT.Engine.GameState.getRouteDistance(route, state)) {
                 if (state.hasWon) {
                     PT.App.goto('VICTORY');
                     return;
@@ -249,7 +249,8 @@
             // Two-tier scene lookup: per-location first, then terrain fallback
             const locationScenes = PT.Data.LocationScenes || {};
             const scene = locationScenes[route.id] || TERRAIN_SCENES[route.terrain] || TERRAIN_SCENES.route;
-            const progress = route.distanceToNext > 0 ? Math.min(100, (state.distanceTraveled / route.distanceToNext) * 100) : 100;
+            const routeDist = PT.Engine.GameState.getRouteDistance(route, state);
+            const progress = routeDist > 0 ? Math.min(100, (state.distanceTraveled / routeDist) * 100) : 100;
             // True only once the FINAL route's own distance is exhausted — not
             // merely upon arriving at it. The final route (e.g. Route 28/Mt.
             // Silver) is a real ~100-mile leg with its own encounters/events,
@@ -259,7 +260,7 @@
             // above once distance is exhausted, but the condition still needs
             // to be correct so CONTINUE keeps advancing days until then.
             const isAtDestination = state.currentLocationIndex >= PT.Data.Routes.length - 1 &&
-                state.distanceTraveled >= route.distanceToNext;
+                state.distanceTraveled >= PT.Engine.GameState.getRouteDistance(route, state);
 
             // Dynamic state elements
             const timeOfDay = getTimeOfDay(state.daysElapsed);
@@ -324,8 +325,8 @@
                         <div class="progress-bar-fill" style="width: ${progress}%"></div>
                     </div>
                     <div class="progress-labels">
-                        <span>${state.distanceTraveled} / ${route.distanceToNext} mi</span>
-                        <span>${nextRoute ? (route.distanceToNext - state.distanceTraveled) + ' mi left' : 'ARRIVED'}</span>
+                        <span>${state.distanceTraveled} / ${PT.Engine.GameState.getRouteDistance(route, state)} mi</span>
+                        <span>${nextRoute ? (PT.Engine.GameState.getRouteDistance(route, state) - state.distanceTraveled) + ' mi left' : 'ARRIVED'}</span>
                     </div>
                 </div>
 
@@ -440,19 +441,38 @@
                     nextAction = () => PT.App.goto('TRAVEL');
                 }
 
+                // Trainer battle (difficulty 2+, engine/travel-engine.js's
+                // advanceDay) is independent of results.encounter/results.event
+                // — a single day can carry both a wild encounter AND a trainer
+                // battle. Trainer battle goes first; whatever the wild-
+                // encounter/event/arrival flow above would have done next is
+                // threaded through as an onComplete callback in its params
+                // (screen params are plain in-memory objects here, never
+                // persisted — PT.Engine.GameState.saveGame(state) only ever
+                // saves `state`, not screen-manager params) so the day's other
+                // half still plays out once the battle resolves, instead of
+                // silently dropping it behind a bare goto('TRAVEL').
+                if (results.trainerBattle) {
+                    const afterTrainerBattle = nextAction;
+                    nextAction = () => PT.App.goto('TRAINER_BATTLE', Object.assign({}, results.trainerBattle, { onComplete: afterTrainerBattle }));
+                }
+
                 // Show day recap popup
-                showDayRecap(results.messages, nextAction, results.encounter, results.event, results.arrivedAtLocation ? PT.Engine.GameState.getCurrentRoute(state) : null);
+                showDayRecap(results.messages, nextAction, results.encounter, results.event, results.arrivedAtLocation ? PT.Engine.GameState.getCurrentRoute(state) : null, results.trainerBattle);
             }
 
-            function showDayRecap(messages, nextAction, encounter, event, arrivedRoute) {
+            function showDayRecap(messages, nextAction, encounter, event, arrivedRoute, trainerBattle) {
                 // Build recap lines
                 const lines = messages.length > 0
                     ? messages.map(m => `<div class="recap-line">${m}</div>`).join('')
                     : '<div class="recap-line">Nothing eventful happened.</div>';
 
-                // Hint about what's coming next
+                // Hint about what's coming next — trainer battle takes priority
+                // since it's shown first (see proceedWithDay's onComplete chaining).
                 let nextHint = '';
-                if (encounter) {
+                if (trainerBattle) {
+                    nextHint = `<div class="recap-next">${trainerBattle.trainerName || 'A trainer'} wants to battle!</div>`;
+                } else if (encounter) {
                     const pokeName = encounter.name || 'a wild Pokemon';
                     nextHint = `<div class="recap-next">A wild ${pokeName} appeared!</div>`;
                 } else if (event) {
@@ -595,7 +615,7 @@
                 if (hasUnbeatenGym && wouldProgress) {
                     // Estimate if this step would cause arrival
                     const paceConfig = PT.Engine.TravelEngine.PACE_CONFIG[state.pace] || PT.Engine.TravelEngine.PACE_CONFIG.steady;
-                    const remaining = route.distanceToNext - state.distanceTraveled;
+                    const remaining = PT.Engine.GameState.getRouteDistance(route, state) - state.distanceTraveled;
                     // Use max possible travel (pace + variance + fly bonus + surf bonus) to predict
                     const maxPossibleTravel = paceConfig.distance + 3 + 3 + (route.terrain === 'water' ? 5 : 0);
 
@@ -852,12 +872,13 @@
             if (r.hasGym) icons.push('G');
 
             // Distance label
-            const dist = r.distanceToNext > 0 ? `${r.distanceToNext} mi` : '—';
+            const rDist = PT.Engine.GameState.getRouteDistance(r, state);
+            const dist = rDist > 0 ? `${rDist} mi` : '—';
 
             // Progress on current location
             let progressText = '';
-            if (isCurrent && r.distanceToNext > 0) {
-                const pct = Math.floor((state.distanceTraveled / r.distanceToNext) * 100);
+            if (isCurrent && rDist > 0) {
+                const pct = Math.floor((state.distanceTraveled / rDist) * 100);
                 progressText = ` <span style="color:var(--gb-darkest);font-weight:bold;">(${pct}%)</span>`;
             }
 
@@ -901,6 +922,13 @@
             { label: 'RECORDS', screen: 'RECORDS' },
             { label: 'LEADERBOARD', screen: 'LEADERBOARD' }
         ];
+        // Same staging-only (!PT.Config.isProd) + ?debug=1 gate used by
+        // title-screen.js's debug row — lets a debug-panel session add food /
+        // toggle auto-catch mid-run instead of only pre-game.
+        const debugRequested = new URLSearchParams(window.location.search).get('debug') === '1';
+        if (PT.Config && !PT.Config.isProd && debugRequested) {
+            items.push({ label: 'DEBUG PANEL', screen: 'DEBUGPANEL' });
+        }
 
         const soundOn = PT.Engine.Audio && PT.Engine.Audio.isEnabled();
 

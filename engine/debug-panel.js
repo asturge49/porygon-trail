@@ -16,6 +16,7 @@
     PT.Engine = PT.Engine || {};
 
     let forcedOutcome = null; // null | 'win' | 'lose' — single-use, cleared on read
+    let autoCatchEnabled = false; // persistent toggle — every wild catch attempt auto-succeeds while on
 
     PT.Engine.DebugPanel = {
         getForcedOutcome() {
@@ -24,6 +25,14 @@
 
         setForcedOutcome(value) {
             forcedOutcome = (value === 'win' || value === 'lose') ? value : null;
+        },
+
+        getAutoCatchEnabled() {
+            return autoCatchEnabled;
+        },
+
+        setAutoCatchEnabled(value) {
+            autoCatchEnabled = !!value;
         },
 
         // Drop-in replacement for `rng.chance(chance)` at a battle-resolution
