@@ -186,6 +186,20 @@
         return new Date(dateStr).toISOString().slice(0, 10);
     }
 
+    // dayKey of N days before today (UTC, matching dayKey's own toISOString basis).
+    function daysAgoKey(n) {
+        const d = new Date();
+        d.setUTCDate(d.getUTCDate() - n);
+        return dayKey(d);
+    }
+
+    // The set of dayKeys covering today and the (n-1) days before it.
+    function keySetForLastNDays(n) {
+        const set = new Set();
+        for (let i = 0; i < n; i++) set.add(daysAgoKey(i));
+        return set;
+    }
+
     function statCard(label, value, cls) {
         return `<div class="stat-card">
             <div class="stat-label">${label}</div>
@@ -342,9 +356,25 @@
 
         const totalRuns = leaderboard.length;
         const completedRuns = leaderboard.filter(r => r.status !== 'in_progress');
-        const wins = leaderboard.filter(r => r.won).length;
         const e4Clears = leaderboard.filter(r => r.kanto_e4_cleared).length;
         const johtoEntries = leaderboard.filter(r => r.johto_completed === true).length;
+
+        // ----- Date windows (UTC) for the recency stat groups below -----
+        const todayKey = daysAgoKey(0);
+        const yesterdayKey = daysAgoKey(1);
+        const last7Keys = keySetForLastNDays(7);
+        const last30Keys = keySetForLastNDays(30);
+
+        // ----- New trainers / runs logged, by recency window -----
+        const newTrainersLast30 = profiles.filter(p => last30Keys.has(dayKey(p.created_at))).length;
+        const newTrainersLast7 = profiles.filter(p => last7Keys.has(dayKey(p.created_at))).length;
+        const newTrainersYesterday = profiles.filter(p => dayKey(p.created_at) === yesterdayKey).length;
+        const newTrainersToday = profiles.filter(p => dayKey(p.created_at) === todayKey).length;
+
+        const runsLoggedLast30 = leaderboard.filter(r => last30Keys.has(dayKey(r.created_at))).length;
+        const runsLoggedLast7 = leaderboard.filter(r => last7Keys.has(dayKey(r.created_at))).length;
+        const runsLoggedYesterday = leaderboard.filter(r => dayKey(r.created_at) === yesterdayKey).length;
+        const runsLoggedToday = leaderboard.filter(r => dayKey(r.created_at) === todayKey).length;
 
         // ----- Red capstone battle: challenged vs. won -----
         // capstone_result fires exactly once per run that reaches Red and resolves
@@ -405,19 +435,31 @@
 
         // ----- Heartbeats: time-on-page (session_heartbeat, 1 beat = 0.5 min) -----
         const heartbeats = events.filter(e => e.event_type === 'session_heartbeat');
-        const todayKey = dayKey(new Date());
 
         const heartbeatsByUserAllTime = {};
         const heartbeatsByUserToday = {};
+        const heartbeatsByUserYesterday = {};
+        const heartbeatsByUserLast7 = {};
         const heartbeatsByDay = {};
         heartbeats.forEach(e => {
             heartbeatsByUserAllTime[e.user_id] = (heartbeatsByUserAllTime[e.user_id] || 0) + 1;
             const d = dayKey(e.created_at);
             heartbeatsByDay[d] = (heartbeatsByDay[d] || 0) + 1;
-            if (d === todayKey) {
-                heartbeatsByUserToday[e.user_id] = (heartbeatsByUserToday[e.user_id] || 0) + 1;
-            }
+            if (d === todayKey) heartbeatsByUserToday[e.user_id] = (heartbeatsByUserToday[e.user_id] || 0) + 1;
+            if (d === yesterdayKey) heartbeatsByUserYesterday[e.user_id] = (heartbeatsByUserYesterday[e.user_id] || 0) + 1;
+            if (last7Keys.has(d)) heartbeatsByUserLast7[e.user_id] = (heartbeatsByUserLast7[e.user_id] || 0) + 1;
         });
+
+        // ----- Trainers over hour-played thresholds, by recency window -----
+        const HOUR_THRESHOLDS = [1, 3, 5, 10];
+        function countsAboveHourThresholds(heartbeatCountsByUser) {
+            const hours = Object.values(heartbeatCountsByUser).map(c => (c * MINUTES_PER_HEARTBEAT) / 60);
+            return HOUR_THRESHOLDS.map(t => hours.filter(h => h > t).length);
+        }
+        const [allTimeOver1h, allTimeOver3h, allTimeOver5h, allTimeOver10h] = countsAboveHourThresholds(heartbeatsByUserAllTime);
+        const [last7Over1h, last7Over3h, last7Over5h, last7Over10h] = countsAboveHourThresholds(heartbeatsByUserLast7);
+        const [yesterdayOver1h, yesterdayOver3h, yesterdayOver5h, yesterdayOver10h] = countsAboveHourThresholds(heartbeatsByUserYesterday);
+        const [todayOver1h, todayOver3h, todayOver5h, todayOver10h] = countsAboveHourThresholds(heartbeatsByUserToday);
 
         // Total hours on the trail: all heartbeats, and the subset logged by users
         // who have at least one completed run (status !== 'in_progress') — excludes
@@ -426,6 +468,7 @@
         const totalHoursAll = (heartbeats.length * MINUTES_PER_HEARTBEAT) / 60;
         const totalHoursCompletedUsers = (heartbeats.filter(e => completedUserIds.has(e.user_id)).length * MINUTES_PER_HEARTBEAT) / 60;
         const avgHoursPerCompletedTrainer = completedUserIds.size ? totalHoursCompletedUsers / completedUserIds.size : 0;
+        const avgRunsPerCompletedTrainer = completedUserIds.size ? completedRuns.length / completedUserIds.size : 0;
 
         const topHeartbeatUsersAllTime = allSorted(heartbeatsByUserAllTime)
             .map(([userId, count]) => [nameFor(userId), +(count * MINUTES_PER_HEARTBEAT).toFixed(1)]);
@@ -459,6 +502,28 @@
             deathLocationLabels.push('Unknown Location');
             deathLocationCounts.push(deathsWithUnknownLocation);
         }
+
+        // ----- Death context: gym battle vs. E4 battle vs. everything else -----
+        // gameOverReason itself doesn't distinguish battle context (it's always
+        // "party_wiped" whether that happened in a gym, an E4 battle, or a wild
+        // encounter — see screens/gym-screen.js, elite-four-screen.js, and
+        // encounter-screen.js), so this classifies by WHERE the death happened
+        // instead, using the same route_index as the death-location chart above.
+        // Indices below are hasGym cities / E4 locations, read straight off
+        // data/routes.js in ROUTE_ORDER's index order. "Route deaths" is
+        // everything else — plain routes/caves and non-gym cities, both regions.
+        const KANTO_GYM_INDICES = [4, 6, 9, 14, 15, 17, 21, 23];
+        const JOHTO_GYM_INDICES = [34, 38, 41, 46, 49, 52, 55, 59];
+        const KANTO_E4_INDEX = 28;
+        const JOHTO_E4_INDEX = 62;
+        const sumIndices = (arr, indices) => indices.reduce((sum, i) => sum + (arr[i] || 0), 0);
+
+        const kantoGymDeaths = sumIndices(deathCountsByIndex, KANTO_GYM_INDICES);
+        const johtoGymDeaths = sumIndices(deathCountsByIndex, JOHTO_GYM_INDICES);
+        const kantoE4Deaths = deathCountsByIndex[KANTO_E4_INDEX] || 0;
+        const johtoE4Deaths = deathCountsByIndex[JOHTO_E4_INDEX] || 0;
+        const totalDeaths = deathCountsByIndex.reduce((a, b) => a + b, 0) + deathsWithUnknownLocation;
+        const routeDeaths = totalDeaths - kantoGymDeaths - johtoGymDeaths - kantoE4Deaths - johtoE4Deaths;
 
         // ----- Pokemon team composition: parties that WON the E4 battle -----
         // Johto: the johto_elite_four_cleared event logs the exact living party
@@ -499,25 +564,33 @@
                 <h2>&gt; Overview</h2>
                 <div class="stat-grid">
                     ${statCard('Trainers Registered', profilesCount)}
-                    ${statCard('Total Runs Logged', totalRuns)}
-                    ${statCard('Full Victory Rate', pct(wins, completedRuns.length))}
-                    ${statCard('Kanto E4 Clear Rate', pct(e4Clears, completedRuns.length))}
+                    ${statCard('Trainers With Completed Run', `${completedUserIds.size} / ${profilesCount}`)}
+                    ${statCard('Avg Runs Per Completed-Run Trainer', avgRunsPerCompletedTrainer.toFixed(1))}
                     ${statCard('Avg Score', Math.round(avg(leaderboard.map(r => r.score))))}
-                    ${statCard('Avg Days Survived', avg(leaderboard.map(r => r.days_elapsed)).toFixed(1))}
-                    ${statCard('Avg Pokedex Count', avg(leaderboard.map(r => r.pokedex_count)).toFixed(1))}
-                    ${statCard('Johto Runs Completed', johtoEntries)}
+                    ${statCard('Total Runs Logged', totalRuns)}
                     ${statCard('Total Hours On Trail', totalHoursAll.toFixed(1))}
-                    ${statCard('Trainers With A Completed Run', `${completedUserIds.size} / ${profilesCount}`)}
                     ${statCard('Total Hours (Completed-Run Trainers)', totalHoursCompletedUsers.toFixed(1))}
                     ${statCard('Avg Hours Per Completed-Run Trainer', avgHoursPerCompletedTrainer.toFixed(1))}
-                    ${statCard('Red Challenged', redChallenges)}
-                    ${statCard('Red Defeated', `${redWins} (${pct(redWins, redChallenges)})`)}
                 </div>
             </section>
 
             <section class="dex-section">
                 <h2>&gt; Activity</h2>
-                <div class="panel-grid">
+                <div class="stat-subheading">New Registered Trainers</div>
+                <div class="stat-grid">
+                    ${statCard('Last 30 Days', newTrainersLast30)}
+                    ${statCard('Last 7 Days', newTrainersLast7)}
+                    ${statCard('Yesterday', newTrainersYesterday)}
+                    ${statCard('Today', newTrainersToday)}
+                </div>
+                <div class="stat-subheading">Runs Logged</div>
+                <div class="stat-grid">
+                    ${statCard('Last 30 Days', runsLoggedLast30)}
+                    ${statCard('Last 7 Days', runsLoggedLast7)}
+                    ${statCard('Yesterday', runsLoggedYesterday)}
+                    ${statCard('Today', runsLoggedToday)}
+                </div>
+                <div class="panel-grid" style="margin-top: 16px;">
                     <div class="panel">
                         <h3>Runs Logged Per Day</h3>
                         <canvas id="chart-runs-day"></canvas>
@@ -531,7 +604,35 @@
 
             <section class="dex-section">
                 <h2>&gt; Time On Trail (Heartbeats, 1 beat = 30s)</h2>
-                <div class="panel" id="group-heartbeat-day">
+                <div class="stat-subheading">Trainers Over Hour-Played Thresholds — All-Time</div>
+                <div class="stat-grid">
+                    ${statCard('> 1 Hour', allTimeOver1h)}
+                    ${statCard('> 3 Hours', allTimeOver3h)}
+                    ${statCard('> 5 Hours', allTimeOver5h)}
+                    ${statCard('> 10 Hours', allTimeOver10h)}
+                </div>
+                <div class="stat-subheading">Last 7 Days</div>
+                <div class="stat-grid">
+                    ${statCard('> 1 Hour', last7Over1h)}
+                    ${statCard('> 3 Hours', last7Over3h)}
+                    ${statCard('> 5 Hours', last7Over5h)}
+                    ${statCard('> 10 Hours', last7Over10h)}
+                </div>
+                <div class="stat-subheading">Yesterday</div>
+                <div class="stat-grid">
+                    ${statCard('> 1 Hour', yesterdayOver1h)}
+                    ${statCard('> 3 Hours', yesterdayOver3h)}
+                    ${statCard('> 5 Hours', yesterdayOver5h)}
+                    ${statCard('> 10 Hours', yesterdayOver10h)}
+                </div>
+                <div class="stat-subheading">Today</div>
+                <div class="stat-grid">
+                    ${statCard('> 1 Hour', todayOver1h)}
+                    ${statCard('> 3 Hours', todayOver3h)}
+                    ${statCard('> 5 Hours', todayOver5h)}
+                    ${statCard('> 10 Hours', todayOver10h)}
+                </div>
+                <div class="panel" id="group-heartbeat-day" style="margin-top: 16px;">
                     <div class="panel-header-row">
                         <h3>Minutes-On-Page Per Day, All Trainers</h3>
                         <div class="range-toggle">
@@ -559,7 +660,19 @@
 
             <section class="dex-section">
                 <h2>&gt; Player Behavior</h2>
-                <div class="panel-grid">
+                <div class="stat-grid">
+                    ${statCard('Total Runs Completed', completedRuns.length)}
+                    ${statCard('Kanto Gym Deaths', kantoGymDeaths)}
+                    ${statCard('Johto Gym Deaths', johtoGymDeaths)}
+                    ${statCard('Route Deaths', routeDeaths)}
+                    ${statCard('Kanto E4 Deaths', kantoE4Deaths)}
+                    ${statCard('Kanto E4 Defeated', e4Clears)}
+                    ${statCard('Johto E4 Deaths', johtoE4Deaths)}
+                    ${statCard('Johto E4 Defeated', johtoEntries)}
+                    ${statCard('Red Challenged', redChallenges)}
+                    ${statCard('Red Defeated', `${redWins} (${pct(redWins, redChallenges)})`)}
+                </div>
+                <div class="panel-grid" style="margin-top: 16px;">
                     <div class="panel">
                         <h3>Starter Popularity</h3>
                         <canvas id="chart-starters"></canvas>
