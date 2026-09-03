@@ -488,24 +488,43 @@
         };
     }
 
+    // One row of the rewards/outcome list — see gym-screen.js's identical
+    // helper for why this isn't folded into engine/battle-outcome-ui.js.
+    function rewardRow(label, value) {
+        return `
+            <div class="battle-breakdown-row">
+                <span class="battle-breakdown-label">${label}</span>
+                <span class="battle-breakdown-value">${value}</span>
+            </div>`;
+    }
+
     function resolveWildBattle(chosen, pokemon, state, msgEl, actionsDiv, showResult) {
         const pokemonData = PT.Data.Pokemon.find(p => p.id === pokemon.id);
         const opponentTypes = pokemonData ? pokemonData.types : pokemon.types;
         const typeChart = getWildTypeWeaknesses(opponentTypes);
 
-        // Calculate win chance — wild battles are easier than gyms
+        // Calculate win chance — wild battles are easier than gyms.
+        // `breakdown` mirrors this math for engine/battle-outcome-ui.js's panel.
         let chance = 50;
-        let battleBonuses = [];
+        let breakdown = [{ label: 'BASE CHANCE', value: 50 }];
 
         // Type advantage
         const hasAdvantage = chosen.types.some(t => typeChart.weakTo.includes(t));
         const hasDisadvantage = chosen.types.some(t => typeChart.strongTo.includes(t));
-        if (hasAdvantage) chance += 20;
-        if (hasDisadvantage) chance -= 20;
+        if (hasAdvantage) {
+            chance += 20;
+            breakdown.push({ label: 'TYPE MATCHUP (SE)', value: 20 });
+        } else if (hasDisadvantage) {
+            chance -= 20;
+            breakdown.push({ label: 'TYPE MATCHUP (NVE)', value: -20 });
+        } else {
+            breakdown.push({ label: 'TYPE MATCHUP', value: 0 });
+        }
 
         // Rarity of wild Pokemon affects difficulty
-        if (pokemon.rarity === 'legendary') chance -= 15;
-        if (pokemon.rarity === 'rare') chance -= 5;
+        const rarityPenalty = pokemon.rarity === 'legendary' ? 15 : pokemon.rarity === 'rare' ? 5 : 0;
+        if (rarityPenalty > 0) chance -= rarityPenalty;
+        breakdown.push({ label: `RARITY (${pokemon.rarity.toUpperCase()})`, value: rarityPenalty > 0 ? -rarityPenalty : 0 });
 
         // Progressive scaling — mirrors the gym-battle formula (gym-screen.js)
         // so wild encounters stop being trivial farming fodder as the run goes
@@ -514,16 +533,20 @@
         const totalBadgeCount = state.badges.filter(b => b !== 'champion').length;
         const wildScaling = Math.floor((totalBadgeCount / 16) * 18);
         if (wildScaling > 0) chance -= wildScaling;
+        breakdown.push({ label: `PROGRESSION (${totalBadgeCount} BADGES)`, value: wildScaling > 0 ? -wildScaling : 0 });
 
         // Johto wild Pokemon hit back harder — matches the flee-chance and
         // gym-loss-damage regional bump already applied elsewhere.
-        if (state.region === 'johto') chance -= 10;
+        if (state.region === 'johto') {
+            chance -= 10;
+            breakdown.push({ label: 'JOHTO REGION', value: -10 });
+        }
 
         // Win Rate buff (Muscle Band stacks)
         const winRateBonus = PT.Engine.GameState.getWinRateBonus(state);
         if (winRateBonus > 0) {
             chance += winRateBonus;
-            battleBonuses.push(`WIN RATE +${winRateBonus}%`);
+            breakdown.push({ label: 'MUSCLE BAND', value: winRateBonus });
         }
 
         // Poison ability: scales with power, party-wide (same as Intimidate below)
@@ -531,7 +554,8 @@
         if (poisonPowerBattle > 0) {
             const poisonBonus = Math.floor(1 * poisonPowerBattle);
             chance += poisonBonus;
-            battleBonuses.push(`POISON +${poisonBonus}%`);
+            const poisonN = PT.Engine.GameState.getAbilityContributorCount(state, 'poison');
+            breakdown.push({ label: poisonN > 1 ? `POISON (${poisonN} POKEMON)` : 'POISON', value: poisonBonus });
         }
 
         // Intimidate ability: scales with power
@@ -539,20 +563,21 @@
         if (intimidatePowerBattle > 0) {
             const intimBonus = Math.floor(3 * intimidatePowerBattle);
             chance += intimBonus;
-            battleBonuses.push(`INTIMIDATE +${intimBonus}%`);
+            const intimN = PT.Engine.GameState.getAbilityContributorCount(state, 'intimidate');
+            breakdown.push({ label: intimN > 1 ? `INTIMIDATE (${intimN} POKEMON)` : 'INTIMIDATE', value: intimBonus });
         }
 
         // Battle Stars bonus
         const starBonus = PT.Engine.GameState.getStarBonus(chosen);
         if (starBonus.winChanceBonus > 0) {
             chance += starBonus.winChanceBonus;
-            battleBonuses.push(`${'★'.repeat(chosen.battleStars || 0)} +${starBonus.winChanceBonus}%`);
+            breakdown.push({ label: `BATTLE STARS (${'★'.repeat(chosen.battleStars || 0)})`, value: starBonus.winChanceBonus });
         }
 
         // Clamp
         const preClampChance = chance;
         chance = Math.max(15, Math.min(85, chance));
-        if (preClampChance !== chance) battleBonuses.push(chance === 85 ? 'MAXED OUT' : 'FLOORED OUT');
+        const maxed = preClampChance !== chance ? (chance === 85 ? 'capped' : 'floored') : null;
 
         const won = state.rng.chance(chance);
         const wildHp = PT.Engine.GameState.getMaxHpForPokemon(pokemon);
@@ -573,26 +598,31 @@
 
             // Award battle star (evolution win doesn't count)
             const starResult = PT.Engine.GameState.addBattleWin(chosen, state, evoResult.evolved);
-            let starLine = '';
-            if (starResult.earned) {
-                starLine = `<br>★ ${chosen.name} earned a Battle Star! [${'★'.repeat(chosen.battleStars)}] (${chosen.battleStars}/3)`;
-            }
-            if (starResult.expShareBonus) {
-                starLine += starResult.expShareBonus.type === 'evolution'
-                    ? `<br>EXP. SHARE: ${starResult.expShareBonus.name} also evolved into ${starResult.expShareBonus.newName}!`
-                    : `<br>EXP. SHARE: ${starResult.expShareBonus.name} also earned a Battle Star!`;
-            }
 
             // Reward: small money bounty
             const baseMoneyReward = pokemon.rarity === 'legendary' ? 500 : pokemon.rarity === 'rare' ? 200 : pokemon.rarity === 'uncommon' ? 100 : 50;
             const moneyReward = PT.Engine.GameState.applyPayDay(state, baseMoneyReward);
             state.resources.money += moneyReward;
 
+            let rewardRows = rewardRow('MONEY', `+$${moneyReward}${moneyReward > baseMoneyReward ? ' (BONUS)' : ''}`);
+            if (evoResult.evolved) {
+                rewardRows += rewardRow('EVOLVED', `${evoResult.oldName} → ${evoResult.newName}`);
+            }
+            if (starResult.earned) {
+                rewardRows += rewardRow('BATTLE STAR EARNED', `${'★'.repeat(chosen.battleStars)} (${chosen.battleStars}/3)`);
+            }
+            if (starResult.expShareBonus) {
+                rewardRows += rewardRow('EXP. SHARE',
+                    starResult.expShareBonus.type === 'evolution'
+                        ? `${starResult.expShareBonus.name} also evolved into ${starResult.expShareBonus.newName}!`
+                        : `${starResult.expShareBonus.name} also earned a Battle Star!`);
+            }
+
             msgEl.innerHTML = `
                 <div style="text-align: center;">
                     <strong>${chosen.name} defeated wild ${pokemon.name}!</strong>
-                    <br>Won $${moneyReward}!${moneyReward > baseMoneyReward ? ' BONUS!' : ''}${evoLine}${starLine}
-                    <br><span style="font-size: 6px;">Win chance was ${chance}%${battleBonuses.length > 0 ? ' (' + battleBonuses.join(', ') + ')' : ''}</span>
+                    <div class="battle-breakdown-list" style="max-width: 380px; margin: 4px auto 0;">${rewardRows}</div>
+                    ${PT.Engine.BattleOutcomeUI.renderBreakdown({ chance, maxed, rows: breakdown, notApplicable: [], quote: null })}
                 </div>
             `;
             PT.Engine.GameState.saveGame(state);
@@ -619,13 +649,14 @@
                 PT.Engine.GameState.addToLog(state, `${chosen.name} took ${lossDamage} damage from wild ${pokemon.name}.`);
             }
 
+            let lossRows = rewardRow('RESULT', died ? `${chosen.name} was killed` : `${chosen.name} took ${lossDamage} damage`);
+            lossRows += rewardRow(`WILD ${pokemon.name.toUpperCase()} HP`, wildHp);
+
             msgEl.innerHTML = `
                 <div style="text-align: center;">
                     <strong>${chosen.name} lost to wild ${pokemon.name}!</strong>
-                    <br>${died
-                        ? `${chosen.name} was killed!`
-                        : `${chosen.name} took ${lossDamage} damage! (${chosen.hp}/${chosen.maxHp} HP)`}
-                    <br><span style="font-size: 6px;">Win chance was ${chance}%${battleBonuses.length > 0 ? ' (' + battleBonuses.join(', ') + ')' : ''} | Wild ${pokemon.name} HP: ${wildHp}</span>
+                    <div class="battle-breakdown-list" style="max-width: 380px; margin: 4px auto 0;">${lossRows}</div>
+                    ${PT.Engine.BattleOutcomeUI.renderBreakdown({ chance, maxed, rows: breakdown, notApplicable: [], quote: null })}
                 </div>
             `;
             PT.Engine.GameState.saveGame(state);

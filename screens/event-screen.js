@@ -3,6 +3,16 @@
     const PT = window.PorygonTrail;
     PT.Screens = PT.Screens || {};
 
+    // One row of the rewards/outcome list — see gym-screen.js's identical
+    // helper for why this isn't folded into engine/battle-outcome-ui.js.
+    function rewardRow(label, value) {
+        return `
+            <div class="battle-breakdown-row">
+                <span class="battle-breakdown-label">${label}</span>
+                <span class="battle-breakdown-value">${value}</span>
+            </div>`;
+    }
+
     PT.Screens.EVENT = {
         render(container, state, params) {
             const event = params.event;
@@ -217,29 +227,28 @@
 
             // Try evolution FIRST
             const evoResult = PT.Engine.GameState.evolvePokemon(chosen, state);
-            let evoLine = '';
             if (evoResult.evolved) {
-                evoLine = `<br>${evoResult.oldName} evolved into ${evoResult.newName}!`;
                 PT.Engine.GameState.addToLog(state, `${evoResult.oldName} evolved into ${evoResult.newName}!`);
             }
 
             // Award battle star (evolution win doesn't count)
             const starResult = PT.Engine.GameState.addBattleWin(chosen, state, evoResult.evolved);
-            let starLine = '';
-            if (starResult.earned) {
-                starLine = `<br>★ ${chosen.name} earned a Battle Star! [${'★'.repeat(chosen.battleStars)}] (${chosen.battleStars}/3)`;
-            }
+            let rewardRows = '';
+            if (evoResult.evolved) rewardRows += rewardRow('EVOLVED', `${evoResult.oldName} → ${evoResult.newName}`);
+            if (starResult.earned) rewardRows += rewardRow('BATTLE STAR EARNED', `${'★'.repeat(chosen.battleStars)} (${chosen.battleStars}/3)`);
             if (starResult.expShareBonus) {
-                starLine += starResult.expShareBonus.type === 'evolution'
-                    ? `<br>EXP. SHARE: ${starResult.expShareBonus.name} also evolved into ${starResult.expShareBonus.newName}!`
-                    : `<br>EXP. SHARE: ${starResult.expShareBonus.name} also earned a Battle Star!`;
+                rewardRows += rewardRow('EXP. SHARE',
+                    starResult.expShareBonus.type === 'evolution'
+                        ? `${starResult.expShareBonus.name} also evolved into ${starResult.expShareBonus.newName}!`
+                        : `${starResult.expShareBonus.name} also earned a Battle Star!`);
             }
 
             const winNarration = battle.winNarration || `${chosen.name} won the battle!`;
             narrative.innerHTML = `
                 <div style="text-align: center;">
-                    <strong>${winNarration}</strong>${evoLine}${starLine}
-                    <br><span style="font-size: 6px;">Win chance: ${result.chance}%${result.battleBonuses.length > 0 ? ' (' + result.battleBonuses.join(', ') + ')' : ''}</span>
+                    <strong>${winNarration}</strong>
+                    ${rewardRows ? `<div class="battle-breakdown-list" style="max-width: 380px; margin: 4px auto 0;">${rewardRows}</div>` : ''}
+                    ${PT.Engine.BattleOutcomeUI.renderBreakdown({ chance: result.chance, maxed: result.maxed, rows: result.breakdown, notApplicable: [], quote: null })}
                 </div>
             ` + buildEffectsSummary(winEffects);
 
@@ -264,13 +273,12 @@
             }
 
             const lossNarration = battle.lossNarration || `${chosen.name} lost the battle!`;
+            const lossRows = rewardRow('RESULT', died ? `${chosen.name} was killed` : `${chosen.name} took ${result.lossDamage} damage`);
             narrative.innerHTML = `
                 <div style="text-align: center;">
                     <strong>${lossNarration}</strong>
-                    <br>${died
-                        ? `${chosen.name} was killed!`
-                        : `${chosen.name} took ${result.lossDamage} damage! (${chosen.hp}/${chosen.maxHp} HP)`}
-                    <br><span style="font-size: 6px;">Win chance: ${result.chance}%${result.battleBonuses.length > 0 ? ' (' + result.battleBonuses.join(', ') + ')' : ''}</span>
+                    <div class="battle-breakdown-list" style="max-width: 380px; margin: 4px auto 0;">${lossRows}</div>
+                    ${PT.Engine.BattleOutcomeUI.renderBreakdown({ chance: result.chance, maxed: result.maxed, rows: result.breakdown, notApplicable: [], quote: null })}
                 </div>
             ` + buildEffectsSummary(lossEffects);
 

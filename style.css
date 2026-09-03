@@ -1995,6 +1995,84 @@ body {
 }
 
 /* ============================================
+   BATTLE OUTCOME PANEL (engine/battle-outcome-ui.js)
+   Shared "what determined this fight" breakdown, used by every battle
+   resolution screen (gyms, gauntlet, E4, Red, wild encounters, events).
+   ============================================ */
+
+.battle-outcome-panel {
+    width: 100%;
+    max-width: 380px;
+    margin: 10px auto 0;
+    text-align: left;
+}
+
+.battle-outcome-meter-label {
+    font-size: var(--font-size-sm);
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 3px;
+}
+
+.battle-outcome-maxed {
+    font-size: 6px;
+    font-weight: normal;
+    color: var(--gb-dark);
+}
+
+.battle-breakdown-list {
+    display: flex;
+    flex-direction: column;
+    margin-top: 6px;
+}
+
+.battle-breakdown-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 8px;
+    padding: 3px 2px;
+    border-bottom: 1px solid var(--gb-light);
+    font-size: 7px;
+}
+
+.battle-breakdown-label {
+    color: var(--gb-dark);
+    text-transform: uppercase;
+}
+
+.battle-breakdown-value {
+    color: var(--gb-darkest);
+    font-weight: bold;
+    white-space: nowrap;
+}
+
+.battle-breakdown-na {
+    opacity: 0.6;
+}
+
+.battle-breakdown-na .battle-breakdown-label::after {
+    content: " — not eligible for this battle";
+    text-transform: none;
+    font-style: italic;
+}
+
+.battle-breakdown-na .battle-breakdown-value {
+    font-weight: normal;
+    font-style: italic;
+}
+
+.battle-outcome-quote {
+    font-size: 6px;
+    font-style: italic;
+    color: var(--gb-dark);
+    opacity: 0.75;
+    text-align: center;
+    margin-top: 8px;
+    padding: 0 16px;
+}
+
+/* ============================================
    GYM REWARD SCREEN
    ============================================ */
 

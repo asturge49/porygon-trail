@@ -159,6 +159,20 @@
         };
     }
 
+    // One row of the rewards/outcome list (money, badge, evolution, battle
+    // star, ...) — same visual language as engine/battle-outcome-ui.js's
+    // win-chance breakdown rows (.battle-breakdown-row), just for non-%
+    // values. Kept local rather than folded into that module since the
+    // shape of "what happened" differs too much per context (gym has a
+    // badge, wild/event don't, ...) to be worth a shared function for.
+    function rewardRow(label, value) {
+        return `
+            <div class="battle-breakdown-row">
+                <span class="battle-breakdown-label">${label}</span>
+                <span class="battle-breakdown-value">${value}</span>
+            </div>`;
+    }
+
     function resolveGymBattle(pokemon, leader, leaderId, state, container, opponent) {
         // Clear locked opponent now that battle is committed
         delete state._gymLockedOpponent;
@@ -171,33 +185,47 @@
         const opponentTypes = opponentData ? opponentData.types : [leader.type];
         const typeChart = getTypeWeaknesses(opponentTypes);
 
-        // Calculate success chance
+        // Calculate success chance. `breakdown` mirrors the math below one
+        // row per lever, feeding engine/battle-outcome-ui.js's panel — every
+        // term that touches `chance` gets a row, including when it's 0, so a
+        // trainer can see e.g. "TYPE MATCHUP +0%" and know that lever just
+        // didn't apply this fight rather than wondering if it was skipped.
         let chance = 45;
-        let battleBonuses = [];
+        let breakdown = [{ label: 'BASE CHANCE', value: 45 }];
 
         // Type advantage based on opponent Pokemon's types
         const hasAdvantage = pokemon.types.some(t => typeChart.weakTo.includes(t));
         const hasDisadvantage = pokemon.types.some(t => typeChart.strongTo.includes(t));
-        if (hasAdvantage) chance += 20;
-        if (hasDisadvantage) chance -= 20;
+        if (hasAdvantage) {
+            chance += 20;
+            breakdown.push({ label: 'TYPE MATCHUP (SE)', value: 20 });
+        } else if (hasDisadvantage) {
+            chance -= 20;
+            breakdown.push({ label: 'TYPE MATCHUP (NVE)', value: -20 });
+        } else {
+            breakdown.push({ label: 'TYPE MATCHUP', value: 0 });
+        }
 
         // Win Rate buff (Muscle Band stacks)
         const winRateBonus = PT.Engine.GameState.getWinRateBonus(state);
         if (winRateBonus > 0) {
             chance += winRateBonus;
-            battleBonuses.push(`WIN RATE +${winRateBonus}%`);
+            breakdown.push({ label: 'MUSCLE BAND', value: winRateBonus });
         }
 
         // Party size bonus
         const aliveCount = PT.Engine.GameState.getAliveParty(state).length;
-        chance += aliveCount * 2;
+        const partySizeBonus = aliveCount * 2;
+        chance += partySizeBonus;
+        breakdown.push({ label: 'PARTY SIZE', value: partySizeBonus });
 
         // Poison ability: scales with power (party-wide, same as Intimidate)
         const poisonPower = PT.Engine.GameState.getAbilityPower(state, 'poison');
         if (poisonPower > 0) {
             const poisonBonus = Math.floor(1 * poisonPower);
             chance += poisonBonus;
-            battleBonuses.push(`POISON +${poisonBonus}%`);
+            const poisonN = PT.Engine.GameState.getAbilityContributorCount(state, 'poison');
+            breakdown.push({ label: poisonN > 1 ? `POISON (${poisonN} POKEMON)` : 'POISON', value: poisonBonus });
         }
 
         // Intimidate ability: scales with power
@@ -205,20 +233,21 @@
         if (intimidatePower > 0) {
             const intimBonus = Math.floor(3 * intimidatePower);
             chance += intimBonus;
-            battleBonuses.push(`INTIMIDATE +${intimBonus}%`);
+            const intimN = PT.Engine.GameState.getAbilityContributorCount(state, 'intimidate');
+            breakdown.push({ label: intimN > 1 ? `INTIMIDATE (${intimN} POKEMON)` : 'INTIMIDATE', value: intimBonus });
         }
 
         // Psychic Dominance (Mewtwo) — +50% win chance on all battles
         if (PT.Engine.GameState.hasAbility(state, 'psychic_dominance')) {
             chance += 50;
-            battleBonuses.push(`PSYCHIC DOMINANCE +50%`);
+            breakdown.push({ label: 'PSYCHIC DOMINANCE', value: 50 });
         }
 
         // Battle Stars bonus
         const starBonus = PT.Engine.GameState.getStarBonus(pokemon);
         if (starBonus.winChanceBonus > 0) {
             chance += starBonus.winChanceBonus;
-            battleBonuses.push(`${'★'.repeat(pokemon.battleStars || 0)} +${starBonus.winChanceBonus}%`);
+            breakdown.push({ label: `BATTLE STARS (${'★'.repeat(pokemon.battleStars || 0)})`, value: starBonus.winChanceBonus });
         }
 
         // Gym progressive scaling — later gyms expect battle-hardened Pokemon
@@ -226,11 +255,12 @@
         const badgeCount = state.badges.filter(b => b !== 'champion').length;
         const gymScaling = Math.floor((badgeCount / 7) * 9); // 0,1,2,3,5,6,7,9
         if (gymScaling > 0) chance -= gymScaling;
+        breakdown.push({ label: `GYM PROGRESSION (${badgeCount} BADGES)`, value: gymScaling > 0 ? -gymScaling : 0 });
 
         // Clamp
         const preClampChance = chance;
         chance = Math.max(10, Math.min(80, chance));
-        if (preClampChance !== chance) battleBonuses.push(chance === 80 ? 'MAXED OUT' : 'FLOORED OUT');
+        const maxed = preClampChance !== chance ? (chance === 80 ? 'capped' : 'floored') : null;
 
         const won = state.rng.chance(chance);
         let gymMoneyReward = 0;
@@ -273,14 +303,21 @@
 
             // Award battle star (evolution win doesn't count)
             const starResult = PT.Engine.GameState.addBattleWin(pokemon, state, evoResult.evolved);
-            let starLine = '';
+            let rewardRows = rewardRow('BADGE EARNED', leader.badge);
+            rewardRows += rewardRow('MONEY', `+$${gymMoneyReward}${gymMoneyReward > leader.reward.money ? ' (BONUS)' : ''}`);
+            if (evoResult.evolved) {
+                rewardRows += rewardRow('EVOLVED', `${evoResult.oldName} → ${evoResult.newName}`);
+            } else if (evoResult.reason === 'location_limit') {
+                rewardRows += rewardRow('EVOLUTION', 'blocked (already evolved here)');
+            }
             if (starResult.earned) {
-                starLine = `<br>★ ${pokemon.name} earned a Battle Star! [${'★'.repeat(pokemon.battleStars)}] (${pokemon.battleStars}/3)`;
+                rewardRows += rewardRow('BATTLE STAR EARNED', `${'★'.repeat(pokemon.battleStars)} (${pokemon.battleStars}/3)`);
             }
             if (starResult.expShareBonus) {
-                starLine += starResult.expShareBonus.type === 'evolution'
-                    ? `<br>EXP. SHARE: ${starResult.expShareBonus.name} also evolved into ${starResult.expShareBonus.newName}!`
-                    : `<br>EXP. SHARE: ${starResult.expShareBonus.name} also earned a Battle Star!`;
+                rewardRows += rewardRow('EXP. SHARE',
+                    starResult.expShareBonus.type === 'evolution'
+                        ? `${starResult.expShareBonus.name} also evolved into ${starResult.expShareBonus.newName}!`
+                        : `${starResult.expShareBonus.name} also earned a Battle Star!`);
             }
 
             div.innerHTML = `
@@ -294,13 +331,11 @@
                             <div style="font-size: 8px; text-decoration: line-through;">${opponent.name}</div>
                         </div>
                     </div>
-                    <div class="gym-leader-name"><span class="badge-earned">${leader.badge}</span></div>
-                    <div class="gym-challenge-text">${leader.victoryText}</div>
-                    <div style="font-size: 8px; margin-top: 8px;">
-                        ${pokemon.name} defeated ${leader.name}'s ${opponent.name}!
-                        <br>Earned: <span class="badge-earned">${leader.badge}</span> + $${gymMoneyReward}${gymMoneyReward > leader.reward.money ? ' BONUS!' : ''}${evoLine}${starLine}
-                        <br><span style="font-size: 6px;">Win chance was ${chance}%${battleBonuses.length > 0 ? ' (' + battleBonuses.join(', ') + ')' : ''}</span>
-                    </div>
+                    <div style="font-size: 8px; margin-top: 4px;">${pokemon.name} defeated ${leader.name}'s ${opponent.name}!</div>
+                    <div class="battle-breakdown-list" style="max-width: 380px; margin: 4px auto 0;">${rewardRows}</div>
+                    ${PT.Engine.BattleOutcomeUI.renderBreakdown({
+                        chance, maxed, rows: breakdown, notApplicable: [], quote: leader.victoryText
+                    })}
                 </div>
                 <button class="btn btn-wide" id="btn-continue">CONTINUE</button>
             `;
@@ -357,6 +392,11 @@
                 PT.Engine.GameState.addToLog(state, `Lost to ${leader.name}'s ${opponent.name}. ${pokemon.name} was badly hurt.`);
             }
 
+            let lossRows = rewardRow('RESULT', died ? `${pokemon.name} was killed` : `${pokemon.name} took ${damage} damage`);
+            if (focusBandSaved) lossRows += rewardRow('FOCUS BAND', `${pokemon.name} held on!`);
+            if (isAce) lossRows += rewardRow('ACE POKEMON', 'ignores Battle Star protection');
+            if (!died) lossRows += rewardRow('NEXT STEPS', 'try again next visit');
+
             div.innerHTML = `
                 <div class="event-title">DEFEAT...</div>
                 <div class="gym-battle-area">
@@ -369,16 +409,10 @@
                         </div>
                     </div>
                     <div class="gym-leader-name">${leader.name} wins</div>
-                    <div class="gym-challenge-text">${leader.defeatText}</div>
-                    <div style="font-size: 8px; margin-top: 8px;">
-                        ${died
-                            ? `${pokemon.name} was killed by ${opponent.name}!`
-                            : `${pokemon.name} takes ${damage} damage from ${opponent.name}!`}
-                        ${focusBandSaved ? `<br>FOCUS BAND: ${pokemon.name} held on through what should've been a finishing blow!` : ''}
-                        ${isAce ? '<br><span style="font-size: 6px;">Ace Pokemon ignore Battle Star protection!</span>' : ''}
-                        <br><span style="font-size: 6px;">Win chance was ${chance}%${battleBonuses.length > 0 ? ' (' + battleBonuses.join(', ') + ')' : ''}</span>
-                        ${died ? '' : '<br>You can try again next time you visit.'}
-                    </div>
+                    <div class="battle-breakdown-list" style="max-width: 380px; margin: 4px auto 0;">${lossRows}</div>
+                    ${PT.Engine.BattleOutcomeUI.renderBreakdown({
+                        chance, maxed, rows: breakdown, notApplicable: [], quote: leader.defeatText
+                    })}
                 </div>
                 <button class="btn btn-wide" id="btn-continue">CONTINUE</button>
             `;
@@ -526,39 +560,51 @@
         // difficulty jump comes from needing to clear three of these in a
         // row, not from a harsher per-battle formula.
         let chance = 45;
-        let battleBonuses = [];
+        let breakdown = [{ label: 'BASE CHANCE', value: 45 }];
         const hasAdvantage = pokemon.types.some(t => typeChart.weakTo.includes(t));
         const hasDisadvantage = pokemon.types.some(t => typeChart.strongTo.includes(t));
-        if (hasAdvantage) chance += 20;
-        if (hasDisadvantage) chance -= 20;
+        if (hasAdvantage) {
+            chance += 20;
+            breakdown.push({ label: 'TYPE MATCHUP (SE)', value: 20 });
+        } else if (hasDisadvantage) {
+            chance -= 20;
+            breakdown.push({ label: 'TYPE MATCHUP (NVE)', value: -20 });
+        } else {
+            breakdown.push({ label: 'TYPE MATCHUP', value: 0 });
+        }
         const winRateBonus = PT.Engine.GameState.getWinRateBonus(state);
-        if (winRateBonus > 0) { chance += winRateBonus; battleBonuses.push(`WIN RATE +${winRateBonus}%`); }
+        if (winRateBonus > 0) { chance += winRateBonus; breakdown.push({ label: 'MUSCLE BAND', value: winRateBonus }); }
         const aliveCount = PT.Engine.GameState.getAliveParty(state).length;
-        chance += aliveCount * 2;
+        const partySizeBonus = aliveCount * 2;
+        chance += partySizeBonus;
+        breakdown.push({ label: 'PARTY SIZE', value: partySizeBonus });
         const poisonPower = PT.Engine.GameState.getAbilityPower(state, 'poison');
         if (poisonPower > 0) {
             const poisonBonus = Math.floor(1 * poisonPower);
             chance += poisonBonus;
-            battleBonuses.push(`POISON +${poisonBonus}%`);
+            const poisonN = PT.Engine.GameState.getAbilityContributorCount(state, 'poison');
+            breakdown.push({ label: poisonN > 1 ? `POISON (${poisonN} POKEMON)` : 'POISON', value: poisonBonus });
         }
         const intimidatePower = PT.Engine.GameState.getAbilityPower(state, 'intimidate');
         if (intimidatePower > 0) {
             const intimBonus = Math.floor(3 * intimidatePower);
             chance += intimBonus;
-            battleBonuses.push(`INTIMIDATE +${intimBonus}%`);
+            const intimN = PT.Engine.GameState.getAbilityContributorCount(state, 'intimidate');
+            breakdown.push({ label: intimN > 1 ? `INTIMIDATE (${intimN} POKEMON)` : 'INTIMIDATE', value: intimBonus });
         }
-        if (PT.Engine.GameState.hasAbility(state, 'psychic_dominance')) { chance += 50; battleBonuses.push(`PSYCHIC DOMINANCE +50%`); }
+        if (PT.Engine.GameState.hasAbility(state, 'psychic_dominance')) { chance += 50; breakdown.push({ label: 'PSYCHIC DOMINANCE', value: 50 }); }
         const starBonus = PT.Engine.GameState.getStarBonus(pokemon);
         if (starBonus.winChanceBonus > 0) {
             chance += starBonus.winChanceBonus;
-            battleBonuses.push(`${'★'.repeat(pokemon.battleStars || 0)} +${starBonus.winChanceBonus}%`);
+            breakdown.push({ label: `BATTLE STARS (${'★'.repeat(pokemon.battleStars || 0)})`, value: starBonus.winChanceBonus });
         }
         const badgeCount = state.badges.filter(b => b !== 'champion').length;
         const gymScaling = Math.floor((badgeCount / 7) * 9);
         if (gymScaling > 0) chance -= gymScaling;
+        breakdown.push({ label: `GYM PROGRESSION (${badgeCount} BADGES)`, value: gymScaling > 0 ? -gymScaling : 0 });
         const preClampChance = chance;
         chance = Math.max(10, Math.min(80, chance));
-        if (preClampChance !== chance) battleBonuses.push(chance === 80 ? 'MAXED OUT' : 'FLOORED OUT');
+        const maxed = preClampChance !== chance ? (chance === 80 ? 'capped' : 'floored') : null;
 
         const won = state.rng.chance(chance);
         const isLastRound = round >= leader.pokemon.length - 1;
@@ -578,15 +624,6 @@
                 evoLine = `<br><span style="font-size: 6px;">(${pokemon.name} already evolved at this location — no further evolution here.)</span>`;
             }
             const starResult = PT.Engine.GameState.addBattleWin(pokemon, state, evoResult.evolved);
-            let starLine = '';
-            if (starResult.earned) {
-                starLine = `<br>★ ${pokemon.name} earned a Battle Star! [${'★'.repeat(pokemon.battleStars)}] (${pokemon.battleStars}/3)`;
-            }
-            if (starResult.expShareBonus) {
-                starLine += starResult.expShareBonus.type === 'evolution'
-                    ? `<br>EXP. SHARE: ${starResult.expShareBonus.name} also evolved into ${starResult.expShareBonus.newName}!`
-                    : `<br>EXP. SHARE: ${starResult.expShareBonus.name} also earned a Battle Star!`;
-            }
 
             let gymMoneyReward = 0;
             if (isLastRound) {
@@ -605,6 +642,24 @@
                 PT.Engine.GameState.addToLog(state, `Defeated ${leader.name}'s ${opponent.name}! (${round + 1}/${leader.pokemon.length})`);
             }
 
+            let rewardRows = isLastRound
+                ? rewardRow('BADGE EARNED', leader.badge) + rewardRow('MONEY', `+$${gymMoneyReward}${gymMoneyReward > leader.reward.money ? ' (BONUS)' : ''}`)
+                : rewardRow('POKEMON LEFT', `${leader.pokemon.length - round - 1}`);
+            if (evoResult.evolved) {
+                rewardRows += rewardRow('EVOLVED', `${evoResult.oldName} → ${evoResult.newName}`);
+            } else if (evoResult.reason === 'location_limit') {
+                rewardRows += rewardRow('EVOLUTION', 'blocked (already evolved here)');
+            }
+            if (starResult.earned) {
+                rewardRows += rewardRow('BATTLE STAR EARNED', `${'★'.repeat(pokemon.battleStars)} (${pokemon.battleStars}/3)`);
+            }
+            if (starResult.expShareBonus) {
+                rewardRows += rewardRow('EXP. SHARE',
+                    starResult.expShareBonus.type === 'evolution'
+                        ? `${starResult.expShareBonus.name} also evolved into ${starResult.expShareBonus.newName}!`
+                        : `${starResult.expShareBonus.name} also earned a Battle Star!`);
+            }
+
             div.innerHTML = `
                 <div class="event-title">${isLastRound ? 'VICTORY!' : 'ONE DOWN!'}</div>
                 <div class="gym-battle-area">
@@ -616,14 +671,12 @@
                             <div style="font-size: 8px; text-decoration: line-through;">${opponent.name}</div>
                         </div>
                     </div>
-                    ${isLastRound ? `<div class="gym-leader-name"><span class="badge-earned">${leader.badge}</span></div>
-                    <div class="gym-challenge-text">${leader.victoryText}</div>` : ''}
-                    <div style="font-size: 8px; margin-top: 8px;">
-                        ${pokemon.name} defeated ${leader.name}'s ${opponent.name}!
-                        ${isLastRound ? `<br>Earned: <span class="badge-earned">${leader.badge}</span> + $${gymMoneyReward}${gymMoneyReward > leader.reward.money ? ' BONUS!' : ''}` : `<br>${leader.pokemon.length - round - 1} Pokemon left.`}
-                        ${evoLine}${starLine}
-                        <br><span style="font-size: 6px;">Win chance was ${chance}%${battleBonuses.length > 0 ? ' (' + battleBonuses.join(', ') + ')' : ''}</span>
-                    </div>
+                    ${isLastRound ? `<div class="gym-leader-name"><span class="badge-earned">${leader.badge}</span></div>` : ''}
+                    <div style="font-size: 8px; margin-top: 4px;">${pokemon.name} defeated ${leader.name}'s ${opponent.name}!</div>
+                    <div class="battle-breakdown-list" style="max-width: 380px; margin: 4px auto 0;">${rewardRows}</div>
+                    ${PT.Engine.BattleOutcomeUI.renderBreakdown({
+                        chance, maxed, rows: breakdown, notApplicable: [], quote: isLastRound ? leader.victoryText : null
+                    })}
                 </div>
                 <button class="btn btn-wide" id="btn-gauntlet-continue">${isLastRound ? 'CONTINUE' : `FACE ${leader.pokemon[round + 1].name.toUpperCase()}`}</button>
             `;
@@ -696,6 +749,11 @@
         const aliveAfter = PT.Engine.GameState.getAliveParty(state);
         const partyWiped = aliveAfter.length === 0;
 
+        let lossRows = rewardRow('RESULT', died ? `${pokemon.name} was killed` : `${pokemon.name} took ${damage} damage`);
+        if (focusBandSaved) lossRows += rewardRow('FOCUS BAND', `${pokemon.name} held on!`);
+        if (isAce) lossRows += rewardRow('ACE POKEMON', 'ignores Battle Star protection');
+        lossRows += rewardRow('STATUS', partyWiped ? 'all Pokemon have fallen' : `must defeat ${opponent.name} to advance`);
+
         div.innerHTML = `
             <div class="event-title">DEFEAT...</div>
             <div class="gym-battle-area">
@@ -708,18 +766,10 @@
                     </div>
                 </div>
                 <div class="gym-leader-name">${leader.name} wins</div>
-                <div class="gym-challenge-text">${leader.defeatText}</div>
-                <div style="font-size: 8px; margin-top: 8px;">
-                    ${died
-                        ? `${pokemon.name} was killed by ${opponent.name}!`
-                        : `${pokemon.name} takes ${damage} damage from ${opponent.name}!`}
-                    ${focusBandSaved ? `<br>FOCUS BAND: ${pokemon.name} held on through what should've been a finishing blow!` : ''}
-                    ${isAce ? '<br><span style="font-size: 6px;">Ace Pokemon ignore Battle Star protection!</span>' : ''}
-                    <br><span style="font-size: 6px;">Win chance was ${chance}%${battleBonuses.length > 0 ? ' (' + battleBonuses.join(', ') + ')' : ''}</span>
-                    ${partyWiped
-                        ? '<br><strong>All your Pokemon have fallen...</strong>'
-                        : `<br>You must defeat ${leader.name}'s ${opponent.name} to advance.`}
-                </div>
+                <div class="battle-breakdown-list" style="max-width: 380px; margin: 4px auto 0;">${lossRows}</div>
+                ${PT.Engine.BattleOutcomeUI.renderBreakdown({
+                    chance, maxed, rows: breakdown, notApplicable: [], quote: leader.defeatText
+                })}
             </div>
             <button class="btn btn-wide" id="btn-gauntlet-continue">${partyWiped ? 'GAME OVER' : 'CHOOSE ANOTHER POKEMON'}</button>
         `;

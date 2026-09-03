@@ -176,19 +176,27 @@
             if (info.resistedBy) info.resistedBy.forEach(r => strongTo.add(r));
         });
 
+        // `breakdown` mirrors this math for engine/battle-outcome-ui.js's panel.
         let chance = baseChance;
-        let battleBonuses = [];
+        let breakdown = [{ label: 'BASE CHANCE', value: baseChance }];
 
         const hasAdvantage = chosen.types.some(t => weakTo.has(t));
         const hasDisadvantage = chosen.types.some(t => strongTo.has(t));
-        if (hasAdvantage) { chance += 20; battleBonuses.push('SE +20%'); }
-        if (hasDisadvantage) { chance -= 15; battleBonuses.push('NVE -15%'); }
+        if (hasAdvantage) {
+            chance += 20;
+            breakdown.push({ label: 'TYPE MATCHUP (SE)', value: 20 });
+        } else if (hasDisadvantage) {
+            chance -= 15;
+            breakdown.push({ label: 'TYPE MATCHUP (NVE)', value: -15 });
+        } else {
+            breakdown.push({ label: 'TYPE MATCHUP', value: 0 });
+        }
 
         // Win Rate buff (Muscle Band stacks)
         const winRateBonus = PT.Engine.GameState.getWinRateBonus(state);
         if (winRateBonus > 0) {
             chance += winRateBonus;
-            battleBonuses.push(`WIN RATE +${winRateBonus}%`);
+            breakdown.push({ label: 'MUSCLE BAND', value: winRateBonus });
         }
 
         // Poison ability: scales with power
@@ -196,40 +204,41 @@
         if (poisonPower > 0) {
             const poisonBonus = Math.floor(1 * poisonPower);
             chance += poisonBonus;
-            battleBonuses.push(`POISON +${poisonBonus}%`);
+            const poisonN = PT.Engine.GameState.getAbilityContributorCount(state, 'poison');
+            breakdown.push({ label: poisonN > 1 ? `POISON (${poisonN} POKEMON)` : 'POISON', value: poisonBonus });
         }
         // Intimidate ability: scales with power
         const intimidatePower = PT.Engine.GameState.getAbilityPower(state, 'intimidate');
         if (intimidatePower > 0) {
             const intimBonus = Math.floor(3 * intimidatePower);
             chance += intimBonus;
-            battleBonuses.push(`INTIMIDATE +${intimBonus}%`);
+            const intimN = PT.Engine.GameState.getAbilityContributorCount(state, 'intimidate');
+            breakdown.push({ label: intimN > 1 ? `INTIMIDATE (${intimN} POKEMON)` : 'INTIMIDATE', value: intimBonus });
         }
 
         // Psychic Dominance (Mewtwo) — +50% win chance on all battles
         if (PT.Engine.GameState.hasAbility(state, 'psychic_dominance')) {
             chance += 50;
-            battleBonuses.push(`PSYCHIC DOMINANCE +50%`);
+            breakdown.push({ label: 'PSYCHIC DOMINANCE', value: 50 });
         }
 
         // Battle Stars bonus
         const starBonus = PT.Engine.GameState.getStarBonus(chosen);
         if (starBonus.winChanceBonus > 0) {
             chance += starBonus.winChanceBonus;
-            battleBonuses.push(`${'★'.repeat(chosen.battleStars || 0)} +${starBonus.winChanceBonus}%`);
+            breakdown.push({ label: `BATTLE STARS (${'★'.repeat(chosen.battleStars || 0)})`, value: starBonus.winChanceBonus });
         }
 
         // Johto event battles hit back harder — matches the flee-chance,
         // wild-encounter, and gym-loss regional bumps applied elsewhere.
         if (state.region === 'johto') {
             chance -= 10;
-            battleBonuses.push('JOHTO -10%');
+            breakdown.push({ label: 'JOHTO REGION', value: -10 });
         }
 
         const preClampChance = chance;
         chance = Math.max(15, Math.min(85, chance));
-        const maxed = preClampChance !== chance;
-        if (maxed) battleBonuses.push(chance === 85 ? 'MAXED OUT' : 'FLOORED OUT');
+        const maxed = preClampChance !== chance ? (chance === 85 ? 'capped' : 'floored') : null;
 
         const won = state.rng.chance(chance);
         const opponentHp = PT.Engine.GameState.getMaxHpForPokemon(opponent);
@@ -251,7 +260,7 @@
             lossDamage += 2 + johtoBadges;
         }
 
-        return { won, chance, opponent, lossDamage, battleBonuses, hasAdvantage, hasDisadvantage, maxed };
+        return { won, chance, opponent, lossDamage, breakdown, hasAdvantage, hasDisadvantage, maxed };
     }
 
     function rollEvent(state) {

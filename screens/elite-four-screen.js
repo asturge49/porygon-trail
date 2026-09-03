@@ -42,6 +42,16 @@
         };
     }
 
+    // One row of the rewards/outcome list — see gym-screen.js's identical
+    // helper for why this isn't folded into engine/battle-outcome-ui.js.
+    function rewardRow(label, value) {
+        return `
+            <div class="battle-breakdown-row">
+                <span class="battle-breakdown-label">${label}</span>
+                <span class="battle-breakdown-value">${value}</span>
+            </div>`;
+    }
+
     // Which Elite Four pool is active — the Johto E4 rematch (§9.2) is a
     // separate diversified pool from Kanto's, selected purely off
     // state.region so this screen doesn't depend on how the calling route
@@ -212,23 +222,35 @@
         const opponentTypes = opponentData ? opponentData.types : [trainer.type];
         const typeChart = getTypeWeaknesses(opponentTypes);
 
-        // Calculate success chance — BRUTAL Elite Four
+        // Calculate success chance — BRUTAL Elite Four. `breakdown` mirrors
+        // this math for engine/battle-outcome-ui.js's panel — one row per
+        // lever, even at 0, so a trainer can see every term that applies
+        // here (and, via `notApplicable` below, the ones that don't).
         let chance = 25; // Base 25% — the elite are ELITE
-        let battleBonuses = [];
+        let breakdown = [{ label: 'BASE CHANCE', value: 25 }];
 
         // Progressive difficulty — each fight is harder than the last
         const progressionPenalty = e4Index * 3; // 0%, -3%, -6%, -9%, -12%
         chance -= progressionPenalty;
-        if (progressionPenalty > 0) battleBonuses.push(`Round ${e4Index + 1} penalty -${progressionPenalty}%`);
+        breakdown.push({ label: `ROUND ${e4Index + 1} PENALTY`, value: progressionPenalty > 0 ? -progressionPenalty : 0 });
 
         // Type advantage (smaller bonus than gyms)
         const hasAdvantage = pokemon.types.some(t => typeChart.weakTo.includes(t));
         const hasDisadvantage = pokemon.types.some(t => typeChart.strongTo.includes(t));
-        if (hasAdvantage) chance += 25; // SE matchups are your lifeline
-        if (hasDisadvantage) chance -= 25; // NVE is near-suicide
+        if (hasAdvantage) {
+            chance += 25; // SE matchups are your lifeline
+            breakdown.push({ label: 'TYPE MATCHUP (SE)', value: 25 });
+        } else if (hasDisadvantage) {
+            chance -= 25; // NVE is near-suicide
+            breakdown.push({ label: 'TYPE MATCHUP (NVE)', value: -25 });
+        } else {
+            breakdown.push({ label: 'TYPE MATCHUP', value: 0 });
+        }
 
         // Badge bonus (minimal)
-        chance += state.badges.filter(b => b !== 'champion').length * 1;
+        const badgeCount = state.badges.filter(b => b !== 'champion').length;
+        chance += badgeCount * 1;
+        breakdown.push({ label: `BADGES (${badgeCount})`, value: badgeCount });
 
         // Poison ability: scales with power, party-wide (halved in E4, same as
         // Intimidate below — see engine/game-state.js's getAbilityPower)
@@ -236,7 +258,8 @@
         if (poisonPower > 0) {
             const poisonBonus = Math.max(1, Math.floor(0.5 * poisonPower));
             chance += poisonBonus;
-            battleBonuses.push(`POISON +${poisonBonus}%`);
+            const poisonN = PT.Engine.GameState.getAbilityContributorCount(state, 'poison');
+            breakdown.push({ label: poisonN > 1 ? `POISON (${poisonN} POKEMON)` : 'POISON', value: poisonBonus });
         }
 
         // Intimidate ability: scales with power (halved in E4)
@@ -244,13 +267,14 @@
         if (intimidatePower > 0) {
             const intimBonus = Math.max(1, Math.floor(1.5 * intimidatePower));
             chance += intimBonus;
-            battleBonuses.push(`INTIMIDATE +${intimBonus}%`);
+            const intimN = PT.Engine.GameState.getAbilityContributorCount(state, 'intimidate');
+            breakdown.push({ label: intimN > 1 ? `INTIMIDATE (${intimN} POKEMON)` : 'INTIMIDATE', value: intimBonus });
         }
 
         // Psychic Dominance (Mewtwo) — reduced in E4 (from +50% to +25%)
         if (PT.Engine.GameState.hasAbility(state, 'psychic_dominance')) {
             chance += 25;
-            battleBonuses.push(`PSYCHIC DOMINANCE +25%`);
+            breakdown.push({ label: 'PSYCHIC DOMINANCE', value: 25 });
         }
 
         // Battle Stars bonus (halved in E4: +1.5% per star instead of +3%)
@@ -258,13 +282,21 @@
         if (stars > 0) {
             const starWinBonus = Math.floor(stars * 1.5);
             chance += starWinBonus;
-            battleBonuses.push(`${'★'.repeat(stars)} +${starWinBonus}%`);
+            breakdown.push({ label: `BATTLE STARS (${'★'.repeat(stars)})`, value: starWinBonus });
         }
 
         // Hard ceiling — staggered cap, gets tighter each round
         const capByRound = [55, 54, 53, 51, 50];
         const cap = capByRound[e4Index] || 50;
+        const preClampChance = chance;
         chance = Math.max(8, Math.min(cap, chance));
+        const maxed = preClampChance !== chance ? (chance === cap ? 'capped' : 'floored') : null;
+
+        // Items that exist elsewhere in the game but have no effect here —
+        // surfaced so a trainer doesn't wonder why stacking Muscle Band isn't
+        // moving this number, instead of leaving it silently unused.
+        const notApplicable = [];
+        if ((state.buffs.keyItems.muscleBand || 0) > 0) notApplicable.push('MUSCLE BAND');
 
         const won = state.rng.chance(chance);
 
@@ -290,17 +322,24 @@
 
             // Award battle star (evolution win doesn't count)
             const starResult = PT.Engine.GameState.addBattleWin(pokemon, state, evoResult.evolved);
-            let starLine = '';
-            if (starResult.earned) {
-                starLine = `<br>★ ${pokemon.name} earned a Battle Star! [${'★'.repeat(pokemon.battleStars)}] (${pokemon.battleStars}/3)`;
-            }
-            if (starResult.expShareBonus) {
-                starLine += starResult.expShareBonus.type === 'evolution'
-                    ? `<br>EXP. SHARE: ${starResult.expShareBonus.name} also evolved into ${starResult.expShareBonus.newName}!`
-                    : `<br>EXP. SHARE: ${starResult.expShareBonus.name} also earned a Battle Star!`;
-            }
 
             const isLastBattle = e4Index >= pool.length - 1;
+
+            let rewardRows = rewardRow('STATUS', isLastBattle ? `defeated all ${pool.length}! CHAMPION!` : `next up: ${pool[e4Index + 1].name}`);
+            if (evoResult.evolved) {
+                rewardRows += rewardRow('EVOLVED', `${evoResult.oldName} → ${evoResult.newName}`);
+            } else if (evoResult.reason === 'location_limit') {
+                rewardRows += rewardRow('EVOLUTION', 'blocked (already evolved here)');
+            }
+            if (starResult.earned) {
+                rewardRows += rewardRow('BATTLE STAR EARNED', `${'★'.repeat(pokemon.battleStars)} (${pokemon.battleStars}/3)`);
+            }
+            if (starResult.expShareBonus) {
+                rewardRows += rewardRow('EXP. SHARE',
+                    starResult.expShareBonus.type === 'evolution'
+                        ? `${starResult.expShareBonus.name} also evolved into ${starResult.expShareBonus.newName}!`
+                        : `${starResult.expShareBonus.name} also earned a Battle Star!`);
+            }
 
             div.innerHTML = `
                 <div class="event-title">VICTORY!</div>
@@ -313,14 +352,11 @@
                             <div style="font-size: 8px; text-decoration: line-through;">${opponent.name}</div>
                         </div>
                     </div>
-                    <div class="gym-challenge-text" style="font-size: 7px;">${trainer.defeatText}</div>
-                    <div style="font-size: 8px; margin-top: 8px;">
-                        ${pokemon.name} defeated ${trainer.name}'s ${opponent.name}!${evoLine}${starLine}
-                        <br><span style="font-size: 6px;">Win chance was ${chance}%${battleBonuses.length > 0 ? ' (' + battleBonuses.join(', ') + ')' : ''}</span>
-                        ${isLastBattle
-                            ? `<br><strong>You've defeated all ${pool.length}! You are the CHAMPION!</strong>`
-                            : `<br>Next up: ${pool[e4Index + 1].name}...`}
-                    </div>
+                    <div style="font-size: 8px; margin-top: 4px;">${pokemon.name} defeated ${trainer.name}'s ${opponent.name}!</div>
+                    <div class="battle-breakdown-list" style="max-width: 380px; margin: 4px auto 0;">${rewardRows}</div>
+                    ${PT.Engine.BattleOutcomeUI.renderBreakdown({
+                        chance, maxed, rows: breakdown, notApplicable, quote: trainer.defeatText
+                    })}
                 </div>
                 <button class="btn btn-wide" id="btn-e4-next">
                     ${isLastBattle ? 'CONTINUE' : `FACE ${pool[e4Index + 1].name.toUpperCase()}`}
@@ -459,9 +495,17 @@
             const aliveAfter = PT.Engine.GameState.getAliveParty(state);
             const partyWiped = aliveAfter.length === 0;
 
-            const statusMsg = killed
-                ? `${pokemon.name} was killed by ${opponent.name}!`
-                : `${pokemon.name} took ${E4_LOSS_DAMAGE} damage! (${pokemon.hp}/${pokemon.maxHp} HP remaining)`;
+            // Elite Four damage bypasses ALL held-item/ability death-avoidance
+            // (Battle Stars, Focus Band, Safeguard, System Restore) — it's a
+            // direct HP subtraction, not the shared damagePokemon() every
+            // other loss goes through. Only call out items the player
+            // actually owns, so this doesn't clutter a fight where it's moot.
+            const lossNotApplicable = [];
+            if ((state.buffs.keyItems.focusBand || 0) > 0) lossNotApplicable.push('FOCUS BAND');
+
+            let lossRows = rewardRow('RESULT', killed ? `${pokemon.name} was killed` : `${pokemon.name} took ${E4_LOSS_DAMAGE} damage`);
+            lossRows += rewardRow('BATTLE STARS', 'ignored on Elite Four kills');
+            lossRows += rewardRow('STATUS', partyWiped ? 'all Pokemon have fallen' : `must defeat ${opponent.name} to advance`);
 
             div.innerHTML = `
                 <div class="event-title">DEFEAT...</div>
@@ -475,14 +519,10 @@
                         </div>
                     </div>
                     <div class="gym-leader-name">${trainer.name} wins</div>
-                    <div style="font-size: 8px; margin-top: 8px;">
-                        ${statusMsg}
-                        <br><span style="font-size: 6px;">Win chance was ${chance}%${battleBonuses.length > 0 ? ' (' + battleBonuses.join(', ') + ')' : ''}</span>
-                        <br><span style="font-size: 6px;">Elite Four ignores Battle Star protection!</span>
-                        ${partyWiped
-                            ? '<br><strong>All your Pokemon have fallen...</strong>'
-                            : `<br>You must defeat ${trainer.name}'s ${opponent.name} to advance.`}
-                    </div>
+                    <div class="battle-breakdown-list" style="max-width: 380px; margin: 4px auto 0;">${lossRows}</div>
+                    ${PT.Engine.BattleOutcomeUI.renderBreakdown({
+                        chance, maxed, rows: breakdown, notApplicable: notApplicable.concat(lossNotApplicable), quote: null
+                    })}
                 </div>
                 <button class="btn btn-wide" id="btn-e4-continue">
                     ${partyWiped ? 'GAME OVER' : 'CHOOSE ANOTHER POKEMON'}

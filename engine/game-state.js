@@ -555,6 +555,16 @@
         return getAbilityPower(state, ability) || 1;
     }
 
+    // How many living party members are directly contributing to a stacked
+    // ability's power (Poison/Intimidate) — for battle-outcome UI copy like
+    // "INTIMIDATE +8% (3 Pokemon)" so a player can see stacking is happening,
+    // not just a bigger number. Deliberately simpler than getAbilityPower:
+    // doesn't count Mimic copies (there's nothing else to attribute a Ditto's
+    // borrowed power to) or gym-reward boosts (those aren't a "Pokemon").
+    function getAbilityContributorCount(state, ability) {
+        return getAliveParty(state).filter(p => p.travelAbility === ability).length;
+    }
+
     // Get the full evolution chain for a pokemon
     function getEvoChain(pokemonId) {
         const allPokemon = PT.Data.Pokemon;
@@ -1040,6 +1050,7 @@
         getAliveParty,
         hasAbility,
         getAbilityPower,
+        getAbilityContributorCount,
         starterAbilityMult,
         hasType,
         getCurrentRoute,
