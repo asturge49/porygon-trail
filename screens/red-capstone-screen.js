@@ -284,7 +284,7 @@
         const notApplicable = [];
         if ((state.buffs.keyItems.muscleBand || 0) > 0) notApplicable.push('MUSCLE BAND');
 
-        const won = state.rng.chance(chance);
+        const won = PT.Engine.DebugPanel.resolveOutcome(chance, state.rng);
 
         container.innerHTML = '';
         const div = document.createElement('div');

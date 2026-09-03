@@ -579,7 +579,7 @@
         chance = Math.max(15, Math.min(85, chance));
         const maxed = preClampChance !== chance ? (chance === 85 ? 'capped' : 'floored') : null;
 
-        const won = state.rng.chance(chance);
+        const won = PT.Engine.DebugPanel.resolveOutcome(chance, state.rng);
         const wildHp = PT.Engine.GameState.getMaxHpForPokemon(pokemon);
         const lossDamage = Math.max(1, wildHp - 1);
 
