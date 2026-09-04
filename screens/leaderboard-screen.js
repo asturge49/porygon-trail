@@ -104,7 +104,7 @@
                  data-username="${entry.name}">
                 <span>${i + 1}</span>
                 <span>
-                    <span>${entry.name}</span>${(entry.kantoE4Cleared !== undefined ? entry.kantoE4Cleared : entry.won) ? ' ★' : entry.inProgress ? ' ⏳' : ''}
+                    <span>${entry.name}</span>${(entry.kantoE4Cleared !== undefined ? entry.kantoE4Cleared : entry.won) ? ' ★' : entry.inProgress ? ' ⏳' : ''}${entry.difficultyLevel ? ` <span style="font-size: 6px; color: var(--gb-dark);">LV${entry.difficultyLevel}</span>` : ''}
                     <br><span style="font-size: 6px; color: var(--gb-dark);">${statLine(entry, mode, region)} | ${entry.inProgress ? 'IN PROGRESS' : entry.date}</span>
                 </span>
                 <span>${mainValue(entry, mode, region)}</span>
@@ -156,6 +156,7 @@
 
             <div style="font-size: 6px; color: var(--gb-dark); padding: 4px; text-align: center;">
                 ★ = Beat the Kanto Elite Four &nbsp;|&nbsp; ⏳ = Run still in progress
+                ${['runs', 'trainers', 'catches', 'fastest'].includes(currentMode) ? '&nbsp;|&nbsp; LVx = Difficulty level the run was played at' : ''}
                 ${regionToggleApplies
                     ? (currentMode === 'e4wins'
                         ? '<br>KANTO/JOHTO = lifetime wins of that Elite Four &nbsp;|&nbsp; ALL = combined'

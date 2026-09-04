@@ -41,8 +41,10 @@
 
     // `region`: 'kanto' (default) or 'johto' (§13.2 leaderboard toggle) — the
     // Johto view ranks by johto_score and only includes runs that reached Johto.
-    function getGlobalLeaderboard(region) {
-        return fetchOrdered('score', false, false, null, null, region, 'johto_score');
+    // `levelFilter` (optional, 1-5): restrict to runs started at that
+    // difficulty level — same signature as its sibling fetchers below.
+    function getGlobalLeaderboard(region, levelFilter) {
+        return fetchOrdered('score', false, false, null, null, region, 'johto_score', levelFilter);
     }
 
     // Columns available since launch, plus kanto_e4_cleared (added by this same
@@ -56,7 +58,10 @@
     // EVERY row-based tab (HIGH SCORE, TOP TRAINERS, MOST CATCHES, FASTEST WIN),
     // not just one. Apply it before relying on any of those on a given
     // environment (staging vs prod are separate Supabase projects).
-    const BASE_COLUMNS = 'user_id, username, score, pokedex_count, badges, days_elapsed, won, date, status, kanto_e4_cleared';
+    // difficulty_level defaults to 1 on every row (pre-existing rows included —
+    // see supabase/schema.sql), so unlike kanto_e4_cleared this one's safe to
+    // include unconditionally with no separate un-migrated-DB fallback story.
+    const BASE_COLUMNS = 'user_id, username, score, pokedex_count, badges, days_elapsed, won, date, status, kanto_e4_cleared, difficulty_level';
 
     // Same idea, extended with the Johto columns (§13.1-13.2, supabase/schema.sql).
     // Only used for a Johto-region fetch, so a staging/prod DB that hasn't had the
@@ -76,6 +81,11 @@
             // Row-based tabs' ★ marker (screens/leaderboard-screen.js) uses this
             // instead of `won` — Kanto E4 clear, not the full Red-capstone win.
             kantoE4Cleared: !!row.kanto_e4_cleared,
+            // Level tagging (§ leaderboard visibility) — which difficulty level
+            // this specific run was started on, so other players can see what
+            // a score is actually being compared against. Defaults to 1 for
+            // pre-existing rows the same way the column itself does.
+            difficultyLevel: row.difficulty_level || 1,
             date: row.date,
             inProgress: row.status === 'in_progress',
             legendaryCount: row.legendary_count || 0,
