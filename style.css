@@ -2048,12 +2048,15 @@ body {
 .battle-breakdown-label {
     color: var(--gb-dark);
     text-transform: uppercase;
+    flex-shrink: 0;
 }
 
 .battle-breakdown-value {
     color: var(--gb-darkest);
     font-weight: bold;
-    white-space: nowrap;
+    text-align: right;
+    min-width: 0;
+    overflow-wrap: break-word;
 }
 
 .battle-breakdown-na {
