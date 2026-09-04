@@ -81,6 +81,17 @@
                 { id: 59, name: "Arcanine" }, { id: 130, name: "Gyarados" },
                 { id: 65, name: "Alakazam" }, { id: 103, name: "Exeggutor" },
                 { id: 112, name: "Rhydon" },
+            ],
+            // Johto rematch roster — flat and randomly picked (not tiered by
+            // badge count like the Kanto rosters above) since char_rival_taunt
+            // recurs generically with no location/region gate of its own; a
+            // flat pool means Gary's Johto encounters don't need a separate
+            // badge-count scale to feel consistent. Picked in pickEventBattleOpponent
+            // below via the state.region check, same pool name ("gary") — he's
+            // still Gary in Johto, not swapped for Silver.
+            johto: [
+                { id: 197, name: "Umbreon" }, { id: 195, name: "Quagsire" },
+                { id: 232, name: "Donphan" }, { id: 234, name: "Stantler" },
             ]
         },
         // Youngster Joey — Route 1's one-time "top percentage" Rattata fight.
@@ -129,6 +140,10 @@
         if (Array.isArray(entry)) {
             // Flat pool (jessie_james, giovanni) — pick randomly
             pool = entry;
+        } else if (poolName === 'gary' && state.region === 'johto' && entry.johto) {
+            // Gary's Johto rematch roster — flat, not tiered by badge count
+            // (see the "johto" pool comment above).
+            pool = entry.johto;
         } else {
             // Tiered pool — pick by badge count
             const badges = state.badges.filter(b => b !== 'champion').length;
