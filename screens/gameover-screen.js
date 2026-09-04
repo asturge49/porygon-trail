@@ -49,6 +49,7 @@
             }
 
             // Save score
+            const legendaryCount = PT.Engine.Scoring.countLegendaries(state);
             PT.Engine.Scoring.saveToLeaderboard(Object.assign({
                 runId: state.runId,
                 name: state.trainerName,
@@ -64,7 +65,7 @@
                 // this matters — kept here too for consistency even though
                 // getHighestUnlockedLevel only ever queries won=true rows.
                 difficultyLevel: state.difficultyLevel || 1,
-                legendaryCount: PT.Engine.Scoring.countLegendaries(state),
+                legendaryCount: legendaryCount,
                 kantoE4Cleared: PT.Engine.Scoring.getKantoE4Cleared(state),
                 // Champion credit for a Kanto and/or Johto E4 clear that
                 // didn't go on to beat Red — victory-screen.js's own
@@ -102,22 +103,38 @@
             const div = document.createElement('div');
             div.className = 'screen gameover-screen';
             div.innerHTML = `
-                <div class="gameover-title">HERE LIES ${state.trainerName.toUpperCase()}</div>
-                <div class="text-box text-center" style="font-size: 8px;">
-                    ${reasons[state.gameOverReason] || "Your journey has ended."}
-                    <br>Made it to <strong>${route.name}</strong> in ${state.daysElapsed} days.
-                </div>
-
-                <div class="memorial-section">
-                    <div class="memorial-label">~ Pokemon Caught ~</div>
-                    <div class="memorial-pokemon-grid">
+                <div class="hof-summary-card">
+                    <div class="gameover-title">HERE LIES ${state.trainerName.toUpperCase()}</div>
+                    <div class="hof-trainer-line">
+                        ${reasons[state.gameOverReason] || "Your journey has ended."}
+                        <br>Made it to <strong>${route.name}</strong> in ${state.daysElapsed} days.
+                    </div>
+                    <div class="hof-score-display">
+                        <div class="hof-score-label">FINAL SCORE</div>
+                        <div class="hof-score-value">${score.toLocaleString()}</div>
+                    </div>
+                    <div class="hall-of-fame-team">
                         ${caughtPokemon.map(p => `
-                            <div class="memorial-pokemon">
-                                <img class="memorial-sprite" src="${p.spriteUrl}" alt="${p.name}"
+                            <div class="hof-pokemon">
+                                <img class="hof-sprite" src="${p.spriteUrl}" alt="${p.name}"
                                      onerror="this.style.display='none'">
-                                <div class="memorial-name">${p.name}</div>
+                                <div class="hof-name">${p.name}</div>
                             </div>
                         `).join('')}
+                    </div>
+                    <div class="hof-stats-grid">
+                        <div class="resource-item">
+                            <div class="resource-label">DAYS</div>
+                            <div class="resource-value">${state.daysElapsed}</div>
+                        </div>
+                        <div class="resource-item">
+                            <div class="resource-label">POKEDEX</div>
+                            <div class="resource-value">${state.pokedexCaught.length}</div>
+                        </div>
+                        <div class="resource-item">
+                            <div class="resource-label">LEGENDARIES</div>
+                            <div class="resource-value">${legendaryCount}</div>
+                        </div>
                     </div>
                 </div>
 
