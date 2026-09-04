@@ -497,10 +497,19 @@
 
     // Site-wide "Trainers fallen on the trail" / "Hall of Fame members" counts
     // for the title-screen tagline — every completed run across every account,
-    // not just this device's local PT.Engine.Records tally. Same run-counting
-    // semantics Records used locally (each completed run counts once; a player
-    // who's won more than once adds more than one to the win count) — just
-    // summed over pt_leaderboard's public-read rows instead of localStorage.
+    // not just this device's local PT.Engine.Records tally.
+    //
+    // `won=true` alone is NOT "beat Red" — victory-screen.js sets it for BOTH
+    // endings it renders: a Kanto-only Champion run that declines Johto
+    // (state.hasWon set in elite-four-screen.js) and the real Red-capstone
+    // win at Mt. Silver (state.hasWon set in red-capstone-screen.js). Only
+    // the latter also has johto_completed=true, since reaching Red requires
+    // having cleared the Johto Elite Four rematch first — so `won=true AND
+    // johto_completed=true` is the actual Red-win count (matches Records'
+    // local totalWins semantics, which only ever counts real Red wins).
+    // Verified against prod: 718 completed / 7 real Red wins, not 65
+    // won=true rows.
+    //
     // Returns null if Supabase isn't configured or either query fails, so the
     // caller can fall back to something sensible instead of showing 0/0.
     async function getGlobalPlayerStats() {
@@ -509,17 +518,17 @@
         const client = auth.getClient();
         if (!client) return null;
 
-        const [totalRes, wonRes] = await Promise.all([
+        const [totalRes, redWinsRes] = await Promise.all([
             client.from('pt_leaderboard').select('*', { count: 'exact', head: true }).eq('status', 'completed'),
-            client.from('pt_leaderboard').select('*', { count: 'exact', head: true }).eq('status', 'completed').eq('won', true)
+            client.from('pt_leaderboard').select('*', { count: 'exact', head: true }).eq('status', 'completed').eq('won', true).eq('johto_completed', true)
         ]);
-        if (totalRes.error || wonRes.error) {
-            console.warn('Could not fetch global player stats:', totalRes.error || wonRes.error);
+        if (totalRes.error || redWinsRes.error) {
+            console.warn('Could not fetch global player stats:', totalRes.error || redWinsRes.error);
             return null;
         }
         const totalRuns = totalRes.count || 0;
-        const totalWins = wonRes.count || 0;
-        return { fallenCount: Math.max(0, totalRuns - totalWins), hallOfFameCount: totalWins };
+        const redWins = redWinsRes.count || 0;
+        return { fallenCount: Math.max(0, totalRuns - redWins), hallOfFameCount: redWins };
     }
 
     // Insert or update this run's row (keyed by run_id), so an in-progress run
