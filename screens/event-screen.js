@@ -288,7 +288,12 @@
             // Award battle star (evolution win doesn't count)
             const starResult = PT.Engine.GameState.addBattleWin(chosen, state, evoResult.evolved);
             let rewardRows = rewardRow('RESULT', `${chosen.name} defeated ${battle.trainerName || 'trainer'}'s ${opponent.name}!`);
-            if (winEffects.money) rewardRows += rewardRow('REWARD', `+$${winEffects.money}`);
+            if (winEffects.money) {
+                const awardedMoney = winEffects._moneyAwarded != null ? winEffects._moneyAwarded : winEffects.money;
+                rewardRows += rewardRow('REWARD', `+$${awardedMoney}`);
+                const eventPaydayBonus = awardedMoney - winEffects.money;
+                if (eventPaydayBonus > 0) rewardRows += rewardRow('PAYDAY', `+$${eventPaydayBonus}`);
+            }
             if (evoResult.evolved) rewardRows += rewardRow('EVOLVED', `${evoResult.oldName} → ${evoResult.newName}`);
             if (starResult.earned) rewardRows += rewardRow('BATTLE STAR EARNED', `${'★'.repeat(chosen.battleStars)} (${chosen.battleStars}/3)`);
             if (starResult.expShareBonus) {
@@ -357,7 +362,12 @@
         if (effects.pokeballs < 0) lines.push(`${effects.pokeballs} Poke Balls`);
         if (effects.greatballs > 0) lines.push(`+${effects.greatballs} Great Balls`);
         if (effects.ultraballs > 0) lines.push(`+${effects.ultraballs} Ultra Balls`);
-        if (effects.money > 0) lines.push(`+$${effects.money}`);
+        if (effects.money > 0) {
+            const awardedMoney = effects._moneyAwarded != null ? effects._moneyAwarded : effects.money;
+            lines.push(`+$${awardedMoney}`);
+            const paydayBonus = awardedMoney - effects.money;
+            if (paydayBonus > 0) lines.push(`+$${paydayBonus} from Pay Day`);
+        }
         if (effects.money < 0) lines.push(`-$${Math.abs(effects.money)}`);
         if (effects.potions > 0) lines.push(`+${effects.potions} Potions`);
         if (effects.rareCandy > 0) lines.push(`+${effects.rareCandy} Rare Candy`);

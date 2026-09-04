@@ -190,7 +190,7 @@
             }
             const starResult = PT.Engine.GameState.addBattleWin(pokemon, state, evoResult.evolved);
 
-            return { resolved: true, won: true, moneyAwarded, evolution: evoResult.evolved ? evoResult : null, starResult };
+            return { resolved: true, won: true, moneyAwarded, baseReward: reward, evolution: evoResult.evolved ? evoResult : null, starResult };
         }
 
         const damage = trainerEncounter ? (trainerEncounter.damage || 1) : 1;

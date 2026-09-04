@@ -319,7 +319,9 @@
             // Award battle star (evolution win doesn't count)
             const starResult = PT.Engine.GameState.addBattleWin(pokemon, state, evoResult.evolved);
             let rewardRows = rewardRow('BADGE EARNED', leader.badge);
-            rewardRows += rewardRow('MONEY', `+$${gymMoneyReward}${gymMoneyReward > leader.reward.money ? ' (BONUS)' : ''}`);
+            rewardRows += rewardRow('MONEY', `+$${gymMoneyReward}`);
+            const gymPaydayBonus = gymMoneyReward - leader.reward.money;
+            if (gymPaydayBonus > 0) rewardRows += rewardRow('PAYDAY', `+$${gymPaydayBonus}`);
             if (evoResult.evolved) {
                 rewardRows += rewardRow('EVOLVED', `${evoResult.oldName} → ${evoResult.newName}`);
             } else if (evoResult.reason === 'location_limit') {
@@ -676,8 +678,10 @@
                 PT.Engine.GameState.addToLog(state, `Defeated ${leader.name}'s ${opponent.name}! (${round + 1}/${leader.pokemon.length})`);
             }
 
+            const gauntletPaydayBonus = gymMoneyReward - leader.reward.money;
             let rewardRows = isLastRound
-                ? rewardRow('BADGE EARNED', leader.badge) + rewardRow('MONEY', `+$${gymMoneyReward}${gymMoneyReward > leader.reward.money ? ' (BONUS)' : ''}`)
+                ? rewardRow('BADGE EARNED', leader.badge) + rewardRow('MONEY', `+$${gymMoneyReward}`) +
+                  (gauntletPaydayBonus > 0 ? rewardRow('PAYDAY', `+$${gauntletPaydayBonus}`) : '')
                 : rewardRow('POKEMON LEFT', `${leader.pokemon.length - round - 1}`);
             if (evoResult.evolved) {
                 rewardRows += rewardRow('EVOLVED', `${evoResult.oldName} → ${evoResult.newName}`);

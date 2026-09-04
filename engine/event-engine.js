@@ -420,15 +420,25 @@
         // Effect objects are static data reused across triggers of the same event —
         // clear last time's leftover pending-catch queue so it can't leak into this run.
         effects._pendingCatch = undefined;
+        // Same reasoning — some callers (event-engine.js's own resolveChoice,
+        // event-screen.js's loss branch) pass the shared static effects object
+        // straight from data/events.js rather than a copy, so effects.money
+        // itself must never be overwritten. This transient field carries the
+        // actual Pay-Day-boosted amount for display (e.g. event-screen.js's
+        // REWARD/PAYDAY rows, buildEffectsSummary) without touching it.
+        effects._moneyAwarded = undefined;
 
         // Resource changes
         const resourceKeys = ['food', 'pokeballs', 'greatballs', 'ultraballs', 'potions', 'superPotions', 'repels', 'rareCandy', 'escapeRope', 'money'];
         resourceKeys.forEach(key => {
             if (effects[key] !== undefined) {
                 let amount = effects[key];
-                // Pay Day: 50% bonus on positive money gains
+                // Pay Day: bonus on positive money gains, scaling with the
+                // party's Pay Day ability power (see getAbilityPower/
+                // applyPayDay in game-state.js).
                 if (key === 'money' && amount > 0) {
                     amount = PT.Engine.GameState.applyPayDay(state, amount);
+                    effects._moneyAwarded = amount;
                 }
                 state.resources[key] = Math.max(0, state.resources[key] + amount);
             }

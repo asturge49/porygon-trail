@@ -616,7 +616,9 @@
             const moneyReward = PT.Engine.GameState.applyPayDay(state, baseMoneyReward);
             state.resources.money += moneyReward;
 
-            let rewardRows = rewardRow('MONEY', `+$${moneyReward}${moneyReward > baseMoneyReward ? ' (BONUS)' : ''}`);
+            let rewardRows = rewardRow('MONEY', `+$${moneyReward}`);
+            const wildPaydayBonus = moneyReward - baseMoneyReward;
+            if (wildPaydayBonus > 0) rewardRows += rewardRow('PAYDAY', `+$${wildPaydayBonus}`);
             if (evoResult.evolved) {
                 rewardRows += rewardRow('EVOLVED', `${evoResult.oldName} → ${evoResult.newName}`);
             }
