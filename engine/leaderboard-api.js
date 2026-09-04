@@ -495,6 +495,33 @@
         return trainers;
     }
 
+    // Site-wide "Trainers fallen on the trail" / "Hall of Fame members" counts
+    // for the title-screen tagline — every completed run across every account,
+    // not just this device's local PT.Engine.Records tally. Same run-counting
+    // semantics Records used locally (each completed run counts once; a player
+    // who's won more than once adds more than one to the win count) — just
+    // summed over pt_leaderboard's public-read rows instead of localStorage.
+    // Returns null if Supabase isn't configured or either query fails, so the
+    // caller can fall back to something sensible instead of showing 0/0.
+    async function getGlobalPlayerStats() {
+        const auth = PT.Engine.Auth;
+        if (!auth || !auth.isConfigured()) return null;
+        const client = auth.getClient();
+        if (!client) return null;
+
+        const [totalRes, wonRes] = await Promise.all([
+            client.from('pt_leaderboard').select('*', { count: 'exact', head: true }).eq('status', 'completed'),
+            client.from('pt_leaderboard').select('*', { count: 'exact', head: true }).eq('status', 'completed').eq('won', true)
+        ]);
+        if (totalRes.error || wonRes.error) {
+            console.warn('Could not fetch global player stats:', totalRes.error || wonRes.error);
+            return null;
+        }
+        const totalRuns = totalRes.count || 0;
+        const totalWins = wonRes.count || 0;
+        return { fallenCount: Math.max(0, totalRuns - totalWins), hallOfFameCount: totalWins };
+    }
+
     // Insert or update this run's row (keyed by run_id), so an in-progress run
     // can keep updating the same leaderboard entry instead of spawning new rows.
     async function upsertGlobal(entry) {
@@ -679,6 +706,7 @@
         saveGlobal: upsertGlobal,
         clearLocal,
         isGlobalEnabled,
+        getGlobalPlayerStats,
         getHighestUnlockedLevel,
         recordLevelWin
     };

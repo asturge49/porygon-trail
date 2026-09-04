@@ -36,9 +36,15 @@
             const isLoggedIn = auth && auth.isLoggedIn();
             const username = isLoggedIn ? auth.getCurrentUsername() : null;
 
-            // Tagline stats — live local record counts, same source
-            // records-screen.js reads. "Fallen" = every completed run that
-            // didn't end in a Red win; "Hall of Fame" = runs that did.
+            // Tagline stats — site-wide counts across every player's account
+            // (engine/leaderboard-api.js's getGlobalPlayerStats, backed by
+            // Supabase), not just this device's local records. "Fallen" =
+            // every completed run that didn't end in a Red win; "Hall of
+            // Fame" = runs that did. Rendered with this device's own local
+            // PT.Engine.Records tally first (so the tagline isn't blank
+            // while the network request is in flight) and swapped for the
+            // global count once it resolves; falls back to staying local-only
+            // if Supabase isn't configured or the query fails.
             const records = PT.Engine.Records ? PT.Engine.Records.getRecords() : null;
             const totalRuns = records ? (records.totalRuns || 0) : 0;
             const redDefeated = records ? (records.totalWins || 0) : 0;
@@ -54,8 +60,8 @@
                 </div>
                 <div class="title-logo">PORYGON<br>TRAIL</div>
                 <div class="title-tagline">
-                    Trainers fallen on the trail = ${fallenCount}<br>
-                    Hall of Fame members = ${redDefeated}
+                    Trainers fallen on the trail = <span id="tagline-fallen">${fallenCount}</span><br>
+                    Hall of Fame members = <span id="tagline-hof">${redDefeated}</span>
                 </div>
                 <div style="font-size: 7px; text-align: center; color: var(--gb-dark);">created by ProfOak</div>
 
@@ -113,6 +119,20 @@
                         PT.App.goto('STARTER');
                     }
                 });
+            }
+
+            // Swap the local tagline counts for site-wide ones once the
+            // global query resolves. No-op if Supabase isn't configured
+            // (isGlobalEnabled false) or the fetch fails — tagline just
+            // stays on this device's local counts.
+            if (PT.Engine.LeaderboardAPI && PT.Engine.LeaderboardAPI.isGlobalEnabled()) {
+                PT.Engine.LeaderboardAPI.getGlobalPlayerStats().then(stats => {
+                    if (!stats) return;
+                    const fallenEl = document.getElementById('tagline-fallen');
+                    const hofEl = document.getElementById('tagline-hof');
+                    if (fallenEl) fallenEl.textContent = stats.fallenCount;
+                    if (hofEl) hofEl.textContent = stats.hallOfFameCount;
+                }).catch(() => {});
             }
 
             // If logged in and no local save, check for a cloud save
