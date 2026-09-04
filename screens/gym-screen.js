@@ -56,6 +56,8 @@
             const previewIsLateGym = previewGymIndex >= 4;
             const previewBaseDamage = previewIsLateGym ? 3 : 2;
             const lossDamage = isAce ? previewBaseDamage + 1 : previewBaseDamage;
+            // Mirrors resolveGymBattle's actual deathChance formula below.
+            const previewDeathChance = isAce ? 60 : (leaderId === 'brock' ? 0 : 30);
 
             const div = document.createElement('div');
             div.className = 'screen gym-screen';
@@ -85,7 +87,7 @@
                 <div class="text-box" style="font-size: 7px;">
                     Choose your Pokemon! ${opponent.name} is ${opponentTypes.join('/')}-type.
                     <br>Weak to: ${typeChart.weakTo.join(', ') || 'none'} | Resists: ${typeChart.strongTo.join(', ') || 'none'}
-                    <br><span style="font-size: 6px;">If you lose, your Pokemon takes ${lossDamage} damage.</span>
+                    <br><span style="font-size: 6px;">${lossPreviewText(lossDamage, previewDeathChance)}</span>
                 </div>
                 <div class="event-choices" id="gym-choices">
                     ${PT.Engine.GameState.getAliveParty(state).map((p, i) => {
@@ -174,6 +176,15 @@
                 <span class="battle-breakdown-label">${label}</span>
                 <span class="battle-breakdown-value">${value}</span>
             </div>`;
+    }
+
+    // Pre-battle "if you lose" preview line — takes the same deathChance the
+    // resolve function is about to actually roll, so the player sees the
+    // real risk (or lack of it, for a non-ace Brock loss) before picking a
+    // Pokemon, not just the fixed HP cost.
+    function lossPreviewText(lossDamage, deathChance) {
+        const killClause = deathChance > 0 ? ` (${deathChance}% chance it's killed for good)` : '';
+        return `If you lose, your Pokemon takes ${lossDamage} damage${killClause}.`;
     }
 
     function resolveGymBattle(pokemon, leader, leaderId, state, container, opponent) {
@@ -496,6 +507,11 @@
         const previewIsLateGym = previewGymIndex >= 4;
         const previewBaseDamage = previewIsLateGym ? 3 : 2;
         const lossDamage = isAce ? previewBaseDamage + 1 : previewBaseDamage;
+        // Mirrors resolveGauntletBattle's actual deathChance formula below —
+        // no Brock exemption here, since the gauntlet path (Johto leaders,
+        // or any Kanto leader at difficulty 3+) never gets the single-battle
+        // path's first-gym leniency.
+        const previewDeathChance = isAce ? 45 : 30;
 
         const div = document.createElement('div');
         div.className = 'screen gym-screen';
@@ -524,7 +540,7 @@
             <div class="text-box" style="font-size: 7px;">
                 Choose your Pokemon! ${opponent.name} is ${opponentTypes.join('/')}-type.
                 <br>Weak to: ${typeChart.weakTo.join(', ') || 'none'} | Resists: ${typeChart.strongTo.join(', ') || 'none'}
-                <br><span style="font-size: 6px;">If you lose, your Pokemon takes ${lossDamage} damage.</span>
+                <br><span style="font-size: 6px;">${lossPreviewText(lossDamage, previewDeathChance)}</span>
                 ${round > 0 ? `<br><span style="font-size: 6px;">Defeated so far: ${round}/${leader.pokemon.length}</span>` : ''}
             </div>
             <div class="event-choices" id="gym-choices">
