@@ -346,8 +346,10 @@
         } else {
             if (PT.Engine.Audio) PT.Engine.Audio.gymDefeat();
 
-            // Ace Pokemon: 60% death chance, non-ace: 30%
-            const deathChance = isAce ? 60 : 30;
+            // Ace Pokemon: 60% death chance, non-ace: 30% — except Brock,
+            // the very first gym, where a non-ace loss can't kill at all.
+            // Ace Pokemon still carry full risk even here.
+            const deathChance = isAce ? 60 : (leaderId === 'brock' ? 0 : 30);
             // Loss damage steps up for the back-half gyms (Sabrina onward, by
             // route-encounter order) — ace Pokemon always hit for the top of
             // that tier's range.
