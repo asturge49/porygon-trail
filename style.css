@@ -425,7 +425,7 @@ body {
 .level-banner-item {
     flex: 1;
     text-align: center;
-    padding: 14px 4px;
+    padding: 6px 4px;
     background: var(--gb-light);
     border-right: 2px solid var(--gb-darkest);
     cursor: pointer;
@@ -484,8 +484,10 @@ body {
 .level-detail-line {
     display: flex;
     gap: 8px;
-    align-items: baseline;
-    padding: 5px 0;
+    align-items: center;
+    min-height: 22px;
+    line-height: 1.3;
+    padding: 4px 0;
     border-bottom: 1px solid var(--gb-light);
     font-size: 9px;
 }

@@ -17,11 +17,11 @@
     // Each level's OWN addition only — the cumulative list shown below the
     // banner stacks these together, it doesn't restate them per level.
     const LEVEL_FLAVOR = {
-        1: 'Base game — wild Pokemon, routes, and the gyms.',
-        2: 'Trainer battles are active on the trail, alongside wild encounters.',
-        3: 'Gyms become a full 3-on-3 gauntlet. Routes stretch further.',
-        4: 'Trainers now field ace Pokemon.',
-        5: 'Routes stretch further again, and the Mart charges a premium.'
+        1: 'Base game',
+        2: 'Trainers added to routes',
+        3: 'Kanto Gym revamp + longer routes',
+        4: 'Trainer pokemon upgraded',
+        5: 'Longer routes + mart prices increased'
     };
 
     function getLevelConfigs() {
