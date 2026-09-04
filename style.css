@@ -477,7 +477,7 @@ body {
 .level-detail-mult {
     flex-shrink: 0;
     color: var(--gb-dark);
-    font-size: 6px;
+    font-size: 9px;
 }
 
 .name-input-area {
