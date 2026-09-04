@@ -78,6 +78,7 @@
                         USE POTION
                     </button>
                     <button class="btn btn-small" id="btn-party">PARTY</button>
+                    <button class="btn btn-small" id="btn-pokedex">POKEDEX</button>
                 </div>
             `;
             container.appendChild(div);
@@ -245,6 +246,10 @@
             // View party
             document.getElementById('btn-party').addEventListener('click', () => {
                 PT.App.push('PARTY');
+            });
+
+            document.getElementById('btn-pokedex').addEventListener('click', () => {
+                PT.App.push('POKEDEX');
             });
         }
     };
