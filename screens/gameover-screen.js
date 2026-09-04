@@ -60,6 +60,10 @@
                 daysElapsed: state.daysElapsed,
                 date: new Date().toLocaleDateString(),
                 won: false,
+                // See victory-screen.js's own saveToLeaderboard call for why
+                // this matters — kept here too for consistency even though
+                // getHighestUnlockedLevel only ever queries won=true rows.
+                difficultyLevel: state.difficultyLevel || 1,
                 legendaryCount: PT.Engine.Scoring.countLegendaries(state),
                 kantoE4Cleared: PT.Engine.Scoring.getKantoE4Cleared(state),
                 // Champion credit for a Kanto and/or Johto E4 clear that

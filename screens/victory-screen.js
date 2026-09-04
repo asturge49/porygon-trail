@@ -62,6 +62,14 @@
                 daysElapsed: state.daysElapsed,
                 date: new Date().toLocaleDateString(),
                 won: true,
+                // Never threaded through here before — every win saved to
+                // pt_leaderboard as difficulty_level 1 regardless of what
+                // level was actually played (leaderboard-api.js's upsertGlobal
+                // defaults entry.difficultyLevel to 1 when it's missing), so
+                // getHighestUnlockedLevel's "max difficulty_level among wins"
+                // query could never see a win above Level 1 — the next level
+                // never unlocked no matter how many times Red fell on it.
+                difficultyLevel: state.difficultyLevel || 1,
                 legendaryCount: legendaryCount,
                 championIds: PT.Engine.Scoring.getChampionIds(state),
                 kantoE4Cleared: PT.Engine.Scoring.getKantoE4Cleared(state)
