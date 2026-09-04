@@ -1044,7 +1044,7 @@
         const evoChainDisplay = evoChain.map(e =>
             e.id === pokemon.id ? `<strong>[${e.name}]</strong>` : e.name
         ).join(' → ');
-        const isFinal = PT.Engine.GameState.isFinalEvolution(pokemon);
+        const isFinal = PT.Engine.GameState.isFinalEvolution(pokemon, state);
 
         // Stars display
         const stars = pokemon.battleStars || 0;

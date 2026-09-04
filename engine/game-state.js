@@ -685,18 +685,25 @@
             const johtoEeveelutions = [196, 197].filter(id => PT.Data.Pokemon.some(p => p.id === id));
             evoPool = evoPool.concat(johtoEeveelutions);
         }
-        const evoId = evoPool.length > 1 ? evoPool[Math.floor(Math.random() * evoPool.length)] : evoPool[0];
-        const evoData = PT.Data.Pokemon.find(p => p.id === evoId);
-        if (!evoData) return { evolved: false };
 
         // Region-gated evolutions (§8.2): any evolution whose target species is
         // Gen II (national dex 152-251) can't fire until the run has reached
         // Johto — regardless of what item/trade/friendship the original games
         // required, since this engine only has one abstracted evolution trigger.
-        const targetIsGenTwo = evoData.id >= 152 && evoData.id <= 251;
-        if (targetIsGenTwo && (!state || state.region !== 'johto')) {
+        // Filtered out BEFORE picking a branch (not after) so a mixed
+        // Gen1/Gen2 branching evolution — Gloom->Vileplume/Bellossom,
+        // Poliwhirl->Poliwrath/Politoed, Slowpoke->Slowbro/Slowking — reliably
+        // takes its available Gen1 branch in Kanto instead of a coin-flip
+        // chance of the random pick landing on the locked branch and failing
+        // outright even though a valid evolution was available.
+        const inJohto = !!(state && state.region === 'johto');
+        const reachablePool = inJohto ? evoPool : evoPool.filter(id => !(id >= 152 && id <= 251));
+        if (reachablePool.length === 0) {
             return { evolved: false, reason: 'region_locked' };
         }
+        const evoId = reachablePool.length > 1 ? reachablePool[Math.floor(Math.random() * reachablePool.length)] : reachablePool[0];
+        const evoData = PT.Data.Pokemon.find(p => p.id === evoId);
+        if (!evoData) return { evolved: false };
 
         const oldName = partyMon.name;
         partyMon.id = evoData.id;
@@ -793,17 +800,32 @@
     // The win that triggers evolution does NOT count.
     // Only one star per location.
 
-    // Check if a Pokemon is at its final evolution (no evolvesTo)
-    function isFinalEvolution(pokemon) {
+    // Check if a Pokemon is at its final evolution (no evolvesTo), or is
+    // functionally final for now because its only evolution target is a
+    // Gen II species and evolvePokemon() region-gates that until Johto
+    // (see its region_locked check below) — e.g. Golbat, Onix, Chansey,
+    // Seadra, Scyther, and Porygon can't actually evolve during the whole
+    // Kanto leg, so they shouldn't be permanently denied battle stars for
+    // an evolution they have no way to trigger yet. `state` is optional;
+    // omit it (e.g. a Pokedex species lookup with no live run) to fall
+    // back to "not final" for a Gen-II-only evolution target.
+    function isFinalEvolution(pokemon, state) {
         if (pokemon.noEvolve) return true;
         const data = PT.Data.Pokemon.find(p => p.id === pokemon.id);
-        return data && !data.evolvesTo;
+        if (!data) return false;
+        if (!data.evolvesTo) return true;
+        const evoPool = Array.isArray(data.evolvesTo) ? data.evolvesTo : [data.evolvesTo];
+        const allTargetsAreGenTwo = evoPool.every(id => id >= 152 && id <= 251);
+        if (allTargetsAreGenTwo && (!state || state.region !== 'johto')) {
+            return true;
+        }
+        return false;
     }
 
     // Shared star-earning check, used both for the Pokemon that actually won
     // the fight and (via Exp Share) for one teammate riding along on the win.
     function tryEarnStar(pokemon, state) {
-        if (!isFinalEvolution(pokemon)) {
+        if (!isFinalEvolution(pokemon, state)) {
             return { earned: false, reason: 'not_final_evo' };
         }
         if ((pokemon.battleStars || 0) >= 3) {
@@ -839,12 +861,12 @@
             const currentLoc = state.currentLocationIndex;
             const candidates = getAliveParty(state).filter(p => p !== pokemon);
             const starCandidates = candidates.filter(p =>
-                isFinalEvolution(p) &&
+                isFinalEvolution(p, state) &&
                 (p.battleStars || 0) < 3 &&
                 !(p.lastStarLocation === currentLoc && currentLoc >= 0)
             );
             const evoCandidates = candidates.filter(p =>
-                !isFinalEvolution(p) &&
+                !isFinalEvolution(p, state) &&
                 !(p.lastEvoLocation === currentLoc && currentLoc >= 0)
             );
             const pool = starCandidates.concat(evoCandidates);

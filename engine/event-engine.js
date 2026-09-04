@@ -517,7 +517,7 @@
         if (effects.grantStar) {
             const alive = PT.Engine.GameState.getAliveParty(state);
             const eligible = alive.filter(p => {
-                if (!PT.Engine.GameState.isFinalEvolution(p)) return false;
+                if (!PT.Engine.GameState.isFinalEvolution(p, state)) return false;
                 return (p.battleStars || 0) < 3;
             });
             if (eligible.length > 0) {
