@@ -271,7 +271,8 @@
 
             // Award battle star (evolution win doesn't count)
             const starResult = PT.Engine.GameState.addBattleWin(chosen, state, evoResult.evolved);
-            let rewardRows = '';
+            let rewardRows = rewardRow('RESULT', `${chosen.name} defeated ${battle.trainerName || 'trainer'}'s ${opponent.name}!`);
+            if (winEffects.money) rewardRows += rewardRow('REWARD', `+$${winEffects.money}`);
             if (evoResult.evolved) rewardRows += rewardRow('EVOLVED', `${evoResult.oldName} → ${evoResult.newName}`);
             if (starResult.earned) rewardRows += rewardRow('BATTLE STAR EARNED', `${'★'.repeat(chosen.battleStars)} (${chosen.battleStars}/3)`);
             if (starResult.expShareBonus) {
@@ -285,10 +286,10 @@
             narrative.innerHTML = `
                 <div style="text-align: center;">
                     <strong>${winNarration}</strong>
-                    ${rewardRows ? `<div class="battle-breakdown-list" style="max-width: 380px; margin: 4px auto 0;">${rewardRows}</div>` : ''}
+                    <div class="battle-breakdown-list" style="max-width: 380px; margin: 4px auto 0;">${rewardRows}</div>
                     ${PT.Engine.BattleOutcomeUI.renderBreakdown({ chance: result.chance, maxed: result.maxed, rows: result.breakdown, notApplicable: [], quote: null })}
                 </div>
-            ` + buildEffectsSummary(winEffects);
+            ` + buildEffectsSummary(Object.assign({}, winEffects, { money: 0 }));
 
             if (winEffects._pendingCatch && winEffects._pendingCatch.length > 0) {
                 showEventSwapQueue(state, winEffects._pendingCatch.slice(), choicesDiv, narrative);
@@ -311,14 +312,15 @@
             }
 
             const lossNarration = battle.lossNarration || `${chosen.name} lost the battle!`;
-            const lossRows = rewardRow('RESULT', died ? `${chosen.name} was killed` : `${chosen.name} took ${result.lossDamage} damage`);
+            let lossRows = rewardRow('RESULT', died ? `${chosen.name} was killed` : `${chosen.name} took ${result.lossDamage} damage`);
+            if (lossEffects.money) lossRows += rewardRow('PENALTY', `-$${Math.abs(lossEffects.money)}`);
             narrative.innerHTML = `
                 <div style="text-align: center;">
                     <strong>${lossNarration}</strong>
                     <div class="battle-breakdown-list" style="max-width: 380px; margin: 4px auto 0;">${lossRows}</div>
                     ${PT.Engine.BattleOutcomeUI.renderBreakdown({ chance: result.chance, maxed: result.maxed, rows: result.breakdown, notApplicable: [], quote: null })}
                 </div>
-            ` + buildEffectsSummary(lossEffects);
+            ` + buildEffectsSummary(Object.assign({}, lossEffects, { money: 0 }));
 
             if (state.isGameOver || state.party.length === 0) {
                 choicesDiv.innerHTML = '<button class="btn btn-wide" id="btn-event-continue">CONTINUE</button>';
