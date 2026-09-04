@@ -162,7 +162,12 @@
     // used as the target/winner. On loss, damages that Pokemon the same way
     // engine/event-engine.js's event battles do (PT.Engine.GameState.damagePokemon,
     // which already handles fainting/graveyard). On win, awards the trainer's
-    // reward money and increments state.trainersDefeated.
+    // reward money, increments state.trainersDefeated, and — same as every
+    // other battle type (gym/event/E4) — gives the winning Pokemon its shot
+    // at evolving and, if it doesn't evolve this fight, a battle star.
+    // evolvePokemon/tryEarnStar each already enforce their own "once per
+    // location" cap (lastEvoLocation/lastStarLocation), so trainer wins
+    // naturally respect that same limit without any extra bookkeeping here.
     function resolveTrainerBattle(state, partyMemberId, won, trainerEncounter) {
         const alive = PT.Engine.GameState.getAliveParty(state);
         const pokemon = alive.find(p => p.id === partyMemberId) || alive[0];
@@ -177,7 +182,15 @@
             state.resources.money += moneyAwarded;
             state.trainersDefeated = (state.trainersDefeated || 0) + 1;
             PT.Engine.GameState.addToLog(state, `Defeated ${trainerName}'s ${opponentName}! Got $${moneyAwarded}!`);
-            return { resolved: true, won: true, moneyAwarded };
+
+            // Try evolution first — the win that causes it doesn't also earn a star.
+            const evoResult = PT.Engine.GameState.evolvePokemon(pokemon, state);
+            if (evoResult.evolved) {
+                PT.Engine.GameState.addToLog(state, `${evoResult.oldName} evolved into ${evoResult.newName}!`);
+            }
+            const starResult = PT.Engine.GameState.addBattleWin(pokemon, state, evoResult.evolved);
+
+            return { resolved: true, won: true, moneyAwarded, evolution: evoResult.evolved ? evoResult : null, starResult };
         }
 
         const damage = trainerEncounter ? (trainerEncounter.damage || 1) : 1;

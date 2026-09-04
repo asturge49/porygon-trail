@@ -169,6 +169,10 @@
         // (species ids can repeat, but this matches every other party
         // lookup convention in the codebase).
         const partyMemberId = pokemon.id;
+        // Captured before resolveTrainerBattle runs, since a win may evolve
+        // `pokemon` in place — the result text should credit whoever actually
+        // fought, not the form they turned into mid-sentence.
+        const pokemonNameBeforeBattle = pokemon.name;
 
         let engineResult = null;
         if (PT.Engine.TrainerEngine && PT.Engine.TrainerEngine.resolveTrainerBattle) {
@@ -189,8 +193,18 @@
             // can boost it above the trainer's base reward) — fall back to the
             // base reward if TrainerEngine wasn't available to resolve it.
             const awarded = (engineResult && engineResult.moneyAwarded != null) ? engineResult.moneyAwarded : battle.reward;
-            resultRows = rewardRow('RESULT', `${pokemon.name} defeated ${battle.trainerName}'s ${battle.pokemon.name}!`);
+            resultRows = rewardRow('RESULT', `${pokemonNameBeforeBattle} defeated ${battle.trainerName}'s ${battle.pokemon.name}!`);
             if (awarded) resultRows += rewardRow('REWARD', `+$${awarded}`);
+            const evo = engineResult && engineResult.evolution;
+            const starResult = engineResult && engineResult.starResult;
+            if (evo) resultRows += rewardRow('EVOLVED', `${evo.oldName} → ${evo.newName}`);
+            if (starResult && starResult.earned) resultRows += rewardRow('BATTLE STAR EARNED', `${'★'.repeat(pokemon.battleStars)} (${pokemon.battleStars}/3)`);
+            if (starResult && starResult.expShareBonus) {
+                resultRows += rewardRow('EXP. SHARE',
+                    starResult.expShareBonus.type === 'evolution'
+                        ? `${starResult.expShareBonus.name} also evolved into ${starResult.expShareBonus.newName}!`
+                        : `${starResult.expShareBonus.name} also earned a Battle Star!`);
+            }
         } else {
             title = 'DEFEAT...';
             const dmg = battle.damage != null ? battle.damage : 2;
