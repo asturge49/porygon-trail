@@ -4,23 +4,24 @@
 // one of 5 difficulty levels before naming their trainer / picking a
 // starter. Levels above the account's highest-unlocked level (tracked via
 // PT.Engine.LeaderboardAPI.getHighestUnlockedLevel, based on Red-win
-// history across all levels) are shown locked. A brand-new/logged-out
-// account is capped at level 1.
+// history across all levels) are locked — and deliberately show no
+// description at all, so a future level stays a surprise rather than a
+// spoiler. A single banner strip (not a grid of cards) shows all 5 levels
+// at once; selecting an unlocked level builds up a cumulative list below
+// it of everything from Level 1 up through the one selected, since each
+// level's changes stack on top of the ones before it.
 (function() {
     const PT = window.PorygonTrail;
     PT.Screens = PT.Screens || {};
 
-    // Short flavor text per level — mirrors PT.Data.DifficultyLevels'
-    // config (scoreMultiplier, trainersEnabled, gymGauntlet, aceTrainers,
-    // routeDistanceBonus, shopPriceMultiplier) if that data is available;
-    // falls back to this hardcoded copy otherwise so the screen still
-    // renders correctly before/without the engine-layer data landing.
+    // Each level's OWN addition only — the cumulative list shown below the
+    // banner stacks these together, it doesn't restate them per level.
     const LEVEL_FLAVOR = {
-        1: 'The base game. No trainer battles — just wild Pokemon, routes, and the gyms.',
-        2: 'Trainer battles are now active on the trail alongside wild encounters.',
-        3: 'Gyms become a full 3-on-3 gauntlet, and routes stretch longer.',
-        4: 'Trainers now field ace Pokemon — tougher fights, bigger risk.',
-        5: 'Routes stretch even longer and the Mart charges a premium. The hardest run.'
+        1: 'Base game — wild Pokemon, routes, and the gyms.',
+        2: 'Trainer battles are active on the trail, alongside wild encounters.',
+        3: 'Gyms become a full 3-on-3 gauntlet. Routes stretch further.',
+        4: 'Trainers now field ace Pokemon.',
+        5: 'Routes stretch further again, and the Mart charges a premium.'
     };
 
     function getLevelConfigs() {
@@ -34,7 +35,7 @@
         }
         // Fallback synthetic configs — used only if the engine-layer data
         // module hasn't landed yet. Shape mirrors the documented contract.
-        return [1, 2, 3, 4, 5].map(level => ({ level }));
+        return [1, 2, 3, 4, 5].map(level => ({ level, scoreMultiplier: 1 }));
     }
 
     PT.Screens.LEVEL_SELECT = {
@@ -42,7 +43,7 @@
             const levels = getLevelConfigs();
 
             const div = document.createElement('div');
-            div.className = 'screen starter-screen';
+            div.className = 'screen level-select-screen';
             div.innerHTML = `
                 <div class="text-box">
                     <p>PROF. OAK: Before you set out, choose your difficulty!</p>
@@ -52,57 +53,80 @@
                     Checking unlocked levels...
                 </div>
                 <div id="level-select-body" style="display:none;">
-                    <div class="starter-choices" id="level-choices" style="flex-wrap: wrap; gap: 8px;">
+                    <div class="level-banner" id="level-banner">
                         ${levels.map(lv => `
-                            <div class="starter-card level-card" data-level="${lv.level}" style="width: 150px; opacity: 0.4; cursor: default; position: relative;">
-                                <div class="starter-name">LEVEL ${lv.level}</div>
-                                <div class="starter-bonus" style="min-height: 32px;">${LEVEL_FLAVOR[lv.level] || ''}</div>
-                                <div class="level-lock-reason" style="font-size: 6px; margin-top: 6px; color: var(--gb-dark);"></div>
+                            <div class="level-banner-item" data-level="${lv.level}">
+                                <span class="level-banner-num">${lv.level}</span>
+                                <span class="level-banner-sub">&nbsp;</span>
                             </div>
                         `).join('')}
                     </div>
+                    <div class="level-details" id="level-details"></div>
                     <button class="btn btn-wide" id="btn-level-confirm" style="margin-top: 12px;" disabled>BEGIN AT LEVEL &mdash;</button>
                 </div>
             `;
             container.appendChild(div);
 
             let selectedLevel = null;
+            let highestUnlocked = 1;
 
-            function selectLevel(level, cardEl) {
+            function renderDetails(level) {
+                const detailsEl = document.getElementById('level-details');
+                const lines = levels
+                    .filter(lv => lv.level <= level)
+                    .map(lv => `
+                        <div class="level-detail-line">
+                            <span class="level-detail-badge">LV ${lv.level}</span>
+                            <span>${LEVEL_FLAVOR[lv.level] || ''}</span>
+                        </div>
+                    `).join('');
+                const currentConfig = levels.find(lv => lv.level === level);
+                const multText = currentConfig && currentConfig.scoreMultiplier
+                    ? `<div class="level-detail-mult" style="text-align:center; margin-top:6px;">SCORE MULTIPLIER: ${currentConfig.scoreMultiplier}&times;</div>`
+                    : '';
+                detailsEl.innerHTML = `
+                    <div class="level-details-title">WHAT LEVEL ${level} INCLUDES</div>
+                    ${lines}
+                    ${multText}
+                `;
+            }
+
+            function selectLevel(level) {
                 selectedLevel = level;
-                document.querySelectorAll('.level-card').forEach(c => c.classList.remove('selected'));
-                cardEl.classList.add('selected');
+                document.querySelectorAll('.level-banner-item').forEach(item => {
+                    item.classList.toggle('selected', parseInt(item.dataset.level, 10) === level);
+                });
+                renderDetails(level);
                 const confirmBtn = document.getElementById('btn-level-confirm');
                 confirmBtn.disabled = false;
                 confirmBtn.textContent = `BEGIN AT LEVEL ${level}`;
             }
 
-            function renderUnlocked(highestUnlocked) {
-                const unlocked = Math.max(1, Math.min(5, parseInt(highestUnlocked, 10) || 1));
+            function renderUnlocked(unlockedResult) {
+                highestUnlocked = Math.max(1, Math.min(5, parseInt(unlockedResult, 10) || 1));
 
                 document.getElementById('level-select-loading').style.display = 'none';
                 document.getElementById('level-select-body').style.display = '';
 
-                document.querySelectorAll('.level-card').forEach(card => {
-                    const level = parseInt(card.dataset.level, 10);
-                    const isUnlocked = level <= unlocked;
-                    const reasonEl = card.querySelector('.level-lock-reason');
+                document.querySelectorAll('.level-banner-item').forEach(item => {
+                    const level = parseInt(item.dataset.level, 10);
+                    const isUnlocked = level <= highestUnlocked;
+                    const subEl = item.querySelector('.level-banner-sub');
 
                     if (isUnlocked) {
-                        card.style.opacity = '1';
-                        card.style.cursor = 'pointer';
-                        if (reasonEl) reasonEl.textContent = '';
-                        card.addEventListener('click', () => selectLevel(level, card));
+                        item.classList.remove('locked');
+                        if (subEl) subEl.textContent = ' '; // keep row height consistent, no spoiler text
+                        item.addEventListener('click', () => selectLevel(level));
                     } else {
-                        card.style.opacity = '0.4';
-                        card.style.cursor = 'not-allowed';
-                        if (reasonEl) reasonEl.textContent = `Beat Red on Level ${level - 1} to unlock`;
+                        item.classList.add('locked');
+                        if (subEl) subEl.textContent = 'LOCKED';
+                        // Deliberately no click handler and no description —
+                        // a locked level shows nothing about what it changes.
                     }
                 });
 
                 // Default the highlighted/pre-selected level to the highest unlocked one
-                const defaultCard = document.querySelector(`.level-card[data-level="${unlocked}"]`);
-                if (defaultCard) selectLevel(unlocked, defaultCard);
+                selectLevel(highestUnlocked);
             }
 
             // Staging test-environment bypass: same !PT.Config.isProd +
