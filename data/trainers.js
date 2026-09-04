@@ -60,6 +60,14 @@
             rewardMoney: 300
         },
         {
+            id: 'jr_trainer_kanto', name: 'Jr. Trainer', region: 'kanto',
+            tierMin: 2, tierMax: 2,
+            terrain: ['route'], routeIds: [],
+            pokemonPool: [27, 50], // Sandshrew, Diglett
+            spriteKey: 'jr_trainer',
+            rewardMoney: 300
+        },
+        {
             id: 'psychic_kanto', name: 'Psychic', region: 'kanto',
             tierMin: 3, tierMax: 3,
             terrain: [], routeIds: ['saffron_city'],
@@ -89,6 +97,14 @@
             terrain: [], routeIds: ['cinnabar_island'],
             pokemonPool: [140, 138], // Kabuto, Omanyte
             spriteKey: 'poke_maniac',
+            rewardMoney: 350
+        },
+        {
+            id: 'gambler_kanto', name: 'Gambler', region: 'kanto',
+            tierMin: 3, tierMax: 3,
+            terrain: ['route'], routeIds: [],
+            pokemonPool: [100, 81], // Voltorb, Magnemite
+            spriteKey: 'gambler',
             rewardMoney: 350
         },
         {
