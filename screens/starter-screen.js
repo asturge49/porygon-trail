@@ -3,23 +3,25 @@
     const PT = window.PorygonTrail;
     PT.Screens = PT.Screens || {};
 
+    // Ability name/description are looked up live from data/pokemon.js and
+    // the shared PT.Data.AbilityDescriptions (data/ability-buffs.js) rather
+    // than hand-written per starter — hand-written copy is exactly what went
+    // stale here before (advertised "Surf ability" after Squirtle's ability
+    // changed to Strength).
     const STARTERS = [
-        {
-            id: 1, name: "Bulbasaur",
-            bonuses: ["Better healing on the trail", "Grass events easier", "Cut ability clears obstacles"],
-            sprite: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-i/red-blue/gray/1.png"
-        },
-        {
-            id: 4, name: "Charmander",
-            bonuses: ["Efficient cooking saves food", "Better in caves & mountains", "Fire scares wild Pokemon"],
-            sprite: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-i/red-blue/gray/4.png"
-        },
-        {
-            id: 7, name: "Squirtle",
-            bonuses: ["Tough, hard-shelled and durable", "Strength ability lowers injury risk", "Great for grueling-pace pushes"],
-            sprite: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-i/red-blue/gray/7.png"
-        }
+        { id: 1, name: "Bulbasaur", sprite: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-i/red-blue/gray/1.png" },
+        { id: 4, name: "Charmander", sprite: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-i/red-blue/gray/4.png" },
+        { id: 7, name: "Squirtle", sprite: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-i/red-blue/gray/7.png" }
     ];
+
+    // Most abilities only have a display name in PT.Data.AbilityBuffs
+    // (the 9 buffable ones) — "fire" (Charmander's) isn't buffable and has
+    // no entry there, so fall back to title-casing the raw key.
+    function abilityDisplayName(key) {
+        const buff = PT.Data.AbilityBuffs && PT.Data.AbilityBuffs[key];
+        if (buff && buff.name) return buff.name;
+        return key.charAt(0).toUpperCase() + key.slice(1);
+    }
 
     let selectedStarter = null;
 
@@ -45,13 +47,21 @@
                     Now choose your partner Pokemon!
                 </div>
                 <div class="starter-choices" id="starter-choices">
-                    ${STARTERS.map(s => `
+                    ${STARTERS.map(s => {
+                        const data = PT.Data.Pokemon.find(p => p.id === s.id);
+                        const ability = data ? data.travelAbility : null;
+                        const abilityName = ability ? abilityDisplayName(ability) : 'Unknown';
+                        const abilityDesc = ability && PT.Data.AbilityDescriptions ? PT.Data.AbilityDescriptions[ability] : '';
+                        return `
                         <div class="starter-card" data-id="${s.id}">
                             <div class="starter-name">${s.name}</div>
                             <img class="starter-sprite" src="${s.sprite}" alt="${s.name}">
-                            <div class="starter-bonus">${s.bonuses.map(b => `> ${b}`).join('<br>')}</div>
+                            <div class="starter-bonus">
+                                <strong>${abilityName}</strong>${abilityDesc ? `<br>${abilityDesc}` : ''}
+                            </div>
                         </div>
-                    `).join('')}
+                    `;
+                    }).join('')}
                 </div>
                 <button class="btn btn-wide" id="btn-start" disabled>BEGIN YOUR JOURNEY</button>
             `;

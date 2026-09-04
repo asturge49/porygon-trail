@@ -1014,30 +1014,7 @@
     }
 
     function showPokemonProfile(pokemon, partyIndex, state) {
-        const abilityDesc = {
-            cut: 'Forages extra food while traveling',
-            surf: 'Bonus miles on water routes',
-            fly: 'Scouts shortcuts for bonus miles',
-            strength: 'Reduces injury chance on risky travel',
-            flash: 'Finds hidden money and items',
-            dig: 'Guarantees escape from wild encounters',
-            fire: 'Efficient cooking saves food',
-            heal: 'Passively heals injured party members',
-            psychic: 'Foresight: choose between encounters/events',
-            poison: 'Battle win bonus',
-            guard: 'Chance to block injuries entirely',
-            intimidate: 'Catch rate bonus + battle win bonus',
-            payday: 'Bonus money on all rewards',
-            safeguard: 'Saves a Pokemon from death once',
-            system_restore: 'Revive one lost Pokemon (once per game)',
-            glitch: 'Unpredictable chaos effects',
-            mimic: 'Copies the strongest ability in your party',
-            aurora_veil: 'All party damage reduced by 1',
-            thunderclap: 'Double travel distance on all paces',
-            sacred_flame: 'Zero food consumption',
-            psychic_dominance: '+50% win chance on all battles',
-            miracle: 'Random powerful bonus effect every day'
-        };
+        const abilityDesc = PT.Data.AbilityDescriptions;
 
         // Evolution chain
         const evoChain = PT.Engine.GameState.getEvoChain(pokemon.id);
