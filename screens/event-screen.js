@@ -29,6 +29,9 @@
                     : 'assets/team-rocket/rocket-grunt-johto-f.png';
             case 'gary': return 'assets/rivals/gary.png';
             case 'silver': return 'assets/rivals/silver.png';
+            // Reuses the ambient trail Youngster trainer class's own portrait
+            // (data/trainers.js's youngster_kanto) rather than a one-off asset.
+            case 'joey': return 'assets/trainers/youngster.png';
             default: return null;
         }
     }

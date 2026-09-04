@@ -83,6 +83,13 @@
                 { id: 112, name: "Rhydon" },
             ]
         },
+        // Youngster Joey — Route 1's one-time "top percentage" Rattata fight.
+        // Flat, single-species pool for the same reason as silver below: a
+        // one-time deterministic fight, not a recurring roster — his Rattata
+        // IS the joke, so there's nothing to randomize.
+        joey: [
+            { id: 19, name: "Rattata" }
+        ],
         // Silver — Johto's rival, Day 1 on Route 29. Flat (not tiered by
         // badge count like gary/rocket_grunt) since this is a single
         // one-time early-game fight, not a recurring pool. Both species are

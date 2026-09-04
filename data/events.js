@@ -6644,11 +6644,22 @@
             choices: [
                 {
                     text: "Battle Joey's Rattata",
-                    outcomes: [
-                        { weight: 40, narration: "Joey's Rattata is... actually really good? It lands a critical Hyper Fang! Your Pokemon wins, but barely. Joey's in tears. \"I'll train harder! Here — take my lunch money.\" He shoves cash at you and runs off.", effects: { partyDamageAll: 1, money: 200 } },
-                        { weight: 35, narration: "Your Pokemon wipes the floor with Joey's Rattata. He sniffles. \"It's still top percentage...\" He hands you a potion and shuffles away, defeated but not broken.", effects: { potions: 1, money: 100 } },
-                        { weight: 25, narration: "Joey's Rattata CRITS on the first turn! Your Pokemon goes down HARD. Joey is ecstatic. \"I TOLD YOU! TOP! PERCENTAGE!\" He's so happy he gives you his spare Rattata. It is, admittedly, pretty good.", effects: { partyDamageAll: 1, catchPokemon: 19 } }
-                    ]
+                    // Legacy scripted dice-roll battle (three flat weighted
+                    // outcomes, no Pokemon picker, no real win chance) predates
+                    // the eventBattle mechanic every other named-trainer story
+                    // event now uses (Gary, Team Rocket, Silver, ...) — converted
+                    // to match: a real 1v1 pick against the "joey" pool
+                    // (event-engine.js, always his signature Rattata) through
+                    // the shared win-chance calc, instead of a scripted roll.
+                    eventBattle: {
+                        pool: "joey",
+                        difficulty: "easy",
+                        trainerName: "Youngster Joey",
+                        winNarration: "Your Pokemon wipes the floor with Joey's Rattata. He sniffles. \"It's still top percentage...\" He hands you a potion and some cash, defeated but not broken.",
+                        lossNarration: "Joey's Rattata CRITS out of nowhere! Your Pokemon goes down HARD. Joey is ecstatic. \"I TOLD YOU! TOP! PERCENTAGE!\" He's so happy he gives you his spare Rattata. It is, admittedly, pretty good.",
+                        winEffects: { money: 200, potions: 1 },
+                        lossEffects: { catchPokemon: 19 }
+                    }
                 },
                 {
                     text: "\"That's great, Joey. I gotta go.\"",
