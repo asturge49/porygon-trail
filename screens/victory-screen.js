@@ -50,6 +50,7 @@
             }
 
             // Save score
+            const legendaryCount = PT.Engine.Scoring.countLegendaries(state);
             PT.Engine.Scoring.saveToLeaderboard(Object.assign({
                 runId: state.runId,
                 name: state.trainerName,
@@ -61,7 +62,7 @@
                 daysElapsed: state.daysElapsed,
                 date: new Date().toLocaleDateString(),
                 won: true,
-                legendaryCount: PT.Engine.Scoring.countLegendaries(state),
+                legendaryCount: legendaryCount,
                 championIds: PT.Engine.Scoring.getChampionIds(state),
                 kantoE4Cleared: PT.Engine.Scoring.getKantoE4Cleared(state)
             }, PT.Engine.Scoring.getJohtoLeaderboardFields(state, score)));
@@ -75,26 +76,55 @@
                 return ' ' + '★'.repeat(stars);
             }
 
+            // This screen fires from two different endings: the modern one
+            // (reached via red-capstone-screen.js, after Red's whole team
+            // falls at Mt. Silver) and an older Kanto-only one
+            // (elite-four-screen.js, for a run that never continues into
+            // Johto) — "reached the Indigo Plateau" only ever described the
+            // second case, so it read as flatly wrong on the ending most
+            // players actually see now.
+            const beatRed = state.region === 'johto';
+            const trainerLine = beatRed
+                ? `${state.trainerName} has conquered the trail — Red's team fell at Mt. Silver.`
+                : `${state.trainerName} has cleared the Kanto Elite Four${state.badges.includes('champion') ? ' and become Champion' : ''}.`;
+
             const div = document.createElement('div');
             div.className = 'screen victory-screen';
             div.innerHTML = `
-                <div class="victory-title">HALL OF FAME</div>
-                <div class="text-box text-center" style="font-size: 8px;">
-                    Congratulations, ${state.trainerName}!
-                    <br>You've reached the Indigo Plateau${state.badges.includes('champion') ? ' and became CHAMPION!' : '!'}
-                </div>
-                <div class="hall-of-fame-team">
-                    ${hofTeam.map(p => {
-                        const isAlive = aliveNames.includes(p.name);
-                        const stars = p.battleStars || 0;
-                        return `
-                        <div class="hof-pokemon" style="${!isAlive ? 'opacity: 0.4;' : ''}">
-                            <img class="hof-sprite" src="${p.spriteUrl}" alt="${p.name}"
-                                 onerror="this.style.display='none'">
-                            <div class="hof-name" style="${!isAlive ? 'text-decoration: line-through;' : ''}">${p.name}</div>
-                            ${stars > 0 ? `<div style="font-size: 6px; color: #b8860b;">${'★'.repeat(stars)}</div>` : ''}
+                <div class="hof-summary-card">
+                    <div class="victory-title">HALL OF FAME</div>
+                    <div class="hof-trainer-line">${trainerLine}</div>
+                    <div class="hof-score-display">
+                        <div class="hof-score-label">FINAL SCORE</div>
+                        <div class="hof-score-value">${score.toLocaleString()}</div>
+                    </div>
+                    <div class="hall-of-fame-team">
+                        ${hofTeam.map(p => {
+                            const isAlive = aliveNames.includes(p.name);
+                            const stars = p.battleStars || 0;
+                            return `
+                            <div class="hof-pokemon" style="${!isAlive ? 'opacity: 0.4;' : ''}">
+                                <img class="hof-sprite" src="${p.spriteUrl}" alt="${p.name}"
+                                     onerror="this.style.display='none'">
+                                <div class="hof-name" style="${!isAlive ? 'text-decoration: line-through;' : ''}">${p.name}</div>
+                                ${stars > 0 ? `<div style="font-size: 6px; color: #b8860b;">${'★'.repeat(stars)}</div>` : ''}
+                            </div>
+                        `}).join('')}
+                    </div>
+                    <div class="hof-stats-grid">
+                        <div class="resource-item">
+                            <div class="resource-label">DAYS</div>
+                            <div class="resource-value">${state.daysElapsed}</div>
                         </div>
-                    `}).join('')}
+                        <div class="resource-item">
+                            <div class="resource-label">POKEDEX</div>
+                            <div class="resource-value">${state.pokedexCaught.length}</div>
+                        </div>
+                        <div class="resource-item">
+                            <div class="resource-label">LEGENDARIES</div>
+                            <div class="resource-value">${legendaryCount}</div>
+                        </div>
+                    </div>
                 </div>
                 <div class="score-breakdown" style="font-size: 7px;">
                     ${breakdown.kantoVictory ? `<div>Kanto Clear Bonus: +${breakdown.kantoVictory}</div>` : ''}
