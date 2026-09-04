@@ -8042,8 +8042,9 @@
                     text: "Feed it (20 food)",
                     requiresItem: "food",
                     outcomes: [
-                        { weight: 70, narration: "You lay out 20 portions of food. The Snorlax eats everything in approximately four seconds, then rolls off the road with a satisfied grunt. Extortion. Pure extortion.", effects: { food: -20 } },
-                        { weight: 30, narration: "The Snorlax eats your offering and seems to warm up to you. It leans its massive head toward your team with a rumble. Everyone gets an unexpected nap against warm Snorlax fur.", effects: { food: -20, healAll: true } }
+                        { weight: 60, narration: "You lay out 20 portions of food. The Snorlax eats everything in approximately four seconds, then rolls off the road with a satisfied grunt. Extortion. Pure extortion.", effects: { food: -20 } },
+                        { weight: 30, narration: "The Snorlax eats your offering and seems to warm up to you. It leans its massive head toward your team with a rumble. Everyone gets an unexpected nap against warm Snorlax fur.", effects: { food: -20, healAll: true } },
+                        { weight: 10, narration: "The Snorlax eats your offering, lets out a satisfied belch, and then... doesn't leave. It just looks at you, blinks slowly, and falls in line behind your party. You have a Snorlax now.", effects: { food: -20, catchPokemon: 143 } }
                     ]
                 },
                 {
