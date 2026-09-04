@@ -36,6 +36,14 @@
             const isLoggedIn = auth && auth.isLoggedIn();
             const username = isLoggedIn ? auth.getCurrentUsername() : null;
 
+            // Tagline stats — live local record counts, same source
+            // records-screen.js reads. "Fallen" = every completed run that
+            // didn't end in a Red win; "Hall of Fame" = runs that did.
+            const records = PT.Engine.Records ? PT.Engine.Records.getRecords() : null;
+            const totalRuns = records ? (records.totalRuns || 0) : 0;
+            const redDefeated = records ? (records.totalWins || 0) : 0;
+            const fallenCount = Math.max(0, totalRuns - redDefeated);
+
             const div = document.createElement('div');
             div.className = 'screen title-screen';
             div.innerHTML = `
@@ -45,6 +53,10 @@
                          onerror="this.style.display='none'">
                 </div>
                 <div class="title-logo">PORYGON<br>TRAIL</div>
+                <div class="title-tagline">
+                    Trainers fallen on the trail = ${fallenCount}<br>
+                    Hall of Fame members = ${redDefeated}
+                </div>
                 <div style="font-size: 7px; text-align: center; color: var(--gb-dark);">created by ProfOak</div>
 
                 <div id="user-status" style="font-size: 7px; text-align: center; margin: 6px 0;
@@ -62,10 +74,16 @@
                         <button class="btn btn-wide" id="btn-cloud-continue">LOAD CLOUD SAVE</button>
                     </div>
                     <button class="btn btn-wide" id="btn-new-game">NEW GAME</button>
-                    <button class="btn btn-wide" id="btn-pokedex">POKÉDEX</button>
-                    <button class="btn btn-wide" id="btn-guide">GUIDE</button>
-                    <button class="btn btn-wide" id="btn-leaderboard">LEADERBOARD</button>
-                    <button class="btn btn-wide" id="btn-records">RECORDS</button>
+                </div>
+
+                <div class="title-grid-2x2">
+                    <button class="btn" id="btn-pokedex">POKÉDEX</button>
+                    <button class="btn" id="btn-guide">GUIDE</button>
+                    <button class="btn" id="btn-leaderboard">LEADERBOARD</button>
+                    <button class="btn" id="btn-records">RECORDS</button>
+                </div>
+
+                <div class="title-utility-group">
                     ${isLoggedIn ? `
                     <button class="btn btn-wide btn-small" id="btn-profile">
                         SIGN OUT (${username.toUpperCase()})
