@@ -308,6 +308,32 @@ body {
     width: 280px;
 }
 
+.title-tagline {
+    font-size: 7px;
+    text-align: center;
+    color: var(--gb-dark);
+    line-height: 1.6;
+}
+
+/* The 4 reference/info pages (Pokedex/Guide/Leaderboard/Records) grouped as
+   a 2x2 block, visually distinct from the primary Continue/New Game stack
+   above it and the account/settings group below. */
+.title-grid-2x2 {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+    width: 280px;
+    margin-top: 8px;
+}
+
+.title-utility-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    width: 280px;
+    margin-top: 8px;
+}
+
 .blink {
     animation: blink 1s step-end infinite;
 }
