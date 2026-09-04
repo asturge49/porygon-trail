@@ -441,17 +441,19 @@
                     nextAction = () => PT.App.goto('TRAVEL');
                 }
 
-                // Trainer battle (difficulty 2+, engine/travel-engine.js's
-                // advanceDay) is independent of results.encounter/results.event
-                // — a single day can carry both a wild encounter AND a trainer
-                // battle. Trainer battle goes first; whatever the wild-
-                // encounter/event/arrival flow above would have done next is
-                // threaded through as an onComplete callback in its params
+                // Trainer battle (difficulty 2+) is mutually exclusive with a
+                // wild encounter or a regular event (engine/travel-engine.js
+                // folds all three into one roll) — but arriving at a new
+                // location is a separate check and can still land on the same
+                // day as a trainer battle (e.g. Explore pace, 0 travel
+                // distance). Trainer battle goes first in that case; whatever
+                // the arrival/plain-continue flow above would have done next
+                // is threaded through as an onComplete callback in its params
                 // (screen params are plain in-memory objects here, never
                 // persisted — PT.Engine.GameState.saveGame(state) only ever
-                // saves `state`, not screen-manager params) so the day's other
-                // half still plays out once the battle resolves, instead of
-                // silently dropping it behind a bare goto('TRAVEL').
+                // saves `state`, not screen-manager params) so arrival still
+                // plays out once the battle resolves, instead of silently
+                // dropping it behind a bare goto('TRAVEL').
                 if (results.trainerBattle) {
                     const afterTrainerBattle = nextAction;
                     nextAction = () => PT.App.goto('TRAINER_BATTLE', Object.assign({}, results.trainerBattle, { onComplete: afterTrainerBattle }));

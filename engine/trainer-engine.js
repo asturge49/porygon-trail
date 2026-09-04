@@ -1,16 +1,21 @@
 // Porygon Trail - Trainer Engine
 // Difficulty-gated trail trainer battles (level 2+, see data/difficulty-levels.js).
-// engine/travel-engine.js calls rollTrainerEncounter(state) once per day,
-// independently of the existing wild-encounter/event rolls, and attaches a
-// non-null result to that day's results.trainerBattle (see the comment above
-// that call site for the exact shape). Resolution — win/loss damage, reward
-// money, logging — happens later via resolveTrainerBattle, called by
-// whatever screen presents the battle to the player.
+// engine/travel-engine.js folds TRAINER_ENCOUNTER_CHANCE into the SAME roll
+// as the narrative event chance (mutually exclusive with both a wild
+// encounter and a regular event — see that call site) rather than rolling
+// for a trainer independently, so a single day never stacks a trainer fight
+// on top of something else. isTrainerEligible(state) lets travel-engine
+// check eligibility (level, route, one-per-location cap, matching classes)
+// before committing to that combined roll; generateTrainerEncounter(state)
+// builds the actual encounter once the combined roll has already decided a
+// trainer is what happens. Resolution — win/loss damage, reward money,
+// logging — happens later via resolveTrainerBattle, called by whatever
+// screen presents the battle to the player.
 (function() {
     const PT = window.PorygonTrail;
     PT.Engine = PT.Engine || {};
 
-    const TRAINER_ENCOUNTER_CHANCE = 30; // % — independent roll, gated separately below
+    const TRAINER_ENCOUNTER_CHANCE = 30; // % share of the combined event+trainer roll (see travel-engine.js)
 
     // Kanto tiering: compares the current route index against the indices of
     // the routes whose gymLeader is brock / erika / giovanni (the
@@ -64,27 +69,45 @@
         }
     }
 
-    // Returns null, or a trainer encounter object shaped:
+    // Everything that has to be true for a trainer to be able to show up
+    // here at all, independent of the RNG roll itself: difficulty level,
+    // a real route with wild encounters enabled, this location not already
+    // having had its one trainer for the visit, and at least one trainer
+    // class actually matching the current region/terrain/tier. Doesn't
+    // touch state.rng — safe to call speculatively before deciding whether
+    // to roll for a trainer at all.
+    function isTrainerEligible(state) {
+        const levelConfig = PT.Data.getLevelConfig(state);
+        if (!levelConfig.trainersEnabled) return false;
+
+        const route = PT.Engine.GameState.getCurrentRoute(state);
+        if (!route || !(route.encounterRate > 0)) return false;
+
+        if (!state.trainerEncounteredLocations) state.trainerEncounteredLocations = [];
+        if (state.trainerEncounteredLocations.includes(state.currentLocationIndex)) return false;
+
+        return getMatchingClasses(state, route).length > 0;
+    }
+
+    // Builds and returns a trainer encounter object, shaped:
     //   {
     //     trainerClassId, trainerName, spriteKey, region, tier,
     //     pokemon: { id, name, level, ace },
     //     damage, reward
     //   }
-    function rollTrainerEncounter(state) {
+    // Assumes the caller already confirmed isTrainerEligible(state) and has
+    // already decided (via its own roll) that a trainer is what happens
+    // today — this function itself never rolls a chance, it just generates
+    // the encounter's content. Returns null if eligibility turns out to no
+    // longer hold (defensive — state shouldn't change between the two calls
+    // in practice, since both happen synchronously within the same day's
+    // roll).
+    function generateTrainerEncounter(state) {
+        if (!isTrainerEligible(state)) return null;
         const levelConfig = PT.Data.getLevelConfig(state);
-        if (!levelConfig.trainersEnabled) return null;
-
         const route = PT.Engine.GameState.getCurrentRoute(state);
-        if (!route || !(route.encounterRate > 0)) return null;
-
-        if (!state.trainerEncounteredLocations) state.trainerEncounteredLocations = [];
-        if (state.trainerEncounteredLocations.includes(state.currentLocationIndex)) return null;
-
-        if (!state.rng.chance(TRAINER_ENCOUNTER_CHANCE)) return null;
 
         const matches = getMatchingClasses(state, route);
-        if (matches.length === 0) return null;
-
         const trainerClass = state.rng.pick(matches);
         const pokemonId = state.rng.pick(trainerClass.pokemonPool);
         const pokemonData = PT.Data.Pokemon.find(p => p.id === pokemonId);
@@ -167,5 +190,5 @@
         return { resolved: true, won: false, fainted: !!fainted, damage };
     }
 
-    PT.Engine.TrainerEngine = { getCurrentTier, rollTrainerEncounter, resolveTrainerBattle };
+    PT.Engine.TrainerEngine = { getCurrentTier, isTrainerEligible, generateTrainerEncounter, resolveTrainerBattle, TRAINER_ENCOUNTER_CHANCE };
 })();

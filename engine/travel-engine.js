@@ -82,19 +82,18 @@
             messages: [],
             encounter: null,
             event: null,
-            // Trail trainer battle roll (difficulty level 2+, see
-            // engine/trainer-engine.js#rollTrainerEncounter). null when no
-            // trainer battle was rolled today; otherwise shaped:
+            // Trail trainer battle (difficulty level 2+, see
+            // engine/trainer-engine.js#generateTrainerEncounter). null when no
+            // trainer battle happened today; otherwise shaped:
             //   {
             //     trainerClassId, trainerName, spriteKey, region, tier,
             //     pokemon: { id, name, level, ace },
             //     damage, reward
             //   }
-            // This roll is INDEPENDENT of the wild encounter/event roll above —
-            // it can be non-null on the same day as results.encounter and/or
-            // results.event. Screen code should present it alongside whatever
-            // else happened that day and eventually call
-            // PT.Engine.TrainerEngine.resolveTrainerBattle(state, partyMemberId, won, results.trainerBattle).
+            // Shares a single combined roll with results.event (see below) —
+            // mutually exclusive with BOTH results.encounter and results.event,
+            // never more than one of the three per day. Screen code eventually
+            // calls PT.Engine.TrainerEngine.resolveTrainerBattle(state, partyMemberId, won, results.trainerBattle).
             trainerBattle: null,
             arrivedAtLocation: false,
             gameOver: false
@@ -333,24 +332,35 @@
             }
         }
 
-        // --- Event roll ---
+        // --- Event / trail-trainer roll (mutually exclusive with each other,
+        // and — like the event roll always has been — with a wild encounter
+        // above) ---
+        // Trail trainers (difficulty level 2+) share this single roll with
+        // narrative events rather than getting an independent roll of their
+        // own: TRAINER_ENCOUNTER_CHANCE is added on top of the event chance,
+        // and whichever of the two "wins" a proportional split of that
+        // combined chance is what happens today. Previously a trainer battle
+        // could land on the same day as a wild encounter (or, via a separate
+        // bug, even looked like it was stacking with events) — one day now
+        // ever produces at most one of {wild encounter, event, trainer}.
         if (!results.encounter && (!results.arrivedAtLocation || pace.distance === 0)) {
             const eventChance = 25 + (pace.eventMod || 0) + PT.Engine.GameState.getEventRateBonus(state);
-            if (state.rng.chance(eventChance)) {
-                results.event = PT.Engine.EventEngine.rollEvent(state);
-                if (results.event) {
-                    results.messages.push(`Event: ${results.event.name}`);
+            const trainerEligible = PT.Engine.TrainerEngine.isTrainerEligible(state);
+            const trainerChance = trainerEligible ? PT.Engine.TrainerEngine.TRAINER_ENCOUNTER_CHANCE : 0;
+            const combinedChance = eventChance + trainerChance;
+            if (combinedChance > 0) {
+                const roll = state.rng.randInt(1, 100);
+                if (roll <= trainerChance) {
+                    results.trainerBattle = PT.Engine.TrainerEngine.generateTrainerEncounter(state);
+                    if (results.trainerBattle) {
+                        results.messages.push(`A trainer wants to battle: ${results.trainerBattle.trainerName}!`);
+                    }
+                } else if (roll <= combinedChance) {
+                    results.event = PT.Engine.EventEngine.rollEvent(state);
+                    if (results.event) {
+                        results.messages.push(`Event: ${results.event.name}`);
+                    }
                 }
-            }
-        }
-
-        // --- Trail trainer battle roll (difficulty level 2+) ---
-        // Independent of the wild encounter/event roll above — can fire on
-        // the same day as either (or both/neither) of those.
-        if (!results.arrivedAtLocation || pace.distance === 0) {
-            results.trainerBattle = PT.Engine.TrainerEngine.rollTrainerEncounter(state);
-            if (results.trainerBattle) {
-                results.messages.push(`A trainer wants to battle: ${results.trainerBattle.trainerName}!`);
             }
         }
 
