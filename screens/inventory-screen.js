@@ -173,11 +173,14 @@
                 const alive = PT.Engine.GameState.getAliveParty(state);
                 if (alive.length === 0) { msg.textContent = "No alive Pokemon!"; return; }
 
-                // Find Pokemon that can evolve OR can gain a star (final evo, <3 stars)
+                // Find Pokemon that can evolve right now OR can gain a star (final
+                // evo — or region-locked from its next evolution until Johto,
+                // e.g. Golbat/Onix/Chansey/Seadra/Scyther/Porygon in Kanto — with
+                // <3 stars). Region-aware so a Rare Candy doesn't offer a doomed
+                // "evolve" attempt on a Gen-II-locked Pokemon before Johto.
                 const candidates = alive.filter(p => {
-                    const data = PT.Data.Pokemon.find(pk => pk.id === p.id);
-                    if (data && data.evolvesTo) return true; // can evolve
-                    if (PT.Engine.GameState.isFinalEvolution(p) && (p.battleStars || 0) < 3) return true; // can gain star
+                    if (!PT.Engine.GameState.isFinalEvolution(p, state)) return true; // can evolve
+                    if ((p.battleStars || 0) < 3) return true; // can gain star
                     return false;
                 });
 
@@ -193,10 +196,11 @@
                         <div class="potion-pokemon-list">
                             ${candidates.map(p => {
                                 const data = PT.Data.Pokemon.find(pk => pk.id === p.id);
-                                const canEvolve = data && data.evolvesTo;
+                                const canEvolve = !PT.Engine.GameState.isFinalEvolution(p, state);
                                 let actionText;
                                 if (canEvolve) {
-                                    const evoData = PT.Data.Pokemon.find(pk => pk.id === data.evolvesTo);
+                                    const evoTarget = Array.isArray(data.evolvesTo) ? data.evolvesTo[0] : data.evolvesTo;
+                                    const evoData = PT.Data.Pokemon.find(pk => pk.id === evoTarget);
                                     actionText = `→ ${evoData ? evoData.name : '???'}`;
                                 } else {
                                     actionText = `★ ${(p.battleStars || 0)} → ${(p.battleStars || 0) + 1} star${(p.battleStars || 0) + 1 !== 1 ? 's' : ''}`;
