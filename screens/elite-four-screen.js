@@ -154,7 +154,7 @@
                 <div class="gym-battle-sprites">
                     <div class="gym-leader-portrait">
                         <img src="${trainer.spriteUrl}" alt="${trainer.name}"
-                             style="width: 56px; height: 56px; image-rendering: pixelated;"
+                             style="width: 80px; height: 80px; image-rendering: pixelated;"
                              onerror="this.style.display='none'">
                         <div class="gym-portrait-label">${trainer.name}</div>
                         <div style="font-size: 6px;">${trainer.title}</div>
