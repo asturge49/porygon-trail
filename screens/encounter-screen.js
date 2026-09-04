@@ -567,6 +567,12 @@
             breakdown.push({ label: intimN > 1 ? `INTIMIDATE (${intimN} POKEMON)` : 'INTIMIDATE', value: intimBonus });
         }
 
+        // Psychic Dominance (Mewtwo) — +50% win chance on all battles
+        if (PT.Engine.GameState.hasAbility(state, 'psychic_dominance')) {
+            chance += 50;
+            breakdown.push({ label: 'PSYCHIC DOMINANCE', value: 50 });
+        }
+
         // Battle Stars bonus
         const starBonus = PT.Engine.GameState.getStarBonus(chosen);
         if (starBonus.winChanceBonus > 0) {

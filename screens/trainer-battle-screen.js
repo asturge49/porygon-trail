@@ -157,6 +157,11 @@
             breakdown.push({ label: 'INTIMIDATE', value: intimBonus });
         }
 
+        if (PT.Engine.GameState.hasAbility(state, 'psychic_dominance')) {
+            chance += 50;
+            breakdown.push({ label: 'PSYCHIC DOMINANCE', value: 50 });
+        }
+
         const stars = pokemon.battleStars || 0;
         if (stars > 0) {
             const starBonus = Math.floor(stars * 1.5);
