@@ -33,7 +33,8 @@
                 <p>PROF. ELM: I'd love to give you a Johto partner, but your party
                 is full (6/6)!</p>
                 <p style="margin-top: 8px;">Make room for your Johto starter? Release
-                one of your Pokemon to accept Elm's offer.</p>
+                one of your Pokemon to accept Elm's offer — or keep your full party
+                and skip the starter.</p>
             </div>
             <div class="party-grid" id="elm-release-grid">
                 ${state.party.map((p, i) => `
@@ -48,6 +49,7 @@
                     </div>
                 `).join('')}
             </div>
+            <button class="btn btn-wide" id="btn-elm-decline" style="margin-top: 8px;">KEEP MY PARTY — SKIP THE STARTER</button>
         `;
         container.appendChild(div);
 
@@ -65,6 +67,11 @@
                     btn.classList.add('btn-confirm-danger');
                 }
             });
+        });
+
+        document.getElementById('btn-elm-decline').addEventListener('click', () => {
+            PT.Engine.GameState.addToLog(state, "Declined Prof. Elm's Johto starter to keep a full party.");
+            enterJohto(state);
         });
     }
 
