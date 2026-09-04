@@ -104,8 +104,8 @@
                  data-username="${entry.name}">
                 <span>${i + 1}</span>
                 <span>
-                    <span>${entry.name}</span>${(entry.kantoE4Cleared !== undefined ? entry.kantoE4Cleared : entry.won) ? ' ★' : entry.inProgress ? ' ⏳' : ''}${entry.difficultyLevel ? ` <span style="font-size: 6px; color: var(--gb-dark);">LV${entry.difficultyLevel}</span>` : ''}
-                    <br><span style="font-size: 6px; color: var(--gb-dark);">${statLine(entry, mode, region)} | ${entry.inProgress ? 'IN PROGRESS' : entry.date}</span>
+                    <span>${entry.name}</span>${(entry.kantoE4Cleared !== undefined ? entry.kantoE4Cleared : entry.won) ? ' ★' : entry.inProgress ? ' ⏳' : ''}
+                    <br><span style="font-size: 6px; color: var(--gb-dark);">${statLine(entry, mode, region)} | ${entry.inProgress ? 'IN PROGRESS' : entry.date}${entry.difficultyLevel ? ` | LV${entry.difficultyLevel}` : ''}</span>
                 </span>
                 <span>${mainValue(entry, mode, region)}</span>
                 ${hideBadges ? '' : `<span>${(region === 'johto' ? entry.johtoBadges : entry.badges) || 0}</span>`}
