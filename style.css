@@ -324,6 +324,16 @@ body {
     justify-content: space-between;
 }
 
+/* Level-select is much shorter than the actual starter picker (no big
+   sprite grid), so it gets its own layout instead of inheriting
+   .starter-screen's space-between — that stretched the banner/details
+   block all the way to the bottom of the screen, leaving a large empty
+   gap under the intro text. */
+.level-select-screen {
+    justify-content: flex-start;
+    gap: 12px;
+}
+
 .starter-choices {
     display: flex;
     gap: 12px;
@@ -373,6 +383,101 @@ body {
 .starter-card:hover .starter-bonus,
 .starter-card.selected .starter-bonus {
     color: var(--gb-light);
+}
+
+/* Difficulty level banner (screens/level-select-screen.js) — a single strip
+   of 5 segments rather than a grid of cards, deliberately with NO
+   description text on the segments themselves: locked levels should read
+   as locked, not previewed, so the only way to see what a level changes is
+   to have actually unlocked it and select it. */
+.level-banner {
+    display: flex;
+    border: 3px solid var(--gb-darkest);
+    overflow: hidden;
+}
+
+.level-banner-item {
+    flex: 1;
+    text-align: center;
+    padding: 14px 4px;
+    background: var(--gb-light);
+    border-right: 2px solid var(--gb-darkest);
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s;
+}
+
+.level-banner-item:last-child {
+    border-right: none;
+}
+
+.level-banner-item .level-banner-num {
+    font-size: var(--font-size-lg);
+    font-weight: bold;
+    display: block;
+}
+
+.level-banner-item .level-banner-sub {
+    font-size: 6px;
+    display: block;
+    margin-top: 2px;
+    color: var(--gb-dark);
+}
+
+.level-banner-item.selected {
+    background: var(--gb-darkest);
+    color: var(--gb-lightest);
+}
+
+.level-banner-item.selected .level-banner-sub {
+    color: var(--gb-light);
+}
+
+.level-banner-item.locked {
+    background: var(--gb-bg);
+    color: var(--gb-dark);
+    cursor: not-allowed;
+    opacity: 0.55;
+}
+
+.level-details {
+    border: 3px solid var(--gb-darkest);
+    background: var(--gb-white);
+    padding: 10px 14px;
+    margin-top: 10px;
+    min-height: 90px;
+    text-align: left;
+}
+
+.level-details-title {
+    font-size: 8px;
+    color: var(--gb-dark);
+    text-align: center;
+    margin-bottom: 6px;
+}
+
+.level-detail-line {
+    display: flex;
+    gap: 8px;
+    align-items: baseline;
+    padding: 5px 0;
+    border-bottom: 1px solid var(--gb-light);
+    font-size: 9px;
+}
+
+.level-detail-line:last-child {
+    border-bottom: none;
+}
+
+.level-detail-badge {
+    flex-shrink: 0;
+    font-weight: bold;
+    min-width: 42px;
+}
+
+.level-detail-mult {
+    flex-shrink: 0;
+    color: var(--gb-dark);
+    font-size: 6px;
 }
 
 .name-input-area {
