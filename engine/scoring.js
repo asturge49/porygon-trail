@@ -165,7 +165,9 @@
 
         // Difficulty level score multiplier (data/difficulty-levels.js) —
         // applied to the running total, after every additive breakdown line.
-        score *= PT.Data.getLevelConfig(state).scoreMultiplier;
+        // Multipliers like 1.5x/0.75x can leave a fractional point, which has
+        // no business showing up on a leaderboard — round to a whole number.
+        score = Math.round(score * PT.Data.getLevelConfig(state).scoreMultiplier);
 
         score = Math.max(0, score);
         return { score, breakdown };
