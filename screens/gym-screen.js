@@ -439,6 +439,11 @@
     // ===== Johto gauntlet (3-on-3, back-to-back) =====
 
     function renderGauntletIntro(container, state, leader, leaderId) {
+        // This gauntlet layout is shared between actual Johto gyms and Kanto
+        // gyms at difficulty level 3+ (see isJohtoLeader() below) — sprite
+        // generation must follow the CURRENT region, not be hardcoded to
+        // 'johto', or Kanto opponents render with Crystal-style sprites.
+        const spriteGen = state.region === 'johto' ? 'johto' : 'kanto';
         const div = document.createElement('div');
         div.className = 'screen gym-screen';
         div.innerHTML = `
@@ -451,7 +456,7 @@
             <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin: 8px 0;">
                 ${leader.pokemon.map(mon => `
                     <div style="text-align: center; font-size: 7px; min-width: 55px;">
-                        <img src="${PT.Engine.GameState.getSpriteUrl(mon.id, 'johto')}" alt="${mon.name}"
+                        <img src="${PT.Engine.GameState.getSpriteUrl(mon.id, spriteGen)}" alt="${mon.name}"
                              style="width: 40px; height: 40px; image-rendering: pixelated;"
                              onerror="this.style.display='none'">
                         <div style="font-weight: bold;">${mon.name}${mon.ace ? ' ★' : ''}</div>
@@ -473,7 +478,10 @@
 
     function renderGauntletBattleSelect(container, state, leader, leaderId, round) {
         const opponent = leader.pokemon[round];
-        const opponentSprite = PT.Engine.GameState.getSpriteUrl(opponent.id, 'johto');
+        // See renderGauntletIntro's comment — this layout is shared with
+        // Kanto gyms at difficulty level 3+, so sprite gen must track the
+        // actual region, not be hardcoded to 'johto'.
+        const opponentSprite = PT.Engine.GameState.getSpriteUrl(opponent.id, state.region === 'johto' ? 'johto' : 'kanto');
         const isAce = !!opponent.ace;
 
         const opponentData = PT.Data.Pokemon.find(p => p.id === opponent.id);
@@ -552,9 +560,12 @@
     function resolveGauntletBattle(pokemon, leader, leaderId, state, container, opponent, round) {
         const isAce = !!opponent.ace;
         // Johto gym rosters mix in Kanto-origin species (Clefairy, Magneton,
-        // Dragonite, ...) — always render them with Crystal art here so the
-        // whole gauntlet reads as Johto, not just the Gen II-only members.
-        const opponentSprite = PT.Engine.GameState.getSpriteUrl(opponent.id, 'johto');
+        // Dragonite, ...) — always render those with Crystal art so a Johto
+        // gauntlet reads as Johto, not just the Gen II-only members. But this
+        // same gauntlet layout is also used for Kanto gyms at difficulty
+        // level 3+, so that only applies while actually in Johto — otherwise
+        // Kanto opponents would wrongly get Crystal sprites too.
+        const opponentSprite = PT.Engine.GameState.getSpriteUrl(opponent.id, state.region === 'johto' ? 'johto' : 'kanto');
         const opponentData = PT.Data.Pokemon.find(p => p.id === opponent.id);
         const opponentTypes = opponentData ? opponentData.types : [leader.type];
         const typeChart = getTypeWeaknesses(opponentTypes);
