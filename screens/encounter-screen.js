@@ -507,6 +507,7 @@
         // `breakdown` mirrors this math for engine/battle-outcome-ui.js's panel.
         let chance = 50;
         let breakdown = [{ label: 'BASE CHANCE', value: 50 }];
+        chance = PT.Engine.GameState.applyEarlyGameBaseFloor(state, chance, breakdown);
 
         // Type advantage
         const hasAdvantage = chosen.types.some(t => typeChart.weakTo.includes(t));

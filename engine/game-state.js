@@ -519,6 +519,42 @@
         return getAliveParty(state).some(p => p.travelAbility === ability);
     }
 
+    // Early-game leniency — a new run's opening stretch (before Brock, then
+    // before Misty) is the least forgiving part of the game: a thin party
+    // with no Battle Stars, key items, or badges yet, up against the same
+    // base win chances as the rest of the run. This tops up (never lowers)
+    // any battle's base chance up to a floor for that phase, so it only ever
+    // helps a fight that would otherwise start below the floor — an event
+    // battle's already-generous 'easy' base, for example, is untouched.
+    // Badge count is the signal (0 = pre-Brock, 1 = Brock-to-Misty, 2+ =
+    // normal difficulty resumes) rather than daysElapsed or location, so it
+    // still applies correctly to a run that lingers on Route 1 or backtracks.
+    // No effect in Johto — badge count there always starts at 8 (Kanto's
+    // full set), so it would never actually apply, but the region check
+    // keeps the intent explicit rather than relying on that coincidence.
+    function getEarlyGameBaseFloor(state) {
+        if (!state || state.region === 'johto') return 0;
+        const badgeCount = (state.badges || []).filter(b => b !== 'champion').length;
+        if (badgeCount === 0) return 55;  // start of the run, before Brock
+        if (badgeCount === 1) return 50;  // Brock cleared, before Misty
+        return 0;                         // Misty cleared onward
+    }
+
+    // Applies getEarlyGameBaseFloor to an in-progress chance/breakdown pair —
+    // shared by every battle screen's win-chance calc so the floor-topping
+    // logic and its breakdown row only exist in one place. Returns the
+    // (possibly unchanged) chance; mutates breakdown in place like every
+    // other bonus in these calcs.
+    function applyEarlyGameBaseFloor(state, chance, breakdown) {
+        const floor = getEarlyGameBaseFloor(state);
+        if (floor > chance) {
+            const bonus = floor - chance;
+            breakdown.push({ label: 'NEW TRAINER BOOST', value: bonus });
+            return chance + bonus;
+        }
+        return chance;
+    }
+
     // Starter Pokemon (Bulbasaur/Charmander/Squirtle lines) get 2x ability effectiveness
     const STARTER_IDS = [1,2,3, 4,5,6, 7,8,9];
 
@@ -1101,6 +1137,8 @@
         hasAbility,
         getAbilityPower,
         getAbilityContributorCount,
+        getEarlyGameBaseFloor,
+        applyEarlyGameBaseFloor,
         starterAbilityMult,
         hasType,
         getCurrentRoute,

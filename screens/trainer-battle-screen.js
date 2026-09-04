@@ -118,6 +118,7 @@
         // shared PT.Engine.BattleOutcomeUI.renderBreakdown panel.
         let chance = battle.tier === 'ace' || (battle.pokemon && battle.pokemon.ace) ? 35 : 45;
         const breakdown = [{ label: 'BASE CHANCE', value: chance }];
+        chance = PT.Engine.GameState.applyEarlyGameBaseFloor(state, chance, breakdown);
 
         const hasAdvantage = pokemon.types.some(t => weakTo.has(t));
         const strongTo = new Set();

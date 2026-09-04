@@ -195,6 +195,7 @@
         // didn't apply this fight rather than wondering if it was skipped.
         let chance = 45;
         let breakdown = [{ label: 'BASE CHANCE', value: 45 }];
+        chance = PT.Engine.GameState.applyEarlyGameBaseFloor(state, chance, breakdown);
 
         // Type advantage based on opponent Pokemon's types
         const hasAdvantage = pokemon.types.some(t => typeChart.weakTo.includes(t));
@@ -575,6 +576,7 @@
         // row, not from a harsher per-battle formula.
         let chance = 45;
         let breakdown = [{ label: 'BASE CHANCE', value: 45 }];
+        chance = PT.Engine.GameState.applyEarlyGameBaseFloor(state, chance, breakdown);
         const hasAdvantage = pokemon.types.some(t => typeChart.weakTo.includes(t));
         const hasDisadvantage = pokemon.types.some(t => typeChart.strongTo.includes(t));
         if (hasAdvantage) {
