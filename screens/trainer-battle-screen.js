@@ -142,6 +142,14 @@
         chance += badgeCount;
         breakdown.push({ label: `BADGES (${badgeCount})`, value: badgeCount });
 
+        const poisonPower = PT.Engine.GameState.getAbilityPower ? PT.Engine.GameState.getAbilityPower(state, 'poison') : 0;
+        if (poisonPower > 0) {
+            const poisonBonus = Math.floor(1 * poisonPower);
+            chance += poisonBonus;
+            const poisonN = PT.Engine.GameState.getAbilityContributorCount(state, 'poison');
+            breakdown.push({ label: poisonN > 1 ? `POISON (${poisonN} POKEMON)` : 'POISON', value: poisonBonus });
+        }
+
         const intimidatePower = PT.Engine.GameState.getAbilityPower ? PT.Engine.GameState.getAbilityPower(state, 'intimidate') : 0;
         if (intimidatePower > 0) {
             const intimBonus = Math.max(1, Math.floor(1.5 * intimidatePower));
