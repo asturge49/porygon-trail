@@ -148,7 +148,14 @@
             name: pokemonData.name,
             types: pokemonData.types,
             rarity: pokemonData.rarity,
-            spriteUrl: PT.Engine.GameState.getSpriteUrl(pokemonData.id)
+            // Never threaded state.region through — every event battle
+            // opponent under dex #152 (most of johto-rocket.js's early/mid
+            // tiers, and the whole "gary" pool reused for his Johto rematch)
+            // always rendered Gen I/Kanto art even when the fight was
+            // actually happening in Johto. getSpriteUrl only picks Crystal
+            // art for a sub-152 species when told the catch/battle region is
+            // 'johto' explicitly (dex 152+ already forces it regardless).
+            spriteUrl: PT.Engine.GameState.getSpriteUrl(pokemonData.id, state.region === 'johto' ? 'johto' : undefined)
         };
     }
 
