@@ -15,6 +15,20 @@
     PT.Screens.ELMSTARTER = {
         render(container, state) {
             selectedStarter = null;
+
+            // region flips to 'johto' here, in memory, rather than back in
+            // postvictory-screen.js's "CONTINUE TO JOHTO" click handler — this
+            // screen is the earliest point a starter (and its spriteGen, which
+            // createPartyPokemon freezes from state.region at catch time — see
+            // engine/game-state.js) actually needs it. Nothing on this screen
+            // persists a save until enterJohto() below, which sets region again
+            // right alongside the currentLocationIndex advance — so a save can
+            // never land with region already 'johto' while still parked on
+            // Kanto's pokemon_league route (which used to make travel-screen.js
+            // misread a stuck save as a Johto E4 rematch forever if the game was
+            // closed before a starter was ever picked).
+            state.region = 'johto';
+
             const partyFull = state.party.length >= 6;
 
             if (partyFull) {
@@ -141,6 +155,17 @@
     }
 
     function enterJohto(state) {
+        // Redundant with ELMSTARTER.render's own assignment above (region is
+        // already 'johto' by the time anything reaches here) — kept so this
+        // function stays correct on its own, since it's the point that actually
+        // persists the save, atomically with the currentLocationIndex advance
+        // below. Never set region ahead of this pairing (e.g. back in
+        // postvictory-screen.js) — that reopened the window where a save could
+        // land with region already 'johto' but currentLocationIndex still on
+        // Kanto's pokemon_league route, which travel-screen.js's E4 gate used to
+        // misread as a Johto E4 rematch forever.
+        state.region = 'johto';
+
         // Stamped once so the leaderboard/telemetry layer (engine/scoring.js's
         // getJohtoLeaderboardFields, §13.1-13.2) can later compute "days spent
         // in Johto" as a delta from the run's total daysElapsed.

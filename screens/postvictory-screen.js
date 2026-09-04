@@ -19,7 +19,13 @@
             container.appendChild(div);
 
             document.getElementById('btn-continue-johto').addEventListener('click', () => {
-                state.region = 'johto';
+                // state.region flips to 'johto' inside enterJohto() (johto-starter-
+                // screen.js), together with the currentLocationIndex advance past
+                // pokemon_league — not here. Flipping it here left a save that could
+                // be closed mid-transition (region already 'johto', but still
+                // parked on Kanto's E4 route and never given a starter) with no
+                // way to tell TRAVEL apart from a genuine Johto E4 rematch — see
+                // the safeguard in travel-screen.js's pokemon_league branch.
                 PT.Engine.GameState.addToLog(state, 'Set off for the Johto region!');
                 PT.Engine.GameState.saveGame(state);
                 PT.App.goto('ELMSTARTER');

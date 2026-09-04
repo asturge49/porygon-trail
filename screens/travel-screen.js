@@ -218,6 +218,24 @@
                     PT.App.goto('VICTORY');
                     return;
                 }
+                // Safeguard: state.completedRegions already including 'kanto'
+                // means the Kanto E4 was truly cleared (it's only pushed there
+                // synchronously with the save in elite-four-screen.js's win
+                // branch) — the run should already have moved past this route
+                // via johto-starter-screen.js's enterJohto(), which advances
+                // currentLocationIndex onto New Bark Town the moment a starter
+                // is resolved. A save can still be parked here if the game was
+                // closed after clearing Kanto's E4 but before ever finishing
+                // the Prof. Elm starter screen; without this guard, CONTINUE
+                // just re-triggers showE4PokemonCenter below forever (and once
+                // region is 'johto', getElite4Data() misreads it as the Johto
+                // E4 rematch on top of that). Route back to the starter screen
+                // to resume properly instead of re-fighting an already-cleared
+                // Elite Four.
+                if (state.completedRegions && state.completedRegions.includes('kanto')) {
+                    PT.App.goto('ELMSTARTER');
+                    return;
+                }
                 showE4PokemonCenter(container, state);
                 return;
             }
