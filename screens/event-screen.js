@@ -97,14 +97,27 @@
             const narrative = document.getElementById('event-narrative');
             const choicesDiv = document.getElementById('event-choices');
 
-            // Typewriter effect for initial event description
+            // Typewriter effect for initial event description. The interval
+            // keeps appending characters to `narrative` on its own clock —
+            // if a choice is picked (and narrative gets overwritten with
+            // battle/result HTML) before it finishes, the next tick's
+            // `textContent +=` would wipe out all of that markup (it
+            // replaces every child with a single text node) and keep
+            // clobbering it every 20ms after. Must be cleared the instant a
+            // choice commits, before anything else touches narrative.
+            let typewriterInterval = null;
             if (PT.Engine.typewriter) {
                 narrative.textContent = '';
-                PT.Engine.typewriter(narrative, event.description, 20);
+                typewriterInterval = PT.Engine.typewriter(narrative, event.description, 20);
             }
 
             document.querySelectorAll('[data-choice]').forEach(btn => {
                 btn.addEventListener('click', () => {
+                    if (typewriterInterval) {
+                        clearInterval(typewriterInterval);
+                        typewriterInterval = null;
+                    }
+
                     const choiceIndex = parseInt(btn.dataset.choice);
                     const choice = event.choices[choiceIndex];
 
