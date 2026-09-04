@@ -1241,35 +1241,6 @@
             ]
         },
         {
-            id: "trainer_battle",
-            type: "combat",
-            name: "Trainer Challenge!",
-            description: "A fellow trainer spots you and wants to battle! \"Hey! You look strong! Let's see what you've got!\"",
-            weight: 10,
-            oneTime: false,
-            minDay: 2,
-            choices: [
-                {
-                    text: "Accept the challenge!",
-                    eventBattle: {
-                        pool: "trainer",
-                        difficulty: "easy",
-                        trainerName: "Trainer",
-                        winNarration: "Your Pokemon wins! The trainer pays up and shares some tips.",
-                        lossNarration: "Their Pokemon was tougher than expected. \"Good fight though!\"",
-                        winEffects: { money: 500, trainPokemon: true },
-                        lossEffects: { money: -200 }
-                    }
-                },
-                {
-                    text: "\"Not right now.\"",
-                    outcomes: [
-                        { weight: 100, narration: "\"Aw man, next time then!\" The trainer waves goodbye.", effects: {} }
-                    ]
-                }
-            ]
-        },
-        {
             id: "pokemart_sale",
             type: "story",
             name: "PokeMart Sale!",
@@ -3882,33 +3853,6 @@
             ]
         },
         {
-            id: "char_wandering_trainer",
-            type: "story",
-            name: "Wandering Trainer!",
-            description: "A wandering trainer offers battle tips. \"Let me show you some tricks!\"",
-            weight: 7,
-            oneTime: false,
-            minDay: 2,
-            choices: [
-                { text: "Learn from them", outcomes: [
-                    { weight: 50, narration: "Great tips! Your team feels more prepared!", effects: { healOne: true } },
-                    { weight: 30, narration: "They share some supplies too!", effects: { pokeballs: 2, food: 3 } },
-                    { weight: 20, narration: "They teach your Pokemon a new technique! Everyone's energized!", effects: { healAll: true } }
-                ]},
-                { text: "Challenge them instead",
-                    eventBattle: {
-                        pool: "trainer",
-                        difficulty: "easy",
-                        trainerName: "Wandering Trainer",
-                        winNarration: "You win! The intense battle strengthens your Pokemon!",
-                        lossNarration: "They're tougher than they look. \"Keep training, kid!\"",
-                        winEffects: { money: 400, trainPokemon: true },
-                        lossEffects: { money: -100 }
-                    }
-                }
-            ]
-        },
-        {
             id: "char_pokemon_breeder",
             type: "story",
             name: "Pokemon Breeder!",
@@ -6391,35 +6335,6 @@
 
         // ===== BATTLE STAR EVENTS =====
         {
-            id: "dojo_master",
-            type: "dilemma",
-            name: "The Wandering Dojo Master!",
-            description: "A weathered martial artist stands in a clearing, surrounded by defeated wild Pokemon. \"I travel Kanto seeking worthy trainers. Show me your strongest — if they impress me, I'll teach them the way of the warrior.\"",
-            weight: 6,
-            oneTime: false,
-            minDay: 8,
-            choices: [
-                {
-                    text: "Accept his challenge",
-                    eventBattle: {
-                        pool: "fighting_wild",
-                        difficulty: "hard",
-                        trainerName: "Dojo Master",
-                        winNarration: "The master bows deeply. \"Excellent form. Your Pokemon has true fighting spirit.\" He spends hours honing their battle instincts.",
-                        lossNarration: "\"Not yet ready,\" the master says. \"But defeat is a teacher too.\"",
-                        winEffects: { grantStar: true },
-                        lossEffects: { partyDamage: 1 }
-                    }
-                },
-                {
-                    text: "\"We'll pass, thanks.\"",
-                    outcomes: [
-                        { weight: 100, narration: "The master nods. \"The wise trainer knows when to fight and when to walk away.\" He returns to his meditation.", effects: {} }
-                    ]
-                }
-            ]
-        },
-        {
             id: "victory_road_trial",
             type: "story",
             name: "The Victory Road Trial!",
@@ -6466,37 +6381,6 @@
                     outcomes: [
                         { weight: 60, narration: "She laughs. \"Free advice? Fine — stock up on potions before Victory Road. That one's free.\" She tosses you a spare.", effects: { potions: 2 } },
                         { weight: 40, narration: "\"Nothing in life is free, kid.\" She turns back to her badges.", effects: {} }
-                    ]
-                }
-            ]
-        },
-        {
-            id: "wild_tournament",
-            type: "combat",
-            name: "The Underground Pokemon Tournament!",
-            description: "You stumble upon a secret underground tournament. Trainers from all over Kanto have gathered. \"Entry fee is $300,\" says the organizer. \"Winner takes glory and their Pokemon gets recognized as a true champion fighter.\"",
-            weight: 5,
-            oneTime: false,
-            minDay: 12,
-            choices: [
-                {
-                    text: "Enter the tournament ($300)",
-                    requiresMoney: 300,
-                    eventBattle: {
-                        pool: "trainer_battle",
-                        difficulty: "hard",
-                        trainerName: "Tournament Fighter",
-                        winNarration: "Your Pokemon dominates the bracket! The crowd erupts. Your fighter is recognized as a tournament champion — a true battle-tested warrior.",
-                        lossNarration: "A tough loss in the semi-finals. The crowd groans. \"Better luck next time, kid.\"",
-                        winEffects: { money: 400, grantStar: true },
-                        lossEffects: { money: -300, partyDamage: 1 }
-                    }
-                },
-                {
-                    text: "Watch from the crowd",
-                    outcomes: [
-                        { weight: 70, narration: "You watch some incredible battles. Studying the techniques gives you ideas for your own team.", effects: { money: -50 } },
-                        { weight: 30, narration: "You spot a trainer drop some cash in the chaos. Finders keepers.", effects: { money: 100 } }
                     ]
                 }
             ]
@@ -6580,36 +6464,6 @@
             ]
         },
         {
-            id: "vr_rival_campfire",
-            type: "story",
-            name: "Rival's Campfire",
-            description: "A small fire flickers ahead. It's your rival, sitting alone in the dark. For once, he doesn't look cocky. \"Brutal in here, isn't it? I've lost two Pokemon already.\" He looks at your team. \"...You want to share my fire for a bit? I've got food.\"",
-            weight: 8,
-            oneTime: true,
-            locationIds: ["victory_road"],
-            choices: [
-                {
-                    text: "Sit and share the fire",
-                    outcomes: [
-                        { weight: 70, narration: "You sit together in silence, sharing food. For the first time, your rival feels like a friend. \"See you at the top,\" he says as you leave. Your Pokemon seem calmer.", effects: { food: 10, healAll: true } },
-                        { weight: 30, narration: "You share a meal. \"Here, take some of my supplies. I packed too much anyway.\" A rare moment of generosity from your rival.", effects: { food: 15, potions: 1 } }
-                    ]
-                },
-                {
-                    text: "Challenge him to a battle",
-                    eventBattle: {
-                        pool: "ace_trainer",
-                        difficulty: "hard",
-                        trainerName: "Rival",
-                        winNarration: "Your rival grins despite losing. \"Still got it. Here — you earned this.\" He hands you supplies.",
-                        lossNarration: "\"I'll see you at the League... if you make it.\" He packs up and disappears into the dark.",
-                        winEffects: { money: 800, food: 8, grantStar: true },
-                        lossEffects: { food: -5 }
-                    }
-                }
-            ]
-        },
-        {
             id: "vr_cave_in",
             type: "combat",
             name: "Cave-In!",
@@ -6632,36 +6486,6 @@
                         { weight: 50, narration: "You hunker down and protect your team. The collapse subsides. You lost some time but everyone's safe.", effects: { daysLost: 1 } },
                         { weight: 30, narration: "The rocks keep falling longer than expected. Dust fills the air. A day lost, and some food buried under rubble.", effects: { daysLost: 1, food: -5 } },
                         { weight: 20, narration: "You shield your team well. When the dust clears, you spot supplies from another trainer buried in the debris.", effects: { daysLost: 1, food: 6, potions: 1 } }
-                    ]
-                }
-            ]
-        },
-        {
-            id: "vr_veteran_trainer",
-            type: "combat",
-            name: "Victory Road Veteran!",
-            description: "A grizzled trainer blocks the narrow path. Battle scars mark his face. \"I've been waiting here for twenty years. Nobody passes without proving themselves. Show me what you've got, kid.\"",
-            weight: 8,
-            oneTime: true,
-            locationIds: ["victory_road"],
-            choices: [
-                {
-                    text: "Accept his challenge",
-                    eventBattle: {
-                        pool: "ace_trainer",
-                        difficulty: "hard",
-                        trainerName: "Veteran Drake",
-                        winNarration: "The veteran smiles for the first time in years. \"You remind me of the Champion when he first came through. Take these — you'll need them.\"",
-                        lossNarration: "\"Not ready. Come back when you are.\" He turns his back on you.",
-                        winEffects: { money: 1000, superPotions: 3, food: 10, grantStar: true },
-                        lossEffects: { partyDamage: 1 }
-                    }
-                },
-                {
-                    text: "\"I need to conserve my strength for the E4.\"",
-                    outcomes: [
-                        { weight: 60, narration: "The veteran nods slowly. \"Smart. Knowing when not to fight is a skill too.\" He steps aside.", effects: {} },
-                        { weight: 40, narration: "\"Wise choice. Take this for the road.\" He tosses you a ration pack.", effects: { food: 5 } }
                     ]
                 }
             ]
@@ -8655,7 +8479,7 @@
                 {
                     text: "Accept the battle",
                     eventBattle: {
-                        pool: "trainer",
+                        pool: "silver",
                         difficulty: "easy",
                         trainerName: "??? (Rival)",
                         winNarration: "You win, barely. He stares at his Pokemon like it personally betrayed him. \"...Fine. This time.\" He walks off without another word.",
@@ -8790,36 +8614,6 @@
                     text: "\"Sorry, not today.\"",
                     outcomes: [
                         { weight: 100, narration: "The courier sighs and trudges on to find someone less busy. You feel a little bad about it.", effects: {} }
-                    ]
-                }
-            ]
-        },
-        {
-            id: "route30_bug_catcher",
-            type: "combat",
-            name: "Route 30 Bug Catcher",
-            description: "A kid in a wide-brimmed hat blocks the path, net raised like a jousting lance. \"This is MY route! Bug Pokemon only, and I know all of them! Battle me!\"",
-            weight: 9,
-            oneTime: false,
-            minDay: 1,
-            locationIds: ["route_30"],
-            choices: [
-                {
-                    text: "Battle him",
-                    eventBattle: {
-                        pool: "trainer",
-                        difficulty: "easy",
-                        trainerName: "Bug Catcher",
-                        winNarration: "His Caterpie faints mid-String-Shot. \"Nooo! Okay, okay, you win. This time.\"",
-                        lossNarration: "Somehow his Weedle's Poison Sting does real work. He cheers like he's just won a championship.",
-                        winEffects: { money: 250 },
-                        lossEffects: { food: -3 }
-                    }
-                },
-                {
-                    text: "\"Maybe later.\"",
-                    outcomes: [
-                        { weight: 100, narration: "\"Chicken!\" he yells, but lets you pass.", effects: {} }
                     ]
                 }
             ]
@@ -9600,36 +9394,6 @@
             ]
         },
         {
-            id: "johto_travelling_trainer",
-            type: "combat",
-            name: "Travelling Trainer",
-            description: "A trainer with a well-worn backpack and the confident stride of someone who's crossed this region several times already looks you over. \"New to Johto? Let's see what you've got.\"",
-            weight: 10,
-            oneTime: false,
-            minLocation: 29,
-            minDay: 2,
-            choices: [
-                {
-                    text: "Battle",
-                    eventBattle: {
-                        pool: "trainer",
-                        difficulty: "medium",
-                        trainerName: "Travelling Trainer",
-                        winNarration: "\"Not bad. You'll do fine out here.\" She nods once, almost respectfully, and continues on her way.",
-                        lossNarration: "\"Come back when you've got more experience.\" Not unkind, just blunt.",
-                        winEffects: { money: 400 },
-                        lossEffects: { food: -5 }
-                    }
-                },
-                {
-                    text: "\"Not right now.\"",
-                    outcomes: [
-                        { weight: 100, narration: "\"Suit yourself.\" She's unbothered either way.", effects: {} }
-                    ]
-                }
-            ]
-        },
-        {
             id: "johto_rainy_season",
             type: "weather",
             name: "Johto's Rainy Season",
@@ -10017,37 +9781,6 @@
                         { weight: 50, narration: "The draft is fainter than you hoped and you end up guessing anyway. It works out.", effects: {} }
                     ],
                     bonusOutcome: { weight: 100, narration: "With actual light to work with, the correct passage is obvious in seconds.", effects: {} }
-                }
-            ]
-        },
-        {
-            id: "johto_bellsprout_ambush",
-            type: "combat",
-            name: "Bellsprout Ambush",
-            description: "A patch of what you assumed were ordinary Bellsprout turns out to be considerably more coordinated than expected, whipping vines out from the grass in a surprisingly organized pincer.",
-            weight: 7,
-            oneTime: false,
-            terrainTypes: ["route"],
-            minLocation: 29,
-            minDay: 2,
-            choices: [
-                {
-                    text: "Fight through",
-                    eventBattle: {
-                        pool: "trainer",
-                        difficulty: "easy",
-                        trainerName: "Wild Bellsprout Patch",
-                        winNarration: "The patch scatters and burrows back into the grass, thoroughly outmatched.",
-                        lossNarration: "Vines everywhere. You retreat, a little worse for wear, while the Bellsprout return to looking innocuous.",
-                        winEffects: { food: 5 },
-                        lossEffects: { partyDamageAll: 1 }
-                    }
-                },
-                {
-                    text: "Retreat and go around",
-                    outcomes: [
-                        { weight: 100, narration: "You give the patch a wide berth. It goes back to looking like an ordinary field.", effects: { daysLost: 1 } }
-                    ]
                 }
             ]
         },
@@ -10643,35 +10376,6 @@
             ]
         },
         {
-            id: "mt_mortar_hermit_master",
-            type: "special",
-            name: "The Cave Hermit",
-            description: "Deep in Mt. Mortar, an old man in torn training clothes sits cross-legged by a hot spring. \"You want to pass? Prove your Pokemon's spirit is stronger than mine.\"",
-            weight: 10,
-            oneTime: true,
-            locationIds: ["mt_mortar"],
-            choices: [
-                {
-                    text: "Accept his challenge",
-                    eventBattle: {
-                        pool: "trainer",
-                        difficulty: "hard",
-                        trainerName: "Mountain Hermit",
-                        winNarration: "Your Pokemon holds firm through the exchange. The hermit closes his eyes, nods once, and says nothing else — but something about the way your Pokemon carries itself afterward feels different. Sharper.",
-                        lossNarration: "The hermit's Pokemon barely seems to move and still wins. \"Spirit takes years, not days,\" he says, not unkindly, as he helps your team back onto its feet.",
-                        winEffects: { grantStar: true },
-                        lossEffects: { partyDamageAll: 2 }
-                    }
-                },
-                {
-                    text: "\"I'll pass, thanks.\"",
-                    outcomes: [
-                        { weight: 100, narration: "\"Wise, or afraid. Time will tell which.\" He returns to his meditation and lets you by without further comment.", effects: {} }
-                    ]
-                }
-            ]
-        },
-        {
             id: "mt_mortar_waterfall_training",
             type: "dilemma",
             name: "The Waterfall",
@@ -11054,36 +10758,6 @@
                     text: "Leave it undisturbed",
                     outcomes: [
                         { weight: 100, narration: "You leave it be. Some things aren't yours to read.", effects: {} }
-                    ]
-                }
-            ]
-        },
-        {
-            id: "victory_road_johto_veteran_gauntlet",
-            type: "combat",
-            name: "Veteran's Gauntlet",
-            description: "A grizzled veteran trainer blocks the narrow passage, arms crossed. \"Second Victory Road, huh? Figures someone would come back for more. Prove you belong here.\"",
-            weight: 10,
-            oneTime: false,
-            locationIds: ["victory_road_johto"],
-            choices: [
-                {
-                    text: "Accept the gauntlet",
-                    eventBattle: {
-                        pool: "trainer",
-                        difficulty: "hard",
-                        trainerName: "Veteran Trainer",
-                        winNarration: "A hard-fought win. The veteran actually cracks a smile. \"Yeah. You belong here.\" He steps aside without another word.",
-                        lossNarration: "The veteran's experience shows. \"Not yet,\" is all he says, helping you gather your team off the cave floor.",
-                        winEffects: { money: 700, trainPokemon: true },
-                        lossEffects: { partyDamageAll: 2 }
-                    }
-                },
-                {
-                    text: "Try to talk your way past",
-                    outcomes: [
-                        { weight: 30, narration: "\"...Fine. You've got the look of someone who's earned it already.\" He steps aside, somewhat reluctantly.", effects: {} },
-                        { weight: 70, narration: "\"Nice try.\" He doesn't budge an inch. You end up battling him anyway, whether you meant to or not.", effects: { partyDamageAll: 1 } }
                     ]
                 }
             ]
@@ -11751,35 +11425,6 @@
             ]
         },
         {
-            id: "johto_ace_trainer_duel",
-            type: "combat",
-            name: "Ace Trainer Duel",
-            description: "An Ace Trainer steps into your path, unbothered and confident. \"You've got the look of someone who's beaten a few gyms. Let's see if the reputation holds up.\"",
-            weight: 10,
-            minLocation: 42,
-            terrainTypes: ["route"],
-            choices: [
-                {
-                    text: "Accept the duel",
-                    eventBattle: {
-                        pool: "trainer",
-                        difficulty: "medium",
-                        trainerName: "Ace Trainer",
-                        winNarration: "A clean, hard-fought win. \"Reputation holds up,\" she admits, and means it as a compliment.",
-                        lossNarration: "\"Reputation's a little inflated, maybe.\" She's gracious about it, at least, and helps you regroup.",
-                        winEffects: { money: 400 },
-                        lossEffects: { partyDamageAll: 1 }
-                    }
-                },
-                {
-                    text: "Decline",
-                    outcomes: [
-                        { weight: 100, narration: "\"Your loss.\" She shrugs and lets you pass without further comment.", effects: {} }
-                    ]
-                }
-            ]
-        },
-        {
             id: "johto_rocket_stragglers",
             type: "combat",
             name: "Rocket Stragglers",
@@ -11805,35 +11450,6 @@
                     outcomes: [
                         { weight: 60, narration: "They don't even try to stop you, muttering about being reassigned to \"the worst region in the company.\"", effects: {} },
                         { weight: 40, narration: "One makes a halfhearted grab for your bag. You dodge it easily and keep walking.", effects: {} }
-                    ]
-                }
-            ]
-        },
-        {
-            id: "johto_mountain_hiker_challenge",
-            type: "combat",
-            name: "A Hiker's Challenge",
-            description: "A hiker built like the mountain itself blocks the narrow path, arms folded. \"Only room for one on this ledge. Battle for it.\"",
-            weight: 8,
-            minLocation: 42,
-            terrainTypes: ["mountain", "cave"],
-            choices: [
-                {
-                    text: "Battle for the path",
-                    eventBattle: {
-                        pool: "trainer",
-                        difficulty: "medium",
-                        trainerName: "Hiker",
-                        winNarration: "You win the ledge fair and square. The hiker steps aside without complaint, genuinely satisfied by the fight.",
-                        lossNarration: "The hiker wins the standoff and, gracious in victory, lets you by anyway once you've both calmed down.",
-                        winEffects: { money: 250 },
-                        lossEffects: { partyDamageAll: 1 }
-                    }
-                },
-                {
-                    text: "Find another way around",
-                    outcomes: [
-                        { weight: 100, narration: "You backtrack and find a longer, battle-free route around. Slower, but nobody gets hurt over ledge rights.", effects: { daysLost: 1 } }
                     ]
                 }
             ]
@@ -12944,36 +12560,6 @@
         },
 
         // ----- Blackthorn City -----
-        {
-            id: "blackthorn_city_dragon_tamer_rival",
-            type: "combat",
-            name: "A Dragon Tamer's Challenge",
-            description: "A trainer in traditional dragon-den robes stands at the base of the gym steps, a Dratini coiled comfortably around one arm. \"Everyone who comes through here wants to be the next Clair. Prove you've got what it takes before you even try.\"",
-            weight: 9,
-            oneTime: false,
-            minDay: 2,
-            locationIds: ["blackthorn_city"],
-            choices: [
-                {
-                    text: "Accept the challenge",
-                    eventBattle: {
-                        pool: "trainer",
-                        difficulty: "medium",
-                        trainerName: "Dragon Tamer",
-                        winNarration: "Your team edges out the win. The tamer nods slowly, genuinely impressed. \"Not bad. Clair's not going to go easy on you just because you beat me, though.\"",
-                        lossNarration: "The Dratini's Wrap attack proves more than you bargained for. \"Come back when you're ready,\" the tamer says, not unkindly, already recalling their Pokemon.",
-                        winEffects: { money: 400 },
-                        lossEffects: { partyDamageAll: 1 }
-                    }
-                },
-                {
-                    text: "\"I'll save it for the Gym.\"",
-                    outcomes: [
-                        { weight: 100, narration: "\"Your loss,\" the tamer says, though they seem more amused than offended. \"Good luck up there. You'll need more than luck, honestly.\"", effects: {} }
-                    ]
-                }
-            ]
-        },
 
         // ----- Dragon's Den -----
         {

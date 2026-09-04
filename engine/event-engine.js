@@ -83,6 +83,14 @@
                 { id: 112, name: "Rhydon" },
             ]
         },
+        // Silver — Johto's rival, Day 1 on Route 29. Flat (not tiered by
+        // badge count like gary/rocket_grunt) since this is a single
+        // one-time early-game fight, not a recurring pool. Both species are
+        // Route 29's own wild encounter table (data/routes.js) rather than
+        // reused Kanto filler, so the fight actually matches where it's set.
+        silver: [
+            { id: 161, name: "Sentret" }, { id: 163, name: "Hoothoot" }
+        ],
         // Wild dangerous Pokemon (for hazard-type events like Arbok ambush)
         wild_danger: {
             early: [

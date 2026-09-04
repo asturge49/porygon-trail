@@ -697,7 +697,7 @@
                 { pokemonId: 148, weight: 7 },  // Dragonair
                 { pokemonId: 18, weight: 5 }    // Pidgeot
             ],
-            eventPool: ["victory_road_cave", "mewtwo_cave", "victory_road_guardian", "champion_ghost", "vr_fallen_trainer", "vr_underground_stream", "vr_rival_campfire", "vr_cave_in", "vr_veteran_trainer", "vr_fossil_cache", "vr_moltres_shadow", "vr_darkness_maze", "vr_last_chance_merchant"],
+            eventPool: ["victory_road_cave", "mewtwo_cave", "victory_road_guardian", "champion_ghost", "vr_fallen_trainer", "vr_underground_stream", "vr_cave_in", "vr_fossil_cache", "vr_moltres_shadow", "vr_darkness_maze", "vr_last_chance_merchant"],
             flavor: "The longest, darkest cave in Kanto. Many trainers never emerge."
         },
         {
@@ -817,7 +817,7 @@
                 { pokemonId: 69, weight: 3 },   // Bellsprout
                 { pokemonId: 71, weight: 8 }    // Victreebel
             ],
-            eventPool: ["route30_general", "route30_mr_pokemon_errand", "route30_bug_catcher", "route30_bellsprout_grove"],
+            eventPool: ["route30_general", "route30_mr_pokemon_errand", "route30_bellsprout_grove"],
             flavor: "Hoppip drift lazily on the breeze. A famous researcher's house sits nearby."
         },
         {
@@ -1306,7 +1306,7 @@
                 { pokemonId: 95, weight: 4 },   // Onix
                 { pokemonId: 208, weight: 12 }  // Steelix
             ],
-            eventPool: ["mt_mortar_general", "mt_mortar_hermit_master", "mt_mortar_waterfall_training", "mt_mortar_hot_spring_healing"],
+            eventPool: ["mt_mortar_general", "mt_mortar_waterfall_training", "mt_mortar_hot_spring_healing"],
             flavor: "Steam rises from hidden hot springs. Somewhere above, a waterfall roars."
         },
         {
@@ -1410,7 +1410,7 @@
             gymLeader: "clair",
             encounterRate: 0,
             encounterTable: [],
-            eventPool: ["blackthorn_city_dragons_den_gate", "blackthorn_city_clair_challenge", "blackthorn_city_dragon_tamer_rival"],
+            eventPool: ["blackthorn_city_dragons_den_gate", "blackthorn_city_clair_challenge"],
             flavor: "Snow dusts the rooftops. Clair's gym looms at the base of the mountains."
         },
         {
@@ -1463,7 +1463,7 @@
                 { pokemonId: 248, weight: 4 },  // Tyranitar
                 { pokemonId: 227, weight: 10 }  // Skarmory
             ],
-            eventPool: ["victory_road_johto_general", "victory_road_johto_fallen_trainer", "victory_road_johto_veteran_gauntlet", "victory_road_johto_league_hopefuls"],
+            eventPool: ["victory_road_johto_general", "victory_road_johto_fallen_trainer", "victory_road_johto_league_hopefuls"],
             flavor: "The longest, darkest cave in Johto. The ultimate test, once again."
         },
         {

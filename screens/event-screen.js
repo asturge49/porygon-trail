@@ -27,6 +27,8 @@
                 return state.rng.chance(50)
                     ? 'assets/team-rocket/rocket-grunt-johto-m.png'
                     : 'assets/team-rocket/rocket-grunt-johto-f.png';
+            case 'gary': return 'assets/rivals/gary.png';
+            case 'silver': return 'assets/rivals/silver.png';
             default: return null;
         }
     }
