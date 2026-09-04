@@ -69,7 +69,6 @@
                                  onerror="this.style.display='none'">
                             <div class="gym-opponent-name" style="font-size: 9px; font-weight: bold;">${battle.pokemon.name}</div>
                             <div style="font-size: 6px;">${opponentTypes.join('/').toUpperCase()}</div>
-                            <div style="font-size: 7px;">LV ${battle.pokemon.level}</div>
                             ${battle.pokemon.ace ? '<div style="font-size: 7px; color: var(--gb-darkest);">★ ACE POKEMON</div>' : ''}
                         </div>
                     </div>
