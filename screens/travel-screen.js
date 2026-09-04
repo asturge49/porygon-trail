@@ -918,7 +918,6 @@
 
     function showMenuOverlay(state) {
         const items = [
-            { label: 'TEAM', screen: 'PARTY' },
             { label: 'POKÉDEX', screen: 'POKEDEX' },
             { label: 'GUIDE', screen: 'GUIDE' },
             { label: 'RECORDS', screen: 'RECORDS' },
