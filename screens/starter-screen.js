@@ -16,7 +16,7 @@
         },
         {
             id: 7, name: "Squirtle",
-            bonuses: ["Safe water travel", "Surf ability for sea routes", "Better fishing encounters"],
+            bonuses: ["Tough, hard-shelled and durable", "Strength ability lowers injury risk", "Great for grueling-pace pushes"],
             sprite: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-i/red-blue/gray/7.png"
         }
     ];
