@@ -529,7 +529,11 @@
         if (!client) return null;
 
         const [totalRes, redWinsRes] = await Promise.all([
-            client.from('pt_leaderboard').select('*', { count: 'exact', head: true }).eq('status', 'completed'),
+            // No status filter — every row logged counts, in-progress included.
+            // Deliberately unfiltered per product decision: makes the
+            // "trainers fallen" tally look a bit more active to newcomers,
+            // even though it's not strictly "completed runs only" anymore.
+            client.from('pt_leaderboard').select('*', { count: 'exact', head: true }),
             client.from('pt_leaderboard').select('*', { count: 'exact', head: true }).eq('status', 'completed').eq('won', true).eq('johto_completed', true)
         ]);
         if (totalRes.error || redWinsRes.error) {
@@ -539,7 +543,7 @@
         const totalRuns = totalRes.count || 0;
         const redWins = redWinsRes.count || 0;
         // "Trainers fallen on the trail" is the total-runs count directly now,
-        // not runs-minus-wins — every completed run logged, win or not.
+        // not runs-minus-wins — every row logged, completed or in-progress.
         return { fallenCount: totalRuns, hallOfFameCount: redWins };
     }
 
