@@ -48,7 +48,9 @@
             const records = PT.Engine.Records ? PT.Engine.Records.getRecords() : null;
             const totalRuns = records ? (records.totalRuns || 0) : 0;
             const redDefeated = records ? (records.totalWins || 0) : 0;
-            const fallenCount = Math.max(0, totalRuns - redDefeated);
+            // "Trainers fallen on the trail" pulls straight from the total-runs
+            // counter now, not runs-minus-wins — every logged run, win or not.
+            const fallenCount = totalRuns;
 
             const div = document.createElement('div');
             div.className = 'screen title-screen';

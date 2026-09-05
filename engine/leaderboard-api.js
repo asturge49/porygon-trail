@@ -538,7 +538,9 @@
         }
         const totalRuns = totalRes.count || 0;
         const redWins = redWinsRes.count || 0;
-        return { fallenCount: Math.max(0, totalRuns - redWins), hallOfFameCount: redWins };
+        // "Trainers fallen on the trail" is the total-runs count directly now,
+        // not runs-minus-wins — every completed run logged, win or not.
+        return { fallenCount: totalRuns, hallOfFameCount: redWins };
     }
 
     // Insert or update this run's row (keyed by run_id), so an in-progress run
