@@ -532,6 +532,20 @@
         if (rarityPenalty > 0) chance -= rarityPenalty;
         breakdown.push({ label: `RARITY (${pokemon.rarity.toUpperCase()})`, value: rarityPenalty > 0 ? -rarityPenalty : 0 });
 
+        // Weak Pokemon debuff — wild Pokemon start at full HP, so this
+        // compares that fixed value against your chosen Pokemon's CURRENT HP
+        // (not max), making the bonus dynamic on the fly: healing up before
+        // picking a fight, or picking a already-battered Pokemon, both move
+        // this number. Only applies to wild battles — a wild Pokemon being
+        // "weak" relative to yours isn't a concept gyms/trainers/E4 opponents
+        // (who don't start fights already-full the same way) share.
+        const weakPokemonHpDiff = chosen.hp - PT.Engine.GameState.getMaxHpForPokemon(pokemon);
+        const weakPokemonBonus = weakPokemonHpDiff >= 4 ? 10 : weakPokemonHpDiff >= 3 ? 5 : 0;
+        if (weakPokemonBonus > 0) {
+            chance += weakPokemonBonus;
+            breakdown.push({ label: 'WEAK POKEMON DEBUFF', value: weakPokemonBonus });
+        }
+
         // Progressive scaling — mirrors the gym-battle formula (gym-screen.js)
         // so wild encounters stop being trivial farming fodder as the run goes
         // on. Scales from 0 (no badges) to -18% across all 16 badges (Kanto +
