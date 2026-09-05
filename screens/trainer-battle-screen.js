@@ -214,6 +214,7 @@
             const starResult = engineResult && engineResult.starResult;
             if (evo) resultRows += rewardRow('EVOLVED', `${evo.oldName} → ${evo.newName}`);
             if (starResult && starResult.earned) resultRows += rewardRow('BATTLE STAR EARNED', `${'★'.repeat(pokemon.battleStars)} (${pokemon.battleStars}/3)`);
+            if (starResult && starResult.veteranBonus) resultRows += rewardRow('VETERAN BONUS', `${starResult.veteranBonus.name}'s 10th win! Max HP +1`);
             if (starResult && starResult.expShareBonus) {
                 resultRows += rewardRow('EXP. SHARE',
                     starResult.expShareBonus.type === 'evolution'

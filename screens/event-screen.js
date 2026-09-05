@@ -296,6 +296,7 @@
             }
             if (evoResult.evolved) rewardRows += rewardRow('EVOLVED', `${evoResult.oldName} → ${evoResult.newName}`);
             if (starResult.earned) rewardRows += rewardRow('BATTLE STAR EARNED', `${'★'.repeat(chosen.battleStars)} (${chosen.battleStars}/3)`);
+            if (starResult.veteranBonus) rewardRows += rewardRow('VETERAN BONUS', `${starResult.veteranBonus.name}'s 10th win! Max HP +1`);
             if (starResult.expShareBonus) {
                 rewardRows += rewardRow('EXP. SHARE',
                     starResult.expShareBonus.type === 'evolution'

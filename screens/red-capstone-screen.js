@@ -320,6 +320,9 @@
             if (starResult.earned) {
                 rewardRows += rewardRow('BATTLE STAR EARNED', `${'★'.repeat(pokemon.battleStars)} (${pokemon.battleStars}/3)`);
             }
+            if (starResult.veteranBonus) {
+                rewardRows += rewardRow('VETERAN BONUS', `${starResult.veteranBonus.name}'s 10th win! Max HP +1`);
+            }
             if (starResult.expShareBonus) {
                 rewardRows += rewardRow('EXP. SHARE',
                     starResult.expShareBonus.type === 'evolution'

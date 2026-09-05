@@ -749,10 +749,12 @@
         partyMon.travelAbility = evoData.travelAbility;
         partyMon.spriteUrl = getSpriteUrl(evoData.id, partyMon.spriteGen || 'kanto', partyMon.shiny);
         // Set new maxHp — use override if exists, otherwise +1 capped at 6.
-        // HP Up bonus is tracked separately so it survives being reset by
-        // the species-based evolution jump below, then re-added on top.
+        // HP Up bonus and the 10-win veteran bonus are both tracked
+        // separately so they survive being reset by the species-based
+        // evolution jump below, then get re-added on top.
         const hpBonus = partyMon.hpBonus || 0;
-        const baseMaxHpBeforeEvo = partyMon.maxHp - hpBonus;
+        const veteranBonus = partyMon.tenWinBonusApplied ? 1 : 0;
+        const baseMaxHpBeforeEvo = partyMon.maxHp - hpBonus - veteranBonus;
         const evoMaxHp = getMaxHpForPokemon(evoData);
         let newBaseMaxHp = baseMaxHpBeforeEvo;
         if (evoMaxHp > baseMaxHpBeforeEvo) {
@@ -760,7 +762,7 @@
         } else if (baseMaxHpBeforeEvo < 6) {
             newBaseMaxHp = baseMaxHpBeforeEvo + 1;
         }
-        partyMon.maxHp = newBaseMaxHp + hpBonus;
+        partyMon.maxHp = newBaseMaxHp + hpBonus + veteranBonus;
         // Fully heal on evolution
         partyMon.hp = partyMon.maxHp;
         // Track evolution location
@@ -876,7 +878,7 @@
         return { earned: true, reason: null };
     }
 
-    // Award a battle win. Returns { earned: bool, reason: string|null, expShareBonus?: {...} }
+    // Award a battle win. Returns { earned: bool, reason: string|null, expShareBonus?: {...}, veteranBonus?: {...} }
     // Call AFTER evolution check — if the mon just evolved this fight, skip the star.
     function addBattleWin(pokemon, state, justEvolved) {
         pokemon.battleWins = (pokemon.battleWins || 0) + 1;
@@ -885,6 +887,22 @@
         const result = justEvolved
             ? { earned: false, reason: 'evolution_win' }
             : tryEarnStar(pokemon, state);
+
+        // Veteran bonus: a Pokemon's 10th battle win permanently raises its
+        // max HP by 1 — a one-time bonus per Pokemon (not every 10 wins), so
+        // guard on the flag rather than an exact win count (also lets this
+        // apply retroactively to existing saves already past 10 wins the
+        // first time they win again after this feature ships). Tracked
+        // separately from key-items.js's hpUp/hpBonus stacks (HP Up items)
+        // so this never counts against that item's own 3-per-Pokemon cap —
+        // see evolvePokemon's hpBonus handling for the same "survives
+        // evolution" treatment applied to this bonus too.
+        if (!pokemon.tenWinBonusApplied && pokemon.battleWins >= 10) {
+            pokemon.tenWinBonusApplied = true;
+            pokemon.maxHp += 1;
+            pokemon.hp += 1;
+            result.veteranBonus = { name: pokemon.name };
+        }
 
         // Exp Share: one other eligible teammate also benefits from this win —
         // a Battle Star if they're already a final evolution, or a shot at
