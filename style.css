@@ -2745,6 +2745,26 @@ body {
     border-right: 2px solid var(--gb-darkest);
 }
 
+/* Difficulty-level filter — LV1-LV5 plus an ALL that combines every level.
+   One row of 6 so it reads as a single control, same idea as the region
+   toggle above but without the ALL/split two-row split (six buttons fit
+   fine in one row at this font size). */
+.leaderboard-level-toggle {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    border: 3px solid var(--gb-darkest);
+    margin-bottom: 4px;
+}
+
+.leaderboard-level-toggle .leaderboard-tab {
+    border-bottom: none;
+    border-right: 2px solid var(--gb-darkest);
+}
+
+.leaderboard-level-toggle .leaderboard-tab:last-child {
+    border-right: none;
+}
+
 /* ============================================
    RECORDS SCREEN
    ============================================ */

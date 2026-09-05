@@ -36,6 +36,16 @@
     // only runs that never continued into Johto, 'johto' only ones that did.
     let currentRegion = 'all';
 
+    // Level filter — only the tabs whose fetcher actually threads a
+    // `levelFilter` into a server-side `.eq('difficulty_level', ...)` query
+    // (see engine/leaderboard-api.js) get a meaningful per-level view; the
+    // rest (pokedex/legendary/champions/e4wins/redwins) are lifetime
+    // aggregates that don't vary by level, so the toggle doesn't apply.
+    const LEVEL_FILTER_TABS = ['runs', 'trainers', 'catches', 'fastest'];
+    // Level 1 (Casual) has by far the largest player population, so it's
+    // the default view rather than the combined "ALL" one.
+    let currentLevel = 1;
+
     function totalDexCount() {
         return PT.Data.Pokemon.length;
     }
@@ -118,6 +128,7 @@
         const globalAvailable = API.isGlobalEnabled();
         const activeTab = TABS.find(t => t.key === currentMode);
         const regionToggleApplies = REGION_TOGGLE_TABS.includes(currentMode);
+        const levelToggleApplies = LEVEL_FILTER_TABS.includes(currentMode);
 
         const div = document.createElement('div');
         div.className = 'screen leaderboard-screen';
@@ -138,6 +149,12 @@
                     <button class="leaderboard-tab ${currentRegion === 'kanto' ? 'active' : ''}" data-region="kanto">KANTO</button>
                     <button class="leaderboard-tab ${currentRegion === 'johto' ? 'active' : ''}" data-region="johto">JOHTO</button>
                 </div>
+            </div>
+            ` : ''}
+            ${levelToggleApplies ? `
+            <div class="leaderboard-level-toggle">
+                ${[1, 2, 3, 4, 5].map(lv => `<button class="leaderboard-tab ${currentLevel === lv ? 'active' : ''}" data-level="${lv}">LV${lv}</button>`).join('')}
+                <button class="leaderboard-tab ${currentLevel === 'all' ? 'active' : ''}" data-level="all">ALL</button>
             </div>
             ` : ''}
             ` : ''}
@@ -190,14 +207,16 @@
                 return;
             }
 
-            // Only the row-based tabs (REGION_TOGGLE_TABS) take a region arg —
-            // the lifetime/RPC-based ones ignore any extra argument.
+            // Only the row-based tabs (REGION_TOGGLE_TABS) take a region arg,
+            // and only LEVEL_FILTER_TABS take a levelFilter — the lifetime/
+            // RPC-based ones ignore any extra argument.
+            const levelFilter = levelToggleApplies && currentLevel !== 'all' ? currentLevel : null;
             const fetchers = {
-                runs: () => API.getGlobalLeaderboard(currentRegion),
-                trainers: () => API.getTopTrainers(currentRegion),
+                runs: () => API.getGlobalLeaderboard(currentRegion, levelFilter),
+                trainers: () => API.getTopTrainers(currentRegion, levelFilter),
                 pokedex: () => API.getDexCompletionLeaderboard(),
-                catches: () => API.getMostCatchesLeaderboard(currentRegion),
-                fastest: () => API.getFastestWinLeaderboard(currentRegion),
+                catches: () => API.getMostCatchesLeaderboard(currentRegion, levelFilter),
+                fastest: () => API.getFastestWinLeaderboard(currentRegion, levelFilter),
                 legendary: () => API.getLegendaryLeaderboard(),
                 champions: () => API.getChampionLeaderboard(),
                 e4wins: () => API.getE4WinsLeaderboard(),
@@ -249,6 +268,7 @@
                     // data — reset so a later return to a toggle-able tab
                     // doesn't strand the view on Kanto/Johto silently.
                     if (!REGION_TOGGLE_TABS.includes(currentMode)) currentRegion = 'all';
+                    if (!LEVEL_FILTER_TABS.includes(currentMode)) currentLevel = 1;
                     PT.App.goto('LEADERBOARD');
                 });
             });
@@ -258,6 +278,17 @@
                 btn.addEventListener('click', () => {
                     if (currentRegion === btn.dataset.region) return;
                     currentRegion = btn.dataset.region;
+                    PT.App.goto('LEADERBOARD');
+                });
+            });
+
+            // Level filter toggle — LV1 (Casual) is the default since it has
+            // the largest player population; ALL shows every level combined.
+            document.querySelectorAll('.leaderboard-tab[data-level]').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const level = btn.dataset.level === 'all' ? 'all' : Number(btn.dataset.level);
+                    if (currentLevel === level) return;
+                    currentLevel = level;
                     PT.App.goto('LEADERBOARD');
                 });
             });
