@@ -29,7 +29,7 @@
         { name: 'Miracle', pokemon: 'Mew', desc: 'Every day, a random bonus — a full heal, free food, money, items, bonus distance, or a Battle Star.' },
         { name: 'Sacred Flame', pokemon: 'Moltres', desc: 'Your party eats no food at all.' },
         { name: 'Mimic', pokemon: 'Ditto', desc: "Copies whichever ability your strongest teammate already has active, adding its own power on top." },
-        { name: 'Thunderclap', pokemon: 'Zapdos', desc: 'Doubles how far you travel every day.' },
+        { name: 'Thunderclap', pokemon: 'Zapdos or Raikou', desc: 'Doubles how far you travel every day.' },
         { name: 'System Restore', pokemon: 'Porygon', desc: 'Revives a fainted Pokemon from the brink — once per run.' },
         { name: 'Safeguard', pokemon: 'Chansey', desc: 'Saves a Pokemon from fainting — once per Pokemon, for the whole run.' },
         { name: 'Psychic Dominance', pokemon: 'Mewtwo', desc: 'A massive +50% win chance in every battle.' },

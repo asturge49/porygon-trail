@@ -109,10 +109,11 @@
             const variance = state.rng.randInt(-3, 3);
             let dist = Math.max(0, pace.distance + variance);
 
-            // Thunderclap (Zapdos) — double travel distance
+            // Thunderclap (Zapdos, Raikou) — double travel distance
             if (PT.Engine.GameState.hasAbility(state, 'thunderclap')) {
                 dist *= 2;
-                results.messages.push(`THUNDERCLAP: Zapdos' lightning speed doubles your travel distance!`);
+                const thunderName = abilityHolder(state, 'thunderclap') || 'Zapdos';
+                results.messages.push(`THUNDERCLAP: ${thunderName} strikes with lightning speed, doubling your travel distance!`);
             }
 
             results.messages.push(`Traveled ${dist} miles.`);
