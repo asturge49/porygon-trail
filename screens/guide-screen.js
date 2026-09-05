@@ -46,9 +46,9 @@
         {
             title: 'Victory & Completion',
             rows: [
-                { label: "Beat Kanto's Elite Four", value: '+2,000', sub: 'Plus up to +5,000 for finishing Kanto within 100 days.' },
-                { label: "Beat Johto's Elite Four (rematch)", value: '+2,000', sub: 'Plus up to +5,000 for finishing Johto within 100 days of entering it.' },
-                { label: 'Beat Red at Mt. Silver', value: '+2,000', sub: 'The full-game victory bonus, plus up to +5,000 for finishing the whole run within 100 days.' },
+                { label: "Beat Kanto's Elite Four", value: '+2,000', sub: 'Plus up to +5,000 for finishing Kanto within 100 days — 50 points per day under 100.' },
+                { label: "Beat Johto's Elite Four (rematch)", value: '+2,000', sub: 'Plus up to +5,000 for finishing Johto within 100 days of entering it — 50 points per day under 100.' },
+                { label: 'Beat Red at Mt. Silver', value: '+2,000', sub: 'The full-game victory bonus, plus up to +5,000 for finishing the whole run within 100 days — 50 points per day under 100.' },
                 { label: 'Champion badge', value: '+500', sub: 'Earned the moment either Elite Four falls.' },
                 { label: "Each of Red's Pokemon defeated", value: '+500', sub: 'Up to +3,000 for all six — counts even on a loss.' }
             ]
