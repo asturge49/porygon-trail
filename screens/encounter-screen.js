@@ -28,7 +28,14 @@
             const totalBalls = state.resources.pokeballs + state.resources.greatballs + state.resources.ultraballs;
 
             const dex = PT.Engine.Scoring.getGlobalPokedex();
-            const isCaught = dex.caught.includes(pokemon.id);
+            // Pokeball tag: caught on THIS run specifically (state.pokedexCaught),
+            // not the lifetime global dex — a run-local "you already have one of
+            // these in your party/graveyard right now" signal.
+            const isCaughtThisRun = state.pokedexCaught.includes(pokemon.id);
+            // Pokedex tag: has an entry in the persistent, cross-run Pokedex at
+            // all (seen encompasses caught — see updateGlobalPokedex/the encounter
+            // screen's own pokedexSeen push above) — "registered", not "caught".
+            const isRegistered = dex.seen.includes(pokemon.id) || dex.caught.includes(pokemon.id);
             const isChampion = dex.champions.includes(pokemon.id);
 
             const div = document.createElement('div');
@@ -38,9 +45,22 @@
                     Wild ${pokemon.name} appeared!
                 </div>
                 <div class="encounter-sprite-area">
-                    ${isCaught || isChampion ? `
-                        <div class="encounter-status-tag" title="${[isCaught ? 'Caught' : '', isChampion ? 'Champion' : ''].filter(Boolean).join(' & ')}">
-                            ${isCaught ? '<div class="encounter-tag-ball"></div>' : ''}
+                    ${isCaughtThisRun || isRegistered || isChampion ? `
+                        <div class="encounter-status-tag" title="${[isCaughtThisRun ? 'Caught this run' : '', isRegistered ? 'Registered in Pokedex' : '', isChampion ? 'Champion' : ''].filter(Boolean).join(' & ')}">
+                            ${isCaughtThisRun ? '<div class="encounter-tag-ball"></div>' : ''}
+                            ${isRegistered ? `
+                                <svg class="encounter-tag-dex" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <rect x="2" y="2" width="20" height="20" rx="3" fill="none" stroke="currentColor" stroke-width="2"/>
+                                    <circle cx="7" cy="7" r="3.2" fill="none" stroke="currentColor" stroke-width="1.6"/>
+                                    <circle cx="6.2" cy="6.2" r="1" fill="currentColor"/>
+                                    <circle cx="13" cy="6" r="1" fill="currentColor"/>
+                                    <circle cx="16.4" cy="6" r="1" fill="currentColor"/>
+                                    <circle cx="19.8" cy="6" r="1" fill="currentColor"/>
+                                    <path d="M11 12 L20 9.5 L20 20 L4 20 L4 11 Z" fill="none" stroke="currentColor" stroke-width="1.6"/>
+                                    <path d="M8 14.5 L11.5 16.5 L8 18.5 Z" fill="none" stroke="currentColor" stroke-width="1.1"/>
+                                    <line x1="7" y1="19.7" x2="16" y2="19.7" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+                                </svg>
+                            ` : ''}
                             ${isChampion ? '<div class="encounter-tag-star">&#9733;</div>' : ''}
                         </div>
                     ` : ''}

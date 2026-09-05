@@ -1842,6 +1842,15 @@ body {
     line-height: 1;
 }
 
+.encounter-tag-dex {
+    width: 14px;
+    height: 14px;
+    color: var(--gb-darkest);
+    background: var(--gb-white);
+    border-radius: 3px;
+    filter: drop-shadow(0 0 2px rgba(0,0,0,0.4));
+}
+
 .encounter-sprite {
     width: 96px;
     height: 96px;
