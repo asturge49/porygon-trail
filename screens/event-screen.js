@@ -52,7 +52,7 @@
                 <div class="travel-progress" style="margin-bottom: 4px;">
                     <div style="display: flex; justify-content: space-between; font-size: 7px; margin-bottom: 2px;">
                         <span>${route.name}</span>
-                        <span>${nextRoute ? nextRoute.name : 'VICTORY!'}</span>
+                        <span>${nextRoute ? nextRoute.name : 'Champion Battle'}</span>
                     </div>
                     <div class="progress-bar-container">
                         <div class="progress-bar-fill" style="width: ${progress}%"></div>
