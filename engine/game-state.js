@@ -642,14 +642,26 @@
     }
 
     // Pay Day ability — scales with power (25% bonus per power point)
-    function applyPayDay(state, amount) {
+    // Splits a money award into its independent sources — the Payday ability
+    // (needs a Meowth/Persian etc. actually in the party) and the Amulet Coin
+    // key item (a flat +8%-per-stack gym reward, unrelated to any Pokemon) —
+    // applied in sequence (Payday first, then Amulet Coin on top), same order
+    // applyPayDay always used. Exists so UI can label each bonus correctly
+    // instead of crediting an Amulet-Coin-only run's money bump to "Payday"
+    // when no Payday Pokemon is present at all.
+    function getPayDayBreakdown(state, amount) {
         const power = getAbilityPower(state, 'payday');
-        let result = power > 0 ? amount * (1 + 0.25 * power) : amount;
+        const afterPayday = power > 0 ? amount * (1 + 0.25 * power) : amount;
         const moneyMult = state.buffs ? getMoneyMultBonus(state) : 0;
-        if (moneyMult > 0) {
-            result *= (1 + moneyMult / 100);
-        }
-        return Math.floor(result);
+        const afterAmulet = moneyMult > 0 ? afterPayday * (1 + moneyMult / 100) : afterPayday;
+        const finalAmount = Math.floor(afterAmulet);
+        const paydayBonus = Math.floor(afterPayday) - amount;
+        const amuletBonus = finalAmount - Math.floor(afterPayday);
+        return { final: finalAmount, paydayBonus, amuletBonus };
+    }
+
+    function applyPayDay(state, amount) {
+        return getPayDayBreakdown(state, amount).final;
     }
 
     // Evolution stage: 1 = base, 2 = mid, 3 = final/single-stage
@@ -1169,6 +1181,7 @@
         isFinalEvolution,
         pokemonToFood,
         applyPayDay,
+        getPayDayBreakdown,
         getEvoChain,
         getEvoStage,
         getFoodCost,

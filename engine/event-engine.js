@@ -427,18 +427,24 @@
         // actual Pay-Day-boosted amount for display (e.g. event-screen.js's
         // REWARD/PAYDAY rows, buildEffectsSummary) without touching it.
         effects._moneyAwarded = undefined;
+        effects._paydayBonus = undefined;
+        effects._amuletBonus = undefined;
 
         // Resource changes
         const resourceKeys = ['food', 'pokeballs', 'greatballs', 'ultraballs', 'potions', 'superPotions', 'repels', 'rareCandy', 'escapeRope', 'money'];
         resourceKeys.forEach(key => {
             if (effects[key] !== undefined) {
                 let amount = effects[key];
-                // Pay Day: bonus on positive money gains, scaling with the
-                // party's Pay Day ability power (see getAbilityPower/
-                // applyPayDay in game-state.js).
+                // Pay Day / Amulet Coin: bonus on positive money gains — see
+                // getPayDayBreakdown in game-state.js, which keeps the two
+                // sources (a Payday-ability Pokemon vs. the Amulet Coin key
+                // item) separate so they're never mislabeled as each other.
                 if (key === 'money' && amount > 0) {
-                    amount = PT.Engine.GameState.applyPayDay(state, amount);
+                    const breakdown = PT.Engine.GameState.getPayDayBreakdown(state, amount);
+                    amount = breakdown.final;
                     effects._moneyAwarded = amount;
+                    effects._paydayBonus = breakdown.paydayBonus;
+                    effects._amuletBonus = breakdown.amuletBonus;
                 }
                 state.resources[key] = Math.max(0, state.resources[key] + amount);
             }

@@ -647,12 +647,13 @@
 
             // Reward: small money bounty
             const baseMoneyReward = pokemon.rarity === 'legendary' ? 500 : pokemon.rarity === 'rare' ? 200 : pokemon.rarity === 'uncommon' ? 100 : 50;
-            const moneyReward = PT.Engine.GameState.applyPayDay(state, baseMoneyReward);
+            const wildPaydayBreakdown = PT.Engine.GameState.getPayDayBreakdown(state, baseMoneyReward);
+            const moneyReward = wildPaydayBreakdown.final;
             state.resources.money += moneyReward;
 
             let rewardRows = rewardRow('MONEY', `+$${moneyReward}`);
-            const wildPaydayBonus = moneyReward - baseMoneyReward;
-            if (wildPaydayBonus > 0) rewardRows += rewardRow('PAYDAY', `+$${wildPaydayBonus}`);
+            if (wildPaydayBreakdown.paydayBonus > 0) rewardRows += rewardRow('PAYDAY', `+$${wildPaydayBreakdown.paydayBonus}`);
+            if (wildPaydayBreakdown.amuletBonus > 0) rewardRows += rewardRow('AMULET COIN', `+$${wildPaydayBreakdown.amuletBonus}`);
             if (evoResult.evolved) {
                 rewardRows += rewardRow('EVOLVED', `${evoResult.oldName} → ${evoResult.newName}`);
             }

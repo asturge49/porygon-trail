@@ -208,8 +208,8 @@
             const awarded = (engineResult && engineResult.moneyAwarded != null) ? engineResult.moneyAwarded : battle.reward;
             resultRows = rewardRow('RESULT', `${pokemonNameBeforeBattle} defeated ${battle.trainerName}'s ${battle.pokemon.name}!`);
             if (awarded) resultRows += rewardRow('REWARD', `+$${awarded}`);
-            const trainerPaydayBonus = (engineResult && engineResult.baseReward != null) ? awarded - engineResult.baseReward : 0;
-            if (trainerPaydayBonus > 0) resultRows += rewardRow('PAYDAY', `+$${trainerPaydayBonus}`);
+            if (engineResult && engineResult.paydayBonus > 0) resultRows += rewardRow('PAYDAY', `+$${engineResult.paydayBonus}`);
+            if (engineResult && engineResult.amuletBonus > 0) resultRows += rewardRow('AMULET COIN', `+$${engineResult.amuletBonus}`);
             const evo = engineResult && engineResult.evolution;
             const starResult = engineResult && engineResult.starResult;
             if (evo) resultRows += rewardRow('EVOLVED', `${evo.oldName} → ${evo.newName}`);

@@ -178,7 +178,8 @@
 
         if (won) {
             const reward = trainerEncounter ? (trainerEncounter.reward || 0) : 0;
-            const moneyAwarded = PT.Engine.GameState.applyPayDay(state, reward);
+            const paydayBreakdown = PT.Engine.GameState.getPayDayBreakdown(state, reward);
+            const moneyAwarded = paydayBreakdown.final;
             state.resources.money += moneyAwarded;
             state.trainersDefeated = (state.trainersDefeated || 0) + 1;
             PT.Engine.GameState.addToLog(state, `Defeated ${trainerName}'s ${opponentName}! Got $${moneyAwarded}!`);
@@ -190,7 +191,11 @@
             }
             const starResult = PT.Engine.GameState.addBattleWin(pokemon, state, evoResult.evolved);
 
-            return { resolved: true, won: true, moneyAwarded, baseReward: reward, evolution: evoResult.evolved ? evoResult : null, starResult };
+            return {
+                resolved: true, won: true, moneyAwarded, baseReward: reward,
+                paydayBonus: paydayBreakdown.paydayBonus, amuletBonus: paydayBreakdown.amuletBonus,
+                evolution: evoResult.evolved ? evoResult : null, starResult
+            };
         }
 
         const damage = trainerEncounter ? (trainerEncounter.damage || 1) : 1;

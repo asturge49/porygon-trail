@@ -291,8 +291,8 @@
             if (winEffects.money) {
                 const awardedMoney = winEffects._moneyAwarded != null ? winEffects._moneyAwarded : winEffects.money;
                 rewardRows += rewardRow('REWARD', `+$${awardedMoney}`);
-                const eventPaydayBonus = awardedMoney - winEffects.money;
-                if (eventPaydayBonus > 0) rewardRows += rewardRow('PAYDAY', `+$${eventPaydayBonus}`);
+                if (winEffects._paydayBonus > 0) rewardRows += rewardRow('PAYDAY', `+$${winEffects._paydayBonus}`);
+                if (winEffects._amuletBonus > 0) rewardRows += rewardRow('AMULET COIN', `+$${winEffects._amuletBonus}`);
             }
             if (evoResult.evolved) rewardRows += rewardRow('EVOLVED', `${evoResult.oldName} → ${evoResult.newName}`);
             if (starResult.earned) rewardRows += rewardRow('BATTLE STAR EARNED', `${'★'.repeat(chosen.battleStars)} (${chosen.battleStars}/3)`);
@@ -366,8 +366,8 @@
         if (effects.money > 0) {
             const awardedMoney = effects._moneyAwarded != null ? effects._moneyAwarded : effects.money;
             lines.push(`+$${awardedMoney}`);
-            const paydayBonus = awardedMoney - effects.money;
-            if (paydayBonus > 0) lines.push(`+$${paydayBonus} from Pay Day`);
+            if (effects._paydayBonus > 0) lines.push(`+$${effects._paydayBonus} from Pay Day`);
+            if (effects._amuletBonus > 0) lines.push(`+$${effects._amuletBonus} from Amulet Coin`);
         }
         if (effects.money < 0) lines.push(`-$${Math.abs(effects.money)}`);
         if (effects.potions > 0) lines.push(`+${effects.potions} Potions`);

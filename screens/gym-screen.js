@@ -287,7 +287,8 @@
         if (won) {
             state.badges.push(leader.badge);
             state.gymBattlesWon++;
-            gymMoneyReward = PT.Engine.GameState.applyPayDay(state, leader.reward.money);
+            const gymPaydayBreakdown = PT.Engine.GameState.getPayDayBreakdown(state, leader.reward.money);
+            gymMoneyReward = gymPaydayBreakdown.final;
             state.resources.money += gymMoneyReward;
 
             PT.Engine.GameState.addToLog(state, `Defeated ${leader.name}'s ${opponent.name}! Got ${leader.badge}!`);
@@ -320,8 +321,8 @@
             const starResult = PT.Engine.GameState.addBattleWin(pokemon, state, evoResult.evolved);
             let rewardRows = rewardRow('BADGE EARNED', leader.badge);
             rewardRows += rewardRow('MONEY', `+$${gymMoneyReward}`);
-            const gymPaydayBonus = gymMoneyReward - leader.reward.money;
-            if (gymPaydayBonus > 0) rewardRows += rewardRow('PAYDAY', `+$${gymPaydayBonus}`);
+            if (gymPaydayBreakdown.paydayBonus > 0) rewardRows += rewardRow('PAYDAY', `+$${gymPaydayBreakdown.paydayBonus}`);
+            if (gymPaydayBreakdown.amuletBonus > 0) rewardRows += rewardRow('AMULET COIN', `+$${gymPaydayBreakdown.amuletBonus}`);
             if (evoResult.evolved) {
                 rewardRows += rewardRow('EVOLVED', `${evoResult.oldName} → ${evoResult.newName}`);
             } else if (evoResult.reason === 'location_limit') {
@@ -665,10 +666,12 @@
             const starResult = PT.Engine.GameState.addBattleWin(pokemon, state, evoResult.evolved);
 
             let gymMoneyReward = 0;
+            let gauntletPaydayBreakdown = null;
             if (isLastRound) {
                 state.badges.push(leader.badge);
                 state.gymBattlesWon++;
-                gymMoneyReward = PT.Engine.GameState.applyPayDay(state, leader.reward.money);
+                gauntletPaydayBreakdown = PT.Engine.GameState.getPayDayBreakdown(state, leader.reward.money);
+                gymMoneyReward = gauntletPaydayBreakdown.final;
                 state.resources.money += gymMoneyReward;
                 PT.Engine.GameState.addToLog(state, `Swept ${leader.name}'s gym! Got ${leader.badge}!`);
                 PT.Engine.Telemetry.logEvent('johto_gym_cleared', {
@@ -681,10 +684,10 @@
                 PT.Engine.GameState.addToLog(state, `Defeated ${leader.name}'s ${opponent.name}! (${round + 1}/${leader.pokemon.length})`);
             }
 
-            const gauntletPaydayBonus = gymMoneyReward - leader.reward.money;
             let rewardRows = isLastRound
                 ? rewardRow('BADGE EARNED', leader.badge) + rewardRow('MONEY', `+$${gymMoneyReward}`) +
-                  (gauntletPaydayBonus > 0 ? rewardRow('PAYDAY', `+$${gauntletPaydayBonus}`) : '')
+                  (gauntletPaydayBreakdown.paydayBonus > 0 ? rewardRow('PAYDAY', `+$${gauntletPaydayBreakdown.paydayBonus}`) : '') +
+                  (gauntletPaydayBreakdown.amuletBonus > 0 ? rewardRow('AMULET COIN', `+$${gauntletPaydayBreakdown.amuletBonus}`) : '')
                 : rewardRow('POKEMON LEFT', `${leader.pokemon.length - round - 1}`);
             if (evoResult.evolved) {
                 rewardRows += rewardRow('EVOLVED', `${evoResult.oldName} → ${evoResult.newName}`);
