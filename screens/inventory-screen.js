@@ -47,6 +47,30 @@
 
             const msg = document.getElementById('inv-message');
 
+            // Item-use pickers (potion target, rare candy target, etc.) render
+            // as an overlay popup on top of the screen — like travel-screen.js's
+            // day-recap-overlay — instead of appending inline below the item
+            // grid. Appending inline pushed #app's scrollable height past the
+            // viewport the moment a picker listed more than a couple of party
+            // members, forcing a scroll down to even see it. An absolutely
+            // positioned overlay doesn't add to the in-flow layout height, so
+            // the picker always shows in full immediately, with its own
+            // CANCEL/BACK button to close it without taking any action.
+            function closePopup() {
+                const existing = document.getElementById('inv-popup-overlay');
+                if (existing) existing.remove();
+            }
+
+            function showPopup(html) {
+                closePopup();
+                const overlay = document.createElement('div');
+                overlay.className = 'day-recap-overlay';
+                overlay.id = 'inv-popup-overlay';
+                overlay.innerHTML = `<div class="day-recap-popup">${html}</div>`;
+                document.querySelector('.inventory-screen').appendChild(overlay);
+                return overlay;
+            }
+
             // --- USE POTION: show potion type picker (if needed), then Pokemon picker ---
             document.getElementById('btn-use-potion').addEventListener('click', () => {
                 const injured = state.party.filter(p => p.status !== 'fainted' && p.hp < p.maxHp);
@@ -61,66 +85,62 @@
                 if (hasPotion && hasSuper) {
                     showPotionTypePicker();
                 } else {
-                    showPotionTargetPicker(hasSuper);
+                    showPotionTargetPicker(hasSuper, false);
                 }
             });
 
             function showPotionTypePicker() {
-                msg.innerHTML = `
-                    <div class="potion-picker">
-                        <div style="margin-bottom: 6px; font-weight: bold;">Use which item?</div>
-                        <div class="potion-pokemon-list">
-                            <button class="potion-target-btn" id="btn-pick-potion">
-                                <div class="potion-target-info">
-                                    <div style="font-weight: bold;">Potion (+1 HP)</div>
-                                    <div>${state.resources.potions} left</div>
-                                </div>
-                            </button>
-                            <button class="potion-target-btn" id="btn-pick-super-potion">
-                                <div class="potion-target-info">
-                                    <div style="font-weight: bold;">Super Potion (+2 HP)</div>
-                                    <div>${state.resources.superPotions} left</div>
-                                </div>
-                            </button>
-                        </div>
-                        <button class="btn btn-small" id="btn-potion-cancel" style="margin-top: 6px; width: 100%;">CANCEL</button>
+                showPopup(`
+                    <div class="day-recap-title">Use which item?</div>
+                    <div class="potion-pokemon-list">
+                        <button class="potion-target-btn" id="btn-pick-potion">
+                            <div class="potion-target-info">
+                                <div style="font-weight: bold;">Potion (+1 HP)</div>
+                                <div>${state.resources.potions} left</div>
+                            </div>
+                        </button>
+                        <button class="potion-target-btn" id="btn-pick-super-potion">
+                            <div class="potion-target-info">
+                                <div style="font-weight: bold;">Super Potion (+2 HP)</div>
+                                <div>${state.resources.superPotions} left</div>
+                            </div>
+                        </button>
                     </div>
-                `;
-                document.getElementById('btn-pick-potion').addEventListener('click', () => showPotionTargetPicker(false));
-                document.getElementById('btn-pick-super-potion').addEventListener('click', () => showPotionTargetPicker(true));
-                document.getElementById('btn-potion-cancel').addEventListener('click', () => {
-                    msg.textContent = '';
-                });
+                    <button class="btn btn-small" id="btn-potion-cancel" style="margin-top: 6px; width: 100%;">CANCEL</button>
+                `);
+                document.getElementById('btn-pick-potion').addEventListener('click', () => showPotionTargetPicker(false, true));
+                document.getElementById('btn-pick-super-potion').addEventListener('click', () => showPotionTargetPicker(true, true));
+                document.getElementById('btn-potion-cancel').addEventListener('click', closePopup);
             }
 
-            function showPotionTargetPicker(isSuper) {
+            // `canGoBack` is true only when reached from the type picker above
+            // (both potion types in stock) — its Cancel then reads BACK and
+            // returns there instead of closing the whole flow.
+            function showPotionTargetPicker(isSuper, canGoBack) {
                 const injured = state.party.filter(p => p.status !== 'fainted' && p.hp < p.maxHp);
                 const potionName = isSuper ? 'Super Potion' : 'Potion';
                 const healAmt = isSuper ? 2 : 1;
                 const potionCount = isSuper ? state.resources.superPotions : state.resources.potions;
 
-                // Build picker popup
-                msg.innerHTML = `
-                    <div class="potion-picker">
-                        <div style="margin-bottom: 6px; font-weight: bold;">Use ${potionName} (+${healAmt} HP) on who? <span style="color: var(--gb-dark);">(${potionCount} left)</span></div>
-                        <div class="potion-pokemon-list">
-                            ${injured.map((p, i) => `
-                                <button class="potion-target-btn" data-idx="${state.party.indexOf(p)}">
-                                    <img class="potion-target-sprite" src="${p.spriteUrl}" alt="${p.name}"
-                                         onerror="this.style.display='none'">
-                                    <div class="potion-target-info">
-                                        <div style="font-weight: bold;">${p.name}</div>
-                                        <div class="hp-bar" style="width: 60px; height: 6px;">
-                                            <div class="hp-bar-fill ${p.hp <= 1 ? 'low' : ''}" style="width: ${(p.hp / p.maxHp) * 100}%"></div>
-                                        </div>
-                                        <div>HP: ${p.hp}/${p.maxHp}</div>
+                showPopup(`
+                    <div class="day-recap-title">Use ${potionName} (+${healAmt} HP) on who? <span style="color: var(--gb-dark); font-weight: normal;">(${potionCount} left)</span></div>
+                    <div class="potion-pokemon-list">
+                        ${injured.map((p, i) => `
+                            <button class="potion-target-btn" data-idx="${state.party.indexOf(p)}">
+                                <img class="potion-target-sprite" src="${p.spriteUrl}" alt="${p.name}"
+                                     onerror="this.style.display='none'">
+                                <div class="potion-target-info">
+                                    <div style="font-weight: bold;">${p.name}</div>
+                                    <div class="hp-bar" style="width: 60px; height: 6px;">
+                                        <div class="hp-bar-fill ${p.hp <= 1 ? 'low' : ''}" style="width: ${(p.hp / p.maxHp) * 100}%"></div>
                                     </div>
-                                </button>
-                            `).join('')}
-                        </div>
-                        <button class="btn btn-small" id="btn-potion-cancel" style="margin-top: 6px; width: 100%;">CANCEL</button>
+                                    <div>HP: ${p.hp}/${p.maxHp}</div>
+                                </div>
+                            </button>
+                        `).join('')}
                     </div>
-                `;
+                    <button class="btn btn-small" id="btn-potion-cancel" style="margin-top: 6px; width: 100%;">${canGoBack ? 'BACK' : 'CANCEL'}</button>
+                `);
 
                 // Bind target buttons
                 document.querySelectorAll('.potion-target-btn').forEach(btn => {
@@ -141,7 +161,7 @@
                         if (PT.Engine.Audio) PT.Engine.Audio.buy();
 
                         // Show result popup with OK button
-                        msg.innerHTML = `
+                        showPopup(`
                             <div class="potion-result">
                                 <img class="potion-result-sprite" src="${target.spriteUrl}" alt="${target.name}"
                                      onerror="this.style.display='none'">
@@ -155,15 +175,20 @@
                                 </div>
                             </div>
                             <button class="btn btn-small" id="btn-potion-ok" style="margin-top: 6px; width: 100%;">OK</button>
-                        `;
+                        `);
                         document.getElementById('btn-potion-ok').addEventListener('click', () => {
+                            closePopup();
                             PT.App._render();
                         });
                     });
                 });
 
                 document.getElementById('btn-potion-cancel').addEventListener('click', () => {
-                    msg.textContent = '';
+                    if (canGoBack) {
+                        showPotionTypePicker();
+                    } else {
+                        closePopup();
+                    }
                 });
             }
 
@@ -190,36 +215,34 @@
                 }
 
                 // Build picker popup
-                msg.innerHTML = `
-                    <div class="potion-picker">
-                        <div style="margin-bottom: 6px; font-weight: bold;">Use Rare Candy on who? <span style="color: var(--gb-dark);">(${state.resources.rareCandy} left)</span></div>
-                        <div class="potion-pokemon-list">
-                            ${candidates.map(p => {
-                                const data = PT.Data.Pokemon.find(pk => pk.id === p.id);
-                                const canEvolve = !PT.Engine.GameState.isFinalEvolution(p, state);
-                                let actionText;
-                                if (canEvolve) {
-                                    const evoTarget = Array.isArray(data.evolvesTo) ? data.evolvesTo[0] : data.evolvesTo;
-                                    const evoData = PT.Data.Pokemon.find(pk => pk.id === evoTarget);
-                                    actionText = `→ ${evoData ? evoData.name : '???'}`;
-                                } else {
-                                    actionText = `★ ${(p.battleStars || 0)} → ${(p.battleStars || 0) + 1} star${(p.battleStars || 0) + 1 !== 1 ? 's' : ''}`;
-                                }
-                                return `
-                                <button class="potion-target-btn candy-target-btn" data-idx="${state.party.indexOf(p)}">
-                                    <img class="potion-target-sprite" src="${p.spriteUrl}" alt="${p.name}"
-                                         onerror="this.style.display='none'">
-                                    <div class="potion-target-info">
-                                        <div style="font-weight: bold;">${p.name}</div>
-                                        <div style="font-size: 6px;">${actionText}</div>
-                                        <div>HP: ${p.hp}/${p.maxHp}</div>
-                                    </div>
-                                </button>
-                            `}).join('')}
-                        </div>
-                        <button class="btn btn-small" id="btn-candy-cancel" style="margin-top: 6px; width: 100%;">CANCEL</button>
+                showPopup(`
+                    <div class="day-recap-title">Use Rare Candy on who? <span style="color: var(--gb-dark); font-weight: normal;">(${state.resources.rareCandy} left)</span></div>
+                    <div class="potion-pokemon-list">
+                        ${candidates.map(p => {
+                            const data = PT.Data.Pokemon.find(pk => pk.id === p.id);
+                            const canEvolve = !PT.Engine.GameState.isFinalEvolution(p, state);
+                            let actionText;
+                            if (canEvolve) {
+                                const evoTarget = Array.isArray(data.evolvesTo) ? data.evolvesTo[0] : data.evolvesTo;
+                                const evoData = PT.Data.Pokemon.find(pk => pk.id === evoTarget);
+                                actionText = `→ ${evoData ? evoData.name : '???'}`;
+                            } else {
+                                actionText = `★ ${(p.battleStars || 0)} → ${(p.battleStars || 0) + 1} star${(p.battleStars || 0) + 1 !== 1 ? 's' : ''}`;
+                            }
+                            return `
+                            <button class="potion-target-btn candy-target-btn" data-idx="${state.party.indexOf(p)}">
+                                <img class="potion-target-sprite" src="${p.spriteUrl}" alt="${p.name}"
+                                     onerror="this.style.display='none'">
+                                <div class="potion-target-info">
+                                    <div style="font-weight: bold;">${p.name}</div>
+                                    <div style="font-size: 6px;">${actionText}</div>
+                                    <div>HP: ${p.hp}/${p.maxHp}</div>
+                                </div>
+                            </button>
+                        `}).join('')}
                     </div>
-                `;
+                    <button class="btn btn-small" id="btn-candy-cancel" style="margin-top: 6px; width: 100%;">CANCEL</button>
+                `);
 
                 // Bind target buttons
                 document.querySelectorAll('.candy-target-btn').forEach(btn => {
@@ -239,7 +262,7 @@
                             const evoResult = PT.Engine.GameState.evolvePokemon(target, state);
                             if (evoResult.evolved) {
                                 PT.Engine.GameState.addToLog(state, `${evoResult.oldName} evolved into ${evoResult.newName}!`);
-                                msg.innerHTML = `
+                                showPopup(`
                                     <div class="potion-result">
                                         <img class="potion-result-sprite" src="${target.spriteUrl}" alt="${target.name}"
                                              onerror="this.style.display='none'">
@@ -248,20 +271,22 @@
                                         </div>
                                     </div>
                                     <button class="btn btn-small" id="btn-candy-ok" style="margin-top: 6px; width: 100%;">OK</button>
-                                `;
+                                `);
                                 document.getElementById('btn-candy-ok').addEventListener('click', () => {
+                                    closePopup();
                                     PT.App._render();
                                 });
                             } else {
-                                msg.textContent = `${target.name} couldn't evolve. Rare Candy had no effect!`;
                                 state.resources.rareCandy++; // Refund
+                                closePopup();
+                                msg.textContent = `${target.name} couldn't evolve. Rare Candy had no effect!`;
                                 PT.App._render();
                             }
                         } else {
                             // Add a battle star
                             target.battleStars = (target.battleStars || 0) + 1;
                             PT.Engine.GameState.addToLog(state, `${target.name} gained a battle star! (★${target.battleStars})`);
-                            msg.innerHTML = `
+                            showPopup(`
                                 <div class="potion-result">
                                     <img class="potion-result-sprite" src="${target.spriteUrl}" alt="${target.name}"
                                          onerror="this.style.display='none'">
@@ -271,17 +296,16 @@
                                     </div>
                                 </div>
                                 <button class="btn btn-small" id="btn-candy-ok" style="margin-top: 6px; width: 100%;">OK</button>
-                            `;
+                            `);
                             document.getElementById('btn-candy-ok').addEventListener('click', () => {
+                                closePopup();
                                 PT.App._render();
                             });
                         }
                     });
                 });
 
-                document.getElementById('btn-candy-cancel').addEventListener('click', () => {
-                    msg.textContent = '';
-                });
+                document.getElementById('btn-candy-cancel').addEventListener('click', closePopup);
             });
 
             // --- USE REPEL ---
