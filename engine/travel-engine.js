@@ -127,11 +127,12 @@
         // --- Food consumption (weighted by evo stage) ---
         const aliveParty = PT.Engine.GameState.getAliveParty(state);
 
-        // Sacred Flame (Moltres) — zero food consumption
+        // Sacred Flame (Moltres, Entei, Ho-Oh) — zero food consumption
         const hasSacredFlame = PT.Engine.GameState.hasAbility(state, 'sacred_flame');
         let foodConsumed = 0;
         if (hasSacredFlame) {
-            results.messages.push(`SACRED FLAME: Moltres' legendary fire sustains the party! No food consumed.`);
+            const flameName = abilityHolder(state, 'sacred_flame') || 'Moltres';
+            results.messages.push(`SACRED FLAME: ${flameName} sustains the party with legendary fire! No food consumed.`);
         } else {
             const baseFood = aliveParty.length > 0
                 ? aliveParty.reduce((sum, p) => sum + PT.Engine.GameState.getFoodCost(p), 0)
@@ -443,8 +444,10 @@
             }
         }
 
-        // --- Miracle ability: Mew's daily random bonus (always triggers) ---
+        // --- Miracle ability: a daily random bonus (always triggers) —
+        // shared by Mew, Cleffa, Togepi, and Togetic.
         if (PT.Engine.GameState.hasAbility(state, 'miracle')) {
+            const miracleName = abilityHolder(state, 'miracle') || 'Mew';
             const miracleRoll = state.rng.randInt(1, 100);
             if (miracleRoll <= 20) {
                 // Full party heal
@@ -452,33 +455,33 @@
                     p.hp = p.maxHp;
                     if (p.status === 'poisoned' || p.status === 'paralyzed') p.status = 'healthy';
                 });
-                results.messages.push(`MIRACLE: Mew's radiant energy heals the entire party to full HP!`);
+                results.messages.push(`MIRACLE: ${miracleName} radiates healing energy, restoring the entire party to full HP!`);
             } else if (miracleRoll <= 40) {
                 // Free food
                 const foodGain = state.rng.randInt(15, 30);
                 state.resources.food += foodGain;
-                results.messages.push(`MIRACLE: Mew conjures ${foodGain} food from thin air!`);
+                results.messages.push(`MIRACLE: ${miracleName} conjures ${foodGain} food from thin air!`);
             } else if (miracleRoll <= 55) {
                 // Bonus money
                 const miraclePaydayBreakdown = PT.Engine.GameState.getPayDayBreakdown(state, state.rng.randInt(200, 500));
                 const moneyGain = miraclePaydayBreakdown.final;
                 state.resources.money += moneyGain;
-                results.messages.push(`MIRACLE: Mew manifests $${moneyGain} out of nothing!${PT.Engine.GameState.formatPayDaySuffix(miraclePaydayBreakdown)}`);
+                results.messages.push(`MIRACLE: ${miracleName} manifests $${moneyGain} out of nothing!${PT.Engine.GameState.formatPayDaySuffix(miraclePaydayBreakdown)}`);
             } else if (miracleRoll <= 70) {
                 // Free items
                 const itemRoll = state.rng.randInt(1, 3);
-                if (itemRoll === 1) { state.resources.potions += 2; results.messages.push(`MIRACLE: Mew creates 2 Potions!`); }
-                else if (itemRoll === 2) { state.resources.superPotions += 1; results.messages.push(`MIRACLE: Mew creates a Super Potion!`); }
-                else { state.resources.greatballs += 2; results.messages.push(`MIRACLE: Mew creates 2 Great Balls!`); }
+                if (itemRoll === 1) { state.resources.potions += 2; results.messages.push(`MIRACLE: ${miracleName} creates 2 Potions!`); }
+                else if (itemRoll === 2) { state.resources.superPotions += 1; results.messages.push(`MIRACLE: ${miracleName} creates a Super Potion!`); }
+                else { state.resources.greatballs += 2; results.messages.push(`MIRACLE: ${miracleName} creates 2 Great Balls!`); }
             } else if (miracleRoll <= 85) {
                 // Bonus miles
                 if (pace.distance > 0 && !results.arrivedAtLocation) {
                     const bonusMiles = state.rng.randInt(5, 15);
-                    results.messages.push(`MIRACLE: Mew teleports the party forward ${bonusMiles} miles!`);
+                    results.messages.push(`MIRACLE: ${miracleName} teleports the party forward ${bonusMiles} miles!`);
                     addTravelDistance(state, route, nextRoute, bonusMiles, results);
                 } else {
                     state.resources.food += 10;
-                    results.messages.push(`MIRACLE: Mew creates 10 food!`);
+                    results.messages.push(`MIRACLE: ${miracleName} creates 10 food!`);
                 }
             } else {
                 // Battle star on random party member
@@ -486,10 +489,10 @@
                 if (starCandidates.length > 0) {
                     const lucky = state.rng.pick(starCandidates);
                     lucky.battleStars = (lucky.battleStars || 0) + 1;
-                    results.messages.push(`MIRACLE: Mew bestows a Battle Star on ${lucky.name}! ★`);
+                    results.messages.push(`MIRACLE: ${miracleName} bestows a Battle Star on ${lucky.name}! ★`);
                 } else {
                     state.resources.food += 10;
-                    results.messages.push(`MIRACLE: Mew creates 10 food!`);
+                    results.messages.push(`MIRACLE: ${miracleName} creates 10 food!`);
                 }
             }
         }
