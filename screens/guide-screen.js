@@ -107,6 +107,7 @@
                 { label: 'Money', sub: 'Plus the gym badge, on a first clear.' },
                 { label: 'A chance to evolve', sub: 'If eligible.' },
                 { label: 'Battle Stars', sub: 'Only final-evolution Pokemon can earn one — max 3, one per location.' },
+                { label: 'Veteran Bonus', value: '+1 Max HP', sub: "A Pokemon's 10th battle win — one-time only, survives evolution." },
                 { label: 'Exp. Share', sub: 'If held, one other teammate also gets in on the win.' }
             ]
         },
