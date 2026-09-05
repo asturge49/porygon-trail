@@ -1701,8 +1701,6 @@ body {
 .day-recap-body {
     font-size: 7px;
     line-height: 1.8;
-    max-height: 120px;
-    overflow-y: auto;
 }
 
 .recap-line {
