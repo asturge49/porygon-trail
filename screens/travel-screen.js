@@ -1183,6 +1183,22 @@
             return;
         }
 
+        // Guaranteed Day Care egg (see data/events.js's route34_breeder_egg)
+        // — used to be just another low-weight entry in the normal random
+        // event pool while traveling Route 34, competing against the entire
+        // general event list, which made it rare enough that playtesters
+        // reported never seeing it. Forced here instead, the moment Route
+        // 34 ends and Goldenrod City begins, replacing whatever the normal
+        // arrival roll below would have picked rather than stacking with it.
+        if (route.id === 'goldenrod_city' && !state.eventsTriggered.includes('route34_breeder_egg')) {
+            const breederEvent = PT.Data.Events.find(e => e.id === 'route34_breeder_egg');
+            if (breederEvent) {
+                state.eventsTriggered.push(breederEvent.id);
+                PT.App.goto('EVENT', { event: breederEvent });
+                return;
+            }
+        }
+
         // Check for location-specific events
         const locationEvent = PT.Engine.EventEngine.rollEvent(state);
         if (locationEvent) {

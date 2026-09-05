@@ -11731,9 +11731,16 @@
         },
 
         // ===== JOHTO ACQUISITION GAPS (added post-launch) =====
-        // Route 34 Day Care egg — a common, breeder-flavored source for the
-        // eight baby Pokemon that otherwise have no acquisition path
-        // (Pichu/Cleffa/Igglybuff/Togepi/Tyrogue/Smoochum/Elekid/Magby).
+        // Route 34 Day Care egg — the breeder-flavored source for the eight
+        // baby Pokemon that otherwise have no acquisition path (Pichu/Cleffa/
+        // Igglybuff/Togepi/Tyrogue/Smoochum/Elekid/Magby). Guaranteed rather
+        // than randomly rolled: screens/travel-screen.js's handleArrival
+        // forces this by id the moment Route 34 ends and Goldenrod City
+        // begins (it used to compete as a low-weight entry in the general
+        // event pool while traveling Route 34, rare enough that playtesters
+        // never saw it fire). `weight`/`locationIds` are no longer read for
+        // this event — handleArrival looks it up by id directly — but
+        // `oneTime` still guards against it ever firing twice.
         // Deliberately separate from the existing route34_daycare_couple
         // flavor event (which already teases "an egg on the way") rather than
         // folded into it, so that event's tested outcomes stay untouched.
@@ -11742,9 +11749,7 @@
             type: "story",
             name: "An Egg from the Day Care",
             description: "The Day Care man catches you before you're past the fence. \"Actually — funny timing. One of our Pokemon left an egg behind this morning. We can't exactly raise it ourselves, what with the other twenty. You want it?\"",
-            weight: 14,
             oneTime: true,
-            locationIds: ["route_34"],
             choices: [
                 {
                     text: "Take the egg",
