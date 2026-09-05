@@ -391,7 +391,8 @@
                         // ~100-distance Mt. Silver stretch, without stacking
                         // on top of Kanto's reward to feel excessive.
                         const JOHTO_E4_MONEY_REWARD = 5000;
-                        const e4MoneyReward = PT.Engine.GameState.applyPayDay(state, JOHTO_E4_MONEY_REWARD);
+                        const johtoE4PaydayBreakdown = PT.Engine.GameState.getPayDayBreakdown(state, JOHTO_E4_MONEY_REWARD);
+                        const e4MoneyReward = johtoE4PaydayBreakdown.final;
                         state.resources.money += e4MoneyReward;
                         state.johtoE4Cleared = true;
                         // Snapshot Johto's completion bonus now, symmetric to
@@ -404,7 +405,7 @@
                         // stands right now, even if Red is never reached or
                         // the run is lost on Mt. Silver afterward.
                         state.johtoChampionIds = PT.Engine.Scoring.getChampionIdsFromParty(state.party);
-                        PT.Engine.GameState.addToLog(state, `Defeated the Johto Elite Four rematch! Earned $${e4MoneyReward} to restock before Mt. Silver.`);
+                        PT.Engine.GameState.addToLog(state, `Defeated the Johto Elite Four rematch! Earned $${e4MoneyReward} to restock before Mt. Silver.${PT.Engine.GameState.formatPayDaySuffix(johtoE4PaydayBreakdown)}`);
 
                         // Telemetry (§13.3) — funnel: what fraction of Johto
                         // entrants reach the second E4?
@@ -425,9 +426,10 @@
                         return;
                     }
 
-                    const e4MoneyReward = PT.Engine.GameState.applyPayDay(state, 5000);
+                    const kantoE4PaydayBreakdown = PT.Engine.GameState.getPayDayBreakdown(state, 5000);
+                    const e4MoneyReward = kantoE4PaydayBreakdown.final;
                     state.resources.money += e4MoneyReward;
-                    PT.Engine.GameState.addToLog(state, 'Became the Pokemon Champion!');
+                    PT.Engine.GameState.addToLog(state, `Became the Pokemon Champion! Earned $${e4MoneyReward}.${PT.Engine.GameState.formatPayDaySuffix(kantoE4PaydayBreakdown)}`);
 
                     // Post-victory hook (§6): the first Kanto E4 clear doesn't
                     // end the run — it offers Johto. Record the region as

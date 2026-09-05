@@ -295,9 +295,10 @@
             const flashRoll = state.rng.randInt(1, 100);
             if (flashRoll <= 40) {
                 const baseMoneyFound = Math.floor(state.rng.randInt(50, 200) * flashPower);
-                const moneyFound = PT.Engine.GameState.applyPayDay(state, baseMoneyFound);
+                const flashPaydayBreakdown = PT.Engine.GameState.getPayDayBreakdown(state, baseMoneyFound);
+                const moneyFound = flashPaydayBreakdown.final;
                 state.resources.money += moneyFound;
-                results.messages.push(`${flashName} lit up a hidden stash! Found $${moneyFound}!${moneyFound > baseMoneyFound ? ' BONUS!' : ''}`);
+                results.messages.push(`${flashName} lit up a hidden stash! Found $${moneyFound}!${PT.Engine.GameState.formatPayDaySuffix(flashPaydayBreakdown)}`);
             } else if (flashRoll <= 70) {
                 state.resources.potions++;
                 results.messages.push(`${flashName} found a hidden Potion!`);
@@ -418,9 +419,10 @@
             } else if (glitchRoll <= 50) {
                 // Random money glitch
                 const baseGlitchMoney = state.rng.randInt(100, 500);
-                const glitchMoney = PT.Engine.GameState.applyPayDay(state, baseGlitchMoney);
+                const glitchPaydayBreakdown = PT.Engine.GameState.getPayDayBreakdown(state, baseGlitchMoney);
+                const glitchMoney = glitchPaydayBreakdown.final;
                 state.resources.money += glitchMoney;
-                results.messages.push(`GLITCH ABILITY: Memory overflow! +$${glitchMoney} appeared in your wallet!${glitchMoney > baseGlitchMoney ? ' BONUS!' : ''}`);
+                results.messages.push(`GLITCH ABILITY: Memory overflow! +$${glitchMoney} appeared in your wallet!${PT.Engine.GameState.formatPayDaySuffix(glitchPaydayBreakdown)}`);
             } else if (glitchRoll <= 70) {
                 // Heal a random party member to full
                 const injured = PT.Engine.GameState.getAliveParty(state).filter(p => p.hp < p.maxHp);
@@ -457,9 +459,10 @@
                 results.messages.push(`MIRACLE: Mew conjures ${foodGain} food from thin air!`);
             } else if (miracleRoll <= 55) {
                 // Bonus money
-                const moneyGain = PT.Engine.GameState.applyPayDay(state, state.rng.randInt(200, 500));
+                const miraclePaydayBreakdown = PT.Engine.GameState.getPayDayBreakdown(state, state.rng.randInt(200, 500));
+                const moneyGain = miraclePaydayBreakdown.final;
                 state.resources.money += moneyGain;
-                results.messages.push(`MIRACLE: Mew manifests $${moneyGain} out of nothing!`);
+                results.messages.push(`MIRACLE: Mew manifests $${moneyGain} out of nothing!${PT.Engine.GameState.formatPayDaySuffix(miraclePaydayBreakdown)}`);
             } else if (miracleRoll <= 70) {
                 // Free items
                 const itemRoll = state.rng.randInt(1, 3);

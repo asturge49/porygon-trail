@@ -664,6 +664,17 @@
         return getPayDayBreakdown(state, amount).final;
     }
 
+    // Short parenthetical suffix — " (+$9 Payday, +$50 Amulet Coin)" — for
+    // narration/log text that reports a money amount inline rather than as
+    // structured reward rows (travel-engine.js's daily event messages, log
+    // entries). Empty string if neither bonus actually contributed.
+    function formatPayDaySuffix(breakdown) {
+        const parts = [];
+        if (breakdown.paydayBonus > 0) parts.push(`+$${breakdown.paydayBonus} Payday`);
+        if (breakdown.amuletBonus > 0) parts.push(`+$${breakdown.amuletBonus} Amulet Coin`);
+        return parts.length > 0 ? ` (${parts.join(', ')})` : '';
+    }
+
     // Evolution stage: 1 = base, 2 = mid, 3 = final/single-stage
     function getEvoStage(pokemonId) {
         const data = PT.Data.Pokemon.find(p => p.id === pokemonId);
@@ -1182,6 +1193,7 @@
         pokemonToFood,
         applyPayDay,
         getPayDayBreakdown,
+        formatPayDaySuffix,
         getEvoChain,
         getEvoStage,
         getFoodCost,

@@ -61,8 +61,14 @@
 
     PT.Screens.GYM_REWARD = {
         render(container, state, params) {
-            const { leaderId, moneyReward } = params || {};
+            const { leaderId, moneyReward, paydayBonus, amuletBonus } = params || {};
             const leader = PT.Data.GymLeaders[leaderId];
+            // Line items only appear when their source actually contributed —
+            // hidden entirely for a run with no Payday Pokemon / no Amulet Coin.
+            const moneyBreakdownHtml = [
+                paydayBonus > 0 ? `<div>+$${paydayBonus} from Payday</div>` : '',
+                amuletBonus > 0 ? `<div>+$${amuletBonus} from Amulet Coin</div>` : ''
+            ].join('');
 
             const div = document.createElement('div');
             div.className = 'screen';
@@ -89,6 +95,7 @@
                         <div class="event-title">GYM REWARDS</div>
                         <div class="text-box" style="font-size: 7px; text-align: center;">
                             ${leader ? `Defeated ${leader.name}! ` : ''}Earned <strong>$${moneyReward || 0}</strong>.
+                            ${moneyBreakdownHtml ? `<div style="font-size: 6px; color: var(--gb-dark); margin-top: 2px;">${moneyBreakdownHtml}</div>` : ''}
                             <br>Choose a key item to keep — its bonus stacks every time you pick it.
                         </div>
                         <div class="event-choices">

@@ -279,6 +279,7 @@
 
         const won = PT.Engine.DebugPanel.resolveOutcome(chance, state.rng);
         let gymMoneyReward = 0;
+        let gymPaydayBreakdown = null;
 
         container.innerHTML = '';
         const div = document.createElement('div');
@@ -287,7 +288,7 @@
         if (won) {
             state.badges.push(leader.badge);
             state.gymBattlesWon++;
-            const gymPaydayBreakdown = PT.Engine.GameState.getPayDayBreakdown(state, leader.reward.money);
+            gymPaydayBreakdown = PT.Engine.GameState.getPayDayBreakdown(state, leader.reward.money);
             gymMoneyReward = gymPaydayBreakdown.final;
             state.resources.money += gymMoneyReward;
 
@@ -449,7 +450,10 @@
                 if (!state.gameOverReason) state.gameOverReason = 'party_wiped';
                 PT.App.goto('GAMEOVER');
             } else if (won) {
-                PT.App.goto('GYM_REWARD', { leaderId, moneyReward: gymMoneyReward });
+                PT.App.goto('GYM_REWARD', {
+                    leaderId, moneyReward: gymMoneyReward,
+                    paydayBonus: gymPaydayBreakdown.paydayBonus, amuletBonus: gymPaydayBreakdown.amuletBonus
+                });
             } else {
                 PT.App.goto('TRAVEL');
             }
@@ -732,7 +736,10 @@
 
             document.getElementById('btn-gauntlet-continue').addEventListener('click', () => {
                 if (isLastRound) {
-                    PT.App.goto('GYM_REWARD', { leaderId, moneyReward: gymMoneyReward });
+                    PT.App.goto('GYM_REWARD', {
+                        leaderId, moneyReward: gymMoneyReward,
+                        paydayBonus: gauntletPaydayBreakdown.paydayBonus, amuletBonus: gauntletPaydayBreakdown.amuletBonus
+                    });
                 } else {
                     PT.App.goto('GYM', { gymLeader: leaderId, gymRound: round + 1 });
                 }
